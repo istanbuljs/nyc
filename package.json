@@ -1,7 +1,7 @@
 {
   "name": "nyc",
   "version": "1.0.0",
-  "description": "forking code-coverage suing istanbul.",
+  "description": "forking code-coverage using istanbul.",
   "main": "index.js",
   "scripts": {
     "test": "standard && mocha --ui exports"

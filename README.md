@@ -1,3 +1,3 @@
 # nyc
 
-forking code-coverage suing istanbul.
+forking code-coverage using istanbul.
