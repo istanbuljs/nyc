@@ -1,6 +1,6 @@
 {
   "name": "nyc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "forking code-coverage using istanbul.",
   "main": "index.js",
   "scripts": {
@@ -12,8 +12,8 @@
   },
   "config": {
     "nyc": {
-      "pattern": [
-        ""
+      "exclude": [
+        "node_modules\/"
       ]
     }
   },

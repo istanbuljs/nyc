@@ -4,8 +4,8 @@ var _ = require('lodash'),
   istanbul = require('istanbul'),
   instrumenter = new istanbul.Instrumenter(),
   mkdirp = require('mkdirp'),
-  path = require('path')
-  // rimraf = require('rimraf')
+  path = require('path'),
+  rimraf = require('rimraf')
 
 function NYC (opts) {
   _.extend(this, {
@@ -14,22 +14,19 @@ function NYC (opts) {
       './bin/nyc.js'
     ),
     tempDirectory: './nyc_output',
-    cwd: __dirname
+    cwd: process.env.NYC_CWD || process.cwd()
   }, opts)
 
-  // set config in config.nyc stanza of package.json.
-  if (!this.cwd) throw Error('can no find file', process.cwd())
-  // don't have a plan for loading config yet, we should pass
-  // around the cwd using ENV, and use the ENV for config/package.json
-  var config = require(path.resolve(this.cwd, './package.json')).config.nyc
+  var config = require(path.resolve(this.cwd, './package.json')).config || {}
+  config = config.nyc || {}
 
-  // which files should we apply coverage to?
-  this.pattern = config.pattern || ['lib', 'index.js']
-  if (!Array.isArray(this.pattern)) this.pattern = [this.pattern]
-  this.pattern = _.map(this.pattern, function (p) {
-    return new RegExp('^' + p + '.*')
+  this.exclude = config.exclude || ['node_modules\/', 'test\/']
+  if (!Array.isArray(this.exclude)) this.exclude = [this.exclude]
+  this.exclude = _.map(this.exclude, function (p) {
+    return new RegExp(p)
   })
 
+  if (!process.env.NYC_CWD) rimraf.sync(this.tmpDirectory())
   mkdirp.sync(this.tmpDirectory())
 }
 
@@ -46,10 +43,10 @@ NYC.prototype.wrapSpawn = function (_child /* for mocking in tests */) {
         if (arg === options.file) return _this.subprocessBin
         else return arg
       })
+
+      options.envPairs.push('NYC_CWD=' + _this.cwd)
       options.args.unshift(process.execPath)
     }
-    // node fakeamabob test/foo.js
-    // require('fs').appendFileSync('/Users/benjamincoe/output.log', 'Attempt Spawn: ' + JSON.stringify(options) + '\n', 'utf-8')
 
     return spawn.call(this, options)
   }
@@ -76,18 +73,22 @@ NYC.prototype.wrapRequire = function () {
 
   // any JS you require should get coverage added.
   require.extensions['.js'] = function (module, filename) {
-    var instrument = false
+    var instrument = true
     var content = fs.readFileSync(filename, 'utf8')
 
-    // only instrument the file if it matches our coverage pattern.
+    // only instrument a file if it's not on the exclude list.
     var relFile = path.relative(_this.cwd, filename)
-    for (var i = 0, pattern; (pattern = _this.pattern[i]) !== undefined; i++) {
-      if (pattern.test(relFile)) {
-        instrument = true
-      }
+    for (var i = 0, exclude; (exclude = _this.exclude[i]) !== undefined; i++) {
+      if (exclude.test(relFile)) instrument = false
     }
 
-    if (instrument) content = instrumenter.instrumentSync(content, filename)
+    if (instrument) {
+      content = instrumenter.instrumentSync(
+        content,
+        '/' + relFile
+      )
+    }
+
     module._compile(stripBOM(content), filename)
   }
 
@@ -129,8 +130,6 @@ NYC.prototype.report = function () {
         'utf-8'
       ))
     })
-
-  console.log(_this.tmpDirectory())
 
   reports.forEach(function (report) {
     collector.add(report)
