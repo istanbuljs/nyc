@@ -1,0 +1,38 @@
+{
+  "name": "nyc",
+  "version": "1.0.0",
+  "description": "forking code-coverage suing istanbul.",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && mocha --ui exports"
+  },
+  "bin": {
+    "nyc": "./bin/nyc",
+    "nyc-report": "./bin/nyc-report"
+  },
+  "config": {
+    "nyc": {
+      "pattern": [
+        ""
+      ]
+    }
+  },
+  "keywords": [
+    "coverage",
+    "subprocess"
+  ],
+  "author": "Ben Coe <ben@npmjs.com>",
+  "license": "ISC",
+  "dependencies": {
+    "istanbul": "^0.3.13",
+    "lodash": "^3.8.0",
+    "mkdirp": "^0.5.0",
+    "rimraf": "^2.3.3",
+    "yargs": "^3.8.0"
+  },
+  "devDependencies": {
+    "chai": "^2.3.0",
+    "mocha": "^2.2.4",
+    "standard": "^3.7.3"
+  }
+}
