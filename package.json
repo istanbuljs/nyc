@@ -34,5 +34,9 @@
     "chai": "^2.3.0",
     "mocha": "^2.2.4",
     "standard": "^3.7.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:bcoe/nyc.git"
   }
 }
