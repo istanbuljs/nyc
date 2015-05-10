@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
-var NYC = require('../'),
-  nyc = new NYC()
+var NYC = require('../')
 
-nyc.wrap()
+;(new NYC()).wrap()
 
 // make it so we can run coverage on nyc.
 // turtles all the way down.
