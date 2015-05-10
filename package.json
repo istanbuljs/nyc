@@ -7,8 +7,8 @@
     "test": "standard && mocha --ui exports"
   },
   "bin": {
-    "nyc": "./bin/nyc",
-    "nyc-report": "./bin/nyc-report"
+    "nyc": "./bin/nyc.js",
+    "nyc-report": "./bin/nyc-report.js"
   },
   "config": {
     "nyc": {
