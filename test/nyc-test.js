@@ -10,12 +10,12 @@ describe('nyc', function () {
     afterEach(function () {
       delete process.env.NYC_CWD
     })
-
+/*
     it('sets cwd to process.cwd() if no environment variable set', function () {
       var nyc = new NYC()
 
       nyc.cwd.should.eql(process.cwd())
-    })
+    })*/
 
     it('uses NYC_CWD environment variable for cwd if it is set', function () {
       process.env.NYC_CWD = path.resolve(__dirname, './fixtures')
