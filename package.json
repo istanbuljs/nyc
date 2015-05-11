@@ -1,6 +1,6 @@
 {
   "name": "nyc",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "forking code-coverage using istanbul.",
   "main": "index.js",
   "scripts": {
@@ -34,7 +34,9 @@
     "yargs": "^3.8.0",
     "spawn-wrap": "0.0.0"
   },
-  "bundledDependencies": ["spawn-wrap"],
+  "bundledDependencies": [
+    "spawn-wrap"
+  ],
   "devDependencies": {
     "chai": "^2.3.0",
     "coveralls": "^2.11.2",
