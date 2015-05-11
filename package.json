@@ -25,7 +25,7 @@
   "author": "Ben Coe <ben@npmjs.com>",
   "license": "ISC",
   "dependencies": {
-    "istanbul": "git+ssh://git@github.com:bcoe/istanbul.git#text-lcov",
+    "istanbul": "https://github.com/bcoe/istanbul.git#text-lcov",
     "lodash": "^3.8.0",
     "mkdirp": "^0.5.0",
     "rimraf": "^2.3.3",
