@@ -31,8 +31,10 @@
     "mkdirp": "^0.5.0",
     "rimraf": "^2.3.3",
     "strip-bom": "^1.0.0",
-    "yargs": "^3.8.0"
+    "yargs": "^3.8.0",
+    "spawn-wrap": "0.0.0"
   },
+  "bundledDependencies": ["spawn-wrap"],
   "devDependencies": {
     "chai": "^2.3.0",
     "coveralls": "^2.11.2",
