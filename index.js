@@ -5,7 +5,8 @@ var _ = require('lodash'),
   mkdirp = require('mkdirp'),
   path = require('path'),
   rimraf = require('rimraf'),
-  spawnWrap = require('spawn-wrap')
+  spawnWrap = require('spawn-wrap'),
+  stripBom = require('strip-bom')
 
 function NYC (opts) {
   _.extend(this, {
@@ -31,7 +32,7 @@ function NYC (opts) {
   mkdirp.sync(this.tmpDirectory())
 }
 
-NYC.prototype.wrapRequire = function () {
+NYC.prototype._wrapRequire = function () {
   var _this = this
 
   // any JS you require should get coverage added.
@@ -52,7 +53,7 @@ NYC.prototype.wrapRequire = function () {
       )
     }
 
-    module._compile(stripBOM(content), filename)
+    module._compile(stripBom(content), filename)
   }
 
   // ouptut temp coverage reports as processes exit.
@@ -67,25 +68,15 @@ NYC.prototype.wrapRequire = function () {
   })
 }
 
-function stripBOM (content) {
-  // Remove byte order marker. This catches EF BB BF (the UTF-8 BOM)
-  // because the buffer-to-string conversion in `fs.readFileSync()`
-  // translates it to FEFF, the UTF-16 BOM.
-  if (content.charCodeAt(0) === 0xFEFF) {
-    content = content.slice(1)
-  }
-  return content
-}
-
 NYC.prototype.wrap = function () {
   spawnWrap([this.subprocessBin], {NYC_CWD: this.cwd})
-  this.wrapRequire()
+  this._wrapRequire()
 }
 
-NYC.prototype.report = function () {
+NYC.prototype.report = function (_collector, _reporter) {
   var _this = this,
-    collector = new istanbul.Collector(),
-    reporter = new istanbul.Reporter(),
+    collector = _collector || new istanbul.Collector(),
+    reporter = _reporter || new istanbul.Reporter(),
     files = fs.readdirSync(_this.tmpDirectory()),
     reports = _.map(files, function (f) {
       return JSON.parse(fs.readFileSync(

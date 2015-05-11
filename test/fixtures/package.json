@@ -1,1 +1,19 @@
-{}
+{
+  "name": "nyc",
+  "version": "1.1.1",
+  "description": "forking code-coverage using istanbul.",
+  "main": "index.js",
+  "bin": {
+    "nyc": "./bin/nyc.js",
+    "nyc-report": "./bin/nyc-report.js"
+  },
+  "config": {
+    "nyc": {
+      "exclude": [
+        "node_modules/",
+        "blarg/",
+        "blerg/"
+      ]
+    }
+  }
+}

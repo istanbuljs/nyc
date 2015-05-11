@@ -14,7 +14,8 @@
   "config": {
     "nyc": {
       "exclude": [
-        "node_modules/"
+        "node_modules/",
+        "test/"
       ]
     }
   },
@@ -30,6 +31,7 @@
     "mkdirp": "^0.5.0",
     "rimraf": "^2.3.3",
     "spawn-wrap": "0.0.0",
+    "strip-bom": "^1.0.0",
     "yargs": "^3.8.0"
   },
   "devDependencies": {
