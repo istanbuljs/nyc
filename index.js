@@ -55,43 +55,59 @@ NYC.prototype._wrapRequire = function () {
 
     module._compile(stripBom(content), filename)
   }
+}
 
-  // ouptut temp coverage reports as processes exit.
-  process.on('exit', function () {
-    if (!global.__coverage__) return
+NYC.prototype._wrapExit = function () {
+  var _this = this,
+    outputCoverage = function (arg) {
+      if (!global.__coverage__) return
 
-    fs.writeFileSync(
-      path.resolve(_this.tmpDirectory(), './', process.pid + '.json'),
-      JSON.stringify(global.__coverage__),
-      'utf-8'
-    )
+      fs.writeFileSync(
+        path.resolve(_this.tmpDirectory(), './', process.pid + '.json'),
+        JSON.stringify(global.__coverage__),
+        'utf-8'
+      )
+    }
+
+  // output temp coverage reports as processes exit.
+  ;['exit', 'SIGTERM', 'SIGINT', 'SIGHUP'].forEach(function (signal) {
+    process.on(signal, function () {
+      outputCoverage()
+      if (signal === 'SIGTERM') process.exit()
+    })
   })
 }
 
 NYC.prototype.wrap = function () {
   spawnWrap([this.subprocessBin], {NYC_CWD: this.cwd})
   this._wrapRequire()
+  this._wrapExit()
+  return this
 }
 
 NYC.prototype.report = function (_collector, _reporter) {
-  var _this = this,
-    collector = _collector || new istanbul.Collector(),
-    reporter = _reporter || new istanbul.Reporter(),
-    files = fs.readdirSync(_this.tmpDirectory()),
-    reports = _.map(files, function (f) {
-      return JSON.parse(fs.readFileSync(
-        path.resolve(_this.tmpDirectory(), './', f),
-        'utf-8'
-      ))
-    })
+  var collector = _collector || new istanbul.Collector(),
+    reporter = _reporter || new istanbul.Reporter()
 
-  reports.forEach(function (report) {
+  this._loadReports().forEach(function (report) {
     collector.add(report)
   })
 
   reporter.add(this.reporter)
 
   reporter.write(collector, true, function () {})
+}
+
+NYC.prototype._loadReports = function () {
+  var _this = this,
+    files = fs.readdirSync(this.tmpDirectory())
+
+  return _.map(files, function (f) {
+    return JSON.parse(fs.readFileSync(
+      path.resolve(_this.tmpDirectory(), './', f),
+      'utf-8'
+    ))
+  })
 }
 
 NYC.prototype.tmpDirectory = function () {
