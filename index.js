@@ -73,7 +73,7 @@ NYC.prototype._wrapExit = function () {
   ;['exit', 'SIGTERM', 'SIGINT', 'SIGHUP'].forEach(function (signal) {
     process.on(signal, function () {
       outputCoverage()
-      if (signal === 'SIGTERM') process.exit()
+      if (signal === 'SIGTERM') process.exit(143)
     })
   })
 }
