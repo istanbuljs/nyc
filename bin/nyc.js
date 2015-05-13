@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
-var NYC = require('../')
+var NYC = require('../'),
+  yargs = require('yargs')
+    .usage('$0 [file-to-instrument]')
+    .example('$0 ./node_modules/.bin/mocha', 'run mocha test-suite and output JSON files with coverage information')
 
 ;(new NYC()).wrap()
 
@@ -17,4 +20,6 @@ if (process.argv[1]) {
   delete require('module')._cache[process.argv[1]]
   process.argv[1] = require('path').resolve(process.argv[1])
   require('module').runMain()
+} else {
+  yargs.showHelp()
 }

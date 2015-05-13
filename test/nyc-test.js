@@ -1,8 +1,9 @@
-/* global describe, it, afterEach, beforeEach */
+/* global describe, it, afterEach, before */
 
 require('chai').should()
 
-var fs = require('fs'),
+var _ = require('lodash'),
+  fs = require('fs'),
   spawn = require('child_process').spawn,
   NYC = require('../'),
   path = require('path'),
@@ -12,12 +13,13 @@ describe('nyc', function () {
   var fixtures = path.resolve(__dirname, './fixtures')
 
   describe('cwd', function () {
+
     afterEach(function () {
       delete process.env.NYC_CWD
       rimraf.sync(path.resolve(fixtures, './nyc_output'))
     })
 
-    it('sets cwd to process.cwd() if no environment variable set', function () {
+    it('sets cwd to process.cwd() if no environment variable is set', function () {
       var nyc = new NYC()
 
       nyc.cwd.should.eql(process.cwd())
@@ -32,8 +34,8 @@ describe('nyc', function () {
     })
   })
 
-  describe('exclude', function () {
-    it('loads exclude patterns from package.json in cwd', function () {
+  describe('config', function () {
+    it("loads 'exclude' patterns from package.json", function () {
       var nyc = new NYC({
         cwd: path.resolve(__dirname, './fixtures')
       })
@@ -43,24 +45,26 @@ describe('nyc', function () {
   })
 
   describe('wrap', function () {
-    afterEach(function () {
-      delete global.__coverage__['./a.js']
+    var nyc
+
+    before(function () {
+      nyc = (new NYC({
+        cwd: process.cwd()
+      })).wrap()
     })
 
     it('wraps modules with coverage counters when they are required', function () {
-      (new NYC({
-        cwd: path.resolve(__dirname, './fixtures')
-      })).wrap()
+      // clear the module cache so that
+      // we pull index.js in again and wrap it.
+      var name = require.resolve('../')
+      delete require.cache[name]
 
-      var A = require('./fixtures/a')
-      A.should.match(/__cov_/)
+      // when we require index.js it shoudl be wrapped.
+      var index = require('../')
+      index.should.match(/__cov_/)
     })
 
-    it('wraps spawn and writes coverage report for subprocesses', function (done) {
-      (new NYC({
-        cwd: process.cwd()
-      })).wrap()
-
+    it('writes coverage report when process exits', function (done) {
       var proc = spawn('./bin/nyc.js', ['index.js'], {
         cwd: process.cwd(),
         env: process.env,
@@ -72,18 +76,42 @@ describe('nyc', function () {
         return done()
       })
     })
+
+    function testSignal (signal, done) {
+      var proc = spawn('./bin/nyc.js', ['./test/fixtures/' + signal + '.js'], {
+        cwd: process.cwd(),
+        env: process.env,
+        stdio: [process.stdin, process.stdout, process.stderr]
+      })
+
+      proc.on('close', function () {
+        var reports = _.filter(nyc._loadReports(), function (report) {
+          return report['./test/fixtures/' + signal + '.js']
+        })
+        reports.length.should.equal(1)
+        return done()
+      })
+    }
+
+    it('writes coverage report when process is killed with SIGTERM', function (done) {
+      testSignal('sigterm', done)
+    })
+
+    it('writes coverage report when process is killed with SIGHUP', function (done) {
+      testSignal('sighup', done)
+    })
+
+    it('writes coverage report when process is killed with SIGINT', function (done) {
+      testSignal('sigint', done)
+    })
   })
 
   describe('report', function () {
-    beforeEach(function () {
-      rimraf.sync(path.resolve(fixtures, './nyc_output'))
-    })
-
-    it('runs reports for JSON in output directory', function (done) {
+    it('runs reports for all JSON in output directory', function (done) {
       var nyc = new NYC({
           cwd: fixtures
         }),
-        proc = spawn('../../bin/nyc.js', ['a.js'], {
+        proc = spawn('../../bin/nyc.js', ['sigterm.js'], {
           cwd: fixtures,
           env: process.env,
           stdio: [process.stdin, process.stdout, process.stderr]
@@ -94,8 +122,8 @@ describe('nyc', function () {
           {
             add: function (report) {
               // the subprocess we ran should have created
-              // a coverage report on ./a.js.
-              Object.keys(report).should.include('./a.js')
+              // a coverage report on ./sigterm.js.
+              Object.keys(report).should.include('./sigterm.js')
             }
           },
           {
