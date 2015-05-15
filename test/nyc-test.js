@@ -65,11 +65,7 @@ describe('nyc', function () {
     })
 
     function testSignal (signal, done) {
-      var bin = './bin/nyc.js'
-      // use node as the bin if we're already wrapped.
-      if (~process.env._.indexOf('nyc')) bin = 'node'
-
-      var proc = spawn(bin, ['./test/fixtures/' + signal + '.js'], {
+      var proc = spawn(process.execPath, ['./test/fixtures/' + signal + '.js'], {
         cwd: process.cwd(),
         env: process.env,
         stdio: 'inherit'
