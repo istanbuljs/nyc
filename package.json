@@ -4,7 +4,7 @@
   "description": "forking code-coverage using istanbul.",
   "main": "index.js",
   "scripts": {
-    "test": "standard && ./bin/nyc.js ./node_modules/.bin/mocha --ui exports",
+    "test": "standard && ./bin/nyc.js tap ./test/nyc-test.js",
     "coverage": "./bin/nyc-report.js --reporter=text-lcov | coveralls"
   },
   "bin": {
@@ -22,25 +22,26 @@
     "coverage",
     "subprocess"
   ],
+  "contributors": [
+    "Isaac Schlueter <i@izs.me>"
+  ],
   "author": "Ben Coe <ben@npmjs.com>",
   "license": "ISC",
   "dependencies": {
     "istanbul": "^0.3.14",
+    "jsonstream": "^1.0.3",
     "lodash": "^3.8.0",
     "mkdirp": "^0.5.0",
     "rimraf": "^2.3.3",
+    "spawn-wrap": "0.0.9",
     "strip-bom": "^1.0.0",
-    "yargs": "^3.8.0",
-    "spawn-wrap": "0.0.0"
+    "yargs": "^3.8.0"
   },
-  "bundledDependencies": [
-    "spawn-wrap"
-  ],
   "devDependencies": {
     "chai": "^2.3.0",
     "coveralls": "^2.11.2",
-    "mocha": "^2.2.4",
-    "standard": "^3.7.3"
+    "standard": "^3.7.3",
+    "tap": "^1.0.4"
   },
   "repository": {
     "type": "git",

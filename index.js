@@ -1,3 +1,5 @@
+/* global __coverage__ */
+
 var _ = require('lodash'),
   fs = require('fs'),
   istanbul = require('istanbul'),
@@ -5,7 +7,6 @@ var _ = require('lodash'),
   mkdirp = require('mkdirp'),
   path = require('path'),
   rimraf = require('rimraf'),
-  spawnWrap = require('spawn-wrap'),
   stripBom = require('strip-bom')
 
 function NYC (opts) {
@@ -28,8 +29,11 @@ function NYC (opts) {
     return new RegExp(p)
   })
 
-  if (!process.env.NYC_CWD) rimraf.sync(this.tmpDirectory())
   mkdirp.sync(this.tmpDirectory())
+}
+
+NYC.prototype.cleanup = function () {
+  if (!process.env.NYC_CWD) rimraf.sync(this.tmpDirectory())
 }
 
 NYC.prototype._wrapRequire = function () {
@@ -59,27 +63,30 @@ NYC.prototype._wrapRequire = function () {
 
 NYC.prototype._wrapExit = function () {
   var _this = this,
-    outputCoverage = function (arg) {
-      if (!global.__coverage__) return
+    outputCoverage = function () {
+      var coverage
+      if (typeof __coverage__ === 'object') coverage = __coverage__
+      if (!coverage) return
 
       fs.writeFileSync(
         path.resolve(_this.tmpDirectory(), './', process.pid + '.json'),
-        JSON.stringify(global.__coverage__),
+        JSON.stringify(coverage),
         'utf-8'
       )
     }
 
-  // output temp coverage reports as processes exit.
-  ;['exit', 'SIGTERM', 'SIGINT', 'SIGHUP'].forEach(function (signal) {
-    process.on(signal, function () {
-      outputCoverage()
-      if (signal === 'SIGTERM') process.exit(143)
-    })
+  var _kill = process.kill
+  process.kill = function (pid, signal) {
+    outputCoverage()
+    _kill(pid, signal)
+  }
+
+  process.on('exit', function () {
+    outputCoverage()
   })
 }
 
-NYC.prototype.wrap = function () {
-  spawnWrap([this.subprocessBin], {NYC_CWD: this.cwd})
+NYC.prototype.wrap = function (bin) {
   this._wrapRequire()
   this._wrapExit()
   return this

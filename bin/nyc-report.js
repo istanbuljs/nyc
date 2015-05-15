@@ -14,7 +14,7 @@ var NYC = require('../'),
     })
     .help('h')
     .alias('h', 'help')
-    .epilog('github.com/gotwarlost/istanbul for available reporters')
+    .epilog('http://github.com/gotwarlost/istanbul for available reporters')
     .argv
 
 process.env.NYC_CWD = argv['cwd']
