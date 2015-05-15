@@ -1,25 +1,37 @@
 #!/usr/bin/env node
+var sw = require('spawn-wrap')
 
-var NYC = require('../'),
-  yargs = require('yargs')
-    .usage('$0 [file-to-instrument]')
-    .example('$0 ./node_modules/.bin/mocha', 'run mocha test-suite and output JSON files with coverage information')
+if (process.env.NYC_CWD) {
+  var NYC = require('../')
+  ;(new NYC()).wrap()
 
-;(new NYC()).wrap()
+  // make sure we can run coverage on
+  // our own index.js, I like turtles.
+  var name = require.resolve('../')
+  delete require.cache[name]
 
-// make it so we can run coverage on nyc itself.
-var name = require.resolve('../')
-delete require.cache[name]
-
-// hide the fact that nyc.js was used to execute command.
-if (process.argv[1].match((/(nyc.js$)|(nyc$)/))) process.argv.splice(1, 1)
-
-// execute main on whatever file was wrapped by nyc.
-// ./bin/nyc.js ./node_modules/.bin/mocha
-if (process.argv[1]) {
-  delete require('module')._cache[process.argv[1]]
-  process.argv[1] = require('path').resolve(process.argv[1])
-  require('module').runMain()
+  sw.runMain()
 } else {
-  yargs.showHelp()
+  var NYC = require('../')
+
+  ;(new NYC()).cleanup()
+
+  sw([__filename], {
+    NYC_CWD: process.cwd()
+  })
+
+  // this spawn gets wrapped
+  var child = require('child_process').spawn(
+    process.argv[2],
+    process.argv.slice(3),
+    { stdio: 'inherit' }
+  )
+
+  child.on('close', function (code, signal) {
+    if (signal) {
+      process.kill(process.pid, signal)
+    } else {
+      process.exit(code)
+    }
+  })
 }
