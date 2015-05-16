@@ -5,25 +5,38 @@
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
 
 a code coverage tool built on [istanbul](https://www.npmjs.com/package/istanbul)
-that works well for applications that spawn child processes.
+that works well for applications that spawn subprocesses.
 
-## Usage
+## Instrumenting Your Code
 
-Run your tests with the test coverage collector:
+Simply run your tests with `nyc`, and it will collect coverage information for
+each process and store it in `nyc_output`:
+
+```shell
+nyc npm test
+```
+
+If you're so inclined, you can simply add nyc to the test stanza in your package.json:
 
 ```json
 {
   "script": {
-    "test": "nyc tap ./test/*.js",
+    "test": "nyc tap ./test/*.js"
   }
 }
 ```
 
-Now run the reporter afterwords to view your coverage statistics:
+## Running Reports
+
+Once you've run your tests with nyc, simply run:
 
 ```bash
-nyc-report
+nyc report
+```
 
+To view your coverage report:
+
+```shell
 --------------------|-----------|-----------|-----------|-----------|
 File                |   % Stmts |% Branches |   % Funcs |   % Lines |
 --------------------|-----------|-----------|-----------|-----------|
@@ -39,18 +52,42 @@ All files           |     91.89 |        50 |     86.11 |     95.24 |
 --------------------|-----------|-----------|-----------|-----------|
 ```
 
-or use any reporter supported by istanbul:
+you can use any reporters that are supported by istanbul:
 
 ```bash
-nyc-report --reporter=lcov
+nyc report --reporter=lcov
 ```
 
-or, toss a script in your package.json:
+## Integrating With Coveralls
+
+[coveralls.io](https://coveralls.io) is a great tool for adding
+coverage reports to your GitHub project. Here's how to get nyc
+integrated with coveralls and travis-ci.org:
+
+1. add the coveralls and nyc dependencies to your module:
+
+```shell
+npm install coveralls nyc --save
+```
+
+2. update the scripts in your package.json to include these bins:
 
 ```bash
 {
   "script": {
-    "test": "nyc-report --reporter=text-lcov | coveralls",
+    "test": "nyc tap ./test/*.js",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
   }
 }
 ```
+
+3. add the environment variable `COVERALLS_REPO_TOKEN` to travis, this is used by
+  the coveralls bin.
+
+4. update the `script` stanza in `.travis.yml` to the following:
+
+```yaml
+script: npm test && npm run coverage
+```
+
+That's all there is to it!

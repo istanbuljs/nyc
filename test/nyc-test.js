@@ -1,6 +1,7 @@
 /* global describe, it */
 
 var _ = require('lodash'),
+  fs = require('fs'),
   NYC = require('../'),
   path = require('path'),
   rimraf = require('rimraf'),
@@ -92,21 +93,22 @@ describe('nyc', function () {
   describe('report', function () {
     it('runs reports for all JSON in output directory', function (done) {
       var nyc = new NYC({
-          cwd: fixtures
+          cwd: process.cwd()
         }),
-        proc = spawn('../../bin/nyc.js', ['./sigterm.js'], {
-          cwd: fixtures,
+        proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
+          cwd: process.cwd(),
           env: process.env,
-          stdio: [process.stdin, process.stdout, process.stderr]
-        })
+          stdio: 'inherit'
+        }),
+        start = fs.readdirSync(nyc.tmpDirectory()).length
 
       proc.on('close', function () {
         nyc.report(
           {
             add: function (report) {
-              // the subprocess we ran should have created
-              // a coverage report on ./sigterm.js.
-              Object.keys(report).should.include('./sigterm.js')
+              // the subprocess we ran should output reports
+              // for files in the fixtures directory.
+              Object.keys(report).should.match(/.\/test\/fixtures\//)
             }
           },
           {
@@ -115,6 +117,9 @@ describe('nyc', function () {
               reporter.should.equal('text')
             },
             write: function () {
+              // we should have output a report for the new subprocess.
+              var stop = fs.readdirSync(nyc.tmpDirectory()).length
+              stop.should.be.gt(start)
               return done()
             }
           }
