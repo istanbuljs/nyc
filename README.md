@@ -84,10 +84,10 @@ npm install coveralls nyc --save
 3. add the environment variable `COVERALLS_REPO_TOKEN` to travis, this is used by
   the coveralls bin.
 
-4. update the `script` stanza in `.travis.yml` to the following:
+4. add the following to your `.travis.yml`:
 
 ```yaml
-script: npm test && npm run coverage
+after_success: npm run coverage
 ```
 
 That's all there is to it!
