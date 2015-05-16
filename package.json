@@ -1,6 +1,6 @@
 {
   "name": "nyc",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "forking code-coverage using istanbul.",
   "main": "index.js",
   "scripts": {
