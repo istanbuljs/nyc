@@ -7,6 +7,7 @@ var _ = require('lodash'),
   mkdirp = require('mkdirp'),
   path = require('path'),
   rimraf = require('rimraf'),
+  onExit = require('signal-exit'),
   stripBom = require('strip-bom')
 
 function NYC (opts) {
@@ -64,7 +65,7 @@ NYC.prototype._wrapRequire = function () {
 NYC.prototype._wrapExit = function () {
   var _this = this,
     outputCoverage = function () {
-      var coverage
+      var coverage = global.__coverage__
       if (typeof __coverage__ === 'object') coverage = __coverage__
       if (!coverage) return
 
@@ -75,13 +76,7 @@ NYC.prototype._wrapExit = function () {
       )
     }
 
-  var _kill = process.kill
-  process.kill = function (pid, signal) {
-    outputCoverage()
-    _kill(pid, signal)
-  }
-
-  process.on('exit', function () {
+  onExit(function () {
     outputCoverage()
   })
 }
