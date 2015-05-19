@@ -76,9 +76,12 @@ NYC.prototype._wrapExit = function () {
       )
     }
 
-  onExit(function () {
-    outputCoverage()
-  })
+    var opts = {alwaysLast: true}
+    // we're running as a unit test.
+    if (process.env.TAP) opts.maxListeners = 2
+    onExit(function () {
+      outputCoverage()
+    }, opts)
 }
 
 NYC.prototype.wrap = function (bin) {
