@@ -76,9 +76,23 @@ NYC.prototype._wrapExit = function () {
       )
     }
 
-  onExit(function () {
-    outputCoverage()
-  })
+  onExit(outputCoverage)
+
+  // Monkey-patch process.on('exit') so that we always get run last.
+  // running more than once is fine, since it can only add coverage.
+  process.on('exit', outputCoverage)
+
+  var on = process.on
+  process.on = process.addListener = function (ev, fn) {
+    if (ev === 'exit' && fn !== outputCoverage) {
+      process.removeListener('exit', outputCoverage)
+      var ret = on.call(process, ev, fn)
+      on.call(process, ev, outputCoverage)
+      return ret
+    } else {
+      return on.apply(this, arguments)
+    }
+  }
 }
 
 NYC.prototype.wrap = function (bin) {
