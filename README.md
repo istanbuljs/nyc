@@ -19,6 +19,7 @@ nyc npm test
 If you're so inclined, you can simply add nyc to the test stanza in your package.json:
 
 ```json
+
 {
   "script": {
     "test": "nyc tap ./test/*.js"
