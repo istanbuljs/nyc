@@ -58,6 +58,22 @@ you can use any reporters that are supported by istanbul:
 nyc report --reporter=lcov
 ```
 
+## Excluding Files
+
+By default nyc does not instrument files in `node_modules`, or `test`
+for coverage. You can override this setting in your package.json, by
+adding the following configuration:
+
+```js
+{"config": {
+  "nyc": {
+    "exclude": [
+      "node_modules/"
+    ]
+  }
+}}
+```
+
 ## Integrating With Coveralls
 
 [coveralls.io](https://coveralls.io) is a great tool for adding
