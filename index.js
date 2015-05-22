@@ -3,12 +3,12 @@
 var _ = require('lodash'),
   fs = require('fs'),
   istanbul = require('istanbul'),
-  istanbulConfig = istanbul.config.loadFile().instrumentation.config,
+  instrumenterConfig = istanbul.config.loadFile().instrumentation.config,
   instrumenter = new istanbul.Instrumenter({
-    coverageVariable: istanbulConfig.variable,
-    embedSource: istanbulConfig['embed-source'],
-    noCompact: !istanbulConfig.compact,
-    preserveComments: istanbulConfig['preserve-comments']
+    coverageVariable: instrumenterConfig.variable,
+    embedSource: instrumenterConfig['embed-source'],
+    noCompact: !instrumenterConfig.compact,
+    preserveComments: instrumenterConfig['preserve-comments']
   }),
   mkdirp = require('mkdirp'),
   path = require('path'),
