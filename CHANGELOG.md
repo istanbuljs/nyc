@@ -1,5 +1,11 @@
 ## Change Log
 
+### v2.1.0 (2015/05/23 20:55 +00:00)
+- [ad13b30](https://github.com/bcoe/nyc/commit/ad13b30cf263ccc3607e1707ebdf582345ce90fe) added CHANGELOG.md \o/ (@bcoe)
+- [53fef48](https://github.com/bcoe/nyc/commit/53fef4820e7b502d00561fb5d16f5bfb4b641192) put tests around @shackpank's work on .istanbul.yml (@bcoe)
+- [da81c54](https://github.com/bcoe/nyc/commit/da81c5427c2dee38496def9741fdde5524fa0942) upgrade spawn-wrap and foreground-child (@isaacs)
+- [4f69327](https://github.com/bcoe/nyc/commit/4f69327b5e6247770bf299fab86abb67a042b26a) pin tap until new version of nyc can be pulled in (@bcoe)
+
 ### v2.0.6 (2015/05/23 06:52 +00:00)
 - [cd70a41](https://github.com/bcoe/nyc/commit/cd70a414adc12b79770eaca9e8ca0e5f954924f3) upgrade signal-exit (@bcoe)
 
