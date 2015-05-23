@@ -1,6 +1,6 @@
 {
   "name": "nyc",
-  "version": "2.0.6",
+  "version": "2.1.0",
   "description": "a code coverage tool that works well with subprocesses.",
   "main": "index.js",
   "scripts": {
@@ -24,8 +24,14 @@
     "reporter"
   ],
   "contributors": [
-    {"name": "Isaac Schlueter", "website": "https://github.com/isaacs"},
-    {"name": "Ollie Buck", "website": "https://github.com/shackpank"}
+    {
+      "name": "Isaac Schlueter",
+      "website": "https://github.com/isaacs"
+    },
+    {
+      "name": "Ollie Buck",
+      "website": "https://github.com/shackpank"
+    }
   ],
   "author": "Ben Coe <ben@npmjs.com>",
   "license": "ISC",
