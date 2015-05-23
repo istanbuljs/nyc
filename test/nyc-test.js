@@ -5,6 +5,7 @@ var _ = require('lodash'),
   NYC = require('../'),
   path = require('path'),
   rimraf = require('rimraf'),
+  sinon = require('sinon'),
   spawn = require('child_process').spawn
 
 require('chai').should()
@@ -125,6 +126,65 @@ describe('nyc', function () {
           }
         )
       })
+    })
+  })
+
+  describe('.istanbul.yml configuration', function () {
+    var istanbul = require('istanbul')
+    var configSpy = sinon.spy(istanbul.config, 'loadFile')
+    var instrumenterSpy = sinon.spy(istanbul, 'Instrumenter')
+
+    function writeConfig () {
+      fs.writeFileSync('./.istanbul.yml', 'instrumentation:\n\tpreserve-comments: true', 'utf-8')
+    }
+
+    function afterEach () {
+      configSpy.reset()
+      instrumenterSpy.reset()
+      rimraf.sync('./.istanbul.yml')
+    }
+
+    it('it handles having no .istanbul.yml in the root directory', function (done) {
+      afterEach()
+      var nyc = new NYC()
+      return done()
+    })
+
+    it('uses the values in .istanbul.yml to instantiate the instrumenter', function (done) {
+      writeConfig()
+
+      var nyc = new NYC({
+        istanbul: istanbul
+      })
+
+      istanbul.config.loadFile.calledWithMatch('.istanbul.yml').should.equal(true)
+      istanbul.Instrumenter.calledWith({
+        coverageVariable: '__coverage__',
+        embedSource: false,
+        noCompact: false,
+        preserveComments: false
+      }).should.equal(true)
+
+      afterEach()
+      return done();
+    })
+
+    it('loads the .istanbul.yml configuration from NYC_CWD', function (done) {
+      var nyc = new NYC({
+        istanbul: istanbul,
+        cwd: './test/fixtures'
+      })
+
+      istanbul.config.loadFile.calledWithMatch('test/fixtures/.istanbul.yml').should.equal(true)
+      istanbul.Instrumenter.calledWith({
+        coverageVariable: '__coverage__',
+        embedSource: false,
+        noCompact: false,
+        preserveComments: true
+      }).should.equal(true)
+
+      afterEach()
+      return done()
     })
   })
 })

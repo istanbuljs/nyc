@@ -43,6 +43,7 @@
   "devDependencies": {
     "chai": "^2.3.0",
     "coveralls": "^2.11.2",
+    "sinon": "^1.14.1",
     "standard": "^3.7.3",
     "tap": "1.0.4"
   },
