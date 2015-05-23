@@ -147,6 +147,7 @@ describe('nyc', function () {
     it('it handles having no .istanbul.yml in the root directory', function (done) {
       afterEach()
       var nyc = new NYC()
+      nyc.wrap()
       return done()
     })
 
@@ -156,6 +157,7 @@ describe('nyc', function () {
       var nyc = new NYC({
         istanbul: istanbul
       })
+      nyc.wrap()
 
       istanbul.config.loadFile.calledWithMatch('.istanbul.yml').should.equal(true)
       istanbul.Instrumenter.calledWith({
@@ -166,7 +168,7 @@ describe('nyc', function () {
       }).should.equal(true)
 
       afterEach()
-      return done();
+      return done()
     })
 
     it('loads the .istanbul.yml configuration from NYC_CWD', function (done) {
@@ -174,6 +176,7 @@ describe('nyc', function () {
         istanbul: istanbul,
         cwd: './test/fixtures'
       })
+      nyc.wrap()
 
       istanbul.config.loadFile.calledWithMatch('test/fixtures/.istanbul.yml').should.equal(true)
       istanbul.Instrumenter.calledWith({
