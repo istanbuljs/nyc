@@ -2,8 +2,6 @@
 
 var _ = require('lodash'),
   fs = require('fs'),
-  istanbul = require('istanbul'),
-  instrumenter = new istanbul.Instrumenter(),
   mkdirp = require('mkdirp'),
   path = require('path'),
   rimraf = require('rimraf'),
@@ -18,7 +16,8 @@ function NYC (opts) {
     ),
     tempDirectory: './nyc_output',
     cwd: process.env.NYC_CWD || process.cwd(),
-    reporter: 'text'
+    reporter: 'text',
+    istanbul: require('istanbul')
   }, opts)
 
   var config = require(path.resolve(this.cwd, './package.json')).config || {}
@@ -30,7 +29,24 @@ function NYC (opts) {
     return new RegExp(p)
   })
 
+  this.instrumenter = this._createInstrumenter()
+
   mkdirp.sync(this.tmpDirectory())
+}
+
+NYC.prototype._createInstrumenter = function () {
+  var configFile = path.resolve(this.cwd, './.istanbul.yml')
+
+  if (!fs.existsSync(configFile)) configFile = undefined
+
+  var instrumenterConfig = this.istanbul.config.loadFile(configFile).instrumentation.config
+
+  return new this.istanbul.Instrumenter({
+    coverageVariable: '__coverage__',
+    embedSource: instrumenterConfig['embed-source'],
+    noCompact: !instrumenterConfig.compact,
+    preserveComments: instrumenterConfig['preserve-comments']
+  })
 }
 
 NYC.prototype.cleanup = function () {
@@ -52,7 +68,7 @@ NYC.prototype._wrapRequire = function () {
     }
 
     if (instrument) {
-      content = instrumenter.instrumentSync(
+      content = _this.instrumenter.instrumentSync(
         content,
         './' + relFile
       )
@@ -90,8 +106,8 @@ NYC.prototype.wrap = function (bin) {
 }
 
 NYC.prototype.report = function (_collector, _reporter) {
-  var collector = _collector || new istanbul.Collector(),
-    reporter = _reporter || new istanbul.Reporter()
+  var collector = _collector || new this.istanbul.Collector(),
+    reporter = _reporter || new this.istanbul.Reporter()
 
   this._loadReports().forEach(function (report) {
     collector.add(report)

@@ -74,6 +74,17 @@ adding the following configuration:
 }}
 ```
 
+## Configuring Istanbul
+
+Behind the scenes nyc uses [istanbul](https://www.npmjs.com/package/istanbul). You
+can place a `.istanbul.yml` file in your project's root directory to pass config
+setings to istanbul's code instrumenter:
+
+```yml
+instrumentation:
+  preserve-comments: true
+```
+
 ## Integrating With Coveralls
 
 [coveralls.io](https://coveralls.io) is a great tool for adding

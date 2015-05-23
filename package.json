@@ -24,7 +24,8 @@
     "reporter"
   ],
   "contributors": [
-    "Isaac Schlueter <i@izs.me>"
+    {"name": "Isaac Schlueter", "website": "https://github.com/isaacs"},
+    {"name": "Ollie Buck", "website": "https://github.com/shackpank"}
   ],
   "author": "Ben Coe <ben@npmjs.com>",
   "license": "ISC",
@@ -43,6 +44,7 @@
   "devDependencies": {
     "chai": "^2.3.0",
     "coveralls": "^2.11.2",
+    "sinon": "^1.14.1",
     "standard": "^3.7.3",
     "tap": "1.0.4"
   },
