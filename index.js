@@ -3,7 +3,13 @@
 var _ = require('lodash'),
   fs = require('fs'),
   istanbul = require('istanbul'),
-  instrumenter = new istanbul.Instrumenter(),
+  instrumenterConfig = istanbul.config.loadFile().instrumentation.config,
+  instrumenter = new istanbul.Instrumenter({
+    coverageVariable: instrumenterConfig.variable,
+    embedSource: instrumenterConfig['embed-source'],
+    noCompact: !instrumenterConfig.compact,
+    preserveComments: instrumenterConfig['preserve-comments']
+  }),
   mkdirp = require('mkdirp'),
   path = require('path'),
   rimraf = require('rimraf'),
