@@ -1,0 +1,42 @@
+## Change Log
+
+### v2.0.6 (2015/05/23 06:52 +00:00)
+- [cd70a41](https://github.com/bcoe/nyc/commit/cd70a414adc12b79770eaca9e8ca0e5f954924f3) upgrade signal-exit (@bcoe)
+
+### v2.0.5 (2015/05/20 05:44 +00:00)
+- [#11](https://github.com/bcoe/nyc/pull/11) Merge pull request #11 from bcoe/exlude-docs (@bcoe)
+
+### v2.0.4 (2015/05/19 04:58 +00:00)
+- [4d920ef](https://github.com/bcoe/nyc/commit/4d920ef6e0843729a911ca1cf6deaf6645e21f60) ensure that writing code coverage always happens last (@bcoe)
+
+### v2.0.3 (2015/05/18 01:52 +00:00)
+- [94d2693](https://github.com/bcoe/nyc/commit/94d2693739cf7145333d941c88e0d3af9592c1d6) spawn-wrap@0.1.1 (@isaacs)
+
+### v2.0.1 (2015/05/18 01:46 +00:00)
+- [62c2cb0](https://github.com/bcoe/nyc/commit/62c2cb0941fbda8aa5ef6ba4877c02a046b68c6c) upgrade signal-exit dependency (@bcoe)
+
+### v2.0.0 (2015/05/16 21:38 +00:00)
+- [d27794e](https://github.com/bcoe/nyc/commit/d27794e3c527ccf743501f328b9749f1bcf9cefe) got rid of nyc-report bin (@bcoe)
+- [64c9824](https://github.com/bcoe/nyc/commit/64c98241db36331b611cf990343da40d5f45685a) added better documentation and CLI. (@bcoe)
+
+### v1.4.1 (2015/05/16 19:23 +00:00)
+- [ae05346](https://github.com/bcoe/nyc/commit/ae0534617a59c86905f1da290d067945bf7d1bb9) pulled in new version of signal-exit (@bcoe)
+
+### v1.4.0 (2015/05/16 09:11 +00:00)
+- [8ca6e16](https://github.com/bcoe/nyc/commit/8ca6e16f6ecb7fa488944cd00d84ae5d355345d2) pulled in signal-exit module (@bcoe)
+
+### v1.3.0 (2015/05/15 15:56 +00:00)
+- [0f701da](https://github.com/bcoe/nyc/commit/0f701da5aa3ad8a02872c4c6c8c37d0deb2c5877) pulled in new spawn-wrap, various bug fixes (@isaacs)
+
+### v1.2.0 (2015/05/13 20:21 +00:00)
+- [2611ba4](https://github.com/bcoe/nyc/commit/2611ba44f12a25c12c0f95a9bdcfbf905dbb070f) handle signals when writing coverage report (@bcoe)
+
+### v1.1.3 (2015/05/11 18:31 +00:00)
+- [8b362d6](https://github.com/bcoe/nyc/commit/8b362d600845722943c1da8213f0406d6b3a3874) istanbul has a text lcov report now \o/ (@bcoe)
+
+### v1.1.2 (2015/05/11 06:52 +00:00)
+- [48b21cf](https://github.com/bcoe/nyc/commit/48b21cf3b35f6d14d35ac9afdd423ead09a2368e) added coverage and build badges (@bcoe)
+
+### v1.1.0 (2015/05/10 01:32 +00:00)
+- [6c3f8a6](https://github.com/bcoe/nyc/commit/6c3f8a6147c376e87a22c4a72a1ab28ab4177349) pulled in @isaacs spawn-wrap module (@isaacs)
+- [d8956f1](https://github.com/bcoe/nyc/commit/d8956f170f12a8a27cc3f7611f78230393bf105b) we now pass cwd around using the process.env.NYC_CWD variable (@bcoe)
