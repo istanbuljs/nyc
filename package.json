@@ -4,7 +4,7 @@
   "description": "a code coverage tool that works well with subprocesses.",
   "main": "index.js",
   "scripts": {
-    "test": "./bin/nyc.js tap ./test/nyc-test.js",
+    "test": "standard && ./bin/nyc.js tap ./test/nyc-test.js",
     "coverage": "./bin/nyc.js report --reporter=text-lcov | coveralls"
   },
   "bin": {
