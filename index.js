@@ -78,7 +78,6 @@ NYC.prototype._wrapExit = function () {
 
     var opts = {alwaysLast: true}
     // allow more signal handlers in unit tests.
-    if (process.env.NYC_TEST) opts.maxListeners = 2
     onExit(function () {
       outputCoverage()
     }, opts)
