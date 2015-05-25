@@ -1,5 +1,8 @@
 ## Change Log
 
+### v2.1.1 (2015/05/25 02:52 +00:00)
+- [b39dec5](https://github.com/bcoe/nyc/commit/b39dec5a7fb9004be72d024d5d1df2984dd21a52) new signal-exit handles process.exit() in process.on('exit') (@isaacs)
+
 ### v2.1.0 (2015/05/23 20:55 +00:00)
 - [ad13b30](https://github.com/bcoe/nyc/commit/ad13b30cf263ccc3607e1707ebdf582345ce90fe) added CHANGELOG.md \o/ (@bcoe)
 - [53fef48](https://github.com/bcoe/nyc/commit/53fef4820e7b502d00561fb5d16f5bfb4b641192) put tests around @shackpank's work on .istanbul.yml (@bcoe)
