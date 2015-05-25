@@ -1,5 +1,8 @@
 ## Change Log
 
+### v2.1.3 (2015/05/25 06:30 +00:00)
+- [376e328](https://github.com/bcoe/nyc/commit/376e32871d2d65ca31e7d8ba691293ac3ba6117e) handle corrupt JSON files in nyc_output (@bcoe)
+
 ### v2.1.1 (2015/05/25 02:52 +00:00)
 - [b39dec5](https://github.com/bcoe/nyc/commit/b39dec5a7fb9004be72d024d5d1df2984dd21a52) new signal-exit handles process.exit() in process.on('exit') (@isaacs)
 
