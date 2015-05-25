@@ -119,5 +119,5 @@ after_success: npm run coverage
 
 That's all there is to it!
 
-_Note: by default coveralls.io adds comments to pull-request on GitHub, this can
+_Note: by default coveralls.io adds comments to pull-requests on GitHub, this can
 feel intrusive. To disable this, click on your repo on coveralls.io and uncheck `LEAVE COMMENTS?`._
