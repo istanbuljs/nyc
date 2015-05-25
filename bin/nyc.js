@@ -16,7 +16,7 @@ if (process.env.NYC_CWD) {
   var NYC = require('../'),
     yargs = require('yargs')
       .usage('$0 [command] [options]\n\nrun with a file as the first argument, to instrument it with coverage')
-      .command('report', 'run coverage report on nyc_output', function (yargs) {
+      .command('report', 'run coverage report for .nyc_output', function (yargs) {
         yargs
           .option('r', {
             alias: 'reporter',
