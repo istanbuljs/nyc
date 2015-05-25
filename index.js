@@ -92,11 +92,11 @@ NYC.prototype._wrapExit = function () {
       )
     }
 
-  var opts = {alwaysLast: true}
-  // allow more signal handlers in unit tests.
+  // we always want to write coverage
+  // regardless of how the process exits.
   onExit(function () {
     outputCoverage()
-  }, opts)
+  }, {alwaysLast: true})
 }
 
 NYC.prototype.wrap = function (bin) {
