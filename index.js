@@ -23,7 +23,7 @@ function NYC (opts) {
   var config = require(path.resolve(this.cwd, './package.json')).config || {}
   config = config.nyc || {}
 
-  this.exclude = config.exclude || ['node_modules\/', 'test\/']
+  this.exclude = config.exclude || ['node_modules\/', 'test\/', 'test\\.js']
   if (!Array.isArray(this.exclude)) this.exclude = [this.exclude]
   this.exclude = _.map(this.exclude, function (p) {
     return new RegExp(p)
