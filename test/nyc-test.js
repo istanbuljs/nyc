@@ -138,7 +138,7 @@ describe('nyc', function () {
           stdio: 'inherit'
         })
 
-      fs.writeFileSync('./nyc_output/bad.json', '}', 'utf-8')
+      fs.writeFileSync('./.nyc_output/bad.json', '}', 'utf-8')
 
       proc.on('close', function () {
         nyc.report(

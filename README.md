@@ -10,7 +10,7 @@ that works well for applications that spawn subprocesses.
 ## Instrumenting Your Code
 
 Simply run your tests with `nyc`, and it will collect coverage information for
-each process and store it in `nyc_output`:
+each process and store it in `.nyc_output`:
 
 ```shell
 nyc npm test
@@ -118,3 +118,6 @@ after_success: npm run coverage
 ```
 
 That's all there is to it!
+
+_Note: by default coveralls.io adds comments to pull-requests on GitHub, this can
+feel intrusive. To disable this, click on your repo on coveralls.io and uncheck `LEAVE COMMENTS?`._

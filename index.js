@@ -14,7 +14,7 @@ function NYC (opts) {
       __dirname,
       './bin/nyc.js'
     ),
-    tempDirectory: './nyc_output',
+    tempDirectory: './.nyc_output',
     cwd: process.env.NYC_CWD || process.cwd(),
     reporter: 'text',
     istanbul: require('istanbul')
