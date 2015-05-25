@@ -96,7 +96,7 @@ NYC.prototype._wrapExit = function () {
   // regardless of how the process exits.
   onExit(function () {
     outputCoverage()
-  })
+  }, {alwaysLast: true})
 }
 
 NYC.prototype.wrap = function (bin) {
