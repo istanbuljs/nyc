@@ -1,5 +1,8 @@
 ## Change Log
 
+### v2.2.0 (2015/05/25 21:05 +00:00)
+- [b2e4707](https://github.com/bcoe/nyc/commit/b2e4707ca16750fe274f61039baf1cabdd6b0149) change location of nyc_output to .nyc_output. Added note about coveralls comments. (@sindresorhus)
+
 ### v2.1.3 (2015/05/25 06:30 +00:00)
 - [376e328](https://github.com/bcoe/nyc/commit/376e32871d2d65ca31e7d8ba691293ac3ba6117e) handle corrupt JSON files in nyc_output (@bcoe)
 
