@@ -123,10 +123,14 @@ NYC.prototype._loadReports = function () {
     files = fs.readdirSync(this.tmpDirectory())
 
   return _.map(files, function (f) {
-    return JSON.parse(fs.readFileSync(
-      path.resolve(_this.tmpDirectory(), './', f),
-      'utf-8'
-    ))
+    try {
+      return JSON.parse(fs.readFileSync(
+        path.resolve(_this.tmpDirectory(), './', f),
+        'utf-8'
+      ))
+    } catch (e) { // handle corrupt JSON output.
+      return {}
+    }
   })
 }
 

@@ -127,6 +127,34 @@ describe('nyc', function () {
         )
       })
     })
+
+    it('handles corrupt JSON files', function (done) {
+      var nyc = new NYC({
+          cwd: process.cwd()
+        }),
+        proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
+          cwd: process.cwd(),
+          env: process.env,
+          stdio: 'inherit'
+        })
+
+      fs.writeFileSync('./nyc_output/bad.json', '}', 'utf-8')
+
+      proc.on('close', function () {
+        nyc.report(
+          {
+            add: function (report) {}
+          },
+          {
+            add: function (reporter) {},
+            write: function () {
+              // we should get here without exception.
+              return done()
+            }
+          }
+        )
+      })
+    })
   })
 
   describe('.istanbul.yml configuration', function () {
