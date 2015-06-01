@@ -113,7 +113,13 @@ NYC.prototype.report = function (_collector, _reporter) {
     collector.add(report)
   })
 
-  reporter.add(this.reporter)
+  if (Array.isArray(this.reporter)) {
+    this.reporter.forEach(function (_reporter) {
+      reporter.add(_reporter)
+    })
+  } else {
+    reporter.add(this.reporter)
+  }
 
   reporter.write(collector, true, function () {})
 }
