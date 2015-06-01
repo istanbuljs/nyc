@@ -155,6 +155,37 @@ describe('nyc', function () {
         )
       })
     })
+
+    it('handles multiple reporters', function (done) {
+      var reporters = ['text-summary', 'text-lcov'],
+      incr = 0,
+      nyc = new NYC({
+        cwd: process.cwd(),
+        reporter: reporters
+      }),
+      proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
+        cwd: process.cwd(),
+        env: process.env,
+        stdio: 'inherit'
+      })
+
+      proc.on('close', function () {
+        nyc.report(
+          {
+            add: function (report) {}
+          },
+          {
+            add: function (reporter) {
+              incr += !!~reporters.indexOf(reporter)
+            },
+            write: function () {
+              incr.should.eql(reporters.length)
+              return done()
+            }
+          }
+        )
+      })
+    })
   })
 
   describe('.istanbul.yml configuration', function () {
