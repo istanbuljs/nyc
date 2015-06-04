@@ -20,8 +20,9 @@ if (process.env.NYC_CWD) {
         yargs
           .option('r', {
             alias: 'reporter',
-            describe: 'coverage reporter to use',
-            default: 'text'
+            describe: 'coverage reporter(s) to use',
+            default: 'text',
+            array: true
           })
           .help('h')
           .example('$0 report --reporter=lcov', 'output an HTML lcov report to ./coverage')
