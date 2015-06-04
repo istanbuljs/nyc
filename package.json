@@ -4,8 +4,7 @@
   "description": "a code coverage tool that works well with subprocesses.",
   "main": "index.js",
   "scripts": {
-    "test": "standard && ./bin/nyc.js tap ./test/nyc-test.js",
-    "coverage": "./bin/nyc.js report --reporter=text-lcov | coveralls"
+    "test": "standard && tap --coverage ./test/nyc-test.js"
   },
   "bin": {
     "nyc": "./bin/nyc.js"
@@ -47,11 +46,11 @@
     "yargs": "^3.8.0"
   },
   "devDependencies": {
-    "chai": "^2.3.0",
+    "chai": "^3.0.0",
     "coveralls": "^2.11.2",
     "sinon": "^1.14.1",
-    "standard": "^3.7.3",
-    "tap": "1.0.4"
+    "standard": "^4.0.1",
+    "tap": "^1.2.0"
   },
   "repository": {
     "type": "git",

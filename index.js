@@ -16,7 +16,7 @@ function NYC (opts) {
     ),
     tempDirectory: './.nyc_output',
     cwd: process.env.NYC_CWD || process.cwd(),
-    reporter: 'text',
+    reporter: ['text'],
     istanbul: require('istanbul')
   }, opts)
 
@@ -113,13 +113,9 @@ NYC.prototype.report = function (_collector, _reporter) {
     collector.add(report)
   })
 
-  if (Array.isArray(this.reporter)) {
-    this.reporter.forEach(function (_reporter) {
-      reporter.add(_reporter)
-    })
-  } else {
-    reporter.add(this.reporter)
-  }
+  this.reporter.forEach(function (_reporter) {
+    reporter.add(_reporter)
+  })
 
   reporter.write(collector, true, function () {})
 }
