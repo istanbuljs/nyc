@@ -1,5 +1,9 @@
 ## Change Log
 
+### v2.3.0 (2015/06/04 06:43 +00:00)
+- [#27](https://github.com/bcoe/nyc/pull/27) upgraded tap, and switched tests to using tap --coverage (@bcoe)
+- [#25](https://github.com/bcoe/nyc/pull/25) support added for multiple reporters, thanks @jasisk! (@jasisk)
+
 ### v2.2.0 (2015/05/25 21:05 +00:00)
 - [b2e4707](https://github.com/bcoe/nyc/commit/b2e4707ca16750fe274f61039baf1cabdd6b0149) change location of nyc_output to .nyc_output. Added note about coveralls comments. (@sindresorhus)
 
