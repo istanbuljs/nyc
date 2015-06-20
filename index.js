@@ -15,9 +15,11 @@ function NYC (opts) {
     ),
     tempDirectory: './.nyc_output',
     cwd: process.env.NYC_CWD || process.cwd(),
-    reporter: ['text'],
+    reporter: 'text',
     istanbul: require('istanbul')
   }, opts)
+
+  if (!Array.isArray(this.reporter)) this.reporter = [this.reporter]
 
   var config = require(path.resolve(this.cwd, './package.json')).config || {}
   config = config.nyc || {}
@@ -105,6 +107,8 @@ NYC.prototype.wrap = function (bin) {
 }
 
 NYC.prototype.report = function (_collector, _reporter) {
+  cb = cb || function () {}
+
   var collector = _collector || new this.istanbul.Collector()
   var reporter = _reporter || new this.istanbul.Reporter()
 
@@ -116,7 +120,7 @@ NYC.prototype.report = function (_collector, _reporter) {
     reporter.add(_reporter)
   })
 
-  reporter.write(collector, true, function () {})
+  reporter.write(collector, true, cb)
 }
 
 NYC.prototype._loadReports = function () {
@@ -137,6 +141,12 @@ NYC.prototype._loadReports = function () {
 
 NYC.prototype.tmpDirectory = function () {
   return path.resolve(this.cwd, './', this.tempDirectory)
+}
+
+NYC.prototype.mungeArgs = function (yargv) {
+  return process.argv.slice(
+    process.argv.indexOf(yargv._[0])
+  )
 }
 
 module.exports = NYC

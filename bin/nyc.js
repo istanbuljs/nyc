@@ -80,15 +80,27 @@ if (process.env.NYC_CWD) {
     )
   } else if (argv._.length) {
     // wrap subprocesses and execute argv[1]
-    ;(new NYC()).cleanup()
+    var nyc = (new NYC())
+    nyc.cleanup()
 
     sw([__filename], {
       NYC_CWD: process.cwd()
     })
 
-    foreground(process.argv.slice(2))
+    foreground(nyc.mungeArgs(argv), function (done) {
+      if (argv['output-report']) report(argv)
+      return done()
+    })
   } else {
     // I don't have a clue what you're doing.
     yargs.showHelp()
   }
+}
+
+function report (argv) {
+  process.env.NYC_CWD = process.cwd()
+
+  ;(new NYC({
+    reporter: argv.reporter
+  })).report()
 }
