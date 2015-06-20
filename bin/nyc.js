@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 var foreground = require('foreground-child'),
+  path = require('path'),
   sw = require('spawn-wrap')
 
 if (process.env.NYC_CWD) {
@@ -15,9 +16,10 @@ if (process.env.NYC_CWD) {
 } else {
   var NYC = require('../'),
     yargs = require('yargs')
-      .usage('$0 [command] [options]\n\nrun with a file as the first argument, to instrument it with coverage')
+      .usage('$0 [command] [options]\n\nrun your tests with the nyc bin to instrument them with coverage')
       .command('report', 'run coverage report for .nyc_output', function (yargs) {
         yargs
+          .usage('$0 report [options]')
           .option('r', {
             alias: 'reporter',
             describe: 'coverage reporter(s) to use',
@@ -25,8 +27,30 @@ if (process.env.NYC_CWD) {
             array: true
           })
           .help('h')
-          .example('$0 report --reporter=lcov', 'output an HTML lcov report to ./coverage')
           .alias('h', 'help')
+          .example('$0 report --reporter=lcov', 'output an HTML lcov report to ./coverage')
+      })
+      .command('check-coverage', 'check whether coverage is within thresholds provided', function (yargs) {
+        yargs
+          .usage('$0 check-coverage [options]')
+          .option('b', {
+            alias: 'branches',
+            default: 0,
+            description: 'what % of branches must be covered?'
+          })
+          .option('f', {
+            alias: 'functions',
+            default: 0,
+            description: 'what % of functions must be covered?'
+          })
+          .option('l', {
+            alias: 'lines',
+            default: 90,
+            description: 'what % of lines must be covered?'
+          })
+          .help('h')
+          .alias('h', 'help')
+          .example('$0 check-coverage --lines 95', "check whether the JSON in nyc's output folder meets the thresholds provided")
       })
       .help('h')
       .alias('h', 'help')
@@ -36,13 +60,24 @@ if (process.env.NYC_CWD) {
       .epilog('visit http://git.io/vTJJB for list of available reporters'),
     argv = yargs.argv
 
-  if (argv._.length && ~argv._.indexOf('report')) {
+  if (~argv._.indexOf('report')) {
     // run a report.
     process.env.NYC_CWD = process.cwd()
 
     ;(new NYC({
       reporter: argv.reporter
     })).report()
+  } else if (~argv._.indexOf('check-coverage')) {
+    foreground(
+      path.resolve(__dirname, '../node_modules/.bin/istanbul'),
+      [
+        'check-coverage',
+        '--lines=' + argv.lines,
+        '--functions=' + argv.functions,
+        '--branches=' + argv.branches,
+        path.resolve(process.cwd(), './.nyc_output/*.json')
+      ]
+    )
   } else if (argv._.length) {
     // wrap subprocesses and execute argv[1]
     ;(new NYC()).cleanup()
