@@ -1,12 +1,11 @@
 /* global __coverage__ */
-
-var _ = require('lodash'),
-  fs = require('fs'),
-  mkdirp = require('mkdirp'),
-  path = require('path'),
-  rimraf = require('rimraf'),
-  onExit = require('signal-exit'),
-  stripBom = require('strip-bom')
+var _ = require('lodash')
+var fs = require('fs')
+var mkdirp = require('mkdirp')
+var path = require('path')
+var rimraf = require('rimraf')
+var onExit = require('signal-exit')
+var stripBom = require('strip-bom')
 
 function NYC (opts) {
   _.extend(this, {
@@ -79,18 +78,18 @@ NYC.prototype._wrapRequire = function () {
 }
 
 NYC.prototype._wrapExit = function () {
-  var _this = this,
-    outputCoverage = function () {
-      var coverage = global.__coverage__
-      if (typeof __coverage__ === 'object') coverage = __coverage__
-      if (!coverage) return
+  var _this = this
+  var outputCoverage = function () {
+    var coverage = global.__coverage__
+    if (typeof __coverage__ === 'object') coverage = __coverage__
+    if (!coverage) return
 
-      fs.writeFileSync(
-        path.resolve(_this.tmpDirectory(), './', process.pid + '.json'),
-        JSON.stringify(coverage),
-        'utf-8'
-      )
-    }
+    fs.writeFileSync(
+      path.resolve(_this.tmpDirectory(), './', process.pid + '.json'),
+      JSON.stringify(coverage),
+      'utf-8'
+    )
+  }
 
   // we always want to write coverage
   // regardless of how the process exits.
@@ -106,8 +105,8 @@ NYC.prototype.wrap = function (bin) {
 }
 
 NYC.prototype.report = function (_collector, _reporter) {
-  var collector = _collector || new this.istanbul.Collector(),
-    reporter = _reporter || new this.istanbul.Reporter()
+  var collector = _collector || new this.istanbul.Collector()
+  var reporter = _reporter || new this.istanbul.Reporter()
 
   this._loadReports().forEach(function (report) {
     collector.add(report)
@@ -121,8 +120,8 @@ NYC.prototype.report = function (_collector, _reporter) {
 }
 
 NYC.prototype._loadReports = function () {
-  var _this = this,
-    files = fs.readdirSync(this.tmpDirectory())
+  var _this = this
+  var files = fs.readdirSync(this.tmpDirectory())
 
   return _.map(files, function (f) {
     try {

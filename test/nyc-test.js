@@ -1,12 +1,12 @@
 /* global describe, it */
 
-var _ = require('lodash'),
-  fs = require('fs'),
-  NYC = require('../'),
-  path = require('path'),
-  rimraf = require('rimraf'),
-  sinon = require('sinon'),
-  spawn = require('child_process').spawn
+var _ = require('lodash')
+var fs = require('fs')
+var NYC = require('../')
+var path = require('path')
+var rimraf = require('rimraf')
+var sinon = require('sinon')
+var spawn = require('child_process').spawn
 
 require('chai').should()
 require('tap').mochaGlobals()
@@ -94,14 +94,14 @@ describe('nyc', function () {
   describe('report', function () {
     it('runs reports for all JSON in output directory', function (done) {
       var nyc = new NYC({
-          cwd: process.cwd()
-        }),
-        proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
-          cwd: process.cwd(),
-          env: process.env,
-          stdio: 'inherit'
-        }),
-        start = fs.readdirSync(nyc.tmpDirectory()).length
+        cwd: process.cwd()
+      })
+      var proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
+        cwd: process.cwd(),
+        env: process.env,
+        stdio: 'inherit'
+      })
+      var start = fs.readdirSync(nyc.tmpDirectory()).length
 
       proc.on('close', function () {
         nyc.report(
@@ -130,13 +130,13 @@ describe('nyc', function () {
 
     it('handles corrupt JSON files', function (done) {
       var nyc = new NYC({
-          cwd: process.cwd()
-        }),
-        proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
-          cwd: process.cwd(),
-          env: process.env,
-          stdio: 'inherit'
-        })
+        cwd: process.cwd()
+      })
+      var proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
+        cwd: process.cwd(),
+        env: process.env,
+        stdio: 'inherit'
+      })
 
       fs.writeFileSync('./.nyc_output/bad.json', '}', 'utf-8')
 
@@ -157,13 +157,13 @@ describe('nyc', function () {
     })
 
     it('handles multiple reporters', function (done) {
-      var reporters = ['text-summary', 'text-lcov'],
-      incr = 0,
-      nyc = new NYC({
+      var reporters = ['text-summary', 'text-lcov']
+      var incr = 0
+      var nyc = new NYC({
         cwd: process.cwd(),
         reporter: reporters
-      }),
-      proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
+      })
+      var proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
         cwd: process.cwd(),
         env: process.env,
         stdio: 'inherit'
