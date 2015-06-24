@@ -4,8 +4,12 @@
 [![Coverage Status](https://coveralls.io/repos/bcoe/nyc/badge.svg?branch=)](https://coveralls.io/r/bcoe/nyc?branch=)
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
 
+```shell
+nyc npm test
+```
+
 a code coverage tool built on [istanbul](https://www.npmjs.com/package/istanbul)
-that works well for applications that spawn subprocesses.
+that works for applications that spawn subprocesses.
 
 ## Instrumenting Your Code
 
@@ -25,6 +29,17 @@ If you're so inclined, you can simply add nyc to the test stanza in your package
   }
 }
 ```
+
+## Checking Coverage
+
+nyc exposes istanbul's check-coverage tool. After running your tests with nyc,
+simply run:
+
+```shell
+nyc check-coverage --lines 95 --functions 95 --branches 95
+```
+
+This feature makes it easy to fail your tests if coverage drops below a given threshold.
 
 ## Running Reports
 

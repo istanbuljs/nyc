@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-var foreground = require('foreground-child'),
-  sw = require('spawn-wrap')
+var foreground = require('foreground-child')
+var path = require('path')
+var sw = require('spawn-wrap')
 
 if (process.env.NYC_CWD) {
   var NYC = require('../')
@@ -13,36 +14,70 @@ if (process.env.NYC_CWD) {
 
   sw.runMain()
 } else {
-  var NYC = require('../'),
-    yargs = require('yargs')
-      .usage('$0 [command] [options]\n\nrun with a file as the first argument, to instrument it with coverage')
-      .command('report', 'run coverage report for .nyc_output', function (yargs) {
-        yargs
-          .option('r', {
-            alias: 'reporter',
-            describe: 'coverage reporter(s) to use',
-            default: 'text',
-            array: true
-          })
-          .help('h')
-          .example('$0 report --reporter=lcov', 'output an HTML lcov report to ./coverage')
-          .alias('h', 'help')
-      })
-      .help('h')
-      .alias('h', 'help')
-      .version(require('../package.json').version)
-      .example('$0 npm test', 'instrument your tests with coverage')
-      .example('$0 report --reporter=text-lcov', 'output lcov report after running your tests')
-      .epilog('visit http://git.io/vTJJB for list of available reporters'),
-    argv = yargs.argv
+  var NYC = require('../')
+  var yargs = require('yargs')
+    .usage('$0 [command] [options]\n\nrun your tests with the nyc bin to instrument them with coverage')
+    .command('report', 'run coverage report for .nyc_output', function (yargs) {
+      yargs
+        .usage('$0 report [options]')
+        .option('r', {
+          alias: 'reporter',
+          describe: 'coverage reporter(s) to use',
+          default: 'text',
+          array: true
+        })
+        .help('h')
+        .alias('h', 'help')
+        .example('$0 report --reporter=lcov', 'output an HTML lcov report to ./coverage')
+    })
+    .command('check-coverage', 'check whether coverage is within thresholds provided', function (yargs) {
+      yargs
+        .usage('$0 check-coverage [options]')
+        .option('b', {
+          alias: 'branches',
+          default: 0,
+          description: 'what % of branches must be covered?'
+        })
+        .option('f', {
+          alias: 'functions',
+          default: 0,
+          description: 'what % of functions must be covered?'
+        })
+        .option('l', {
+          alias: 'lines',
+          default: 90,
+          description: 'what % of lines must be covered?'
+        })
+        .help('h')
+        .alias('h', 'help')
+        .example('$0 check-coverage --lines 95', "check whether the JSON in nyc's output folder meets the thresholds provided")
+    })
+    .help('h')
+    .alias('h', 'help')
+    .version(require('../package.json').version)
+    .example('$0 npm test', 'instrument your tests with coverage')
+    .example('$0 report --reporter=text-lcov', 'output lcov report after running your tests')
+    .epilog('visit http://git.io/vTJJB for list of available reporters')
+  var argv = yargs.argv
 
-  if (argv._.length && ~argv._.indexOf('report')) {
+  if (~argv._.indexOf('report')) {
     // run a report.
     process.env.NYC_CWD = process.cwd()
 
     ;(new NYC({
       reporter: argv.reporter
     })).report()
+  } else if (~argv._.indexOf('check-coverage')) {
+    foreground(
+      path.resolve(__dirname, '../node_modules/.bin/istanbul'),
+      [
+        'check-coverage',
+        '--lines=' + argv.lines,
+        '--functions=' + argv.functions,
+        '--branches=' + argv.branches,
+        path.resolve(process.cwd(), './.nyc_output/*.json')
+      ]
+    )
   } else if (argv._.length) {
     // wrap subprocesses and execute argv[1]
     ;(new NYC()).cleanup()
