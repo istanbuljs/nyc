@@ -1,5 +1,9 @@
 ## Change Log
 
+### v2.4.0 (2015/06/24 15:57 +00:00)
+- [#30](https://github.com/bcoe/nyc/pull/30) Added check-coverage functionality, thanks
+  @Raynos! (@bcoe)
+
 ### v2.3.0 (2015/06/04 06:43 +00:00)
 - [#27](https://github.com/bcoe/nyc/pull/27) upgraded tap, and switched tests to using tap --coverage (@bcoe)
 - [#25](https://github.com/bcoe/nyc/pull/25) support added for multiple reporters, thanks @jasisk! (@jasisk)
