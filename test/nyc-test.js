@@ -105,6 +105,7 @@ describe('nyc', function () {
 
       proc.on('close', function () {
         nyc.report(
+          null,
           {
             add: function (report) {
               // the subprocess we ran should output reports
@@ -142,6 +143,7 @@ describe('nyc', function () {
 
       proc.on('close', function () {
         nyc.report(
+          null,
           {
             add: function (report) {}
           },
@@ -149,6 +151,7 @@ describe('nyc', function () {
             add: function (reporter) {},
             write: function () {
               // we should get here without exception.
+              fs.unlinkSync('./.nyc_output/bad.json')
               return done()
             }
           }
@@ -171,6 +174,7 @@ describe('nyc', function () {
 
       proc.on('close', function () {
         nyc.report(
+          null,
           {
             add: function (report) {}
           },
@@ -247,6 +251,24 @@ describe('nyc', function () {
 
       afterEach()
       return done()
+    })
+  })
+
+  describe('mungeArgs', function () {
+    it('removes dashed options that proceed bin', function () {
+      process.argv = ['/Users/benjamincoe/bin/iojs',
+        '/Users/benjamincoe/bin/nyc.js',
+        '--reporter',
+        'lcov',
+        'node',
+        'test/nyc-test.js'
+      ]
+
+      var yargv = require('yargs').argv
+
+      var munged = (new NYC()).mungeArgs(yargv)
+
+      munged.should.eql(['node', 'test/nyc-test.js'])
     })
   })
 })

@@ -23,8 +23,7 @@ if (process.env.NYC_CWD) {
         .option('r', {
           alias: 'reporter',
           describe: 'coverage reporter(s) to use',
-          default: 'text',
-          array: true
+          default: 'text'
         })
         .help('h')
         .alias('h', 'help')
@@ -52,6 +51,17 @@ if (process.env.NYC_CWD) {
         .alias('h', 'help')
         .example('$0 check-coverage --lines 95', "check whether the JSON in nyc's output folder meets the thresholds provided")
     })
+    .option('r', {
+      alias: 'reporter',
+      describe: 'coverage reporter(s) to use',
+      default: 'text'
+    })
+    .option('s', {
+      alias: 'silent',
+      default: false,
+      type: 'boolean',
+      describe: "don't output a report after tests finish running"
+    })
     .help('h')
     .alias('h', 'help')
     .version(require('../package.json').version)
@@ -64,9 +74,7 @@ if (process.env.NYC_CWD) {
     // run a report.
     process.env.NYC_CWD = process.cwd()
 
-    ;(new NYC({
-      reporter: argv.reporter
-    })).report()
+    report(argv)
   } else if (~argv._.indexOf('check-coverage')) {
     foreground(
       path.resolve(__dirname, '../node_modules/.bin/istanbul'),
@@ -80,15 +88,27 @@ if (process.env.NYC_CWD) {
     )
   } else if (argv._.length) {
     // wrap subprocesses and execute argv[1]
-    ;(new NYC()).cleanup()
+    var nyc = (new NYC())
+    nyc.cleanup()
 
     sw([__filename], {
       NYC_CWD: process.cwd()
     })
 
-    foreground(process.argv.slice(2))
+    foreground(nyc.mungeArgs(argv), function (done) {
+      if (!argv.silent) report(argv)
+      return done()
+    })
   } else {
     // I don't have a clue what you're doing.
     yargs.showHelp()
   }
+}
+
+function report (argv) {
+  process.env.NYC_CWD = process.cwd()
+
+  ;(new NYC({
+    reporter: argv.reporter
+  })).report()
 }
