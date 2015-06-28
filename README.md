@@ -14,10 +14,16 @@ that works for applications that spawn subprocesses.
 ## Instrumenting Your Code
 
 Simply run your tests with `nyc`, and it will collect coverage information for
-each process and store it in `.nyc_output`:
+each process and store it in `.nyc_output`.
 
 ```shell
 nyc npm test
+```
+
+you can pass a list of Istanbul reporters that you'd like to run:
+
+```shell
+nyc --reporter=lcov --reporter=text-lcov npm test
 ```
 
 If you're so inclined, you can simply add nyc to the test stanza in your package.json:

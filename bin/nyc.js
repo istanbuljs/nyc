@@ -23,8 +23,7 @@ if (process.env.NYC_CWD) {
         .option('r', {
           alias: 'reporter',
           describe: 'coverage reporter(s) to use',
-          default: 'text',
-          array: true
+          default: 'text'
         })
         .help('h')
         .alias('h', 'help')
@@ -51,6 +50,17 @@ if (process.env.NYC_CWD) {
         .help('h')
         .alias('h', 'help')
         .example('$0 check-coverage --lines 95', "check whether the JSON in nyc's output folder meets the thresholds provided")
+    })
+    .option('r', {
+      alias: 'reporter',
+      describe: 'coverage reporter(s) to use',
+      default: 'text'
+    })
+    .option('s', {
+      alias: 'silent',
+      default: false,
+      type: 'boolean',
+      describe: "don't output a report after tests finish running"
     })
     .help('h')
     .alias('h', 'help')
@@ -88,7 +98,7 @@ if (process.env.NYC_CWD) {
     })
 
     foreground(nyc.mungeArgs(argv), function (done) {
-      if (argv['output-report']) report(argv)
+      if (!argv.silent) report(argv)
       return done()
     })
   } else {

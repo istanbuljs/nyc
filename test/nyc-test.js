@@ -151,6 +151,7 @@ describe('nyc', function () {
             add: function (reporter) {},
             write: function () {
               // we should get here without exception.
+              fs.unlinkSync('./.nyc_output/bad.json')
               return done()
             }
           }

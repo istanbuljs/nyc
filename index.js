@@ -106,7 +106,7 @@ NYC.prototype.wrap = function (bin) {
   return this
 }
 
-NYC.prototype.report = function (_collector, _reporter) {
+NYC.prototype.report = function (cb, _collector, _reporter) {
   cb = cb || function () {}
 
   var collector = _collector || new this.istanbul.Collector()
@@ -144,9 +144,9 @@ NYC.prototype.tmpDirectory = function () {
 }
 
 NYC.prototype.mungeArgs = function (yargv) {
-  return process.argv.slice(
-    process.argv.indexOf(yargv._[0])
-  )
+  var argv = process.argv.slice(1)
+
+  return argv.slice(argv.indexOf(yargv._[0]))
 }
 
 module.exports = NYC
