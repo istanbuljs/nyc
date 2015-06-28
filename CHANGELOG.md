@@ -1,5 +1,10 @@
 ## Change Log
 
+### v3.0.0 (2015/06/28 19:49 +00:00)
+
+- [#31](https://github.com/bcoe/nyc/pull/31) Combine instrumentation and reporting steps, based
+  on @Raynos' suggestion (@bcoe)
+
 ### v2.4.0 (2015/06/24 15:57 +00:00)
 - [#30](https://github.com/bcoe/nyc/pull/30) Added check-coverage functionality, thanks
   @Raynos! (@bcoe)
