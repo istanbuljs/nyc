@@ -74,9 +74,7 @@ if (process.env.NYC_CWD) {
     // run a report.
     process.env.NYC_CWD = process.cwd()
 
-    ;(new NYC({
-      reporter: argv.reporter
-    })).report()
+    report(argv)
   } else if (~argv._.indexOf('check-coverage')) {
     foreground(
       path.resolve(__dirname, '../node_modules/.bin/istanbul'),
