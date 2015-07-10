@@ -47,6 +47,11 @@ if (process.env.NYC_CWD) {
           default: 90,
           description: 'what % of lines must be covered?'
         })
+        .option('s', {
+          alias: 'statements',
+          default: 0,
+          description: 'what % of statements must be covered?'
+        })
         .help('h')
         .alias('h', 'help')
         .example('$0 check-coverage --lines 95', "check whether the JSON in nyc's output folder meets the thresholds provided")
@@ -77,8 +82,11 @@ if (process.env.NYC_CWD) {
     report(argv)
   } else if (~argv._.indexOf('check-coverage')) {
     foreground(
-      path.resolve(__dirname, '../node_modules/.bin/istanbul'),
+      'npm',
       [
+        'run',
+        'istanbul',
+        '--',
         'check-coverage',
         '--lines=' + argv.lines,
         '--functions=' + argv.functions,
