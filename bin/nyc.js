@@ -83,6 +83,7 @@ if (process.env.NYC_CWD) {
         '--lines=' + argv.lines,
         '--functions=' + argv.functions,
         '--branches=' + argv.branches,
+        '--statements=' + argv.statements,
         path.resolve(process.cwd(), './.nyc_output/*.json')
       ]
     )
