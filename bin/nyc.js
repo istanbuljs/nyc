@@ -81,24 +81,15 @@ if (process.env.NYC_CWD) {
 
     report(argv)
   } else if (~argv._.indexOf('check-coverage')) {
-    var nycOutputDir = path.resolve(process.cwd(), './.nyc_output/*.json')
-
-    // switch the working directory to nyc,
-    // so that we have the standard bin.
-    process.chdir(path.resolve(__dirname, '../'))
-
     foreground(
-      'npm',
+      require.resolve('istanbul/lib/cli'),
       [
-        'run',
-        'istanbul',
-        '--',
         'check-coverage',
         '--lines=' + argv.lines,
         '--functions=' + argv.functions,
         '--branches=' + argv.branches,
         '--statements=' + argv.statements,
-        nycOutputDir
+        path.resolve(process.cwd(), './.nyc_output/*.json')
       ]
     )
   } else if (argv._.length) {
