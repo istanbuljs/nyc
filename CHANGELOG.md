@@ -1,5 +1,8 @@
 ## Change Log
 
+### v3.0.1 (2015/07/25 20:51 +00:00)
+- [#33](https://github.com/bcoe/nyc/pull/33) spawn istanbul in a way that is less likely to break npm@3.x (@bcoe)
+
 ### v3.0.0 (2015/06/28 19:49 +00:00)
 
 - [#31](https://github.com/bcoe/nyc/pull/31) Combine instrumentation and reporting steps, based
