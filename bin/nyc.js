@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 var foreground = require('foreground-child')
+var NYC = require('../')
 var path = require('path')
 var sw = require('spawn-wrap')
 
 if (process.env.NYC_CWD) {
-  var NYC = require('../')
   ;(new NYC()).wrap()
 
   // make sure we can run coverage on
@@ -14,7 +14,6 @@ if (process.env.NYC_CWD) {
 
   sw.runMain()
 } else {
-  var NYC = require('../')
   var yargs = require('yargs')
     .usage('$0 [command] [options]\n\nrun your tests with the nyc bin to instrument them with coverage')
     .command('report', 'run coverage report for .nyc_output', function (yargs) {
