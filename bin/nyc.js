@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 var foreground = require('foreground-child')
+var NYC = require('../')
 var path = require('path')
 var sw = require('spawn-wrap')
 
 if (process.env.NYC_CWD) {
-  var NYC = require('../')
   ;(new NYC()).wrap()
 
   // make sure we can run coverage on
@@ -14,7 +14,6 @@ if (process.env.NYC_CWD) {
 
   sw.runMain()
 } else {
-  var NYC = require('../')
   var yargs = require('yargs')
     .usage('$0 [command] [options]\n\nrun your tests with the nyc bin to instrument them with coverage')
     .command('report', 'run coverage report for .nyc_output', function (yargs) {
@@ -47,6 +46,11 @@ if (process.env.NYC_CWD) {
           default: 90,
           description: 'what % of lines must be covered?'
         })
+        .option('s', {
+          alias: 'statements',
+          default: 0,
+          description: 'what % of statements must be covered?'
+        })
         .help('h')
         .alias('h', 'help')
         .example('$0 check-coverage --lines 95', "check whether the JSON in nyc's output folder meets the thresholds provided")
@@ -77,7 +81,7 @@ if (process.env.NYC_CWD) {
     report(argv)
   } else if (~argv._.indexOf('check-coverage')) {
     foreground(
-      path.resolve(__dirname, '../node_modules/.bin/istanbul'),
+      require.resolve('istanbul/lib/cli'),
       [
         'check-coverage',
         '--lines=' + argv.lines,
