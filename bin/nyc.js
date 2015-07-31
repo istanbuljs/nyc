@@ -81,8 +81,9 @@ if (process.env.NYC_CWD) {
     report(argv)
   } else if (~argv._.indexOf('check-coverage')) {
     foreground(
-      require.resolve('istanbul/lib/cli'),
+      process.execPath,
       [
+        require.resolve('istanbul/lib/cli'),
         'check-coverage',
         '--lines=' + argv.lines,
         '--functions=' + argv.functions,
