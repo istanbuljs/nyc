@@ -1,5 +1,9 @@
 ## Change Log
 
+### v3.1.0 (2015/08/02 19:04 +00:00)
+
+- [#38](https://github.com/bcoe/nyc/pull/38) fixes for windows spawning (@rmg)
+
 ### v3.0.1 (2015/07/25 20:51 +00:00)
 - [#33](https://github.com/bcoe/nyc/pull/33) spawn istanbul in a way that is less likely to break npm@3.x (@bcoe)
 
