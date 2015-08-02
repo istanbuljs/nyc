@@ -33,7 +33,7 @@ describe('nyc', function () {
 
       var nyc = new NYC()
 
-      nyc.cwd.should.match(/nyc\/test\/fixtures/)
+      nyc.cwd.should.equal(path.resolve(__dirname, './fixtures'))
       afterEach()
     })
   })
@@ -241,7 +241,7 @@ describe('nyc', function () {
       })
       nyc.wrap()
 
-      istanbul.config.loadFile.calledWithMatch('test/fixtures/.istanbul.yml').should.equal(true)
+      istanbul.config.loadFile.calledWithMatch(path.join('test', 'fixtures', '.istanbul.yml')).should.equal(true)
       istanbul.Instrumenter.calledWith({
         coverageVariable: '__coverage__',
         embedSource: false,
