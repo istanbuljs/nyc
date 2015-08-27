@@ -65,7 +65,10 @@ NYC.prototype._wrapRequire = function () {
     // only instrument a file if it's not on the exclude list.
     var relFile = path.relative(_this.cwd, filename)
     for (var i = 0, exclude; (exclude = _this.exclude[i]) !== undefined; i++) {
-      if (exclude.test(relFile)) instrument = false
+      if (exclude.test(relFile)) {
+        instrument = false
+        break
+      }
     }
 
     if (instrument) {
