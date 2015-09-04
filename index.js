@@ -50,6 +50,25 @@ NYC.prototype._createInstrumenter = function () {
   })
 }
 
+NYC.prototype.addFile = function (filename) {
+  var relFile = path.relative(this.cwd, filename)
+
+  // only instrument a file if it's not on the exclude list.
+  for (var i = 0, exclude; (exclude = this.exclude[i]) !== undefined; i++) {
+    if (exclude.test(relFile)) {
+      return
+    }
+  }
+
+  var content = stripBom(fs.readFileSync(filename, 'utf8'))
+
+  content = this.instrumenter.instrumentSync(content, './' + relFile)
+  var preamble = this.instrumenter.getPreamble(content, relFile)
+
+  // we only run the preamble, so none of our code will actually execute (effectively 0 coverage)
+  module._compile(preamble, filename)
+}
+
 NYC.prototype.cleanup = function () {
   if (!process.env.NYC_CWD) rimraf.sync(this.tmpDirectory())
 }
@@ -81,22 +100,11 @@ NYC.prototype._wrapRequire = function () {
 
 NYC.prototype._wrapExit = function () {
   var _this = this
-  var outputCoverage = function () {
-    var coverage = global.__coverage__
-    if (typeof __coverage__ === 'object') coverage = __coverage__
-    if (!coverage) return
-
-    fs.writeFileSync(
-      path.resolve(_this.tmpDirectory(), './', process.pid + '.json'),
-      JSON.stringify(coverage),
-      'utf-8'
-    )
-  }
 
   // we always want to write coverage
   // regardless of how the process exits.
   onExit(function () {
-    outputCoverage()
+    _this.writeCoverageFile()
   }, {alwaysLast: true})
 }
 
@@ -104,6 +112,18 @@ NYC.prototype.wrap = function (bin) {
   this._wrapRequire()
   this._wrapExit()
   return this
+}
+
+NYC.prototype.writeCoverageFile = function () {
+  var coverage = global.__coverage__
+  if (typeof __coverage__ === 'object') coverage = __coverage__
+  if (!coverage) return
+
+  fs.writeFileSync(
+    path.resolve(this.tmpDirectory(), './', process.pid + '.json'),
+    JSON.stringify(coverage),
+    'utf-8'
+  )
 }
 
 NYC.prototype.report = function (cb, _collector, _reporter) {
