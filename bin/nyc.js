@@ -66,6 +66,12 @@ if (process.env.NYC_CWD) {
       type: 'boolean',
       describe: "don't output a report after tests finish running"
     })
+    .option('c', {
+      alias: 'complete',
+      default: false,
+      type: 'boolean',
+      describe: 'whether or not to instrument all files of the project (not just the ones touched by your test suite)'
+    })
     .help('h')
     .alias('h', 'help')
     .version(require('../package.json').version)
@@ -97,6 +103,10 @@ if (process.env.NYC_CWD) {
     var nyc = (new NYC())
     nyc.cleanup()
 
+    if (argv.complete) {
+      addAllFiles()
+    }
+
     sw([__filename], {
       NYC_CWD: process.cwd()
     })
@@ -109,6 +119,18 @@ if (process.env.NYC_CWD) {
     // I don't have a clue what you're doing.
     yargs.showHelp()
   }
+}
+
+function addAllFiles () {
+  var nyc = (new NYC())
+
+  // add all files in the project
+  var findFileSync = require('find').fileSync
+  findFileSync(/\.js$/, process.cwd()).forEach(function (filename) {
+    nyc.addFile(filename)
+  })
+
+  nyc.writeCoverageFile()
 }
 
 function report (argv) {
