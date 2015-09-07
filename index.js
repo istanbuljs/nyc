@@ -63,8 +63,6 @@ NYC.prototype.addFile = function (filename, returnImmediately) {
     }
   }
 
-  if (returnImmediately && !fs.statSync(relFile).isFile()) return {}
-
   var content = stripBom(fs.readFileSync(filename, 'utf8'))
 
   if (instrument) {
@@ -83,7 +81,7 @@ NYC.prototype.addAllFiles = function () {
 
   this._createOutputDirectory()
 
-  glob.sync('**/*.js').forEach(function (filename) {
+  glob.sync('**/*.js', {nodir: true}).forEach(function (filename) {
     var obj = _this.addFile(filename, true)
     if (obj.instrument) {
       module._compile(
