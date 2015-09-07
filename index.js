@@ -50,17 +50,20 @@ NYC.prototype._createInstrumenter = function () {
   })
 }
 
-NYC.prototype.addFile = function (filename) {
+NYC.prototype.addFile = function (filename, returnImmediately) {
   var instrument = true
   var relFile = path.relative(this.cwd, filename)
 
   // only instrument a file if it's not on the exclude list.
   for (var i = 0, exclude; (exclude = this.exclude[i]) !== undefined; i++) {
     if (exclude.test(relFile)) {
+      if (returnImmediately) return {}
       instrument = false
       break
     }
   }
+
+  if (returnImmediately && !fs.statSync(relFile).isFile()) return {}
 
   var content = stripBom(fs.readFileSync(filename, 'utf8'))
 
@@ -81,7 +84,7 @@ NYC.prototype.addAllFiles = function () {
   this._createOutputDirectory()
 
   glob.sync('**/*.js').forEach(function (filename) {
-    var obj = _this.addFile(filename)
+    var obj = _this.addFile(filename, true)
     if (obj.instrument) {
       module._compile(
         _this.instrumenter.getPreamble(obj.content, obj.relFile),
