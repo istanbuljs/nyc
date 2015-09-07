@@ -1,6 +1,7 @@
 /* global __coverage__ */
 var _ = require('lodash')
 var fs = require('fs')
+var glob = require('glob')
 var mkdirp = require('mkdirp')
 var path = require('path')
 var rimraf = require('rimraf')
@@ -31,8 +32,7 @@ function NYC (opts) {
   })
 
   this.instrumenter = this._createInstrumenter()
-
-  mkdirp.sync(this.tmpDirectory())
+  this._createOutputDirectory()
 }
 
 NYC.prototype._createInstrumenter = function () {
@@ -51,26 +51,46 @@ NYC.prototype._createInstrumenter = function () {
 }
 
 NYC.prototype.addFile = function (filename) {
+  var instrument = true
   var relFile = path.relative(this.cwd, filename)
 
   // only instrument a file if it's not on the exclude list.
   for (var i = 0, exclude; (exclude = this.exclude[i]) !== undefined; i++) {
     if (exclude.test(relFile)) {
-      return
+      instrument = false
+      break
     }
   }
 
   var content = stripBom(fs.readFileSync(filename, 'utf8'))
 
-  content = this.instrumenter.instrumentSync(content, './' + relFile)
-  var preamble = this.instrumenter.getPreamble(content, relFile)
+  if (instrument) {
+    content = this.instrumenter.instrumentSync(content, './' + relFile)
+  }
 
-  // we only run the preamble, so none of our code will actually execute (effectively 0 coverage)
-  module._compile(preamble, filename)
+  return {
+    instrument: instrument,
+    content: content,
+    relFile: relFile
+  }
 }
 
-NYC.prototype.cleanup = function () {
-  if (!process.env.NYC_CWD) rimraf.sync(this.tmpDirectory())
+NYC.prototype.addAllFiles = function () {
+  var _this = this
+
+  this._createOutputDirectory()
+
+  glob.sync('**/*.js').forEach(function (filename) {
+    var obj = _this.addFile(filename)
+    if (obj.instrument) {
+      module._compile(
+        _this.instrumenter.getPreamble(obj.content, obj.relFile),
+        filename
+      )
+    }
+  })
+
+  this.writeCoverageFile()
 }
 
 NYC.prototype._wrapRequire = function () {
@@ -78,27 +98,17 @@ NYC.prototype._wrapRequire = function () {
 
   // any JS you require should get coverage added.
   require.extensions['.js'] = function (module, filename) {
-    var instrument = true
-    var content = fs.readFileSync(filename, 'utf8')
-
-    // only instrument a file if it's not on the exclude list.
-    var relFile = path.relative(_this.cwd, filename)
-    for (var i = 0, exclude; (exclude = _this.exclude[i]) !== undefined; i++) {
-      if (exclude.test(relFile)) {
-        instrument = false
-        break
-      }
-    }
-
-    if (instrument) {
-      content = _this.instrumenter.instrumentSync(
-        content,
-        './' + relFile
-      )
-    }
-
-    module._compile(stripBom(content), filename)
+    var obj = _this.addFile(filename)
+    module._compile(obj.content, filename)
   }
+}
+
+NYC.prototype.cleanup = function () {
+  if (!process.env.NYC_CWD) rimraf.sync(this.tmpDirectory())
+}
+
+NYC.prototype._createOutputDirectory = function () {
+  mkdirp.sync(this.tmpDirectory())
 }
 
 NYC.prototype._wrapExit = function () {

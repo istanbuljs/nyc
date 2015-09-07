@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "istanbul": "istanbul",
-    "test": "standard && tap --coverage ./test/nyc-test.js"
+    "test": "standard && ./bin/nyc.js tap ./test/nyc-test.js"
   },
   "bin": {
     "nyc": "./bin/nyc.js"
@@ -13,7 +13,8 @@
   "config": {
     "nyc": {
       "exclude": [
-        "node_modules"
+        "node_modules",
+        "bin"
       ]
     }
   },
@@ -36,8 +37,8 @@
   "author": "Ben Coe <ben@npmjs.com>",
   "license": "ISC",
   "dependencies": {
-    "find": "^0.2.3",
     "foreground-child": "^1.3.0",
+    "glob": "^5.0.14",
     "istanbul": "^0.3.16",
     "lodash": "^3.10.0",
     "mkdirp": "^0.5.0",
@@ -50,7 +51,7 @@
   "devDependencies": {
     "chai": "^3.0.0",
     "sinon": "^1.15.3",
-    "standard": "^4.5.4",
+    "standard": "^5.2.1",
     "tap": "^1.3.0"
   },
   "repository": {
