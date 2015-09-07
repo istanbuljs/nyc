@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "istanbul": "istanbul",
-    "test": "standard && ./bin/nyc.js tap ./test/nyc-test.js"
+    "test": "standard && tap --coverage ./test/nyc-test.js"
   },
   "bin": {
     "nyc": "./bin/nyc.js"
