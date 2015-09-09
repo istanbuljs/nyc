@@ -66,6 +66,12 @@ if (process.env.NYC_CWD) {
       type: 'boolean',
       describe: "don't output a report after tests finish running"
     })
+    .option('a', {
+      alias: 'all',
+      default: false,
+      type: 'boolean',
+      describe: 'whether or not to instrument all files of the project (not just the ones touched by your test suite)'
+    })
     .help('h')
     .alias('h', 'help')
     .version(require('../package.json').version)
@@ -96,6 +102,8 @@ if (process.env.NYC_CWD) {
     // wrap subprocesses and execute argv[1]
     var nyc = (new NYC())
     nyc.cleanup()
+
+    if (argv.all) nyc.addAllFiles()
 
     sw([__filename], {
       NYC_CWD: process.cwd()

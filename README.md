@@ -95,6 +95,11 @@ adding the following configuration:
 }}
 ```
 
+## Include Reports For Files That Are Not Required
+
+By default nyc does not collect coverage for files that have not
+been required, run nyc with the flag `--all` to enable this.
+
 ## Configuring Istanbul
 
 Behind the scenes nyc uses [istanbul](https://www.npmjs.com/package/istanbul). You

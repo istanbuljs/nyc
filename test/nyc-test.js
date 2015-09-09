@@ -15,7 +15,6 @@ describe('nyc', function () {
   var fixtures = path.resolve(__dirname, './fixtures')
 
   describe('cwd', function () {
-
     function afterEach () {
       delete process.env.NYC_CWD
       rimraf.sync(path.resolve(fixtures, './nyc_output'))
@@ -88,6 +87,14 @@ describe('nyc', function () {
 
     it('writes coverage report when process is killed with SIGINT', function (done) {
       testSignal('sigint', done)
+    })
+
+    it('does not output coverage for files that have not been included, by default', function (done) {
+      var reports = _.filter(nyc._loadReports(), function (report) {
+        return report['./test/fixtures/not-loaded.js']
+      })
+      reports.length.should.equal(0)
+      return done()
     })
   })
 
@@ -269,6 +276,42 @@ describe('nyc', function () {
       var munged = (new NYC()).mungeArgs(yargv)
 
       munged.should.eql(['node', 'test/nyc-test.js'])
+    })
+  })
+
+  describe('addAllFiles', function () {
+    it('outputs an empty coverage report for all files that are not excluded', function (done) {
+      var nyc = (new NYC())
+      nyc.addAllFiles()
+
+      var reports = _.filter(nyc._loadReports(), function (report) {
+        return report['./test/fixtures/not-loaded.js']
+      })
+      var report = reports[0]['./test/fixtures/not-loaded.js']
+
+      reports.length.should.equal(1)
+      report.s['1'].should.equal(0)
+      report.s['2'].should.equal(0)
+      return done()
+    })
+
+    it('tracks coverage appropriately once the file is required', function (done) {
+      var nyc = (new NYC({
+        cwd: process.cwd()
+      })).wrap()
+      require('./fixtures/not-loaded')
+      nyc.writeCoverageFile()
+
+      var reports = _.filter(nyc._loadReports(), function (report) {
+        return report['./test/fixtures/not-loaded.js']
+      })
+      var report = reports[0]['./test/fixtures/not-loaded.js']
+
+      reports.length.should.equal(1)
+      report.s['1'].should.equal(1)
+      report.s['2'].should.equal(1)
+
+      return done()
     })
   })
 })
