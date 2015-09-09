@@ -37,7 +37,7 @@
   "author": "Ben Coe <ben@npmjs.com>",
   "license": "ISC",
   "dependencies": {
-    "foreground-child": "^1.3.0",
+    "foreground-child": "1.3.0",
     "glob": "^5.0.14",
     "istanbul": "^0.3.19",
     "lodash": "^3.10.0",
