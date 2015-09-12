@@ -1,5 +1,11 @@
 ## Change Log
 
+### v3.2.2 (2015/09/11 22:02 -07:00)
+
+- [#47](https://github.com/bcoe/nyc/pull/47) make the default exclude rules work on Windows (@bcoe)
+- [#45](https://github.com/bcoe/nyc/pull/45) pull in patched versions of spawn-wrap and foreground-child, which support Windows (@bcoe)
+- [#44](https://github.com/bcoe/nyc/pull/44) Adds --all option which adds 0% coverage reports for all files in project, regardless of whether code touches them (@ronkorving)
+
 ### v3.1.0 (2015/08/02 19:04 +00:00)
 
 - [#38](https://github.com/bcoe/nyc/pull/38) fixes for windows spawning (@rmg)
