@@ -1,6 +1,6 @@
 {
   "name": "nyc",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "a code coverage tool that works well with subprocesses.",
   "main": "index.js",
   "scripts": {
@@ -54,6 +54,10 @@
     "standard": "^5.2.1",
     "tap": "^1.3.4"
   },
+  "bundleDependencies": [
+    "foreground-child",
+    "spawn-wrap"
+  ],
   "repository": {
     "type": "git",
     "url": "git@github.com:bcoe/nyc.git"
