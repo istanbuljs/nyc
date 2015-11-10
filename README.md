@@ -79,7 +79,7 @@ you can use any reporters that are supported by istanbul:
 nyc report --reporter=lcov
 ```
 
-## Excluding Files
+## Including and Excluding Files
 
 By default nyc does not instrument files in `node_modules`, or `test`
 for coverage. You can override this setting in your package.json, by
@@ -94,6 +94,20 @@ adding the following configuration:
   }
 }}
 ```
+
+or if you have some directory/files in `node_modules` you wish to include
+you can add the following configuration as well:
+
+```js
+{"config": {
+  "nyc": {
+    "include": [
+      "node_modules/utils/"
+    ]
+  }
+}}
+```
+
 
 ## Include Reports For Files That Are Not Required
 

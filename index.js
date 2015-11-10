@@ -20,19 +20,29 @@ function NYC (opts) {
     istanbul: require('istanbul')
   }, opts)
 
-  if (!Array.isArray(this.reporter)) this.reporter = [this.reporter]
+  this.reporter = this._toArray(this.reporter)
 
   var config = require(path.resolve(this.cwd, './package.json')).config || {}
   config = config.nyc || {}
 
   this.exclude = config.exclude || ['node_modules[\/\\\\]', 'test[\/\\\\]', 'test\\.js']
-  if (!Array.isArray(this.exclude)) this.exclude = [this.exclude]
-  this.exclude = _.map(this.exclude, function (p) {
-    return new RegExp(p)
-  })
+  this.include = config.include || []
+
+  this.exclude = this._createRegexPath(this._toArray(this.exclude))
+  this.include = this._createRegexPath(this._toArray(this.include))
 
   this.instrumenter = this._createInstrumenter()
   this._createOutputDirectory()
+}
+
+NYC.prototype._createRegexPath = function (array) {
+  return _.map(array, function (path) {
+    return new RegExp(path)
+  })
+}
+
+NYC.prototype._toArray = function (item) {
+  return !Array.isArray(item) ? [item] : item
 }
 
 NYC.prototype._createInstrumenter = function () {
@@ -53,13 +63,17 @@ NYC.prototype._createInstrumenter = function () {
 NYC.prototype.addFile = function (filename, returnImmediately) {
   var instrument = true
   var relFile = path.relative(this.cwd, filename)
+  var include
 
-  // only instrument a file if it's not on the exclude list.
   for (var i = 0, exclude; (exclude = this.exclude[i]) !== undefined; i++) {
+    include = this.include[i]
+
     if (exclude.test(relFile)) {
       if (returnImmediately) return {}
       instrument = false
-      break
+    }
+    if (include && include.test(relFile)) {
+      instrument = true
     }
   }
 
