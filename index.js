@@ -7,6 +7,7 @@ var path = require('path')
 var rimraf = require('rimraf')
 var onExit = require('signal-exit')
 var stripBom = require('strip-bom')
+var SourceMapCache = require('./lib/source-map-cache')
 
 function NYC (opts) {
   _.extend(this, {
@@ -17,7 +18,8 @@ function NYC (opts) {
     tempDirectory: './.nyc_output',
     cwd: process.env.NYC_CWD || process.cwd(),
     reporter: 'text',
-    istanbul: require('istanbul')
+    istanbul: require('istanbul'),
+    sourceMapCache: new SourceMapCache()
   }, opts)
 
   if (!Array.isArray(this.reporter)) this.reporter = [this.reporter]
@@ -51,19 +53,26 @@ NYC.prototype._createInstrumenter = function () {
 }
 
 NYC.prototype.addFile = function (filename, returnImmediately) {
-  var instrument = true
   var relFile = path.relative(this.cwd, filename)
+  var instrument = this.shouldInstrumentFile(relFile)
+  var content = stripBom(fs.readFileSync(filename, 'utf8'))
 
-  // only instrument a file if it's not on the exclude list.
-  for (var i = 0, exclude; (exclude = this.exclude[i]) !== undefined; i++) {
-    if (exclude.test(relFile)) {
-      if (returnImmediately) return {}
-      instrument = false
-      break
-    }
+  if (instrument) {
+    content = this.instrumenter.instrumentSync(content, './' + relFile)
+  } else if (returnImmediately) {
+    return {}
   }
 
-  var content = stripBom(fs.readFileSync(filename, 'utf8'))
+  return {
+    instrument: instrument,
+    content: content,
+    relFile: relFile
+  }
+}
+
+NYC.prototype.addContent = function (filename, content) {
+  var relFile = path.relative(this.cwd, filename)
+  var instrument = this.shouldInstrumentFile(relFile)
 
   if (instrument) {
     content = this.instrumenter.instrumentSync(content, './' + relFile)
@@ -74,6 +83,16 @@ NYC.prototype.addFile = function (filename, returnImmediately) {
     content: content,
     relFile: relFile
   }
+}
+
+NYC.prototype.shouldInstrumentFile = function (relFile, returnImmediately) {
+  // only instrument a file if it's not on the exclude list.
+  for (var i = 0, exclude; (exclude = this.exclude[i]) !== undefined; i++) {
+    if (exclude.test(relFile)) {
+      return false
+    }
+  }
+  return true
 }
 
 NYC.prototype.addAllFiles = function () {
@@ -97,11 +116,41 @@ NYC.prototype.addAllFiles = function () {
 NYC.prototype._wrapRequire = function () {
   var _this = this
 
-  // any JS you require should get coverage added.
-  require.extensions['.js'] = function (module, filename) {
-    var obj = _this.addFile(filename)
+  var babelRequireHook = null
+  var requireHook = function (module, filename) {
+    // allow babel's compile hoook to compile
+    // the code -- ignore node_modules, this
+    // helps avoid cyclical require behavior.
+    var content = null
+    if (babelRequireHook && filename.indexOf('node_modules/') === -1) {
+      babelRequireHook({
+        _compile: function (compiledSrc) {
+          _this.sourceMapCache.add(filename, compiledSrc)
+          content = compiledSrc
+        }
+      }, filename)
+    }
+
+    // now instrument the compiled code.
+    var obj = null
+    if (content) {
+      obj = _this.addContent(filename, content)
+    } else {
+      obj = _this.addFile(filename, false)
+    }
+
     module._compile(obj.content, filename)
   }
+
+  // use a getter and setter to capture any external
+  // require hooks that are registered, e.g., babel-core/register
+  require.extensions.__defineGetter__('.js', function () {
+    return requireHook
+  })
+
+  require.extensions.__defineSetter__('.js', function (value) {
+    babelRequireHook = value
+  })
 }
 
 NYC.prototype.cleanup = function () {
@@ -135,7 +184,7 @@ NYC.prototype.writeCoverageFile = function () {
 
   fs.writeFileSync(
     path.resolve(this.tmpDirectory(), './', process.pid + '.json'),
-    JSON.stringify(coverage),
+    JSON.stringify(this.sourceMapCache.applySourceMaps(coverage)),
     'utf-8'
   )
 }

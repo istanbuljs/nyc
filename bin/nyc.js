@@ -6,6 +6,14 @@ var sw = require('spawn-wrap')
 
 if (process.env.NYC_CWD) {
   ;(new NYC()).wrap()
+  if (process.env.NYC_BABEL === '1') {
+    require.main.paths.push(path.resolve(process.env.NYC_CWD, '/node_modules'))
+    try {
+      require('babel-core/register')
+    } catch (e) {
+      require('babel-register')
+    }
+  }
 
   // make sure we can run coverage on
   // our own index.js, I like turtles.
@@ -72,6 +80,12 @@ if (process.env.NYC_CWD) {
       type: 'boolean',
       describe: 'whether or not to instrument all files of the project (not just the ones touched by your test suite)'
     })
+    .option('b', {
+      alias: 'babel',
+      default: false,
+      type: 'boolean',
+      describe: "should nyc include babel's require hook? (you must add babel as a dependency to your project)"
+    })
     .help('h')
     .alias('h', 'help')
     .version(require('../package.json').version)
@@ -106,7 +120,8 @@ if (process.env.NYC_CWD) {
     if (argv.all) nyc.addAllFiles()
 
     sw([__filename], {
-      NYC_CWD: process.cwd()
+      NYC_CWD: process.cwd(),
+      NYC_BABEL: argv.babel ? '1' : '0'
     })
 
     foreground(nyc.mungeArgs(argv), function (done) {

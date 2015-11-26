@@ -1,11 +1,11 @@
 {
   "name": "nyc",
-  "version": "3.2.2",
+  "version": "4.0.0-alpha",
   "description": "a code coverage tool that works well with subprocesses.",
   "main": "index.js",
   "scripts": {
-    "istanbul": "istanbul",
-    "test": "standard && tap --coverage ./test/nyc-test.js"
+    "pretest": "standard",
+    "test": "tap --coverage ./test/*.js"
   },
   "bin": {
     "nyc": "./bin/nyc.js"
@@ -17,6 +17,11 @@
         "bin"
       ]
     }
+  },
+  "standard": {
+    "ignore": [
+      "**/fixtures/**"
+    ]
   },
   "keywords": [
     "coverage",
@@ -37,6 +42,7 @@
   "author": "Ben Coe <ben@npmjs.com>",
   "license": "ISC",
   "dependencies": {
+    "convert-source-map": "^1.1.2",
     "foreground-child": "1.3.0",
     "glob": "^5.0.14",
     "istanbul": "^0.3.19",
@@ -44,11 +50,14 @@
     "mkdirp": "^0.5.0",
     "rimraf": "^2.4.2",
     "signal-exit": "^2.1.1",
+    "source-map": "^0.5.3",
     "spawn-wrap": "^1.0.1",
     "strip-bom": "^2.0.0",
     "yargs": "^3.15.0"
   },
   "devDependencies": {
+    "babel-core": "^6.2.1",
+    "babel-preset-es2015": "^6.1.18",
     "chai": "^3.0.0",
     "sinon": "^1.15.3",
     "standard": "^5.2.1",
