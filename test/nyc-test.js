@@ -43,7 +43,7 @@ describe('nyc', function () {
         cwd: path.resolve(__dirname, './fixtures')
       })
 
-      nyc.exclude.length.should.eql(3)
+      nyc.exclude.length.should.eql(6)
     })
   })
 
