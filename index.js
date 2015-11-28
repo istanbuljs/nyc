@@ -2,6 +2,7 @@
 var _ = require('lodash')
 var fs = require('fs')
 var glob = require('glob')
+var minimatch = require('minimatch')
 var mkdirp = require('mkdirp')
 var path = require('path')
 var rimraf = require('rimraf')
@@ -30,11 +31,9 @@ function NYC (opts) {
   config = config.nyc || {}
 
   // load exclude stanza from config.
-  this.exclude = config.exclude || ['node_modules[\/\\\\]', 'test[\/\\\\]', 'test\\.js']
+  this.exclude = ['node_modules'].concat(config.exclude || ['test', 'test.js'])
   if (!Array.isArray(this.exclude)) this.exclude = [this.exclude]
-  this.exclude = _.map(this.exclude, function (p) {
-    return new RegExp(p)
-  })
+  this.exclude = this._excludeDirs(this.exclude)
 
   // require extensions can be provided as config in package.json.
   this.require = config.require ? config.require : this.require
@@ -63,6 +62,13 @@ NYC.prototype._createInstrumenter = function () {
     noCompact: !instrumenterConfig.compact,
     preserveComments: instrumenterConfig['preserve-comments']
   })
+}
+
+NYC.prototype._excludeDirs = function (excludes) {
+  var appendix = _.map(excludes, function (exclude) {
+    return exclude + '/**'
+  })
+  return _.union(excludes, appendix)
 }
 
 NYC.prototype.addFile = function (filename, returnImmediately) {
@@ -101,7 +107,7 @@ NYC.prototype.addContent = function (filename, content) {
 NYC.prototype.shouldInstrumentFile = function (relFile, returnImmediately) {
   // only instrument a file if it's not on the exclude list.
   for (var i = 0, exclude; (exclude = this.exclude[i]) !== undefined; i++) {
-    if (exclude.test(relFile)) {
+    if (minimatch(relFile, exclude)) {
       return false
     }
   }
@@ -113,7 +119,7 @@ NYC.prototype.addAllFiles = function () {
 
   this._createOutputDirectory()
 
-  glob.sync('**/*.js', {nodir: true}).forEach(function (filename) {
+  glob.sync('**/*.js', {nodir: true, ignore: this.exclude}).forEach(function (filename) {
     var obj = _this.addFile(filename, true)
     if (obj.instrument) {
       module._compile(
