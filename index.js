@@ -8,6 +8,7 @@ var rimraf = require('rimraf')
 var onExit = require('signal-exit')
 var stripBom = require('strip-bom')
 var SourceMapCache = require('./lib/source-map-cache')
+var tryRequire = require('try-require')
 
 function NYC (opts) {
   _.extend(this, {
@@ -19,22 +20,35 @@ function NYC (opts) {
     cwd: process.env.NYC_CWD || process.cwd(),
     reporter: 'text',
     istanbul: require('istanbul'),
-    sourceMapCache: new SourceMapCache()
+    sourceMapCache: new SourceMapCache(),
+    require: []
   }, opts)
 
   if (!Array.isArray(this.reporter)) this.reporter = [this.reporter]
 
+  // you can specify config in the nyc stanza of package.json.
   var config = require(path.resolve(this.cwd, './package.json')).config || {}
   config = config.nyc || {}
 
+  // load exclude stanza from config.
   this.exclude = config.exclude || ['node_modules[\/\\\\]', 'test[\/\\\\]', 'test\\.js']
   if (!Array.isArray(this.exclude)) this.exclude = [this.exclude]
   this.exclude = _.map(this.exclude, function (p) {
     return new RegExp(p)
   })
 
+  // require extensions can be provided as config in package.json.
+  this.require = config.require ? config.require : this.require
+
   this.instrumenter = this._createInstrumenter()
   this._createOutputDirectory()
+}
+
+NYC.prototype._loadAdditionalModules = function () {
+  require.main.paths.push(path.resolve(this.cwd, '/node_modules'))
+  this.require.forEach(function (r) {
+    tryRequire(r)
+  })
 }
 
 NYC.prototype._createInstrumenter = function () {
@@ -174,6 +188,7 @@ NYC.prototype._wrapExit = function () {
 NYC.prototype.wrap = function (bin) {
   this._wrapRequire()
   this._wrapExit()
+  this._loadAdditionalModules()
   return this
 }
 

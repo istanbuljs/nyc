@@ -38,7 +38,7 @@ If you're so inclined, you can simply add nyc to the test stanza in your package
 
 ## Support For Babel/ES2015
 
-with the `--babel` flag, nyc is the easiest way to add ES2015 support to your project:
+nyc is the easiest way to add ES2015 support to your project:
 
 1. install the appropriate babel dependencies for your project (`npm i babel-core babel-preset-es2015 --save`).
 2. create a `.babelrc` file:
@@ -49,10 +49,10 @@ with the `--babel` flag, nyc is the easiest way to add ES2015 support to your pr
 }
 ```
 
-3. install nyc, and run it with the `--babel` flag:
+3. install nyc, and run it with the appropriate `--require` flags:
 
 ```sh
-nyc --babel mocha
+nyc --require babel-core/register mocha
 ```
 
 nyc uses source-maps to map coverage information back to the appropriate lines of the pre-transpiled code:
@@ -122,6 +122,13 @@ adding the following configuration:
 
 By default nyc does not collect coverage for files that have not
 been required, run nyc with the flag `--all` to enable this.
+
+## Require additional modules
+
+The `--require` flag can be provided to `nyc` to indicate that additional
+modules should be required in the subprocess collecting coverage:
+
+`nyc --require babel-core/register --require babel-polyfill mocha`
 
 ## Configuring Istanbul
 

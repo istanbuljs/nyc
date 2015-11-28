@@ -5,15 +5,9 @@ var path = require('path')
 var sw = require('spawn-wrap')
 
 if (process.env.NYC_CWD) {
-  ;(new NYC()).wrap()
-  if (process.env.NYC_BABEL === '1') {
-    require.main.paths.push(path.resolve(process.env.NYC_CWD, '/node_modules'))
-    try {
-      require('babel-core/register')
-    } catch (e) {
-      require('babel-register')
-    }
-  }
+  ;(new NYC({
+    require: process.env.NYC_REQUIRE.split(',')
+  })).wrap()
 
   // make sure we can run coverage on
   // our own index.js, I like turtles.
@@ -80,16 +74,16 @@ if (process.env.NYC_CWD) {
       type: 'boolean',
       describe: 'whether or not to instrument all files of the project (not just the ones touched by your test suite)'
     })
-    .option('b', {
-      alias: 'babel',
-      default: false,
-      type: 'boolean',
-      describe: "should nyc include babel's require hook? (you must add babel as a dependency to your project)"
+    .option('i', {
+      alias: 'require',
+      default: [],
+      describe: 'a list of additional modules that nyc should attempt to require in its subprocess, e.g., babel-register, babel-polyfill.'
     })
     .help('h')
     .alias('h', 'help')
     .version(require('../package.json').version)
     .example('$0 npm test', 'instrument your tests with coverage')
+    .example('$0 --require babel-core/polyfill --require babel-core/register npm test', 'instrument your tests with coverage and babel')
     .example('$0 report --reporter=text-lcov', 'output lcov report after running your tests')
     .epilog('visit http://git.io/vTJJB for list of available reporters')
   var argv = yargs.argv
@@ -118,10 +112,11 @@ if (process.env.NYC_CWD) {
     nyc.cleanup()
 
     if (argv.all) nyc.addAllFiles()
+    if (!Array.isArray(argv.require)) argv.require = [argv.require]
 
     sw([__filename], {
       NYC_CWD: process.cwd(),
-      NYC_BABEL: argv.babel ? '1' : '0'
+      NYC_REQUIRE: argv.require.join(',')
     })
 
     foreground(nyc.mungeArgs(argv), function (done) {
