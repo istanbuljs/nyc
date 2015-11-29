@@ -1,5 +1,9 @@
 ## Change Log
 
+### v4.0.0 (2015/11/29 10:13 -07:00)
+
+- [#58](https://github.com/bcoe/nyc/pull/58) adds support for Babel (@bcoe)
+
 ### v3.2.2 (2015/09/11 22:02 -07:00)
 
 - [#47](https://github.com/bcoe/nyc/pull/47) make the default exclude rules work on Windows (@bcoe)
