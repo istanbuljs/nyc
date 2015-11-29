@@ -36,6 +36,29 @@ If you're so inclined, you can simply add nyc to the test stanza in your package
 }
 ```
 
+## Support For Babel/ES2015
+
+nyc is the easiest way to add ES2015 support to your project:
+
+1. install the appropriate babel dependencies for your project (`npm i babel-core babel-preset-es2015 --save`).
+2. create a `.babelrc` file:
+
+```json
+{
+  "presets": ["es2015"]
+}
+```
+
+3. install nyc, and run it with the appropriate `--require` flags:
+
+```sh
+nyc --require babel-core/register mocha
+```
+
+nyc uses source-maps to map coverage information back to the appropriate lines of the pre-transpiled code:
+
+<img width="350" src="screen.png">
+
 ## Checking Coverage
 
 nyc exposes istanbul's check-coverage tool. After running your tests with nyc,
@@ -99,6 +122,13 @@ adding the following configuration:
 
 By default nyc does not collect coverage for files that have not
 been required, run nyc with the flag `--all` to enable this.
+
+## Require additional modules
+
+The `--require` flag can be provided to `nyc` to indicate that additional
+modules should be required in the subprocess collecting coverage:
+
+`nyc --require babel-core/register --require babel-polyfill mocha`
 
 ## Configuring Istanbul
 

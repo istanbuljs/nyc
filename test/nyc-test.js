@@ -14,6 +14,30 @@ require('tap').mochaGlobals()
 describe('nyc', function () {
   var fixtures = path.resolve(__dirname, './fixtures')
 
+  describe('babel', function () {
+    it('collects coverage when the babel require hook is installed', function (done) {
+      var nyc = (new NYC({
+        cwd: process.cwd()
+      })).wrap()
+
+      delete require.cache[require.resolve('babel-core/register')]
+      require('babel-core/register')
+      require('./fixtures/es6-not-loaded.js')
+
+      nyc.writeCoverageFile()
+      var reports = _.filter(nyc._loadReports(), function (report) {
+        return report['./test/fixtures/es6-not-loaded.js']
+      })
+      var report = reports[0]['./test/fixtures/es6-not-loaded.js']
+
+      reports.length.should.equal(1)
+      report.s['1'].should.equal(1)
+      report.s['2'].should.equal(1)
+
+      return done()
+    })
+  })
+
   describe('cwd', function () {
     function afterEach () {
       delete process.env.NYC_CWD
@@ -300,8 +324,8 @@ describe('nyc', function () {
         cwd: process.cwd()
       })).wrap()
       require('./fixtures/not-loaded')
-      nyc.writeCoverageFile()
 
+      nyc.writeCoverageFile()
       var reports = _.filter(nyc._loadReports(), function (report) {
         return report['./test/fixtures/not-loaded.js']
       })
