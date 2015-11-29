@@ -8,7 +8,6 @@ var rimraf = require('rimraf')
 var onExit = require('signal-exit')
 var stripBom = require('strip-bom')
 var SourceMapCache = require('./lib/source-map-cache')
-var tryRequire = require('try-require')
 
 function NYC (opts) {
   _.extend(this, {
@@ -47,7 +46,7 @@ function NYC (opts) {
 NYC.prototype._loadAdditionalModules = function () {
   require.main.paths.push(path.resolve(this.cwd, '/node_modules'))
   this.require.forEach(function (r) {
-    tryRequire(r)
+    require(r)
   })
 }
 
