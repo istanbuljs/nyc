@@ -104,7 +104,7 @@ NYC.prototype.addContent = function (filename, content) {
   }
 }
 
-NYC.prototype.shouldInstrumentFile = function (relFile, returnImmediately) {
+NYC.prototype.shouldInstrumentFile = function (relFile) {
   // only instrument a file if it's not on the exclude list.
   for (var i = 0, exclude; (exclude = this.exclude[i]) !== undefined; i++) {
     if (minimatch(relFile, exclude)) {
