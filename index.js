@@ -31,9 +31,9 @@ function NYC (opts) {
   config = config.nyc || {}
 
   // load exclude stanza from config.
-  this.exclude = ['node_modules'].concat(config.exclude || ['test', 'test.js'])
+  this.exclude = ['node_modules/**'].concat(config.exclude || ['test/**', 'test.js'])
   if (!Array.isArray(this.exclude)) this.exclude = [this.exclude]
-  this.exclude = this._excludeDirs(this.exclude)
+  this.exclude = this._prepExcludePatterns(this.exclude)
 
   // require extensions can be provided as config in package.json.
   this.require = config.require ? config.require : this.require
@@ -64,11 +64,22 @@ NYC.prototype._createInstrumenter = function () {
   })
 }
 
-NYC.prototype._excludeDirs = function (excludes) {
-  var appendix = _.map(excludes, function (exclude) {
-    return exclude + '/**'
+NYC.prototype._prepExcludePatterns = function (excludes) {
+  var directories = []
+  excludes = _.map(excludes, function (exclude) {
+    // Remove leading "current folder" prefix
+    if (_.startsWith(exclude, './')) {
+      exclude = exclude.slice(2)
+    }
+
+    // Allow gitignore style of directory exclusion
+    if (!_.endsWith(exclude, '/**')) {
+      directories.push(exclude.concat('/**'))
+    }
+
+    return exclude
   })
-  return _.union(excludes, appendix)
+  return _.union(excludes, directories)
 }
 
 NYC.prototype.addFile = function (filename, returnImmediately) {
