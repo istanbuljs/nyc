@@ -6,7 +6,7 @@ var sw = require('spawn-wrap')
 
 if (process.env.NYC_CWD) {
   ;(new NYC({
-    require: process.env.NYC_REQUIRE.split(',')
+    require: (process.env.NYC_REQUIRE ? process.env.NYC_REQUIRE.split(',') : [])
   })).wrap()
 
   // make sure we can run coverage on
