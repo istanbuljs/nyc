@@ -43,7 +43,34 @@ describe('nyc', function () {
         cwd: path.resolve(__dirname, './fixtures')
       })
 
-      nyc.exclude.length.should.eql(6)
+      nyc.exclude.length.should.eql(5)
+    })
+  })
+
+  describe('_prepExcludePatterns', function () {
+    it('should adjust patterns appropriately', function () {
+      var _prepExcludePatterns = NYC.prototype._prepExcludePatterns
+
+      var result = _prepExcludePatterns(['./foo', 'bar/**'])
+
+      result.should.deep.equal(['foo', 'bar/**', 'foo/**'])
+    })
+  })
+
+  describe('shouldInstrumentFile', function () {
+    it('should exclude appropriately', function () {
+      var nyc = new NYC({
+        cwd: fixtures
+      })
+      var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
+
+      // config.excludes: "blarg", "blerg"
+      // nyc always excludes "node_modules/**"
+      shouldInstrumentFile('foo').should.equal(true)
+      shouldInstrumentFile('node_modules/bar').should.equal(false)
+      shouldInstrumentFile('blarg').should.equal(false)
+      shouldInstrumentFile('blarg/foo.js').should.equal(false)
+      shouldInstrumentFile('blerg').should.equal(false)
     })
   })
 
