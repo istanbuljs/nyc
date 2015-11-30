@@ -3,6 +3,7 @@ var _ = require('lodash')
 var fs = require('fs')
 var glob = require('glob')
 var mkdirp = require('mkdirp')
+var Module = require('module')
 var path = require('path')
 var rimraf = require('rimraf')
 var onExit = require('signal-exit')
@@ -129,40 +130,54 @@ NYC.prototype.addAllFiles = function () {
 NYC.prototype._wrapRequire = function () {
   var _this = this
 
-  var babelRequireHook = null
-  var requireHook = function (module, filename) {
-    // allow babel's compile hoook to compile
-    // the code -- ignore node_modules, this
-    // helps avoid cyclical require behavior.
-    var content = null
-    if (babelRequireHook && filename.indexOf('node_modules/') === -1) {
-      babelRequireHook({
-        _compile: function (compiledSrc) {
-          _this.sourceMapCache.add(filename, compiledSrc)
-          content = compiledSrc
-        }
-      }, filename)
-    }
+  var defaultHook = function (module, filename) {
+    // instrument the required file.
+    var obj = _this.addFile(filename, false)
 
-    // now instrument the compiled code.
-    var obj = null
-    if (content) {
-      obj = _this.addContent(filename, content)
-    } else {
-      obj = _this.addFile(filename, false)
-    }
-
-    module._compile(obj.content, filename)
+    // always use node's original _compile method to compile the instrumented
+    // code. if a custom hook invoked the default hook the code should not be
+    // compiled using the custom hook.
+    Module.prototype._compile.call(module, obj.content, filename)
   }
 
-  // use a getter and setter to capture any external
-  // require hooks that are registered, e.g., babel-core/register
+  var wrapCustomHook = function (hook) {
+    return function (module, filename) {
+      // override the _compile method so the code can be instrumented first.
+      module._compile = function (compiledSrc) {
+        _this.sourceMapCache.add(filename, compiledSrc)
+
+        // now instrument the compiled code.
+        var obj = _this.addContent(filename, compiledSrc)
+        Module.prototype._compile.call(module, obj.content, filename)
+      }
+
+      // allow the custom hook to compile the code. it can fall back to the
+      // default hook if necessary (accessed via require.extensions['.js'] prior
+      // to setting itself)
+      hook(module, filename)
+    }
+  }
+
+  var requireHook = defaultHook
+  // track existing hooks so they can be restored without wrapping them a second
+  // time.
+  var hooks = [requireHook]
+
+  // use a getter and setter to capture any external require hooks that are
+  // registered, e.g., babel-core/register
   require.extensions.__defineGetter__('.js', function () {
     return requireHook
   })
 
-  require.extensions.__defineSetter__('.js', function (value) {
-    babelRequireHook = value
+  require.extensions.__defineSetter__('.js', function (hook) {
+    var restoreIndex = hooks.indexOf(hook)
+    if (restoreIndex !== -1) {
+      requireHook = hook
+      hooks.splice(restoreIndex + 1, hooks.length)
+    } else {
+      requireHook = wrapCustomHook(hook)
+      hooks.push(requireHook)
+    }
   })
 }
 
