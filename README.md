@@ -93,17 +93,17 @@ nyc report --reporter=lcov
 
 ## Excluding Files
 
-You can tell nyc to ignore specific files and directories by adding
+You can tell nyc to exclude specific files and directories by adding
 an `config.nyc.exclude` array to your `package.json`. Each element of
 the array is a glob pattern indicating which paths should be omitted.
 
 Globs are matched using [minimatch](https://github.com/isaacs/minimatch)
 
-In addition to patterns specified in the package, nyc will always ignore
+In addition to patterns specified in the package, nyc will always exclude
 files in `node_modules`.
 
-For example, the following config will ignore all of `node_modules`,
-any files with the extension `.spec.js`, and anything in the `build/`
+For example, the following config will exclude all `node_modules`,
+any files with the extension `.spec.js`, and anything in the `build`
 directory:
 
 ```json
@@ -111,13 +111,14 @@ directory:
   "nyc": {
     "exclude": [
       "**/*.spec.js",
-      "build/**"
+      "build"
     ]
   }
 }}
 ```
 
-> Note: exclude defaults to [`test`, `test.js`].
+> Note: exclude defaults to `['test', 'test{,-*}.js']`, which would exclude
+the `test` directory as well as `test.js` and `test-*.js` files
 
 ## Include Reports For Files That Are Not Required
 
