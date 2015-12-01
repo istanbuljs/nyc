@@ -2,6 +2,7 @@
 
 ### Upcoming
 
+- [#65](https://github.com/bcoe/nyc/pull/65) significant improvements to require hooks (@novemberborn)
 - [#64](https://github.com/bcoe/nyc/pull/64) upgrade Istanbul (@novemberborn)
 
 ### v4.0.0 (2015/11/29 10:13 -07:00)
