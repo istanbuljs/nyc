@@ -74,7 +74,7 @@ NYC.prototype._prepExcludePatterns = function (excludes) {
 
     // Allow gitignore style of directory exclusion
     if (!_.endsWith(exclude, '/**')) {
-      directories.push(exclude.concat('/**'))
+      directories.push(exclude.replace(/\/$/, '').concat('/**'))
     }
 
     return exclude
