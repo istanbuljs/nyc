@@ -31,7 +31,7 @@ function NYC (opts) {
   config = config.nyc || {}
 
   // load exclude stanza from config.
-  this.exclude = ['node_modules/**'].concat(config.exclude || ['test/**', 'test.js'])
+  this.exclude = ['**/node_modules/**'].concat(config.exclude || ['test/**', 'test{,-*}.js'])
   if (!Array.isArray(this.exclude)) this.exclude = [this.exclude]
   this.exclude = this._prepExcludePatterns(this.exclude)
 
