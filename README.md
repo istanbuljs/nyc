@@ -36,28 +36,17 @@ If you're so inclined, you can simply add nyc to the test stanza in your package
 }
 ```
 
-## Support For Babel/ES2015
+## Support For Custom Require Hooks (Babel! ES2015!)
 
-nyc is the easiest way to add ES2015 support to your project:
+nyc supports custom require hooks like
+[`babel-register`](http://babeljs.io/docs/usage/require/). If necessary nyc can
+load the hooks for you, [using the `--require`
+flag](#require-additional-modules).
 
-1. install the appropriate babel dependencies for your project (`npm i babel-core babel-preset-es2015 --save`).
-2. create a `.babelrc` file:
-
-```json
-{
-  "presets": ["es2015"]
-}
-```
-
-3. install nyc, and run it with the appropriate `--require` flags:
-
-```sh
-nyc --require babel-core/register mocha
-```
-
-nyc uses source-maps to map coverage information back to the appropriate lines of the pre-transpiled code:
-
-<img width="350" src="screen.png">
+Source maps are used to map coverage information back to the appropriate lines
+of the pre-transpiled code. You'll have to configure your custom require hook
+to inline the source map in the transpiled code. For Babel that means setting
+the `sourceMaps` option to `inline`.
 
 ## Checking Coverage
 
