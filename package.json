@@ -14,7 +14,8 @@
     "nyc": {
       "exclude": [
         "node_modules",
-        "bin"
+        "bin",
+        "coverage"
       ]
     }
   },
