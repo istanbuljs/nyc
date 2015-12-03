@@ -1,87 +1,80 @@
 /* global describe, it */
 
 var _ = require('lodash')
-var fs = require('fs')
+var path = require('path')
 
-var coverage = JSON.parse(fs.readFileSync('./test/fixtures/coverage-to-map.json', 'utf-8'))
+var fixture = require('source-map-fixtures').inline('branching')
+// Coverage for the fixture is stored relative to the root directory. Here
+// compute the path to the fixture file relative to the root directory.
+var relpath = './' + path.relative(path.join(__dirname, '..'), fixture.file)
+// Compute the number of lines in the original source, excluding any line break
+// at the end of the file.
+var maxLine = fixture.sourceContentSync().trimRight().split(/\r?\n/).length
+
 var SourceMapCache = require('../lib/source-map-cache')
 var sourceMapCache = new SourceMapCache()
-sourceMapCache.add('./test/fixtures/es6-not-loaded.js', fs.readFileSync('./test/fixtures/code-with-map.js', 'utf-8'))
+sourceMapCache.add(relpath, fixture.contentSync())
+
+var coverage = require('./fixtures/coverage')
 
 require('chai').should()
 require('tap').mochaGlobals()
 
-// Note: original source code was 20 lines of es6
-// compiled code is 31 lines of es5 code.
 describe('source-map-cache', function () {
   describe('statements', function () {
     it('drops statements that have no mapping back to the original source code', function () {
       var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      Object.keys(mappedCoverage['./test/fixtures/es6-not-loaded.js'].s).should.be.lt(
-        coverage['./test/fixtures/es6-not-loaded.js'].s
-      )
-      Object.keys(
-        mappedCoverage['./test/fixtures/es6-not-loaded.js'].statementMap
-      ).length.should.equal(
-        Object.keys(mappedCoverage['./test/fixtures/es6-not-loaded.js'].s).length
-      )
+      Object.keys(mappedCoverage[relpath].s)
+        .should.be.lt(coverage[relpath].s)
+      Object.keys(mappedCoverage[relpath].statementMap).length
+        .should.equal(Object.keys(mappedCoverage[relpath].s).length)
     })
 
     it('maps all statements back to their original loc', function () {
       var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      var statements = _.values(mappedCoverage['./test/fixtures/es6-not-loaded.js'].statementMap)
+      var statements = _.values(mappedCoverage[relpath].statementMap)
       var maxStatement = _.max(statements, function (s) {
         return Math.max(s.start.line, s.end.line)
       })
-      Math.max(maxStatement.start.line, maxStatement.end.line).should.be.lte(20)
+      Math.max(maxStatement.start.line, maxStatement.end.line).should.be.lte(maxLine)
     })
   })
 
   describe('functions', function () {
     it('drops functions that have no mapping back to the original source code', function () {
       var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      Object.keys(mappedCoverage['./test/fixtures/es6-not-loaded.js'].f).should.be.lt(
-        coverage['./test/fixtures/es6-not-loaded.js'].f
-      )
-      Object.keys(
-        mappedCoverage['./test/fixtures/es6-not-loaded.js'].fnMap
-      ).length.should.equal(
-        Object.keys(mappedCoverage['./test/fixtures/es6-not-loaded.js'].f).length
-      )
+      Object.keys(mappedCoverage[relpath].f)
+        .should.be.lt(coverage[relpath].f)
+      Object.keys(mappedCoverage[relpath].fnMap).length
+        .should.equal(Object.keys(mappedCoverage[relpath].f).length)
     })
 
     it('maps all functions back to their original loc', function () {
-      var coverage = JSON.parse(fs.readFileSync('./test/fixtures/coverage-to-map.json', 'utf-8'))
       var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      var functions = _.values(mappedCoverage['./test/fixtures/es6-not-loaded.js'].fnMap)
+      var functions = _.values(mappedCoverage[relpath].fnMap)
       var maxFunction = _.max(functions, function (f) {
         return f.line
       })
-      Math.max(maxFunction.line).should.be.lte(20)
+      Math.max(maxFunction.line).should.be.lte(maxLine)
     })
   })
 
   describe('branches', function () {
     it('drops branches that have no mapping back to the original source code', function () {
       var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      Object.keys(mappedCoverage['./test/fixtures/es6-not-loaded.js'].b).should.be.lt(
-        coverage['./test/fixtures/es6-not-loaded.js'].b
-      )
-      Object.keys(
-        mappedCoverage['./test/fixtures/es6-not-loaded.js'].branchMap
-      ).length.should.equal(
-        Object.keys(mappedCoverage['./test/fixtures/es6-not-loaded.js'].b).length
-      )
+      Object.keys(mappedCoverage[relpath].b)
+        .should.be.lt(coverage[relpath].b)
+      Object.keys(mappedCoverage[relpath].branchMap).length
+        .should.equal(Object.keys(mappedCoverage[relpath].b).length)
     })
 
     it('maps all branches back to their original loc', function () {
-      var coverage = JSON.parse(fs.readFileSync('./test/fixtures/coverage-to-map.json', 'utf-8'))
       var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      var branches = _.values(mappedCoverage['./test/fixtures/es6-not-loaded.js'].branchMap)
+      var branches = _.values(mappedCoverage[relpath].branchMap)
       var maxBranch = _.max(branches, function (b) {
         return b.line
       })
-      Math.max(maxBranch.line).should.be.lte(20)
+      Math.max(maxBranch.line).should.be.lte(maxLine)
     })
   })
 })
