@@ -1,5 +1,5 @@
 var signalExit = require('signal-exit')
-var spawn = require('win-spawn')
+var spawn = require('child_process').spawn
 
 module.exports = function (program, args, cb) {
   var arrayIndex = arguments.length
