@@ -2,4 +2,3 @@
 coverage
 node_modules
 !node_modules/spawn-wrap
-!node_modules/foreground-child
