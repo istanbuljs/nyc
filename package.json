@@ -15,7 +15,9 @@
       "exclude": [
         "node_modules",
         "bin",
-        "coverage"
+        "coverage",
+        "test/nyc-test.js",
+        "test/source-map-cache.js"
       ]
     }
   },
