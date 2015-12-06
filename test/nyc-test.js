@@ -14,30 +14,6 @@ require('tap').mochaGlobals()
 describe('nyc', function () {
   var fixtures = path.resolve(__dirname, './fixtures')
 
-  describe('babel', function () {
-    it('collects coverage when the babel require hook is installed', function (done) {
-      var nyc = (new NYC({
-        cwd: process.cwd()
-      })).wrap()
-
-      delete require.cache[require.resolve('babel-core/register')]
-      require('babel-core/register')
-      require('./fixtures/es6-not-loaded.js')
-
-      nyc.writeCoverageFile()
-      var reports = _.filter(nyc._loadReports(), function (report) {
-        return report['./test/fixtures/es6-not-loaded.js']
-      })
-      var report = reports[0]['./test/fixtures/es6-not-loaded.js']
-
-      reports.length.should.equal(1)
-      report.s['1'].should.equal(1)
-      report.s['2'].should.equal(1)
-
-      return done()
-    })
-  })
-
   describe('cwd', function () {
     function afterEach () {
       delete process.env.NYC_CWD
@@ -72,12 +48,11 @@ describe('nyc', function () {
   })
 
   describe('wrap', function () {
-    var nyc
-
     it('wraps modules with coverage counters when they are required', function () {
-      nyc = (new NYC({
+      var nyc = new NYC({
         cwd: process.cwd()
-      })).wrap()
+      })
+      nyc.wrap()
 
       // clear the module cache so that
       // we pull index.js in again and wrap it.
@@ -89,7 +64,39 @@ describe('nyc', function () {
       index.should.match(/__cov_/)
     })
 
+    describe('custom require hooks are installed', function () {
+      it('wraps modules with coverage counters when the custom require hook compiles them', function () {
+        var hook = sinon.spy(function (module, filename) {
+          module._compile(fs.readFileSync(filename, 'utf8'))
+        })
+
+        var nyc = new NYC({
+          cwd: process.cwd()
+        })
+        nyc.wrap()
+
+        // clear the module cache so that
+        // we pull index.js in again and wrap it.
+        var name = require.resolve('../')
+        delete require.cache[name]
+
+        // install the custom require hook
+        require.extensions['.js'] = hook
+
+        // when we require index.js it should be wrapped.
+        var index = require('../')
+        index.should.match(/__cov_/)
+
+        // and the hook should have been called
+        hook.calledOnce.should.be.true
+      })
+    })
+
     function testSignal (signal, done) {
+      var nyc = (new NYC({
+        cwd: process.cwd()
+      })).wrap()
+
       var proc = spawn(process.execPath, ['./test/fixtures/' + signal + '.js'], {
         cwd: process.cwd(),
         env: process.env,
@@ -114,6 +121,10 @@ describe('nyc', function () {
     })
 
     it('does not output coverage for files that have not been included, by default', function (done) {
+      var nyc = (new NYC({
+        cwd: process.cwd()
+      })).wrap()
+
       var reports = _.filter(nyc._loadReports(), function (report) {
         return report['./test/fixtures/not-loaded.js']
       })
