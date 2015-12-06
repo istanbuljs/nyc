@@ -45,9 +45,16 @@ function NYC (opts) {
 }
 
 NYC.prototype._loadAdditionalModules = function () {
-  require.main.paths.push(path.resolve(this.cwd, '/node_modules'))
+  var _this = this
   this.require.forEach(function (r) {
-    require(r)
+    try {
+      // first attempt to require the module relative to
+      // the directory being instrumented.
+      require(path.resolve(_this.cwd, './node_modules', r))
+    } catch (e) {
+      // now try other locations, .e.g, the nyc node_modules folder.
+      require(r)
+    }
   })
 }
 

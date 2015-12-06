@@ -7,6 +7,8 @@ var fixture = require('source-map-fixtures').inline('branching')
 // Coverage for the fixture is stored relative to the root directory. Here
 // compute the path to the fixture file relative to the root directory.
 var relpath = './' + path.relative(path.join(__dirname, '..'), fixture.file)
+// the sourcemap itself remaps the path.
+var mappedPath = './' + path.join(path.dirname(relpath), '../src/branching.js')
 // Compute the number of lines in the original source, excluding any line break
 // at the end of the file.
 var maxLine = fixture.sourceContentSync().trimRight().split(/\r?\n/).length
@@ -24,15 +26,15 @@ describe('source-map-cache', function () {
   describe('statements', function () {
     it('drops statements that have no mapping back to the original source code', function () {
       var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      Object.keys(mappedCoverage[relpath].s)
+      Object.keys(mappedCoverage[mappedPath].s)
         .should.be.lt(coverage[relpath].s)
-      Object.keys(mappedCoverage[relpath].statementMap).length
-        .should.equal(Object.keys(mappedCoverage[relpath].s).length)
+      Object.keys(mappedCoverage[mappedPath].statementMap).length
+        .should.equal(Object.keys(mappedCoverage[mappedPath].s).length)
     })
 
     it('maps all statements back to their original loc', function () {
       var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      var statements = _.values(mappedCoverage[relpath].statementMap)
+      var statements = _.values(mappedCoverage[mappedPath].statementMap)
       var maxStatement = _.max(statements, function (s) {
         return Math.max(s.start.line, s.end.line)
       })
@@ -43,15 +45,15 @@ describe('source-map-cache', function () {
   describe('functions', function () {
     it('drops functions that have no mapping back to the original source code', function () {
       var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      Object.keys(mappedCoverage[relpath].f)
+      Object.keys(mappedCoverage[mappedPath].f)
         .should.be.lt(coverage[relpath].f)
-      Object.keys(mappedCoverage[relpath].fnMap).length
-        .should.equal(Object.keys(mappedCoverage[relpath].f).length)
+      Object.keys(mappedCoverage[mappedPath].fnMap).length
+        .should.equal(Object.keys(mappedCoverage[mappedPath].f).length)
     })
 
     it('maps all functions back to their original loc', function () {
       var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      var functions = _.values(mappedCoverage[relpath].fnMap)
+      var functions = _.values(mappedCoverage[mappedPath].fnMap)
       var maxFunction = _.max(functions, function (f) {
         return f.line
       })
@@ -62,15 +64,15 @@ describe('source-map-cache', function () {
   describe('branches', function () {
     it('drops branches that have no mapping back to the original source code', function () {
       var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      Object.keys(mappedCoverage[relpath].b)
+      Object.keys(mappedCoverage[mappedPath].b)
         .should.be.lt(coverage[relpath].b)
-      Object.keys(mappedCoverage[relpath].branchMap).length
-        .should.equal(Object.keys(mappedCoverage[relpath].b).length)
+      Object.keys(mappedCoverage[mappedPath].branchMap).length
+        .should.equal(Object.keys(mappedCoverage[mappedPath].b).length)
     })
 
     it('maps all branches back to their original loc', function () {
       var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      var branches = _.values(mappedCoverage[relpath].branchMap)
+      var branches = _.values(mappedCoverage[mappedPath].branchMap)
       var maxBranch = _.max(branches, function (b) {
         return b.line
       })
