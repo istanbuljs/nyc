@@ -72,6 +72,7 @@ NYC.prototype.addFile = function (filename, returnImmediately) {
   var content = stripBom(fs.readFileSync(filename, 'utf8'))
 
   if (instrument) {
+    this.sourceMapCache.add(filename, content)
     content = this.instrumenter.instrumentSync(content, './' + relFile)
   } else if (returnImmediately) {
     return {}
