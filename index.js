@@ -84,7 +84,7 @@ NYC.prototype._prepExcludePatterns = function (excludes) {
 
 NYC.prototype.addFile = function (filename, returnImmediately) {
   var relFile = path.relative(this.cwd, filename)
-  var instrument = this.shouldInstrumentFile(relFile)
+  var instrument = this.shouldInstrumentFile(relFile, filename)
   var content = stripBom(fs.readFileSync(filename, 'utf8'))
 
   if (instrument) {
@@ -102,7 +102,7 @@ NYC.prototype.addFile = function (filename, returnImmediately) {
 
 NYC.prototype.addContent = function (filename, content) {
   var relFile = path.relative(this.cwd, filename)
-  var instrument = this.shouldInstrumentFile(relFile)
+  var instrument = this.shouldInstrumentFile(relFile, filename)
 
   if (instrument) {
     content = this.instrumenter.instrumentSync(content, './' + relFile)
@@ -115,15 +115,14 @@ NYC.prototype.addContent = function (filename, content) {
   }
 }
 
-NYC.prototype.shouldInstrumentFile = function (relFile) {
-  // Remove leading "current folder" prefix
-  if (_.startsWith(relFile, './')) {
-    relFile = relFile.slice(2)
-  }
+NYC.prototype.shouldInstrumentFile = function () {
+  var filePaths = _.toArray(arguments).map(function (filePath) {
+    return path.normalize(filePath)
+  })
 
   // only instrument a file if it's not on the exclude list.
   for (var i = 0, exclude; (exclude = this.exclude[i]) !== undefined; i++) {
-    if (minimatch(relFile, exclude)) {
+    if (minimatch.match(filePaths, exclude).length) {
       return false
     }
   }

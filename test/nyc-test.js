@@ -123,6 +123,27 @@ describe('nyc', function () {
       shouldInstrumentFile('blerg').should.equal(false)
       shouldInstrumentFile('./blerg').should.equal(false)
     })
+
+    it('should handle example symlinked node_module', function () {
+      var nyc = new NYC({
+        cwd: fixtures
+      })
+      var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
+
+      var relPath = '../../nyc/node_modules/glob/glob.js'
+      var fullPath = '/Users/user/nyc/node_modules/glob/glob.js'
+
+      // Relative path will sneak past minimatch
+      // Leading dot causes problems
+      shouldInstrumentFile(relPath).should.equal(true)
+
+      // Full path should be excluded (node_modules)
+      shouldInstrumentFile(fullPath).should.equal(false)
+
+      // Send both relative and absolute path
+      // Results in exclusion (include = false)
+      shouldInstrumentFile(relPath, fullPath).should.equal(false)
+    })
   })
 
   describe('wrap', function () {
