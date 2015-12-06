@@ -15,7 +15,10 @@
       "exclude": [
         "node_modules",
         "bin",
-        "coverage"
+        "coverage",
+        "test/nyc-test.js",
+        "test/source-map-cache.js",
+        "test/fixtures/_generateCoverage.js"
       ]
     }
   },
@@ -57,10 +60,9 @@
     "yargs": "^3.15.0"
   },
   "devDependencies": {
-    "babel-core": "^6.2.1",
-    "babel-preset-es2015": "^6.1.18",
     "chai": "^3.0.0",
     "sinon": "^1.15.3",
+    "source-map-fixtures": "^0.1.0",
     "standard": "^5.2.1",
     "tap": "^1.3.4"
   },
