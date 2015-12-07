@@ -60,6 +60,7 @@
     "yargs": "^3.15.0"
   },
   "devDependencies": {
+    "capture-require": "^0.1.0",
     "chai": "^3.0.0",
     "sinon": "^1.15.3",
     "source-map-fixtures": "^0.1.0",
