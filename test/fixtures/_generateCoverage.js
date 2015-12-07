@@ -14,14 +14,9 @@ var NYC = require('../../')
 // Load the 'branching' source map fixture.
 var fixture = require('source-map-fixtures').inline('branching')
 
-// Prevent pollution from earlier nyc runs.
-var tempDirectory = path.join(__dirname, '.nyc_output')
-rimraf.sync(tempDirectory)
-
 // Inject nyc into this process.
 var nyc = (new NYC({
-  cwd: path.join(__dirname, '..', '..'),
-  tempDirectory: tempDirectory
+  cwd: path.join(__dirname, '..', '..')
 })).wrap()
 // Override the exclude option, source-map-fixtures is inside node_modules but
 // should not be excluded when generating the coverage report.
@@ -31,18 +26,23 @@ nyc.exclude = []
 // coverage.
 fixture.require().run()
 
-// Write the coverage file so reports can be loaded.
-nyc.writeCoverageFile()
+// Copy NYC#writeCoverageFile() behavior to get the coverage object, before
+// source maps have been applied.
+var coverage = global.__coverage__
+if (typeof __coverage__ === 'object') coverage = __coverage__
+if (!coverage) {
+  console.error('No coverage.')
+  process.exit(1)
+}
 
-var reports = _.values(nyc._loadReports()[0])
+var reports = _.values(coverage)
 if (reports.length !== 1) {
   console.error('Expected 1 report to be generated, got ' + reports.length)
   process.exit(1)
 }
 
-var coverage = reports[0]
 fs.writeFileSync(
   path.join(__dirname, 'coverage.js'),
   '// Generated using node test/fixtures/_generateCoverage.js\n' +
-  'exports[' + JSON.stringify(coverage.path) + '] = ' + JSON.stringify(coverage, null, 2) + '\n')
-console.log('Written coverage report.')
+  'exports[' + JSON.stringify(reports[0].path) + '] = ' + JSON.stringify(reports[0], null, 2) + '\n')
+  console.log('Written coverage report.')
