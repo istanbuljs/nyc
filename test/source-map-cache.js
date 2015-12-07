@@ -8,7 +8,7 @@ var fixture = require('source-map-fixtures').inline('branching')
 // compute the path to the fixture file relative to the root directory.
 var relpath = './' + path.relative(path.join(__dirname, '..'), fixture.file)
 // the sourcemap itself remaps the path.
-var mappedPath = './' + path.join(path.dirname(relpath), '../src/branching.js')
+var mappedPath = './' + path.relative(path.join(__dirname, '..'), fixture.sourceFile)
 // Compute the number of lines in the original source, excluding any line break
 // at the end of the file.
 var maxLine = fixture.sourceContentSync().trimRight().split(/\r?\n/).length
