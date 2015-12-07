@@ -62,7 +62,7 @@
   "devDependencies": {
     "chai": "^3.0.0",
     "sinon": "^1.15.3",
-    "source-map-fixtures": "^0.1.0",
+    "source-map-fixtures": "^0.2.0",
     "standard": "^5.2.1",
     "tap": "^1.3.4"
   },
