@@ -10,8 +10,8 @@
   "config": {
     "nyc": {
       "exclude": [
-        "blarg",
-        "blerg"
+        "**/blarg",
+        "**/blerg"
       ]
     }
   }

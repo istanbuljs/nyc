@@ -47,11 +47,11 @@ describe('nyc', function () {
     })
   })
 
-  describe('_prepExcludePatterns', function () {
+  describe('_prepGlobPatterns', function () {
     it('should adjust patterns appropriately', function () {
-      var _prepExcludePatterns = NYC.prototype._prepExcludePatterns
+      var _prepGlobPatterns = NYC.prototype._prepGlobPatterns
 
-      var result = _prepExcludePatterns(['./foo', 'bar/**', 'baz/'])
+      var result = _prepGlobPatterns(['./foo', 'bar/**', 'baz/'])
 
       result.should.deep.equal([
         'foo',
@@ -69,7 +69,7 @@ describe('nyc', function () {
 
       // Root package contains config.exclude
       // Restore exclude to default patterns
-      nyc.exclude = nyc._prepExcludePatterns([
+      nyc.exclude = nyc._prepGlobPatterns([
         '**/node_modules/**',
         'test/**',
         'test{,-*}.js'
@@ -78,13 +78,14 @@ describe('nyc', function () {
       var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
 
       // nyc always excludes "node_modules/**"
-      shouldInstrumentFile('foo').should.equal(true)
-      shouldInstrumentFile('node_modules/bar').should.equal(false)
-      shouldInstrumentFile('foo/node_modules/bar').should.equal(false)
-      shouldInstrumentFile('test.js').should.equal(false)
-      shouldInstrumentFile('testfoo.js').should.equal(true)
-      shouldInstrumentFile('test-foo.js').should.equal(false)
-      shouldInstrumentFile('lib/test.js').should.equal(true)
+      shouldInstrumentFile('foo', 'foo').should.equal(true)
+      shouldInstrumentFile('node_modules/bar', 'node_modules/bar').should.equal(false)
+      shouldInstrumentFile('foo/node_modules/bar', 'foo/node_modules/bar').should.equal(false)
+      shouldInstrumentFile('test.js', 'test.js').should.equal(false)
+      shouldInstrumentFile('testfoo.js', 'testfoo.js').should.equal(true)
+      shouldInstrumentFile('test-foo.js', 'test-foo.js').should.equal(false)
+      shouldInstrumentFile('lib/test.js', 'lib/test.js').should.equal(true)
+      shouldInstrumentFile('/foo/bar/test.js', './test.js').should.equal(false)
     })
 
     it('should exclude appropriately with config.exclude', function () {
@@ -94,10 +95,10 @@ describe('nyc', function () {
       var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
 
       // config.excludes: "blarg", "blerg"
-      shouldInstrumentFile('blarg').should.equal(false)
-      shouldInstrumentFile('blarg/foo.js').should.equal(false)
-      shouldInstrumentFile('blerg').should.equal(false)
-      shouldInstrumentFile('./blerg').should.equal(false)
+      shouldInstrumentFile('blarg', 'blarg').should.equal(false)
+      shouldInstrumentFile('blarg/foo.js', 'blarg/foo.js').should.equal(false)
+      shouldInstrumentFile('blerg', 'blerg').should.equal(false)
+      shouldInstrumentFile('./blerg', './blerg').should.equal(false)
     })
 
     it('should handle example symlinked node_module', function () {
@@ -109,16 +110,28 @@ describe('nyc', function () {
       var relPath = '../../nyc/node_modules/glob/glob.js'
       var fullPath = '/Users/user/nyc/node_modules/glob/glob.js'
 
-      // Relative path will sneak past minimatch
-      // Leading dot causes problems
-      shouldInstrumentFile(relPath).should.equal(true)
+      shouldInstrumentFile(fullPath, relPath).should.equal(false)
 
       // Full path should be excluded (node_modules)
-      shouldInstrumentFile(fullPath).should.equal(false)
+      shouldInstrumentFile(fullPath, relPath).should.equal(false)
 
       // Send both relative and absolute path
       // Results in exclusion (include = false)
-      shouldInstrumentFile(relPath, fullPath).should.equal(false)
+      shouldInstrumentFile(fullPath, relPath).should.equal(false)
+    })
+
+    it('allows a file to be included rather than excluded', function () {
+      var nyc = new NYC()
+
+      // Root package contains config.exclude
+      // Restore exclude to default patterns
+      nyc.include = nyc._prepGlobPatterns([
+        'test.js'
+      ])
+
+      var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
+      shouldInstrumentFile('test.js', 'test.js').should.equal(true)
+      shouldInstrumentFile('index.js', 'index.js').should.equal(false)
     })
   })
 

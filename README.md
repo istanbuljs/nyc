@@ -97,7 +97,7 @@ You can tell nyc to exclude specific files and directories by adding
 an `config.nyc.exclude` array to your `package.json`. Each element of
 the array is a glob pattern indicating which paths should be omitted.
 
-Globs are matched using [minimatch](https://github.com/isaacs/minimatch)
+Globs are matched using [micromatch](https://www.npmjs.com/package/micromatch)
 
 In addition to patterns specified in the package, nyc will always exclude
 files in `node_modules`.
@@ -119,6 +119,19 @@ directory:
 
 > Note: exclude defaults to `['test', 'test{,-*}.js']`, which would exclude
 the `test` directory as well as `test.js` and `test-*.js` files
+
+## Including Files
+
+As an alternative to providing a list of files to `exclude`, you can provide
+an `include` key to specify specific files that should be covered:
+
+```json
+{"config": {
+  "nyc": {
+    "include": ["**/build/umd/moment.js"]
+  }
+}}
+```
 
 ## Include Reports For Files That Are Not Required
 

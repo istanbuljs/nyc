@@ -2,7 +2,7 @@
 var _ = require('lodash')
 var fs = require('fs')
 var glob = require('glob')
-var minimatch = require('minimatch')
+var micromatch = require('micromatch')
 var mkdirp = require('mkdirp')
 var Module = require('module')
 var path = require('path')
@@ -32,9 +32,10 @@ function NYC (opts) {
   config = config.nyc || {}
 
   // load exclude stanza from config.
+  this.include = this._prepGlobPatterns(config.include)
   this.exclude = ['**/node_modules/**'].concat(config.exclude || ['test/**', 'test{,-*}.js'])
   if (!Array.isArray(this.exclude)) this.exclude = [this.exclude]
-  this.exclude = this._prepExcludePatterns(this.exclude)
+  this.exclude = this._prepGlobPatterns(this.exclude)
 
   // require extensions can be provided as config in package.json.
   this.require = config.require ? config.require : this.require
@@ -72,27 +73,29 @@ NYC.prototype._createInstrumenter = function () {
   })
 }
 
-NYC.prototype._prepExcludePatterns = function (excludes) {
+NYC.prototype._prepGlobPatterns = function (patterns) {
+  if (!patterns) return patterns
+
   var directories = []
-  excludes = _.map(excludes, function (exclude) {
+  patterns = _.map(patterns, function (pattern) {
     // Remove leading "current folder" prefix
-    if (_.startsWith(exclude, './')) {
-      exclude = exclude.slice(2)
+    if (_.startsWith(pattern, './')) {
+      pattern = pattern.slice(2)
     }
 
     // Allow gitignore style of directory exclusion
-    if (!_.endsWith(exclude, '/**')) {
-      directories.push(exclude.replace(/\/$/, '').concat('/**'))
+    if (!_.endsWith(pattern, '/**')) {
+      directories.push(pattern.replace(/\/$/, '').concat('/**'))
     }
 
-    return exclude
+    return pattern
   })
-  return _.union(excludes, directories)
+  return _.union(patterns, directories)
 }
 
 NYC.prototype.addFile = function (filename, returnImmediately) {
   var relFile = path.relative(this.cwd, filename)
-  var instrument = this.shouldInstrumentFile(relFile, filename)
+  var instrument = this.shouldInstrumentFile(filename, relFile)
   var content = stripBom(fs.readFileSync(filename, 'utf8'))
 
   if (instrument) {
@@ -111,7 +114,7 @@ NYC.prototype.addFile = function (filename, returnImmediately) {
 
 NYC.prototype.addContent = function (filename, content) {
   var relFile = path.relative(this.cwd, filename)
-  var instrument = this.shouldInstrumentFile(relFile, filename)
+  var instrument = this.shouldInstrumentFile(filename, relFile)
 
   if (instrument) {
     content = this.instrumenter.instrumentSync(content, './' + relFile)
@@ -124,18 +127,14 @@ NYC.prototype.addContent = function (filename, content) {
   }
 }
 
-NYC.prototype.shouldInstrumentFile = function () {
-  var filePaths = _.toArray(arguments).map(function (filePath) {
-    return path.normalize(filePath)
-  })
+NYC.prototype.shouldInstrumentFile = function (filename, relFile) {
+  relFile = relFile.replace(/^\.\//, '') // remove leading './'.
 
-  // only instrument a file if it's not on the exclude list.
-  for (var i = 0, exclude; (exclude = this.exclude[i]) !== undefined; i++) {
-    if (minimatch.match(filePaths, exclude).length) {
-      return false
-    }
+  if (this.include) {
+    return micromatch.any(filename, this.include) || micromatch.any(relFile, this.include)
+  } else {
+    return !(micromatch.any(filename, this.exclude) || micromatch.any(relFile, this.exclude))
   }
-  return true
 }
 
 NYC.prototype.addAllFiles = function () {
