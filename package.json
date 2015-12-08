@@ -4,8 +4,9 @@
   "description": "a code coverage tool that works well with subprocesses.",
   "main": "index.js",
   "scripts": {
-    "pretest": "standard",
-    "test": "tap --coverage ./test/*.js"
+    "test": "npm run clean && npm run build && tap --coverage ./test/built-* ./test/source-map-cache.js -b",
+    "clean": "rm -rf ./.nyc_output && rm -rf ./test/fixtures/.nyc_output",
+    "build": "rm -rf ./test/built-* && node ./test/_build-tests.js"
   },
   "bin": {
     "nyc": "./bin/nyc.js"
@@ -18,6 +19,9 @@
         "coverage",
         "test/nyc-test.js",
         "test/source-map-cache.js",
+        "test/_build-tests.js",
+        "test/_header.js",
+        "test/built-.*\\.js",
         "test/fixtures/_generateCoverage.js"
       ]
     }
@@ -61,6 +65,7 @@
   },
   "devDependencies": {
     "chai": "^3.0.0",
+    "parse-function": "^2.0.1",
     "sinon": "^1.15.3",
     "source-map-fixtures": "^0.2.0",
     "standard": "^5.2.1",
