@@ -43,7 +43,82 @@ describe('nyc', function () {
         cwd: path.resolve(__dirname, './fixtures')
       })
 
-      nyc.exclude.length.should.eql(3)
+      nyc.exclude.length.should.eql(5)
+    })
+  })
+
+  describe('_prepExcludePatterns', function () {
+    it('should adjust patterns appropriately', function () {
+      var _prepExcludePatterns = NYC.prototype._prepExcludePatterns
+
+      var result = _prepExcludePatterns(['./foo', 'bar/**', 'baz/'])
+
+      result.should.deep.equal([
+        'foo',
+        'bar/**',
+        'baz/',
+        'foo/**', // Appended `/**`
+        'baz/**'  // Removed trailing slash before appending `/**`
+      ])
+    })
+  })
+
+  describe('shouldInstrumentFile', function () {
+    it('should exclude appropriately with defaults', function () {
+      var nyc = new NYC()
+
+      // Root package contains config.exclude
+      // Restore exclude to default patterns
+      nyc.exclude = nyc._prepExcludePatterns([
+        '**/node_modules/**',
+        'test/**',
+        'test{,-*}.js'
+      ])
+
+      var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
+
+      // nyc always excludes "node_modules/**"
+      shouldInstrumentFile('foo').should.equal(true)
+      shouldInstrumentFile('node_modules/bar').should.equal(false)
+      shouldInstrumentFile('foo/node_modules/bar').should.equal(false)
+      shouldInstrumentFile('test.js').should.equal(false)
+      shouldInstrumentFile('testfoo.js').should.equal(true)
+      shouldInstrumentFile('test-foo.js').should.equal(false)
+      shouldInstrumentFile('lib/test.js').should.equal(true)
+    })
+
+    it('should exclude appropriately with config.exclude', function () {
+      var nyc = new NYC({
+        cwd: fixtures
+      })
+      var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
+
+      // config.excludes: "blarg", "blerg"
+      shouldInstrumentFile('blarg').should.equal(false)
+      shouldInstrumentFile('blarg/foo.js').should.equal(false)
+      shouldInstrumentFile('blerg').should.equal(false)
+      shouldInstrumentFile('./blerg').should.equal(false)
+    })
+
+    it('should handle example symlinked node_module', function () {
+      var nyc = new NYC({
+        cwd: fixtures
+      })
+      var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
+
+      var relPath = '../../nyc/node_modules/glob/glob.js'
+      var fullPath = '/Users/user/nyc/node_modules/glob/glob.js'
+
+      // Relative path will sneak past minimatch
+      // Leading dot causes problems
+      shouldInstrumentFile(relPath).should.equal(true)
+
+      // Full path should be excluded (node_modules)
+      shouldInstrumentFile(fullPath).should.equal(false)
+
+      // Send both relative and absolute path
+      // Results in exclusion (include = false)
+      shouldInstrumentFile(relPath, fullPath).should.equal(false)
     })
   })
 

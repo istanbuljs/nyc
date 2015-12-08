@@ -2,6 +2,7 @@
 var _ = require('lodash')
 var fs = require('fs')
 var glob = require('glob')
+var minimatch = require('minimatch')
 var mkdirp = require('mkdirp')
 var Module = require('module')
 var path = require('path')
@@ -31,11 +32,9 @@ function NYC (opts) {
   config = config.nyc || {}
 
   // load exclude stanza from config.
-  this.exclude = config.exclude || ['node_modules[\/\\\\]', 'test[\/\\\\]', 'test\\.js']
+  this.exclude = ['**/node_modules/**'].concat(config.exclude || ['test/**', 'test{,-*}.js'])
   if (!Array.isArray(this.exclude)) this.exclude = [this.exclude]
-  this.exclude = _.map(this.exclude, function (p) {
-    return new RegExp(p)
-  })
+  this.exclude = this._prepExcludePatterns(this.exclude)
 
   // require extensions can be provided as config in package.json.
   this.require = config.require ? config.require : this.require
@@ -73,9 +72,27 @@ NYC.prototype._createInstrumenter = function () {
   })
 }
 
+NYC.prototype._prepExcludePatterns = function (excludes) {
+  var directories = []
+  excludes = _.map(excludes, function (exclude) {
+    // Remove leading "current folder" prefix
+    if (_.startsWith(exclude, './')) {
+      exclude = exclude.slice(2)
+    }
+
+    // Allow gitignore style of directory exclusion
+    if (!_.endsWith(exclude, '/**')) {
+      directories.push(exclude.replace(/\/$/, '').concat('/**'))
+    }
+
+    return exclude
+  })
+  return _.union(excludes, directories)
+}
+
 NYC.prototype.addFile = function (filename, returnImmediately) {
   var relFile = path.relative(this.cwd, filename)
-  var instrument = this.shouldInstrumentFile(relFile)
+  var instrument = this.shouldInstrumentFile(relFile, filename)
   var content = stripBom(fs.readFileSync(filename, 'utf8'))
 
   if (instrument) {
@@ -94,7 +111,7 @@ NYC.prototype.addFile = function (filename, returnImmediately) {
 
 NYC.prototype.addContent = function (filename, content) {
   var relFile = path.relative(this.cwd, filename)
-  var instrument = this.shouldInstrumentFile(relFile)
+  var instrument = this.shouldInstrumentFile(relFile, filename)
 
   if (instrument) {
     content = this.instrumenter.instrumentSync(content, './' + relFile)
@@ -107,10 +124,14 @@ NYC.prototype.addContent = function (filename, content) {
   }
 }
 
-NYC.prototype.shouldInstrumentFile = function (relFile, returnImmediately) {
+NYC.prototype.shouldInstrumentFile = function () {
+  var filePaths = _.toArray(arguments).map(function (filePath) {
+    return path.normalize(filePath)
+  })
+
   // only instrument a file if it's not on the exclude list.
   for (var i = 0, exclude; (exclude = this.exclude[i]) !== undefined; i++) {
-    if (exclude.test(relFile)) {
+    if (minimatch.match(filePaths, exclude).length) {
       return false
     }
   }
@@ -122,7 +143,7 @@ NYC.prototype.addAllFiles = function () {
 
   this._createOutputDirectory()
 
-  glob.sync('**/*.js', {nodir: true}).forEach(function (filename) {
+  glob.sync('**/*.js', {nodir: true, ignore: this.exclude}).forEach(function (filename) {
     var obj = _this.addFile(filename, true)
     if (obj.instrument) {
       module._compile(
