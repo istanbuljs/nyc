@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 var foreground = require('foreground-child')
-var NYC = require('../')
+var NYC
+try {
+  NYC = require('../index.covered.js')
+} catch (e) {
+  NYC = require('../index.js')
+}
+
 var path = require('path')
 var sw = require('spawn-wrap')
 
@@ -8,11 +14,6 @@ if (process.env.NYC_CWD) {
   ;(new NYC({
     require: process.env.NYC_REQUIRE ? process.env.NYC_REQUIRE.split(',') : []
   })).wrap()
-
-  // make sure we can run coverage on
-  // our own index.js, I like turtles.
-  var name = require.resolve('../')
-  delete require.cache[name]
 
   sw.runMain()
 } else {

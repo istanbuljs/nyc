@@ -3,7 +3,14 @@
 require('source-map-support').install()
 var _ = require('lodash')
 var fs = require('fs')
-var NYC = require('../')
+var NYC
+
+try {
+  NYC = require('../index.covered.js')
+} catch (e) {
+  NYC = require('../')
+}
+
 var path = require('path')
 var rimraf = require('rimraf')
 var sinon = require('sinon')

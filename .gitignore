@@ -3,3 +3,5 @@ coverage
 node_modules
 !node_modules/spawn-wrap
 test/built-*
+self_coverage
+*.covered.js

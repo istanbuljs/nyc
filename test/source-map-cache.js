@@ -23,7 +23,14 @@ var covered = _.mapValues({
   }, fixture)
 })
 
-var SourceMapCache = require('../lib/source-map-cache')
+var SourceMapCache
+try {
+  SourceMapCache = require('../lib/source-map-cache.covered.js')
+  require('../lib/self-coverage-helper.js')
+} catch (e) {
+  SourceMapCache = require('../lib/source-map-cache')
+}
+
 var sourceMapCache = new SourceMapCache()
 _.forOwn(covered, function (fixture) {
   sourceMapCache.add(fixture.relpath, fixture.contentSync())

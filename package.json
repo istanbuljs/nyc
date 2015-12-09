@@ -4,12 +4,15 @@
   "description": "a code coverage tool that works well with subprocesses.",
   "main": "index.js",
   "scripts": {
-    "clean": "rm -rf ./.nyc_output && rm -rf ./test/fixtures/.nyc_output",
+    "clean": "rm -rf ./.nyc_output && rm -rf ./test/fixtures/.nyc_output && rm -f ./index.covered.js ./lib/source-map-cache.covered.js && rm -rf ./self_coverage",
     "build": "node ./build-tests",
     "pretest": "standard",
-    "test": "npm run dev",
-    "cover": "npm run clean && npm run build && tap --coverage ./test/built-*.js ./test/source-map-cache.js",
-    "dev": "npm run clean && npm run build && tap -b ./test/built-*.js ./test/source-map-cache.js"
+    "test": "npm run cover",
+    "cover": "npm run clean && npm run build && npm run instrument && npm run run-tests && npm run report",
+    "dev": "npm run clean && npm run build && npm run run-tests",
+    "instrument": "node ./instrument-index.js",
+    "report": "istanbul report --include=self_coverage/*.json lcov text",
+    "run-tests": "tap -b ./test/built-*.js ./test/source-map-cache.js"
   },
   "bin": {
     "nyc": "./bin/nyc.js"
@@ -24,6 +27,7 @@
         "test/built-*",
         "test/nyc-test.js",
         "test/source-map-cache.js",
+        "index.covered.js",
         "test/fixtures/_generateCoverage.js"
       ]
     }
@@ -70,6 +74,7 @@
   },
   "devDependencies": {
     "chai": "^3.0.0",
+    "coveralls": "^2.11.4",
     "del": "^2.2.0",
     "inline-source-map-comment": "^1.0.5",
     "recast": "^0.10.39",
