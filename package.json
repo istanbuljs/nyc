@@ -35,7 +35,6 @@
   "standard": {
     "ignore": [
       "**/fixtures/**",
-      "**/build-tests.js",
       "**/test/built-*"
     ]
   },
