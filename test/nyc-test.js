@@ -36,6 +36,17 @@ function cleanup () {
   rimraf.sync(tempDir)
 }
 
+// Use bin/nyc.js to run the file in a child process. This should cause a
+// coverage report to be written to the .nyc_output directory within the
+// fixturesDir.
+function coverChild (file, cb) {
+  spawn(
+    process.execPath,
+    [path.resolve(__dirname, '..', 'bin', 'nyc.js'), file],
+    { cwd: fixturesDir }
+  ).on('close', cb)
+}
+
 // If set, NYC_TEST_SPAWN contains the index of the test that should be
 // executed. Otherwise the test runner should be initialized.
 var spawnNthTest = parseInt(process.env.NYC_TEST_SPAWN || '-1', 10)
@@ -246,19 +257,11 @@ describe('nyc', function () {
     })
 
     function testSignal (signal, done) {
-      var nyc = (new NYC({
-        cwd: process.cwd()
-      })).wrap()
+      var nyc = instantiate({ cwd: fixturesDir })
 
-      var proc = spawn(process.execPath, ['./test/fixtures/' + signal + '.js'], {
-        cwd: process.cwd(),
-        env: process.env,
-        stdio: 'inherit'
-      })
-
-      proc.on('close', function () {
+      coverChild(path.join(fixturesDir, signal + '.js'), function () {
         var reports = _.filter(nyc._loadReports(), function (report) {
-          return report['./test/fixtures/' + signal + '.js']
+          return report['./' + signal + '.js']
         })
         reports.length.should.equal(1)
         return done()
@@ -286,24 +289,17 @@ describe('nyc', function () {
 
   describe('report', function () {
     it('runs reports for all JSON in output directory', function (done) {
-      var nyc = new NYC({
-        cwd: process.cwd()
-      })
-      var proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
-        cwd: process.cwd(),
-        env: process.env,
-        stdio: 'inherit'
-      })
+      var nyc = instantiate({ cwd: fixturesDir })
       var start = fs.readdirSync(nyc.tmpDirectory()).length
 
-      proc.on('close', function () {
+      coverChild(path.join(fixturesDir, 'spawn.js'), function () {
         nyc.report(
           null,
           {
             add: function (report) {
               // the subprocess we ran should output reports
               // for files in the fixtures directory.
-              Object.keys(report).should.match(/.\/test\/fixtures\//)
+              Object.keys(report).should.match(/\.\/(spawn|sigint|sigterm)\.js/)
             }
           },
           {
@@ -323,33 +319,25 @@ describe('nyc', function () {
     })
 
     it('handles corrupt JSON files', function (done) {
-      var nyc = new NYC({
-        cwd: process.cwd()
-      })
-      var proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
-        cwd: process.cwd(),
-        env: process.env,
-        stdio: 'inherit'
-      })
+      var nyc = instantiate({ cwd: fixturesDir })
 
-      fs.writeFileSync('./.nyc_output/bad.json', '}', 'utf-8')
+      var bad = path.join(fixturesDir, '.nyc_output', 'bad.json')
+      fs.writeFileSync(bad, '}', 'utf-8')
 
-      proc.on('close', function () {
-        nyc.report(
-          null,
-          {
-            add: function (report) {}
-          },
-          {
-            add: function (reporter) {},
-            write: function () {
-              // we should get here without exception.
-              fs.unlinkSync('./.nyc_output/bad.json')
-              return done()
-            }
+      nyc.report(
+        null,
+        {
+          add: function (report) {}
+        },
+        {
+          add: function (reporter) {},
+          write: function () {
+            // we should get here without exception.
+            fs.unlinkSync(bad)
+            return done()
           }
-        )
-      })
+        }
+      )
     })
 
     it('handles multiple reporters', function (done) {
@@ -359,13 +347,8 @@ describe('nyc', function () {
         cwd: fixturesDir,
         reporter: reporters
       })
-      var proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
-        cwd: process.cwd(),
-        env: process.env,
-        stdio: 'inherit'
-      })
 
-      proc.on('close', function () {
+      coverChild(path.join(fixturesDir, 'sigint.js'), function () {
         nyc.report(
           null,
           {
