@@ -1,5 +1,6 @@
 /* global describe, it */
 
+require('source-map-support').install()
 var _ = require('lodash')
 var fs = require('fs')
 var NYC = require('../')
@@ -7,13 +8,13 @@ var path = require('path')
 var rimraf = require('rimraf')
 var sinon = require('sinon')
 var spawn = require('child_process').spawn
+var fixtures = path.resolve(__dirname, './fixtures')
+var bin = path.resolve(__dirname, '../bin/nyc')
 
 require('chai').should()
 require('tap').mochaGlobals()
 
 describe('nyc', function () {
-  var fixtures = path.resolve(__dirname, './fixtures')
-
   describe('cwd', function () {
     function afterEach () {
       delete process.env.NYC_CWD
@@ -38,7 +39,7 @@ describe('nyc', function () {
   })
 
   describe('config', function () {
-    it("loads 'exclude' patterns from package.json", function () {
+    it('loads exclude patterns from package.json', function () {
       var nyc = new NYC({
         cwd: path.resolve(__dirname, './fixtures')
       })
@@ -182,18 +183,18 @@ describe('nyc', function () {
 
     function testSignal (signal, done) {
       var nyc = (new NYC({
-        cwd: process.cwd()
-      })).wrap()
+        cwd: fixtures
+      }))
 
-      var proc = spawn(process.execPath, ['./test/fixtures/' + signal + '.js'], {
-        cwd: process.cwd(),
-        env: process.env,
-        stdio: 'inherit'
+      var proc = spawn(process.execPath, [bin, './' + signal + '.js'], {
+        cwd: fixtures,
+        env: {},
+        stdio: 'ignore'
       })
 
       proc.on('close', function () {
         var reports = _.filter(nyc._loadReports(), function (report) {
-          return report['./test/fixtures/' + signal + '.js']
+          return report['./' + signal + '.js']
         })
         reports.length.should.equal(1)
         return done()
@@ -224,14 +225,14 @@ describe('nyc', function () {
   describe('report', function () {
     it('runs reports for all JSON in output directory', function (done) {
       var nyc = new NYC({
-        cwd: process.cwd()
+        cwd: fixtures
       })
-      var proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
-        cwd: process.cwd(),
-        env: process.env,
-        stdio: 'inherit'
+
+      var proc = spawn(process.execPath, [bin, './sigint.js'], {
+        cwd: fixtures,
+        env: {},
+        stdio: 'ignore'
       })
-      var start = fs.readdirSync(nyc.tmpDirectory()).length
 
       proc.on('close', function () {
         nyc.report(
@@ -240,7 +241,7 @@ describe('nyc', function () {
             add: function (report) {
               // the subprocess we ran should output reports
               // for files in the fixtures directory.
-              Object.keys(report).should.match(/.\/test\/fixtures\//)
+              Object.keys(report).should.match(/.\/sigint\.js/)
             }
           },
           {
@@ -251,7 +252,7 @@ describe('nyc', function () {
             write: function () {
               // we should have output a report for the new subprocess.
               var stop = fs.readdirSync(nyc.tmpDirectory()).length
-              stop.should.be.gt(start)
+              stop.should.be.eql(1)
               return done()
             }
           }
@@ -420,15 +421,15 @@ describe('nyc', function () {
 
     it('tracks coverage appropriately once the file is required', function (done) {
       var nyc = (new NYC({
-        cwd: process.cwd()
+        cwd: fixtures
       })).wrap()
       require('./fixtures/not-loaded')
 
       nyc.writeCoverageFile()
       var reports = _.filter(nyc._loadReports(), function (report) {
-        return report['./test/fixtures/not-loaded.js']
+        return report['./not-loaded.js']
       })
-      var report = reports[0]['./test/fixtures/not-loaded.js']
+      var report = reports[0]['./not-loaded.js']
 
       reports.length.should.equal(1)
       report.s['1'].should.equal(1)
