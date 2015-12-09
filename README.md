@@ -93,19 +93,47 @@ nyc report --reporter=lcov
 
 ## Excluding Files
 
-By default nyc does not instrument files in `node_modules`, or `test`
-for coverage. You can override this setting in your package.json, by
-adding the following configuration:
+You can tell nyc to exclude specific files and directories by adding
+an `config.nyc.exclude` array to your `package.json`. Each element of
+the array is a glob pattern indicating which paths should be omitted.
 
-```js
+Globs are matched using [micromatch](https://www.npmjs.com/package/micromatch)
+
+In addition to patterns specified in the package, nyc will always exclude
+files in `node_modules`.
+
+For example, the following config will exclude all `node_modules`,
+any files with the extension `.spec.js`, and anything in the `build`
+directory:
+
+```json
 {"config": {
   "nyc": {
     "exclude": [
-      "node_modules/"
+      "**/*.spec.js",
+      "build"
     ]
   }
 }}
 ```
+
+> Note: exclude defaults to `['test', 'test{,-*}.js']`, which would exclude
+the `test` directory as well as `test.js` and `test-*.js` files
+
+## Including Files
+
+As an alternative to providing a list of files to `exclude`, you can provide
+an `include` key to specify specific files that should be covered:
+
+```json
+{"config": {
+  "nyc": {
+    "include": ["**/build/umd/moment.js"]
+  }
+}}
+```
+
+> Note: include defaults to `['**']`
 
 ## Include Reports For Files That Are Not Required
 
@@ -148,7 +176,7 @@ npm install coveralls nyc --save
 {
   "script": {
     "test": "nyc tap ./test/*.js",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
   }
 }
 ```
@@ -164,5 +192,4 @@ after_success: npm run coverage
 
 That's all there is to it!
 
-_Note: by default coveralls.io adds comments to pull-requests on GitHub, this can
-feel intrusive. To disable this, click on your repo on coveralls.io and uncheck `LEAVE COMMENTS?`._
+> Note: by default coveralls.io adds comments to pull-requests on GitHub, this can feel intrusive. To disable this, click on your repo on coveralls.io and uncheck `LEAVE COMMENTS?`._

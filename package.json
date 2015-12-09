@@ -16,6 +16,7 @@
         "node_modules",
         "bin",
         "coverage",
+        "test/fixtures/coverage.js",
         "test/nyc-test.js",
         "test/source-map-cache.js",
         "test/fixtures/_generateCoverage.js"
@@ -51,6 +52,7 @@
     "glob": "^5.0.14",
     "istanbul": "^0.4.1",
     "lodash": "^3.10.0",
+    "micromatch": "^2.1.6",
     "mkdirp": "^0.5.0",
     "rimraf": "^2.4.2",
     "signal-exit": "^2.1.1",

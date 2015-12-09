@@ -10,9 +10,8 @@
   "config": {
     "nyc": {
       "exclude": [
-        "node_modules/",
-        "blarg/",
-        "blerg/"
+        "**/blarg",
+        "**/blerg"
       ]
     }
   }
