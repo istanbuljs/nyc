@@ -133,6 +133,8 @@ an `include` key to specify specific files that should be covered:
 }}
 ```
 
+> Note: include defaults to `['**']`
+
 ## Include Reports For Files That Are Not Required
 
 By default nyc does not collect coverage for files that have not
@@ -174,7 +176,7 @@ npm install coveralls nyc --save
 {
   "script": {
     "test": "nyc tap ./test/*.js",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
   }
 }
 ```
@@ -190,5 +192,4 @@ after_success: npm run coverage
 
 That's all there is to it!
 
-_Note: by default coveralls.io adds comments to pull-requests on GitHub, this can
-feel intrusive. To disable this, click on your repo on coveralls.io and uncheck `LEAVE COMMENTS?`._
+> Note: by default coveralls.io adds comments to pull-requests on GitHub, this can feel intrusive. To disable this, click on your repo on coveralls.io and uncheck `LEAVE COMMENTS?`._

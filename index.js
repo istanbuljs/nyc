@@ -32,7 +32,9 @@ function NYC (opts) {
   config = config.nyc || {}
 
   // load exclude stanza from config.
-  this.include = this._prepGlobPatterns(config.include)
+  this.include = config.include || ['**']
+  this.include = this._prepGlobPatterns(this.include)
+
   this.exclude = ['**/node_modules/**'].concat(config.exclude || ['test/**', 'test{,-*}.js'])
   if (!Array.isArray(this.exclude)) this.exclude = [this.exclude]
   this.exclude = this._prepGlobPatterns(this.exclude)
@@ -78,11 +80,6 @@ NYC.prototype._prepGlobPatterns = function (patterns) {
 
   var directories = []
   patterns = _.map(patterns, function (pattern) {
-    // Remove leading "current folder" prefix
-    if (_.startsWith(pattern, './')) {
-      pattern = pattern.slice(2)
-    }
-
     // Allow gitignore style of directory exclusion
     if (!_.endsWith(pattern, '/**')) {
       directories.push(pattern.replace(/\/$/, '').concat('/**'))
@@ -130,11 +127,8 @@ NYC.prototype.addContent = function (filename, content) {
 NYC.prototype.shouldInstrumentFile = function (filename, relFile) {
   relFile = relFile.replace(/^\.\//, '') // remove leading './'.
 
-  if (this.include) {
-    return micromatch.any(filename, this.include) || micromatch.any(relFile, this.include)
-  } else {
-    return !(micromatch.any(filename, this.exclude) || micromatch.any(relFile, this.exclude))
-  }
+  return (micromatch.any(filename, this.include) || micromatch.any(relFile, this.include)) &&
+    !(micromatch.any(filename, this.exclude) || micromatch.any(relFile, this.exclude))
 }
 
 NYC.prototype.addAllFiles = function () {
