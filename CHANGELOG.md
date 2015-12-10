@@ -2,7 +2,8 @@
 
 ### Upcoming
 
-- [#84](https://github.com/bcoe/nyc/pull/84) glob based include/exlude of files (@Lalem001)
+- [#87](https://github.com/bcoe/nyc/pull/87) make spawn() work on Windows (@bcoe)
+- [#84](https://github.com/bcoe/nyc/pull/84) glob based include/exclude of files (@Lalem001)
 - [#78](https://github.com/bcoe/nyc/pull/78) improvements to sourcemap tests (@novemberborn)
 - [#73](https://github.com/bcoe/nyc/pull/73) improvements to require tests (@novemberborn)
 - [#65](https://github.com/bcoe/nyc/pull/65) significant improvements to require hooks (@novemberborn)
