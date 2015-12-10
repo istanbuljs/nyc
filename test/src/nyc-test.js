@@ -6,17 +6,17 @@ var fs = require('fs')
 var NYC
 
 try {
-  NYC = require('../index.covered.js')
+  NYC = require('../../index.covered.js')
 } catch (e) {
-  NYC = require('../')
+  NYC = require('../../')
 }
 
 var path = require('path')
 var rimraf = require('rimraf')
 var sinon = require('sinon')
 var spawn = require('child_process').spawn
-var fixtures = path.resolve(__dirname, './fixtures')
-var bin = path.resolve(__dirname, '../bin/nyc')
+var fixtures = path.resolve(__dirname, '../fixtures')
+var bin = path.resolve(__dirname, '../../bin/nyc')
 
 require('chai').should()
 require('tap').mochaGlobals()
@@ -25,7 +25,7 @@ describe('nyc', function () {
   describe('cwd', function () {
     function afterEach () {
       delete process.env.NYC_CWD
-      rimraf.sync(path.resolve(fixtures, './nyc_output'))
+      rimraf.sync(path.resolve(fixtures, '../nyc_output'))
     }
 
     it('sets cwd to process.cwd() if no environment variable is set', function () {
@@ -36,11 +36,11 @@ describe('nyc', function () {
     })
 
     it('uses NYC_CWD environment variable for cwd if it is set', function () {
-      process.env.NYC_CWD = path.resolve(__dirname, './fixtures')
+      process.env.NYC_CWD = path.resolve(__dirname, '../fixtures')
 
       var nyc = new NYC()
 
-      nyc.cwd.should.equal(path.resolve(__dirname, './fixtures'))
+      nyc.cwd.should.equal(path.resolve(__dirname, '../fixtures'))
       afterEach()
     })
   })
@@ -48,7 +48,7 @@ describe('nyc', function () {
   describe('config', function () {
     it("loads 'exclude' patterns from package.json", function () {
       var nyc = new NYC({
-        cwd: path.resolve(__dirname, './fixtures')
+        cwd: path.resolve(__dirname, '../fixtures')
       })
 
       nyc.exclude.length.should.eql(5)
@@ -115,7 +115,7 @@ describe('nyc', function () {
       })
       var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
 
-      var relPath = '../../nyc/node_modules/glob/glob.js'
+      var relPath = '../../../nyc/node_modules/glob/glob.js'
       var fullPath = '/Users/user/nyc/node_modules/glob/glob.js'
 
       shouldInstrumentFile(fullPath, relPath).should.equal(false)
@@ -152,11 +152,11 @@ describe('nyc', function () {
 
       // clear the module cache so that
       // we pull index.js in again and wrap it.
-      var name = require.resolve('../')
+      var name = require.resolve('../../')
       delete require.cache[name]
 
       // when we require index.js it should be wrapped.
-      var index = require('../')
+      var index = require('../../')
       index.should.match(/__cov_/)
     })
 
@@ -173,14 +173,14 @@ describe('nyc', function () {
 
         // clear the module cache so that
         // we pull index.js in again and wrap it.
-        var name = require.resolve('../')
+        var name = require.resolve('../../')
         delete require.cache[name]
 
         // install the custom require hook
         require.extensions['.js'] = hook
 
         // when we require index.js it should be wrapped.
-        var index = require('../')
+        var index = require('../../')
         index.should.match(/__cov_/)
 
         // and the hook should have been called
@@ -430,7 +430,7 @@ describe('nyc', function () {
       var nyc = (new NYC({
         cwd: fixtures
       })).wrap()
-      require('./fixtures/not-loaded')
+      require('../fixtures/not-loaded')
 
       nyc.writeCoverageFile()
       var reports = _.filter(nyc._loadReports(), function (report) {

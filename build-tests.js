@@ -3,15 +3,18 @@
 var fs = require('fs')
 var path = require('path')
 var del = require('del')
+var mkdirp = require('mkdirp')
 var forkingTap = require('forking-tap')
 var zeroFill = require('zero-fill')
 var sanitizeFilename = require('sanitize-filename')
 
 // Delete previous files.
 process.chdir(__dirname)
-del.sync(['test/built-*'])
+del.sync(['test/build'])
+mkdirp.sync(path.join(__dirname, 'test/build'))
 
-var testDir = path.join(__dirname, 'test')
+var testDir = path.join(__dirname, 'test/src')
+var buildDir = path.join(__dirname, 'test/build')
 var originalTestsFilename = path.join(testDir, 'nyc-test.js')
 var originalTestSource = fs.readFileSync(originalTestsFilename, 'utf8')
 var individualTests = forkingTap(originalTestSource, {
@@ -33,5 +36,5 @@ individualTests.forEach(function (test, i) {
   // remove any illegal chars
   filename = sanitizeFilename(filename)
 
-  fs.writeFileSync(path.join(testDir, filename), test.code)
+  fs.writeFileSync(path.join(buildDir, filename), test.code)
 })
