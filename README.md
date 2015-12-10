@@ -181,8 +181,7 @@ npm install coveralls nyc --save
 }
 ```
 
-3. add the environment variable `COVERALLS_REPO_TOKEN` to travis, this is used by
-  the coveralls bin.
+3. For private repos, add the environment variable `COVERALLS_REPO_TOKEN` to travis.
 
 4. add the following to your `.travis.yml`:
 
