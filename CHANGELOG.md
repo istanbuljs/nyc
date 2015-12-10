@@ -1,6 +1,6 @@
 ## Change Log
 
-### Upcoming
+### v5.0.0 (2015/12/09 11:03 -07:00)
 
 - [#87](https://github.com/bcoe/nyc/pull/87) make spawn() work on Windows (@bcoe)
 - [#84](https://github.com/bcoe/nyc/pull/84) glob based include/exclude of files (@Lalem001)
