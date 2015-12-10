@@ -1,127 +1,37 @@
 'use strict'
 
 var fs = require('fs')
-var Path = require('path')
+var path = require('path')
 var del = require('del')
-var recast = require('recast')
-var makeSourcemapComment = require('inline-source-map-comment')
-var types = recast.types
-var n = types.namedTypes
+var forkingTap = require('forking-tap')
+var zeroFill = require('zero-fill')
+var sanitizeFilename = require('sanitize-filename')
 
 // Delete previous files.
 process.chdir(__dirname)
 del.sync(['test/built-*'])
 
-var outputDir = Path.join(__dirname, 'test')
-var inputPath = Path.join(outputDir, 'nyc-test.js')
-var inputSource = fs.readFileSync(inputPath, 'utf8')
-
-function parse () {
-  return recast.parse(inputSource, {
-    sourceFileName: inputPath
-  })
-}
-
-function print (ast) {
-  var result = recast.print(rootNode(ast), {
-    sourceMapName: inputPath + '.map'
-  })
-
-  return result.code + '\n' + makeSourcemapComment(result.map)
-}
-
-var i = 0
-
-types.visit(parse(), {
-  visitExpressionStatement: function (path) {
-    var node = path.node
-    if (isIt(node)) {
-      fs.writeFileSync(
-        Path.join(outputDir, name(path, i)),
-        print(copy(path))
-      )
-      i++
-      return false
-    }
-    this.traverse(path)
-  }
+var testDir = path.join(__dirname, 'test')
+var originalTestsFilename = path.join(testDir, 'nyc-test.js')
+var originalTestSource = fs.readFileSync(originalTestsFilename, 'utf8')
+var individualTests = forkingTap(originalTestSource, {
+  filename: originalTestsFilename,
+  attachComment: true
 })
 
-function copy (path) {
-  var copied
-  if (path.parentPath) {
-    copied = copy(path.parentPath).get(path.name)
-  } else {
-    copied = new types.NodePath({root: parse()})
-  }
+individualTests.forEach(function (test, i) {
+  var filename = ['built', zeroFill(3, i)]
+      .concat(test.nestedName)
+      .join('-') + '.js'
 
-  var parent = copied.parent
-  var node = copied.value
-  if (!(n.Node.check(node) && parent && (n.BlockStatement.check(parent.node) || n.Program.check(parent.node)))) {
-    return copied
-  }
+  // file names with spaces are legal, but annoying to use w/ CLI commands
+  filename = filename.replace(/\s/g, '_')
 
-  var body = parent.get('body').value
-  var keeper = parent.get('body', path.name).node
+  // istanbul freaks out if the there are `'` characters in the file name
+  filename = filename.replace(/'/g, '')
 
-  var statementIdx = 0
+  // remove any illegal chars
+  filename = sanitizeFilename(filename)
 
-  while (statementIdx < body.length) {
-    var statement = body[statementIdx]
-    if ((isDescribe(statement) || isIt(statement)) && statement !== keeper) {
-      parent.get('body', statementIdx).replace()
-    } else {
-      statementIdx++
-    }
-  }
-
-  return copied
-}
-
-function isDescribe (node) {
-  if (!n.ExpressionStatement.check(node)) {
-    return false
-  }
-  node = node.expression
-  return n.CallExpression.check(node) && n.Identifier.check(node.callee) && (node.callee.name === 'describe')
-}
-
-function isIt (node) {
-  if (!n.ExpressionStatement.check(node)) {
-    return false
-  }
-  node = node.expression
-  return n.CallExpression.check(node) && n.Identifier.check(node.callee) && (node.callee.name === 'it')
-}
-
-// Walks the path up to the root.
-function rootNode (path) {
-  while (path.parent) {
-    path = path.parent
-  }
-  return path
-}
-
-// Picks a file name for the test, by walking up the tree and looking at describe / require calls.
-function name (path, i) {
-  var arr = []
-  _name(path, arr)
-  var testName = arr.reverse().join(' ')
-  var filename = i + '-' + testName.replace(/\s/g, '_') + '.js'
-  if (i < 100) {
-    filename = (i < 10 ? '00' : '0') + filename
-  }
-  return 'built-' + filename
-}
-
-function _name (path, arr) {
-  if (!path) {
-    return
-  }
-  if (isDescribe(path.node) || isIt(path.node)) {
-    var firstArg = path.get('expression', 'arguments', 0).node
-    n.Literal.assert(firstArg)
-    arr.push(firstArg.value)
-  }
-  _name(path.parent, arr)
-}
+  fs.writeFileSync(path.join(testDir, filename), test.code)
+})

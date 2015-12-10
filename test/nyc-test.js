@@ -46,7 +46,7 @@ describe('nyc', function () {
   })
 
   describe('config', function () {
-    it('loads exclude patterns from package.json', function () {
+    it("loads 'exclude' patterns from package.json", function () {
       var nyc = new NYC({
         cwd: path.resolve(__dirname, './fixtures')
       })
