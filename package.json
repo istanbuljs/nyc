@@ -17,6 +17,12 @@
   "bin": {
     "nyc": "./bin/nyc.js"
   },
+  "files": [
+    "index.js",
+    "bin/*.js",
+    "lib/*.js",
+    "!**/*covered.js"
+  ],
   "config": {
     "nyc": {
       "exclude": [
