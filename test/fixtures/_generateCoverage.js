@@ -16,6 +16,7 @@ var NYC = require('../../')
 var fixtures = {
   bundle: sourceMapFixtures.inline('bundle'),
   inline: sourceMapFixtures.inline('branching'),
+  istanbulIgnore: sourceMapFixtures.inline('istanbul-ignore'),
   none: sourceMapFixtures.none('branching')
 }
 
@@ -30,7 +31,8 @@ nyc.exclude = []
 // Require the fixture so nyc can instrument it, then run it so there's code
 // coverage.
 fixtures.bundle.require().branching()
-fixtures.inline.require().run()
+fixtures.inline.require().run(42)
+fixtures.istanbulIgnore.require().run(99)
 fixtures.none.require().run()
 
 // Copy NYC#writeCoverageFile() behavior to get the coverage object, before
@@ -43,8 +45,8 @@ if (!coverage) {
 }
 
 var reports = _.values(coverage)
-if (reports.length !== 3) {
-  console.error('Expected 3 reports to be generated, got ' + reports.length)
+if (reports.length !== 4) {
+  console.error('Expected 4 reports to be generated, got ' + reports.length)
   process.exit(1)
 }
 
