@@ -11,6 +11,11 @@ var onExit = require('signal-exit')
 var stripBom = require('strip-bom')
 var SourceMapCache = require('./lib/source-map-cache')
 
+/* istanbul ignore next */
+if (/index\.covered\.js$/.test(__filename)) {
+  require('./lib/self-coverage-helper')
+}
+
 function NYC (opts) {
   _.extend(this, {
     subprocessBin: path.resolve(

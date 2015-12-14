@@ -5,7 +5,14 @@
   "main": "index.js",
   "scripts": {
     "pretest": "standard",
-    "test": "tap --coverage ./test/*.js"
+    "test": "npm run cover",
+    "clean": "rm -rf ./.nyc_output ./.self_coverage ./test/fixtures/.nyc_output ./test/build && rm -f *covered.js ./lib/*covered.js",
+    "build": "node ./build-tests",
+    "instrument": "node ./build-self-coverage.js",
+    "run-tests": "tap -b ./test/build/*.js ./test/src/source-map-cache.js",
+    "report": "istanbul report --include=./.self_coverage/*.json lcov text",
+    "cover": "npm run clean && npm run build && npm run instrument && npm run run-tests && npm run report",
+    "dev": "npm run clean && npm run build && npm run run-tests"
   },
   "bin": {
     "nyc": "./bin/nyc.js"
@@ -17,15 +24,18 @@
         "bin",
         "coverage",
         "test/fixtures/coverage.js",
+        "test/build/*",
         "test/nyc-test.js",
         "test/source-map-cache.js",
+        "index.covered.js",
         "test/fixtures/_generateCoverage.js"
       ]
     }
   },
   "standard": {
     "ignore": [
-      "**/fixtures/**"
+      "**/fixtures/**",
+      "**/test/build/*"
     ]
   },
   "keywords": [
@@ -63,10 +73,16 @@
   },
   "devDependencies": {
     "chai": "^3.0.0",
+    "coveralls": "^2.11.4",
+    "del": "^2.2.0",
+    "forking-tap": "^0.1.1",
+    "sanitize-filename": "^1.5.3",
     "sinon": "^1.15.3",
     "source-map-fixtures": "^0.2.0",
+    "source-map-support": "^0.4.0",
     "standard": "^5.2.1",
-    "tap": "^1.3.4"
+    "tap": "^1.3.4",
+    "zero-fill": "^2.2.1"
   },
   "bundleDependencies": [
     "spawn-wrap"

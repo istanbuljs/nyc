@@ -14,22 +14,29 @@ var covered = _.mapValues({
   return _.assign({
     // Coverage for the fixture is stored relative to the root directory. Here
     // compute the path to the fixture file relative to the root directory.
-    relpath: './' + path.relative(path.join(__dirname, '..'), fixture.file),
+    relpath: './' + path.relative(path.join(__dirname, '../..'), fixture.file),
     // the sourcemap itself remaps the path.
-    mappedPath: './' + path.relative(path.join(__dirname, '..'), fixture.sourceFile),
+    mappedPath: './' + path.relative(path.join(__dirname, '../..'), fixture.sourceFile),
     // Compute the number of lines in the original source, excluding any line
     // break at the end of the file.
     maxLine: fixture.sourceContentSync().trimRight().split(/\r?\n/).length
   }, fixture)
 })
 
-var SourceMapCache = require('../lib/source-map-cache')
+var SourceMapCache
+try {
+  SourceMapCache = require('../../lib/source-map-cache.covered.js')
+  require('../../lib/self-coverage-helper.js')
+} catch (e) {
+  SourceMapCache = require('../../lib/source-map-cache')
+}
+
 var sourceMapCache = new SourceMapCache()
 _.forOwn(covered, function (fixture) {
   sourceMapCache.add(fixture.relpath, fixture.contentSync())
 })
 
-var coverage = require('./fixtures/coverage')
+var coverage = require('../fixtures/coverage')
 var fixture = covered.inline
 
 require('chai').should()
