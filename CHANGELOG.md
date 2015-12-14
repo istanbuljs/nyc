@@ -1,5 +1,9 @@
 ## Change Log
 
+### v5.0.1 (2015/12/14 09:09 -07:00)
+
+- [#94](https://github.com/bcoe/nyc/pull/93) Windows failed if argument had no replace() method. (@bcoe)
+
 ### v5.0.0 (2015/12/09 11:03 -07:00)
 
 - [#87](https://github.com/bcoe/nyc/pull/87) make spawn() work on Windows (@bcoe)
