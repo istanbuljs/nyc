@@ -116,21 +116,6 @@ NYC.prototype.addFile = function (filename, returnImmediately) {
   }
 }
 
-NYC.prototype.addContent = function (filename, content) {
-  var relFile = path.relative(this.cwd, filename)
-  var instrument = this.shouldInstrumentFile(filename, relFile)
-
-  if (instrument) {
-    content = this.instrumenter.instrumentSync(content, './' + relFile)
-  }
-
-  return {
-    instrument: instrument,
-    content: content,
-    relFile: relFile
-  }
-}
-
 NYC.prototype.shouldInstrumentFile = function (filename, relFile) {
   relFile = relFile.replace(/^\.\//, '') // remove leading './'.
 
@@ -158,13 +143,18 @@ NYC.prototype.addAllFiles = function () {
 
 NYC.prototype._wrapRequire = function () {
   var _this = this
+  appendTransform(function (code, filename) {
+    var relFile = path.relative(_this.cwd, filename)
+    var instrument = _this.shouldInstrumentFile(filename, relFile)
 
-  appendTransform(function (compiledSrc, filename) {
-    _this.sourceMapCache.add(filename, compiledSrc)
+    if (!instrument) {
+      return code
+    }
+
+    _this.sourceMapCache.add(filename, code)
 
     // now instrument the compiled code.
-    var obj = _this.addContent(filename, compiledSrc)
-    return obj.content
+    return _this.instrumenter.instrumentSync(code, './' + relFile)
   })
 }
 
