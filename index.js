@@ -4,7 +4,7 @@ var fs = require('fs')
 var glob = require('glob')
 var micromatch = require('micromatch')
 var mkdirp = require('mkdirp')
-var captureRequire = require('capture-require')
+var appendTransform = require('append-transform')
 var path = require('path')
 var rimraf = require('rimraf')
 var onExit = require('signal-exit')
@@ -157,12 +157,12 @@ NYC.prototype.addAllFiles = function () {
 NYC.prototype._wrapRequire = function () {
   var _this = this
 
-  captureRequire(function (module, compiledSrc, filename) {
+  appendTransform(function (compiledSrc, filename) {
     _this.sourceMapCache.add(filename, compiledSrc)
 
     // now instrument the compiled code.
     var obj = _this.addContent(filename, compiledSrc)
-    module._compile(obj.content, filename)
+    return obj.content
   })
 }
 

@@ -9,7 +9,7 @@
     "clean": "rm -rf ./.nyc_output ./.self_coverage ./test/fixtures/.nyc_output ./test/build && rm -f *covered.js ./lib/*covered.js",
     "build": "node ./build-tests",
     "instrument": "node ./build-self-coverage.js",
-    "run-tests": "tap -b ./test/build/*.js ./test/src/source-map-cache.js",
+    "run-tests": "tap --no-cov -b ./test/build/*.js ./test/src/source-map-cache.js",
     "report": "istanbul report --include=./.self_coverage/*.json lcov text",
     "cover": "npm run clean && npm run build && npm run instrument && npm run run-tests && npm run report",
     "dev": "npm run clean && npm run build && npm run run-tests"
@@ -63,6 +63,7 @@
   "author": "Ben Coe <ben@npmjs.com>",
   "license": "ISC",
   "dependencies": {
+    "append-transform": "^0.2.0",
     "convert-source-map": "^1.1.2",
     "foreground-child": "^1.3.0",
     "glob": "^5.0.14",
@@ -78,7 +79,6 @@
     "yargs": "^3.15.0"
   },
   "devDependencies": {
-    "capture-require": "^0.1.0",
     "chai": "^3.0.0",
     "coveralls": "^2.11.4",
     "del": "^2.2.0",
