@@ -9,6 +9,7 @@ var sourceMapFixtures = require('source-map-fixtures')
 var covered = _.mapValues({
   bundle: sourceMapFixtures.inline('bundle'),
   inline: sourceMapFixtures.inline('branching'),
+  istanbulIgnore: sourceMapFixtures.inline('istanbul-ignore'),
   none: sourceMapFixtures.none('branching')
 }, function (fixture) {
   return _.assign({
@@ -46,6 +47,11 @@ describe('source-map-cache', function () {
   it('does not rewrite if there is no source map', function () {
     var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
     mappedCoverage[covered.none.relpath].should.eql(coverage[covered.none.relpath])
+  })
+
+  it('retains /* istanbul ignore … */ results', function () {
+    var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
+    mappedCoverage[covered.istanbulIgnore.mappedPath].statementMap['3'].should.have.property('skip', true)
   })
 
   describe('path', function () {
