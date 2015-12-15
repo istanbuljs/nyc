@@ -10,6 +10,7 @@ var rimraf = require('rimraf')
 var onExit = require('signal-exit')
 var stripBom = require('strip-bom')
 var SourceMapCache = require('./lib/source-map-cache')
+var resolveFrom = require('resolve-from')
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -54,14 +55,15 @@ function NYC (opts) {
 NYC.prototype._loadAdditionalModules = function () {
   var _this = this
   this.require.forEach(function (r) {
-    try {
-      // first attempt to require the module relative to
-      // the directory being instrumented.
-      require(path.resolve(_this.cwd, './node_modules', r))
-    } catch (e) {
-      // now try other locations, .e.g, the nyc node_modules folder.
-      require(r)
+    // first attempt to require the module relative to
+    // the directory being instrumented.
+    var p = resolveFrom(_this.cwd, r)
+    if (p) {
+      require(p)
+      return
     }
+    // now try other locations, .e.g, the nyc node_modules folder.
+    require(r)
   })
 }
 
