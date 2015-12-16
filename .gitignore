@@ -1,4 +1,5 @@
 .nyc_output
+.nyc_cache
 coverage
 node_modules
 !node_modules/spawn-wrap
