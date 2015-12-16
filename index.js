@@ -175,7 +175,7 @@ NYC.prototype._wrapRequire = function () {
       return fs.readFileSync(cacheFilePath, 'utf8')
     } catch (e) {
       var instrumented = _this.instrumenter().instrumentSync(code, './' + relFile)
-      fs.writeFileSync(cacheFilePath, instrumented)
+      fs.writeFile(cacheFilePath, instrumented)
       return instrumented
     }
   })
