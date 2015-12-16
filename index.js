@@ -11,6 +11,14 @@ var onExit = require('signal-exit')
 var stripBom = require('strip-bom')
 var SourceMapCache = require('./lib/source-map-cache')
 var resolveFrom = require('resolve-from')
+var crypto = require('crypto')
+
+function md5 (str) {
+  return crypto
+    .createHash('md5')
+    .update(str, 'utf8')
+    .digest('hex')
+}
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -52,7 +60,6 @@ function NYC (opts) {
   // require extensions can be provided as config in package.json.
   this.require = config.require ? config.require : this.require
 
-  this.instrumenter = this._createInstrumenter()
   this._createOutputDirectory()
 }
 
@@ -71,9 +78,9 @@ NYC.prototype._loadAdditionalModules = function () {
   })
 }
 
-/* NYC.prototype.instrumenter = function () {
+NYC.prototype.instrumenter = function () {
   return this._instrumenter || (this._instrumenter = this._createInstrumenter())
-} */
+}
 
 NYC.prototype._createInstrumenter = function () {
   var configFile = path.resolve(this.cwd, './.istanbul.yml')
@@ -112,7 +119,7 @@ NYC.prototype.addFile = function (filename, returnImmediately) {
 
   if (instrument) {
     this.sourceMapCache.add(filename, content)
-    content = this.instrumenter.instrumentSync(content, './' + relFile)
+    content = this.instrumenter().instrumentSync(content, './' + relFile)
   } else if (returnImmediately) {
     return {}
   }
@@ -140,7 +147,7 @@ NYC.prototype.addAllFiles = function () {
     var obj = _this.addFile(filename, true)
     if (obj.instrument) {
       module._compile(
-        _this.instrumenter.getPreamble(obj.content, obj.relFile),
+        _this.instrumenter().getPreamble(obj.content, obj.relFile),
         filename
       )
     }
@@ -161,8 +168,16 @@ NYC.prototype._wrapRequire = function () {
 
     _this.sourceMapCache.add(filename, code)
 
-    // now instrument the compiled code.
-    return _this.instrumenter.instrumentSync(code, './' + relFile)
+    var hash = md5(code)
+    var cacheFilePath = path.join(_this._cacheDirectory(), hash + '.js')
+
+    try {
+      return fs.readFileSync(cacheFilePath, 'utf8')
+    } catch (e) {
+      var instrumented = _this.instrumenter().instrumentSync(code, './' + relFile)
+      fs.writeFileSync(cacheFilePath, instrumented)
+      return instrumented
+    }
   })
 }
 
@@ -172,6 +187,7 @@ NYC.prototype.cleanup = function () {
 
 NYC.prototype._createOutputDirectory = function () {
   mkdirp.sync(this.tmpDirectory())
+  mkdirp.sync(this._cacheDirectory())
 }
 
 NYC.prototype._wrapExit = function () {
@@ -244,8 +260,8 @@ NYC.prototype.tmpDirectory = function () {
   return path.resolve(this.cwd, './', this.tempDirectory)
 }
 
-NYC.prototype.cacheDirectory = function () {
-  return path.resolve(this.cwd, './', this.tempDirectory)
+NYC.prototype._cacheDirectory = function () {
+  return path.resolve(this.cwd, './', this.cacheDirectory)
 }
 
 NYC.prototype.mungeArgs = function (yargv) {
