@@ -10,6 +10,7 @@ var rimraf = require('rimraf')
 var onExit = require('signal-exit')
 var stripBom = require('strip-bom')
 var SourceMapCache = require('./lib/source-map-cache')
+var resolveFrom = require('resolve-from')
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -54,14 +55,15 @@ function NYC (opts) {
 NYC.prototype._loadAdditionalModules = function () {
   var _this = this
   this.require.forEach(function (r) {
-    try {
-      // first attempt to require the module relative to
-      // the directory being instrumented.
-      require(path.resolve(_this.cwd, './node_modules', r))
-    } catch (e) {
-      // now try other locations, .e.g, the nyc node_modules folder.
-      require(r)
+    // first attempt to require the module relative to
+    // the directory being instrumented.
+    var p = resolveFrom(_this.cwd, r)
+    if (p) {
+      require(p)
+      return
     }
+    // now try other locations, .e.g, the nyc node_modules folder.
+    require(r)
   })
 }
 
@@ -114,21 +116,6 @@ NYC.prototype.addFile = function (filename, returnImmediately) {
   }
 }
 
-NYC.prototype.addContent = function (filename, content) {
-  var relFile = path.relative(this.cwd, filename)
-  var instrument = this.shouldInstrumentFile(filename, relFile)
-
-  if (instrument) {
-    content = this.instrumenter.instrumentSync(content, './' + relFile)
-  }
-
-  return {
-    instrument: instrument,
-    content: content,
-    relFile: relFile
-  }
-}
-
 NYC.prototype.shouldInstrumentFile = function (filename, relFile) {
   relFile = relFile.replace(/^\.\//, '') // remove leading './'.
 
@@ -156,13 +143,18 @@ NYC.prototype.addAllFiles = function () {
 
 NYC.prototype._wrapRequire = function () {
   var _this = this
+  appendTransform(function (code, filename) {
+    var relFile = path.relative(_this.cwd, filename)
+    var instrument = _this.shouldInstrumentFile(filename, relFile)
 
-  appendTransform(function (compiledSrc, filename) {
-    _this.sourceMapCache.add(filename, compiledSrc)
+    if (!instrument) {
+      return code
+    }
+
+    _this.sourceMapCache.add(filename, code)
 
     // now instrument the compiled code.
-    var obj = _this.addContent(filename, compiledSrc)
-    return obj.content
+    return _this.instrumenter.instrumentSync(code, './' + relFile)
   })
 }
 
