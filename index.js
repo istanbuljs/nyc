@@ -9,10 +9,10 @@ var path = require('path')
 var rimraf = require('rimraf')
 var onExit = require('signal-exit')
 var stripBom = require('strip-bom')
-var SourceMapCache = require('./lib/source-map-cache')
 var resolveFrom = require('resolve-from')
 var md5 = require('md5-hex')
 var arrify = require('arrify')
+var convertSourceMap = require('convert-source-map')
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -28,7 +28,6 @@ function NYC (opts) {
   this._cacheDirectory = opts.cacheDirectory || './node_modules/.cache/nyc'
   this.cwd = opts.cwd || process.env.NYC_CWD || process.cwd()
   this.reporter = arrify(opts.reporter || 'text')
-  this.sourceMapCache = opts.sourceMapCache || new SourceMapCache()
 
   // you can specify config in the nyc stanza of package.json.
   var config = require(path.resolve(this.cwd, './package.json')).config || {}
@@ -132,6 +131,8 @@ NYC.prototype.addAllFiles = function () {
   this.writeCoverageFile()
 }
 
+var hashCache = {}
+
 NYC.prototype._addSource = function (code, filename, relFile) {
   var instrument = this.shouldInstrumentFile(filename, relFile)
 
@@ -139,14 +140,18 @@ NYC.prototype._addSource = function (code, filename, relFile) {
     return null
   }
 
-  this.sourceMapCache.add(filename, code)
-
   var hash = md5(code)
+  hashCache['./' + relFile] = hash
   var cacheFilePath = path.join(this.cacheDirectory(), hash + '.js')
 
   try {
     return fs.readFileSync(cacheFilePath, 'utf8')
   } catch (e) {
+    var sourceMap = convertSourceMap.fromSource(code) || convertSourceMap.fromMapFileSource(code, path.dirname(filename))
+    if (sourceMap) {
+      var mapPath = path.join(this.cacheDirectory(), hash + '.map')
+      fs.writeFileSync(mapPath, sourceMap.toJSON())
+    }
     var instrumented = this.instrumenter().instrumentSync(code, './' + relFile)
     fs.writeFileSync(cacheFilePath, instrumented)
     return instrumented
@@ -192,9 +197,15 @@ NYC.prototype.writeCoverageFile = function () {
   if (typeof __coverage__ === 'object') coverage = __coverage__
   if (!coverage) return
 
+  Object.keys(coverage).forEach(function (relFile) {
+    if (hashCache[relFile] && coverage[relFile]) {
+      coverage[relFile].contentHash = hashCache[relFile]
+    }
+  })
+
   fs.writeFileSync(
     path.resolve(this.tmpDirectory(), './', process.pid + '.json'),
-    JSON.stringify(this.sourceMapCache.applySourceMaps(coverage)),
+    JSON.stringify(coverage),
     'utf-8'
   )
 }
@@ -220,19 +231,49 @@ NYC.prototype.report = function (cb, _collector, _reporter) {
   reporter.write(collector, true, cb)
 }
 
+var loadedMaps = {}
+
 NYC.prototype._loadReports = function () {
   var _this = this
   var files = fs.readdirSync(this.tmpDirectory())
 
+  var SourceMapCache = require('./lib/source-map-cache')
+  var sourceMapCache = new SourceMapCache()
+
+  var cacheDir = _this.cacheDirectory()
+
   return _.map(files, function (f) {
+    var report
     try {
-      return JSON.parse(fs.readFileSync(
+      report = JSON.parse(fs.readFileSync(
         path.resolve(_this.tmpDirectory(), './', f),
         'utf-8'
       ))
     } catch (e) { // handle corrupt JSON output.
       return {}
     }
+
+    if (report) {
+      Object.keys(report).forEach(function (relFile) {
+        var fileReport = report[relFile]
+        if (fileReport && fileReport.contentHash) {
+          var hash = fileReport.contentHash
+          if (!(loadedMaps[hash] || (loadedMaps[hash] === false))) {
+            try {
+              var mapPath = path.join(cacheDir, hash + '.map')
+              loadedMaps[hash] = fs.readFileSync(mapPath, 'utf8')
+            } catch (e) {
+              loadedMaps[hash] = false
+            }
+          }
+          if (loadedMaps[hash]) {
+            sourceMapCache.addMap(relFile, loadedMaps[hash])
+          }
+        }
+      })
+      report = sourceMapCache.applySourceMaps(report)
+    }
+    return report
   })
 }
 
