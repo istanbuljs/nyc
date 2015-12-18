@@ -6,7 +6,7 @@
   "scripts": {
     "pretest": "standard",
     "test": "npm run cover",
-    "clean": "rm -rf ./.nyc_output ./.self_coverage ./test/fixtures/.nyc_output ./test/build && rm -f *covered.js ./lib/*covered.js",
+    "clean": "rm -rf ./.nyc_output ./.nyc_cache ./.self_coverage ./test/fixtures/.nyc_output ./test/fixtures/.nyc_cache ./test/build && rm -f *covered.js ./lib/*covered.js",
     "build": "node ./build-tests",
     "instrument": "node ./build-self-coverage.js",
     "run-tests": "tap --no-cov -b ./test/build/*.js ./test/src/source-map-cache.js",
@@ -64,11 +64,13 @@
   "license": "ISC",
   "dependencies": {
     "append-transform": "^0.2.0",
+    "arrify": "^1.0.1",
     "convert-source-map": "^1.1.2",
     "foreground-child": "^1.3.0",
     "glob": "^5.0.14",
     "istanbul": "^0.4.1",
     "lodash": "^3.10.0",
+    "md5-hex": "^1.1.0",
     "micromatch": "~2.1.6",
     "mkdirp": "^0.5.0",
     "resolve-from": "^2.0.0",

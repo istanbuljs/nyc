@@ -11,14 +11,8 @@ var onExit = require('signal-exit')
 var stripBom = require('strip-bom')
 var SourceMapCache = require('./lib/source-map-cache')
 var resolveFrom = require('resolve-from')
-var crypto = require('crypto')
-
-function md5 (str) {
-  return crypto
-    .createHash('md5')
-    .update(str, 'utf8')
-    .digest('hex')
-}
+var md5 = require('md5-hex')
+var arrify = require('arrify')
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -26,39 +20,29 @@ if (/index\.covered\.js$/.test(__filename)) {
 }
 
 function NYC (opts) {
-  if (opts && opts.istanbul) {
-    opts._istanbul = opts.istanbul
-    delete opts.istanbul
-  }
-  _.extend(this, {
-    subprocessBin: path.resolve(
-      __dirname,
-      './bin/nyc.js'
-    ),
-    tempDirectory: './.nyc_output',
-    cacheDirectory: './.nyc_cache',
-    cwd: process.env.NYC_CWD || process.cwd(),
-    reporter: 'text',
-    sourceMapCache: new SourceMapCache(),
-    require: []
-  }, opts)
+  opts = opts || {}
 
-  if (!Array.isArray(this.reporter)) this.reporter = [this.reporter]
+  this._istanbul = opts.istanbul
+  this.subprocessBin = opts.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
+  this._tempDirectory = opts.tempDirectory || './.nyc_output'
+  this._cacheDirectory = opts.cacheDirectory || './.nyc_cache'
+  this.cwd = opts.cwd || process.env.NYC_CWD || process.cwd()
+  this.reporter = arrify(opts.reporter || 'text')
+  this.sourceMapCache = opts.sourceMapCache || new SourceMapCache()
 
   // you can specify config in the nyc stanza of package.json.
   var config = require(path.resolve(this.cwd, './package.json')).config || {}
   config = config.nyc || {}
 
   // load exclude stanza from config.
-  this.include = config.include || ['**']
+  this.include = arrify(config.include || ['**'])
   this.include = this._prepGlobPatterns(this.include)
 
-  this.exclude = ['**/node_modules/**'].concat(config.exclude || ['test/**', 'test{,-*}.js'])
-  if (!Array.isArray(this.exclude)) this.exclude = [this.exclude]
+  this.exclude = ['**/node_modules/**'].concat(arrify(config.exclude || ['test/**', 'test{,-*}.js']))
   this.exclude = this._prepGlobPatterns(this.exclude)
 
   // require extensions can be provided as config in package.json.
-  this.require = config.require ? config.require : this.require
+  this.require = arrify(config.require || opts.require)
 
   this._createOutputDirectory()
 }
@@ -169,13 +153,13 @@ NYC.prototype._wrapRequire = function () {
     _this.sourceMapCache.add(filename, code)
 
     var hash = md5(code)
-    var cacheFilePath = path.join(_this._cacheDirectory(), hash + '.js')
+    var cacheFilePath = path.join(_this.cacheDirectory(), hash + '.js')
 
     try {
       return fs.readFileSync(cacheFilePath, 'utf8')
     } catch (e) {
       var instrumented = _this.instrumenter().instrumentSync(code, './' + relFile)
-      fs.writeFile(cacheFilePath, instrumented)
+      fs.writeFileSync(cacheFilePath, instrumented)
       return instrumented
     }
   })
@@ -186,8 +170,8 @@ NYC.prototype.cleanup = function () {
 }
 
 NYC.prototype._createOutputDirectory = function () {
-  mkdirp.sync(this.tmpDirectory())
-  mkdirp.sync(this._cacheDirectory())
+  mkdirp.sync(this.tempDirectory())
+  mkdirp.sync(this.cacheDirectory())
 }
 
 NYC.prototype._wrapExit = function () {
@@ -256,12 +240,12 @@ NYC.prototype._loadReports = function () {
   })
 }
 
-NYC.prototype.tmpDirectory = function () {
-  return path.resolve(this.cwd, './', this.tempDirectory)
+NYC.prototype.tmpDirectory = NYC.prototype.tempDirectory = function () {
+  return path.resolve(this.cwd, './', this._tempDirectory)
 }
 
-NYC.prototype._cacheDirectory = function () {
-  return path.resolve(this.cwd, './', this.cacheDirectory)
+NYC.prototype.cacheDirectory = function () {
+  return path.resolve(this.cwd, './', this._cacheDirectory)
 }
 
 NYC.prototype.mungeArgs = function (yargv) {
