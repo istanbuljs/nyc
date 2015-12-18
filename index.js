@@ -96,22 +96,14 @@ NYC.prototype._prepGlobPatterns = function (patterns) {
   return _.union(patterns, directories)
 }
 
-NYC.prototype.addFile = function (filename, returnImmediately) {
+NYC.prototype.addFile = function (filename) {
   var relFile = path.relative(this.cwd, filename)
-  var instrument = this.shouldInstrumentFile(filename, relFile)
-  var content = stripBom(fs.readFileSync(filename, 'utf8'))
-
-  if (instrument) {
-    this.sourceMapCache.add(filename, content)
-    content = this.instrumenter().instrumentSync(content, './' + relFile)
-  } else if (returnImmediately) {
-    return {}
-  }
-
+  var source = stripBom(fs.readFileSync(filename, 'utf8'))
+  var content = this._addSource(source, filename, relFile)
   return {
-    instrument: instrument,
-    content: content,
-    relFile: relFile
+    instrument: !!content,
+    relFile: relFile,
+    content: content || source
   }
 }
 
@@ -140,28 +132,32 @@ NYC.prototype.addAllFiles = function () {
   this.writeCoverageFile()
 }
 
+NYC.prototype._addSource = function (code, filename, relFile) {
+  var instrument = this.shouldInstrumentFile(filename, relFile)
+
+  if (!instrument) {
+    return null
+  }
+
+  this.sourceMapCache.add(filename, code)
+
+  var hash = md5(code)
+  var cacheFilePath = path.join(this.cacheDirectory(), hash + '.js')
+
+  try {
+    return fs.readFileSync(cacheFilePath, 'utf8')
+  } catch (e) {
+    var instrumented = this.instrumenter().instrumentSync(code, './' + relFile)
+    fs.writeFileSync(cacheFilePath, instrumented)
+    return instrumented
+  }
+}
+
 NYC.prototype._wrapRequire = function () {
   var _this = this
   appendTransform(function (code, filename) {
     var relFile = path.relative(_this.cwd, filename)
-    var instrument = _this.shouldInstrumentFile(filename, relFile)
-
-    if (!instrument) {
-      return code
-    }
-
-    _this.sourceMapCache.add(filename, code)
-
-    var hash = md5(code)
-    var cacheFilePath = path.join(_this.cacheDirectory(), hash + '.js')
-
-    try {
-      return fs.readFileSync(cacheFilePath, 'utf8')
-    } catch (e) {
-      var instrumented = _this.instrumenter().instrumentSync(code, './' + relFile)
-      fs.writeFileSync(cacheFilePath, instrumented)
-      return instrumented
-    }
+    return _this._addSource(code, filename, relFile) || code
   })
 }
 
