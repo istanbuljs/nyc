@@ -6,7 +6,7 @@
   "scripts": {
     "pretest": "standard",
     "test": "npm run cover",
-    "clean": "rm -rf ./.nyc_output ./.nyc_cache ./.self_coverage ./test/fixtures/.nyc_output ./test/fixtures/.nyc_cache ./test/build && rm -f *covered.js ./lib/*covered.js",
+    "clean": "rm -rf ./.nyc_output ./node_modules/.cache ./.self_coverage ./test/fixtures/.nyc_output ./test/fixtures/node_modules/.cache ./test/build && rm -f *covered.js ./lib/*covered.js",
     "build": "node ./build-tests",
     "instrument": "node ./build-self-coverage.js",
     "run-tests": "tap --no-cov -b ./test/build/*.js ./test/src/source-map-cache.js",
