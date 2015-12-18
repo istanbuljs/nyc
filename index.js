@@ -25,7 +25,7 @@ function NYC (opts) {
   this._istanbul = opts.istanbul
   this.subprocessBin = opts.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
   this._tempDirectory = opts.tempDirectory || './.nyc_output'
-  this._cacheDirectory = opts.cacheDirectory || './.nyc_cache'
+  this._cacheDirectory = opts.cacheDirectory || './node_modules/.cache/nyc'
   this.cwd = opts.cwd || process.env.NYC_CWD || process.cwd()
   this.reporter = arrify(opts.reporter || 'text')
   this.sourceMapCache = opts.sourceMapCache || new SourceMapCache()
