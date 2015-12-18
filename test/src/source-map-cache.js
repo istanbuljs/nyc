@@ -4,6 +4,7 @@ var _ = require('lodash')
 var ap = require('any-path')
 var path = require('path')
 
+var convertSourceMap = require('convert-source-map')
 var sourceMapFixtures = require('source-map-fixtures')
 
 // Load source map fixtures.
@@ -35,9 +36,16 @@ try {
 
 var sourceMapCache = new SourceMapCache()
 _.forOwn(covered, function (fixture) {
-  sourceMapCache.add(fixture.relpath, fixture.contentSync())
+  var source = fixture.contentSync()
+  var sourceMap = convertSourceMap.fromSource(source) || convertSourceMap.fromMapFileSource(source, fixture.relpath)
+  if (sourceMap) {
+    sourceMapCache.addMap(fixture.relpath, sourceMap.sourcemap)
+  }
 })
 
+var getReport = function () {
+  return _.cloneDeep(require('../fixtures/report'))
+}
 var coverage = ap(require('../fixtures/coverage'))
 var fixture = covered.inline
 
@@ -46,40 +54,47 @@ require('tap').mochaGlobals()
 
 describe('source-map-cache', function () {
   it('does not rewrite if there is no source map', function () {
-    var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-    mappedCoverage[covered.none.relpath].should.eql(coverage[covered.none.relpath])
+    var report = getReport()
+    sourceMapCache.applySourceMaps(report)
+    report.should.have.property(covered.none.relpath)
   })
 
   it('retains /* istanbul ignore … */ results', function () {
-    var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-    mappedCoverage[covered.istanbulIgnore.mappedPath].statementMap['3'].should.have.property('skip', true)
+    var report = getReport()
+    sourceMapCache.applySourceMaps(report)
+    report[covered.istanbulIgnore.mappedPath].statementMap['3'].should.have.property('skip', true)
   })
 
   describe('path', function () {
     it('does not rewrite path if the source map has more than one source', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      mappedCoverage.should.have.property(covered.bundle.relpath)
-      mappedCoverage[covered.bundle.relpath].should.not.eql(coverage[covered.bundle.relpath])
+      var report = getReport()
+      sourceMapCache.applySourceMaps(report)
+      report.should.have.property(covered.bundle.relpath)
     })
 
     it('rewrites path if the source map exactly one source', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(_.pick(coverage, fixture.relpath))
-      mappedCoverage.should.have.property(fixture.mappedPath)
+      var report = _.pick(getReport(), fixture.relpath)
+      sourceMapCache.applySourceMaps(report)
+      report.should.not.have.property(fixture.relpath)
+      report.should.have.property(fixture.mappedPath)
     })
   })
 
   describe('statements', function () {
     it('drops statements that have no mapping back to the original source code', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      Object.keys(mappedCoverage[fixture.mappedPath].s)
-        .should.be.lt(coverage[fixture.relpath].s)
-      Object.keys(mappedCoverage[fixture.mappedPath].statementMap).length
-        .should.equal(Object.keys(mappedCoverage[fixture.mappedPath].s).length)
+      var report = getReport()
+      var originalS = report[fixture.relpath].s
+      sourceMapCache.applySourceMaps(report)
+      Object.keys(report[fixture.mappedPath].s)
+        .should.be.lt(originalS)
+      Object.keys(report[fixture.mappedPath].statementMap).length
+        .should.equal(Object.keys(report[fixture.mappedPath].s).length)
     })
 
     it('maps all statements back to their original loc', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      var statements = _.values(mappedCoverage[fixture.mappedPath].statementMap)
+      var report = getReport()
+      sourceMapCache.applySourceMaps(report)
+      var statements = _.values(report[fixture.mappedPath].statementMap)
       var maxStatement = _.max(statements, function (s) {
         return Math.max(s.start.line, s.end.line)
       })
@@ -89,16 +104,19 @@ describe('source-map-cache', function () {
 
   describe('functions', function () {
     it('drops functions that have no mapping back to the original source code', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      Object.keys(mappedCoverage[fixture.mappedPath].f)
-        .should.be.lt(coverage[fixture.relpath].f)
-      Object.keys(mappedCoverage[fixture.mappedPath].fnMap).length
-        .should.equal(Object.keys(mappedCoverage[fixture.mappedPath].f).length)
+      var report = getReport()
+      var originalF = report[fixture.relpath].f
+      sourceMapCache.applySourceMaps(report)
+      Object.keys(report[fixture.mappedPath].f)
+        .should.be.lt(originalF)
+      Object.keys(report[fixture.mappedPath].fnMap).length
+        .should.equal(Object.keys(report[fixture.mappedPath].f).length)
     })
 
     it('maps all functions back to their original loc', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      var functions = _.values(mappedCoverage[fixture.mappedPath].fnMap)
+      var report = getReport()
+      sourceMapCache.applySourceMaps(report)
+      var functions = _.values(report[fixture.mappedPath].fnMap)
       var maxFunction = _.max(functions, function (f) {
         return f.line
       })
@@ -108,16 +126,19 @@ describe('source-map-cache', function () {
 
   describe('branches', function () {
     it('drops branches that have no mapping back to the original source code', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      Object.keys(mappedCoverage[fixture.mappedPath].b)
-        .should.be.lt(coverage[fixture.relpath].b)
-      Object.keys(mappedCoverage[fixture.mappedPath].branchMap).length
-        .should.equal(Object.keys(mappedCoverage[fixture.mappedPath].b).length)
+      var report = getReport()
+      var originalB = report[fixture.relpath].b
+      sourceMapCache.applySourceMaps(report)
+      Object.keys(report[fixture.mappedPath].b)
+        .should.be.lt(originalB)
+      Object.keys(report[fixture.mappedPath].branchMap).length
+        .should.equal(Object.keys(report[fixture.mappedPath].b).length)
     })
 
     it('maps all branches back to their original loc', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-      var branches = _.values(mappedCoverage[fixture.mappedPath].branchMap)
+      var report = getReport()
+      sourceMapCache.applySourceMaps(report)
+      var branches = _.values(report[fixture.mappedPath].branchMap)
       var maxBranch = _.max(branches, function (b) {
         return b.line
       })
