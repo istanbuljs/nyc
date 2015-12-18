@@ -449,4 +449,22 @@ describe('nyc', function () {
       return done()
     })
   })
+
+  describe('cache', function () {
+    it('handles collisions', function (done) {
+      var nyc = new NYC({cwd: fixtures})
+      nyc.clearCache()
+
+      var proc = spawn(process.execPath, [bin, process.execPath, './cache-collision-runner.js'], {
+        cwd: fixtures,
+        env: {},
+        stdio: 'inherit'
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        done()
+      })
+    })
+  })
 })
