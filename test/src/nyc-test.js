@@ -235,7 +235,7 @@ describe('nyc', function () {
         cwd: fixtures
       })
 
-      var proc = spawn(process.execPath, [bin, './sigint.js'], {
+      var proc = spawn(process.execPath, [bin, './spawn.js'], {
         cwd: fixtures,
         env: {},
         stdio: 'ignore'
@@ -248,7 +248,7 @@ describe('nyc', function () {
             add: function (report) {
               // the subprocess we ran should output reports
               // for files in the fixtures directory.
-              Object.keys(report).should.match(/.\/sigint\.js/)
+              Object.keys(report).should.match(/.\/(spawn|sigint|sigterm)\.js/)
             }
           },
           {
@@ -259,7 +259,7 @@ describe('nyc', function () {
             write: function () {
               // we should have output a report for the new subprocess.
               var stop = fs.readdirSync(nyc.tmpDirectory()).length
-              stop.should.be.eql(1)
+              stop.should.be.eql(3)
               return done()
             }
           }
