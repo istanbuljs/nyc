@@ -48,7 +48,7 @@ function NYC (opts) {
   // require extensions can be provided as config in package.json.
   this.require = arrify(config.require || opts.require)
 
-  this._createOutputDirectory()
+  this._createDatastoreDirectories()
 
   this.hashCache = {}
   this.loadedMaps = null
@@ -134,8 +134,6 @@ NYC.prototype.shouldInstrumentFile = function (filename, relFile) {
 NYC.prototype.addAllFiles = function () {
   var _this = this
 
-  this._createOutputDirectory()
-
   glob.sync('**/*.js', {nodir: true, ignore: this.exclude}).forEach(function (filename) {
     var obj = _this.addFile(filename, true)
     if (obj.instrument) {
@@ -186,7 +184,7 @@ NYC.prototype.cleanup = function () {
   if (!process.env.NYC_CWD) rimraf.sync(this.tempDirectory())
 }
 
-NYC.prototype._createOutputDirectory = function () {
+NYC.prototype._createDatastoreDirectories = function () {
   mkdirp.sync(this.tempDirectory())
   mkdirp.sync(this.cacheDirectory())
 }
