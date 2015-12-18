@@ -150,14 +150,8 @@ describe('nyc', function () {
       })
       nyc.wrap()
 
-      // clear the module cache so that
-      // we pull index.js in again and wrap it.
-      var name = require.resolve('../../')
-      delete require.cache[name]
-
-      // when we require index.js it should be wrapped.
-      var index = require('../../')
-      index.should.match(/__cov_/)
+      var check = require('../fixtures/check-instrumented')
+      check().should.be.true
     })
 
     describe('custom require hooks are installed', function () {
@@ -171,17 +165,11 @@ describe('nyc', function () {
         })
         nyc.wrap()
 
-        // clear the module cache so that
-        // we pull index.js in again and wrap it.
-        var name = require.resolve('../../')
-        delete require.cache[name]
-
         // install the custom require hook
         require.extensions['.js'] = hook
 
-        // when we require index.js it should be wrapped.
-        var index = require('../../')
-        index.should.match(/__cov_/)
+        var check = require('../fixtures/check-instrumented')
+        check().should.be.true
 
         // and the hook should have been called
         hook.calledOnce.should.be.true
