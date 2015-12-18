@@ -258,7 +258,7 @@ describe('nyc', function () {
             },
             write: function () {
               // we should have output a report for the new subprocess.
-              var stop = fs.readdirSync(nyc.tmpDirectory()).length
+              var stop = fs.readdirSync(nyc.tempDirectory()).length
               stop.should.be.eql(1)
               return done()
             }
