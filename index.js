@@ -1,4 +1,5 @@
 /* global __coverage__ */
+var lazyRequire = require('lazy-req')(require)
 var fs = require('fs')
 var glob = require('glob')
 var micromatch = require('micromatch')
@@ -11,8 +12,9 @@ var stripBom = require('strip-bom')
 var resolveFrom = require('resolve-from')
 var md5 = require('md5-hex')
 var arrify = require('arrify')
+var SourceMapCache = lazyRequire('./lib/source-map-cache')
 var convertSourceMap = require('convert-source-map')
-var endsWith = require('ends-with')
+var istanbul = lazyRequire('istanbul')
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -39,13 +41,17 @@ function NYC (opts) {
     this.include = this._prepGlobPatterns(arrify(config.include))
   }
 
-  this.exclude = ['**/node_modules/**'].concat(arrify(config.exclude || ['test/**', 'test{,-*}.js']))
-  this.exclude = this._prepGlobPatterns(this.exclude)
+  this.exclude = this._prepGlobPatterns(
+    ['**/node_modules/**'].concat(arrify(config.exclude || ['test/**', 'test{,-*}.js']))
+  )
 
   // require extensions can be provided as config in package.json.
   this.require = arrify(config.require || opts.require)
 
   this._createOutputDirectory()
+
+  this.hashCache = {}
+  this.loadedMaps = null
 }
 
 NYC.prototype._loadAdditionalModules = function () {
@@ -72,9 +78,11 @@ NYC.prototype._createInstrumenter = function () {
 
   if (!fs.existsSync(configFile)) configFile = undefined
 
-  var instrumenterConfig = this.istanbul().config.loadFile(configFile).instrumentation.config
+  var istanbul = this.istanbul()
 
-  return new (this.istanbul()).Instrumenter({
+  var instrumenterConfig = istanbul.config.loadFile(configFile).instrumentation.config
+
+  return new istanbul.Instrumenter({
     coverageVariable: '__coverage__',
     embedSource: instrumenterConfig['embed-source'],
     noCompact: !instrumenterConfig.compact,
@@ -95,8 +103,8 @@ NYC.prototype._prepGlobPatterns = function (patterns) {
 
   patterns.forEach(function (pattern) {
     // Allow gitignore style of directory exclusion
-    if (!endsWith(pattern, '/**')) {
-      add(pattern.replace(/\/$/, '').concat('/**'))
+    if (!/\/\*\*$/.test(pattern)) {
+      add(pattern.replace(/\/$/, '') + '/**')
     }
 
     add(pattern)
@@ -108,11 +116,11 @@ NYC.prototype._prepGlobPatterns = function (patterns) {
 NYC.prototype.addFile = function (filename) {
   var relFile = path.relative(this.cwd, filename)
   var source = stripBom(fs.readFileSync(filename, 'utf8'))
-  var content = this._addSource(source, filename, relFile)
+  var instrumentedSource = this._maybeInstrumentSource(source, filename, relFile)
   return {
-    instrument: !!content,
+    instrument: !!instrumentedSource,
     relFile: relFile,
-    content: content || source
+    content: instrumentedSource || source
   }
 }
 
@@ -141,9 +149,7 @@ NYC.prototype.addAllFiles = function () {
   this.writeCoverageFile()
 }
 
-var hashCache = {}
-
-NYC.prototype._addSource = function (code, filename, relFile) {
+NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
   var instrument = this.shouldInstrumentFile(filename, relFile)
 
   if (!instrument) {
@@ -151,7 +157,7 @@ NYC.prototype._addSource = function (code, filename, relFile) {
   }
 
   var hash = md5(code)
-  hashCache['./' + relFile] = hash
+  this.hashCache['./' + relFile] = hash
   var cacheFilePath = path.join(this.cacheDirectory(), hash + '.js')
 
   try {
@@ -172,12 +178,12 @@ NYC.prototype._wrapRequire = function () {
   var _this = this
   appendTransform(function (code, filename) {
     var relFile = path.relative(_this.cwd, filename)
-    return _this._addSource(code, filename, relFile) || code
+    return _this._maybeInstrumentSource(code, filename, relFile) || code
   })
 }
 
 NYC.prototype.cleanup = function () {
-  if (!process.env.NYC_CWD) rimraf.sync(this.tmpDirectory())
+  if (!process.env.NYC_CWD) rimraf.sync(this.tempDirectory())
 }
 
 NYC.prototype._createOutputDirectory = function () {
@@ -208,27 +214,28 @@ NYC.prototype.writeCoverageFile = function () {
   if (!coverage) return
 
   Object.keys(coverage).forEach(function (relFile) {
-    if (hashCache[relFile] && coverage[relFile]) {
-      coverage[relFile].contentHash = hashCache[relFile]
+    if (this.hashCache[relFile] && coverage[relFile]) {
+      coverage[relFile].contentHash = this.hashCache[relFile]
     }
-  })
+  }, this)
 
   fs.writeFileSync(
-    path.resolve(this.tmpDirectory(), './', process.pid + '.json'),
+    path.resolve(this.tempDirectory(), './', process.pid + '.json'),
     JSON.stringify(coverage),
     'utf-8'
   )
 }
 
 NYC.prototype.istanbul = function () {
-  return this._istanbul || (this._istanbul = require('istanbul'))
+  return this._istanbul || (this._istanbul = istanbul())
 }
 
 NYC.prototype.report = function (cb, _collector, _reporter) {
   cb = cb || function () {}
 
-  var collector = _collector || new (this.istanbul()).Collector()
-  var reporter = _reporter || new (this.istanbul()).Reporter()
+  var istanbul = this.istanbul()
+  var collector = _collector || new istanbul.Collector()
+  var reporter = _reporter || new istanbul.Reporter()
 
   this._loadReports().forEach(function (report) {
     collector.add(report)
@@ -241,53 +248,51 @@ NYC.prototype.report = function (cb, _collector, _reporter) {
   reporter.write(collector, true, cb)
 }
 
-var loadedMaps = {}
-
 NYC.prototype._loadReports = function () {
   var _this = this
-  var files = fs.readdirSync(this.tmpDirectory())
+  var files = fs.readdirSync(this.tempDirectory())
 
-  var SourceMapCache = require('./lib/source-map-cache')
-  var sourceMapCache = new SourceMapCache()
+  var sourceMapCache = SourceMapCache()()
 
   var cacheDir = _this.cacheDirectory()
+
+  var loadedMaps = this.loadedMaps || (this.loadedMaps = {})
 
   return files.map(function (f) {
     var report
     try {
       report = JSON.parse(fs.readFileSync(
-        path.resolve(_this.tmpDirectory(), './', f),
+        path.resolve(_this.tempDirectory(), './', f),
         'utf-8'
       ))
     } catch (e) { // handle corrupt JSON output.
       return {}
     }
 
-    if (report) {
-      Object.keys(report).forEach(function (relFile) {
-        var fileReport = report[relFile]
-        if (fileReport && fileReport.contentHash) {
-          var hash = fileReport.contentHash
-          if (!(loadedMaps[hash] || (loadedMaps[hash] === false))) {
-            try {
-              var mapPath = path.join(cacheDir, hash + '.map')
-              loadedMaps[hash] = fs.readFileSync(mapPath, 'utf8')
-            } catch (e) {
-              loadedMaps[hash] = false
-            }
-          }
-          if (loadedMaps[hash]) {
-            sourceMapCache.addMap(relFile, loadedMaps[hash])
+    Object.keys(report).forEach(function (relFile) {
+      var fileReport = report[relFile]
+      if (fileReport && fileReport.contentHash) {
+        var hash = fileReport.contentHash
+        if (!(hash in loadedMaps)) {
+          try {
+            var mapPath = path.join(cacheDir, hash + '.map')
+            loadedMaps[hash] = fs.readFileSync(mapPath, 'utf8')
+          } catch (e) {
+            // set to false to avoid repeatedly trying to load the map
+            loadedMaps[hash] = false
           }
         }
-      })
-      report = sourceMapCache.applySourceMaps(report)
-    }
+        if (loadedMaps[hash]) {
+          sourceMapCache.addMap(relFile, loadedMaps[hash])
+        }
+      }
+    })
+    report = sourceMapCache.applySourceMaps(report)
     return report
   })
 }
 
-NYC.prototype.tmpDirectory = NYC.prototype.tempDirectory = function () {
+NYC.prototype.tempDirectory = function () {
   return path.resolve(this.cwd, './', this._tempDirectory)
 }
 
