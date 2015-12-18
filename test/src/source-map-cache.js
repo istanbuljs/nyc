@@ -46,31 +46,36 @@ require('tap').mochaGlobals()
 
 describe('source-map-cache', function () {
   it('does not rewrite if there is no source map', function () {
-    var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
-    mappedCoverage[covered.none.relpath].should.eql(coverage[covered.none.relpath])
+    var mappedCoverage = _.cloneDeep(coverage)
+    sourceMapCache.applySourceMaps(mappedCoverage)
+    mappedCoverage.should.have.property(covered.none.relpath)
   })
 
   it('retains /* istanbul ignore … */ results', function () {
-    var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
+    var mappedCoverage = _.cloneDeep(coverage)
+    sourceMapCache.applySourceMaps(mappedCoverage)
     mappedCoverage[covered.istanbulIgnore.mappedPath].statementMap['3'].should.have.property('skip', true)
   })
 
   describe('path', function () {
     it('does not rewrite path if the source map has more than one source', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
+      var mappedCoverage = _.cloneDeep(coverage)
+      sourceMapCache.applySourceMaps(mappedCoverage)
       mappedCoverage.should.have.property(covered.bundle.relpath)
-      mappedCoverage[covered.bundle.relpath].should.not.eql(coverage[covered.bundle.relpath])
     })
 
     it('rewrites path if the source map exactly one source', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(_.pick(coverage, fixture.relpath))
+      var mappedCoverage = _.pick(_.cloneDeep(coverage), fixture.relpath)
+      sourceMapCache.applySourceMaps(mappedCoverage)
+      mappedCoverage.should.not.have.property(fixture.relpath)
       mappedCoverage.should.have.property(fixture.mappedPath)
     })
   })
 
   describe('statements', function () {
     it('drops statements that have no mapping back to the original source code', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
+      var mappedCoverage = _.cloneDeep(coverage)
+      sourceMapCache.applySourceMaps(mappedCoverage)
       Object.keys(mappedCoverage[fixture.mappedPath].s)
         .should.be.lt(coverage[fixture.relpath].s)
       Object.keys(mappedCoverage[fixture.mappedPath].statementMap).length
@@ -78,7 +83,8 @@ describe('source-map-cache', function () {
     })
 
     it('maps all statements back to their original loc', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
+      var mappedCoverage = _.cloneDeep(coverage)
+      sourceMapCache.applySourceMaps(mappedCoverage)
       var statements = _.values(mappedCoverage[fixture.mappedPath].statementMap)
       var maxStatement = _.max(statements, function (s) {
         return Math.max(s.start.line, s.end.line)
@@ -89,7 +95,8 @@ describe('source-map-cache', function () {
 
   describe('functions', function () {
     it('drops functions that have no mapping back to the original source code', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
+      var mappedCoverage = _.cloneDeep(coverage)
+      sourceMapCache.applySourceMaps(mappedCoverage)
       Object.keys(mappedCoverage[fixture.mappedPath].f)
         .should.be.lt(coverage[fixture.relpath].f)
       Object.keys(mappedCoverage[fixture.mappedPath].fnMap).length
@@ -97,7 +104,8 @@ describe('source-map-cache', function () {
     })
 
     it('maps all functions back to their original loc', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
+      var mappedCoverage = _.cloneDeep(coverage)
+      sourceMapCache.applySourceMaps(mappedCoverage)
       var functions = _.values(mappedCoverage[fixture.mappedPath].fnMap)
       var maxFunction = _.max(functions, function (f) {
         return f.line
@@ -108,7 +116,8 @@ describe('source-map-cache', function () {
 
   describe('branches', function () {
     it('drops branches that have no mapping back to the original source code', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
+      var mappedCoverage = _.cloneDeep(coverage)
+      sourceMapCache.applySourceMaps(mappedCoverage)
       Object.keys(mappedCoverage[fixture.mappedPath].b)
         .should.be.lt(coverage[fixture.relpath].b)
       Object.keys(mappedCoverage[fixture.mappedPath].branchMap).length
@@ -116,7 +125,8 @@ describe('source-map-cache', function () {
     })
 
     it('maps all branches back to their original loc', function () {
-      var mappedCoverage = sourceMapCache.applySourceMaps(coverage)
+      var mappedCoverage = _.cloneDeep(coverage)
+      sourceMapCache.applySourceMaps(mappedCoverage)
       var branches = _.values(mappedCoverage[fixture.mappedPath].branchMap)
       var maxBranch = _.max(branches, function (b) {
         return b.line

@@ -287,7 +287,7 @@ NYC.prototype._loadReports = function () {
         }
       }
     })
-    report = sourceMapCache.applySourceMaps(report)
+    sourceMapCache.applySourceMaps(report)
     return report
   })
 }
