@@ -4,6 +4,7 @@ var _ = require('lodash')
 var ap = require('any-path')
 var path = require('path')
 
+var convertSourceMap = require('convert-source-map')
 var sourceMapFixtures = require('source-map-fixtures')
 
 // Load source map fixtures.
@@ -35,7 +36,11 @@ try {
 
 var sourceMapCache = new SourceMapCache()
 _.forOwn(covered, function (fixture) {
-  sourceMapCache.add(fixture.relpath, fixture.contentSync())
+  var source = fixture.contentSync()
+  var sourceMap = convertSourceMap.fromSource(source) || convertSourceMap.fromMapFileSource(source, fixture.relpath)
+  if (sourceMap) {
+    sourceMapCache.addMap(fixture.relpath, sourceMap.sourcemap)
+  }
 })
 
 var getReport = function () {

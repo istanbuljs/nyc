@@ -276,7 +276,7 @@ NYC.prototype._loadReports = function () {
         if (!(hash in loadedMaps)) {
           try {
             var mapPath = path.join(cacheDir, hash + '.map')
-            loadedMaps[hash] = fs.readFileSync(mapPath, 'utf8')
+            loadedMaps[hash] = JSON.parse(fs.readFileSync(mapPath, 'utf8'))
           } catch (e) {
             // set to false to avoid repeatedly trying to load the map
             loadedMaps[hash] = false
