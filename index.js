@@ -1,5 +1,4 @@
 /* global __coverage__ */
-var lazyRequire = require('lazy-req')(require)
 var fs = require('fs')
 var glob = require('glob')
 var micromatch = require('micromatch')
@@ -12,9 +11,8 @@ var stripBom = require('strip-bom')
 var resolveFrom = require('resolve-from')
 var md5 = require('md5-hex')
 var arrify = require('arrify')
-var SourceMapCache = lazyRequire('./lib/source-map-cache')
+var SourceMapCache = require('./lib/source-map-cache')
 var convertSourceMap = require('convert-source-map')
-var istanbul = lazyRequire('istanbul')
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -225,7 +223,7 @@ NYC.prototype.writeCoverageFile = function () {
 }
 
 NYC.prototype.istanbul = function () {
-  return this._istanbul || (this._istanbul = istanbul())
+  return this._istanbul || (this._istanbul = require('istanbul'))
 }
 
 NYC.prototype.report = function (cb, _collector, _reporter) {
@@ -250,7 +248,7 @@ NYC.prototype._loadReports = function () {
   var _this = this
   var files = fs.readdirSync(this.tempDirectory())
 
-  var sourceMapCache = SourceMapCache()()
+  var sourceMapCache = new SourceMapCache()
 
   var cacheDir = _this.cacheDirectory()
 
