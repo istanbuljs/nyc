@@ -64,11 +64,11 @@ describe('nyc', function () {
       var result = _prepGlobPatterns(['./foo', 'bar/**', 'baz/'])
 
       result.should.deep.equal([
+        './foo/**', // Appended `/**`
         './foo',
         'bar/**',
-        'baz/',
-        './foo/**', // Appended `/**`
-        'baz/**'  // Removed trailing slash before appending `/**`
+        'baz/**',  // Removed trailing slash before appending `/**`
+        'baz/'
       ])
     })
   })
