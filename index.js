@@ -182,6 +182,10 @@ NYC.prototype.cleanup = function () {
   if (!process.env.NYC_CWD) rimraf.sync(this.tempDirectory())
 }
 
+NYC.prototype.clearCache = function () {
+  rimraf.sync(this.cacheDirectory())
+}
+
 NYC.prototype._createDatastoreDirectories = function () {
   mkdirp.sync(this.tempDirectory())
   mkdirp.sync(this.cacheDirectory())
