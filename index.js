@@ -34,8 +34,10 @@ function NYC (opts) {
   config = config.nyc || {}
 
   // load exclude stanza from config.
-  this.include = arrify(config.include || ['**'])
-  this.include = this._prepGlobPatterns(this.include)
+  this.include = false
+  if (config.include) {
+    this.include = this._prepGlobPatterns(arrify(config.include))
+  }
 
   this.exclude = ['**/node_modules/**'].concat(arrify(config.exclude || ['test/**', 'test{,-*}.js']))
   this.exclude = this._prepGlobPatterns(this.exclude)
@@ -117,7 +119,7 @@ NYC.prototype.addFile = function (filename) {
 NYC.prototype.shouldInstrumentFile = function (filename, relFile) {
   relFile = relFile.replace(/^\.\//, '') // remove leading './'.
 
-  return (micromatch.any(filename, this.include) || micromatch.any(relFile, this.include)) &&
+  return (!this.include || micromatch.any(filename, this.include) || micromatch.any(relFile, this.include)) &&
     !(micromatch.any(filename, this.exclude) || micromatch.any(relFile, this.exclude))
 }
 
