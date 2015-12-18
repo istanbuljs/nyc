@@ -1,4 +1,4 @@
-// Generated using node test/fixtures/_generateCoverage.js
+// Generated using node test/fixtures/_generateReport.js
 exports["./node_modules/source-map-fixtures/fixtures/bundle-inline.js"] = {
   "path": "./node_modules/source-map-fixtures/fixtures/bundle-inline.js",
   "s": {
