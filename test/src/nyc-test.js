@@ -271,30 +271,23 @@ describe('nyc', function () {
       var nyc = new NYC({
         cwd: process.cwd()
       })
-      var proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
-        cwd: process.cwd(),
-        env: process.env,
-        stdio: 'inherit'
-      })
 
       fs.writeFileSync('./.nyc_output/bad.json', '}', 'utf-8')
 
-      proc.on('close', function () {
-        nyc.report(
-          null,
-          {
-            add: function (report) {}
-          },
-          {
-            add: function (reporter) {},
-            write: function () {
-              // we should get here without exception.
-              fs.unlinkSync('./.nyc_output/bad.json')
-              return done()
-            }
+      nyc.report(
+        null,
+        {
+          add: function (report) {}
+        },
+        {
+          add: function (reporter) {},
+          write: function () {
+            // we should get here without exception.
+            fs.unlinkSync('./.nyc_output/bad.json')
+            return done()
           }
-        )
-      })
+        }
+      )
     })
 
     it('handles multiple reporters', function (done) {
