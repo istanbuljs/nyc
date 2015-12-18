@@ -1,5 +1,4 @@
 /* global __coverage__ */
-var _ = require('lodash')
 var fs = require('fs')
 var glob = require('glob')
 var micromatch = require('micromatch')
@@ -13,6 +12,7 @@ var resolveFrom = require('resolve-from')
 var md5 = require('md5-hex')
 var arrify = require('arrify')
 var convertSourceMap = require('convert-source-map')
+var endsWith = require('ends-with')
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -83,16 +83,24 @@ NYC.prototype._createInstrumenter = function () {
 NYC.prototype._prepGlobPatterns = function (patterns) {
   if (!patterns) return patterns
 
-  var directories = []
-  patterns = _.map(patterns, function (pattern) {
+  var result = []
+
+  function add (pattern) {
+    if (result.indexOf(pattern) === -1) {
+      result.push(pattern)
+    }
+  }
+
+  patterns.forEach(function (pattern) {
     // Allow gitignore style of directory exclusion
-    if (!_.endsWith(pattern, '/**')) {
-      directories.push(pattern.replace(/\/$/, '').concat('/**'))
+    if (!endsWith(pattern, '/**')) {
+      add(pattern.replace(/\/$/, '').concat('/**'))
     }
 
-    return pattern
+    add(pattern)
   })
-  return _.union(patterns, directories)
+
+  return result
 }
 
 NYC.prototype.addFile = function (filename) {
@@ -242,7 +250,7 @@ NYC.prototype._loadReports = function () {
 
   var cacheDir = _this.cacheDirectory()
 
-  return _.map(files, function (f) {
+  return files.map(function (f) {
     var report
     try {
       report = JSON.parse(fs.readFileSync(
