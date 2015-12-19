@@ -150,14 +150,8 @@ describe('nyc', function () {
       })
       nyc.wrap()
 
-      // clear the module cache so that
-      // we pull index.js in again and wrap it.
-      var name = require.resolve('../../')
-      delete require.cache[name]
-
-      // when we require index.js it should be wrapped.
-      var index = require('../../')
-      index.should.match(/__cov_/)
+      var check = require('../fixtures/check-instrumented')
+      check().should.be.true
     })
 
     describe('custom require hooks are installed', function () {
@@ -171,17 +165,11 @@ describe('nyc', function () {
         })
         nyc.wrap()
 
-        // clear the module cache so that
-        // we pull index.js in again and wrap it.
-        var name = require.resolve('../../')
-        delete require.cache[name]
-
         // install the custom require hook
         require.extensions['.js'] = hook
 
-        // when we require index.js it should be wrapped.
-        var index = require('../../')
-        index.should.match(/__cov_/)
+        var check = require('../fixtures/check-instrumented')
+        check().should.be.true
 
         // and the hook should have been called
         hook.calledOnce.should.be.true
@@ -235,7 +223,7 @@ describe('nyc', function () {
         cwd: fixtures
       })
 
-      var proc = spawn(process.execPath, [bin, './sigint.js'], {
+      var proc = spawn(process.execPath, [bin, './spawn.js'], {
         cwd: fixtures,
         env: {},
         stdio: 'ignore'
@@ -248,7 +236,7 @@ describe('nyc', function () {
             add: function (report) {
               // the subprocess we ran should output reports
               // for files in the fixtures directory.
-              Object.keys(report).should.match(/.\/sigint\.js/)
+              Object.keys(report).should.match(/.\/(spawn|sigint|sigterm)\.js/)
             }
           },
           {
@@ -259,7 +247,7 @@ describe('nyc', function () {
             write: function () {
               // we should have output a report for the new subprocess.
               var stop = fs.readdirSync(nyc.tmpDirectory()).length
-              stop.should.be.eql(1)
+              stop.should.be.eql(3)
               return done()
             }
           }
@@ -271,30 +259,23 @@ describe('nyc', function () {
       var nyc = new NYC({
         cwd: process.cwd()
       })
-      var proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
-        cwd: process.cwd(),
-        env: process.env,
-        stdio: 'inherit'
-      })
 
       fs.writeFileSync('./.nyc_output/bad.json', '}', 'utf-8')
 
-      proc.on('close', function () {
-        nyc.report(
-          null,
-          {
-            add: function (report) {}
-          },
-          {
-            add: function (reporter) {},
-            write: function () {
-              // we should get here without exception.
-              fs.unlinkSync('./.nyc_output/bad.json')
-              return done()
-            }
+      nyc.report(
+        null,
+        {
+          add: function (report) {}
+        },
+        {
+          add: function (reporter) {},
+          write: function () {
+            // we should get here without exception.
+            fs.unlinkSync('./.nyc_output/bad.json')
+            return done()
           }
-        )
-      })
+        }
+      )
     })
 
     it('handles multiple reporters', function (done) {
