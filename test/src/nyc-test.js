@@ -2,6 +2,7 @@
 
 require('source-map-support').install()
 var _ = require('lodash')
+var ap = require('any-path')
 var fs = require('fs')
 var NYC
 
@@ -400,9 +401,9 @@ describe('nyc', function () {
       nyc.addAllFiles()
 
       var reports = _.filter(nyc._loadReports(), function (report) {
-        return report['./test' + path.sep + 'fixtures' + path.sep + 'not-loaded.js']
+        return ap(report['./test/fixtures/not-loaded.js'])
       })
-      var report = reports[0]['./test' + path.sep + 'fixtures' + path.sep + 'not-loaded.js']
+      var report = reports[0]['./test/fixtures/not-loaded.js']
 
       reports.length.should.equal(1)
       report.s['1'].should.equal(0)

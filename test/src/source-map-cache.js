@@ -1,6 +1,7 @@
 /* global describe, it */
 
 var _ = require('lodash')
+var ap = require('any-path')
 var path = require('path')
 
 var sourceMapFixtures = require('source-map-fixtures')
@@ -37,7 +38,7 @@ _.forOwn(covered, function (fixture) {
   sourceMapCache.add(fixture.relpath, fixture.contentSync())
 })
 
-var coverage = require('../fixtures/coverage')
+var coverage = ap(require('../fixtures/coverage'))
 var fixture = covered.inline
 
 require('chai').should()
