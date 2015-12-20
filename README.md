@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/bcoe/nyc.png)](https://travis-ci.org/bcoe/nyc)
 [![Coverage Status](https://coveralls.io/repos/bcoe/nyc/badge.svg?branch=)](https://coveralls.io/r/bcoe/nyc?branch=)
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
+[![Windows Tests][https://img.shields.io/appveyor/ci/bcoe/nyc/master.svg?label=Windows%20Tests]][https://ci.appveyor.com/project/bcoe/nyc]
+
 
 ```shell
 nyc npm test
