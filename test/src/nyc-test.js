@@ -14,6 +14,7 @@ try {
 var path = require('path')
 var rimraf = require('rimraf')
 var sinon = require('sinon')
+var isWindows = require('is-windows')
 var spawn = require('win-spawn')
 var fixtures = path.resolve(__dirname, '../fixtures')
 var bin = path.resolve(__dirname, '../../bin/nyc')
@@ -197,10 +198,12 @@ describe('nyc', function () {
     }
 
     it('writes coverage report when process is killed with SIGTERM', function (done) {
+      if (isWindows) return done()
       testSignal('sigterm', done)
     })
 
     it('writes coverage report when process is killed with SIGINT', function (done) {
+      if (isWindows) return done()
       testSignal('sigint', done)
     })
 
@@ -285,7 +288,7 @@ describe('nyc', function () {
         cwd: process.cwd(),
         reporter: reporters
       })
-      var proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
+      var proc = spawn(process.execPath, ['./test/fixtures/not-loaded.js'], {
         cwd: process.cwd(),
         env: process.env,
         stdio: 'inherit'

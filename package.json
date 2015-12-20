@@ -84,6 +84,7 @@
     "coveralls": "^2.11.4",
     "del": "^2.2.0",
     "forking-tap": "^0.1.1",
+    "is-windows": "^0.1.0",
     "sanitize-filename": "^1.5.3",
     "sinon": "^1.15.3",
     "source-map-fixtures": "^0.4.0",
