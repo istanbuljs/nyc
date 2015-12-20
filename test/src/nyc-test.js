@@ -401,7 +401,7 @@ describe('nyc', function () {
       nyc.addAllFiles()
 
       var reports = _.filter(nyc._loadReports(), function (report) {
-        return ap(report['./test/fixtures/not-loaded.js'])
+        return ap(report)['./test/fixtures/not-loaded.js']
       })
       var report = reports[0]['./test/fixtures/not-loaded.js']
 
