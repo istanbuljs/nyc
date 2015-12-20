@@ -440,7 +440,7 @@ describe('nyc', function () {
       var nyc = new NYC({cwd: fixtures})
       nyc.clearCache()
 
-      var proc = spawn(process.execPath, [bin, process.execPath, './cache-collision-runner.js'], {
+      var proc = spawn(process.execPath, [bin, './cache-collision-runner.js'], {
         cwd: fixtures,
         env: {},
         stdio: 'inherit'
