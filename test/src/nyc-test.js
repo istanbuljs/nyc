@@ -14,7 +14,7 @@ try {
 var path = require('path')
 var rimraf = require('rimraf')
 var sinon = require('sinon')
-var spawn = require('child_process').spawn
+var spawn = require('win-spawn')
 var fixtures = path.resolve(__dirname, '../fixtures')
 var bin = path.resolve(__dirname, '../../bin/nyc')
 
