@@ -239,7 +239,7 @@ describe('nyc', function () {
             add: function (report) {
               // the subprocess we ran should output reports
               // for files in the fixtures directory.
-              Object.keys(report).should.match(/.\/(spawn|sigint|sigterm)\.js/)
+              Object.keys(report).should.match(/.\/(spawn|child-1|child-2)\.js/)
             }
           },
           {
@@ -288,7 +288,7 @@ describe('nyc', function () {
         cwd: process.cwd(),
         reporter: reporters
       })
-      var proc = spawn(process.execPath, ['./test/fixtures/not-loaded.js'], {
+      var proc = spawn(process.execPath, ['./test/fixtures/child-1.js'], {
         cwd: process.cwd(),
         env: process.env,
         stdio: 'inherit'
