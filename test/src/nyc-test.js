@@ -2,6 +2,7 @@
 
 require('source-map-support').install()
 var _ = require('lodash')
+var ap = require('any-path')
 var fs = require('fs')
 var NYC
 
@@ -14,7 +15,8 @@ try {
 var path = require('path')
 var rimraf = require('rimraf')
 var sinon = require('sinon')
-var spawn = require('child_process').spawn
+var isWindows = require('is-windows')
+var spawn = require('win-spawn')
 var fixtures = path.resolve(__dirname, '../fixtures')
 var bin = path.resolve(__dirname, '../../bin/nyc')
 
@@ -197,10 +199,12 @@ describe('nyc', function () {
     }
 
     it('writes coverage report when process is killed with SIGTERM', function (done) {
+      if (isWindows) return done()
       testSignal('sigterm', done)
     })
 
     it('writes coverage report when process is killed with SIGINT', function (done) {
+      if (isWindows) return done()
       testSignal('sigint', done)
     })
 
@@ -236,7 +240,7 @@ describe('nyc', function () {
             add: function (report) {
               // the subprocess we ran should output reports
               // for files in the fixtures directory.
-              Object.keys(report).should.match(/.\/(spawn|sigint|sigterm)\.js/)
+              Object.keys(report).should.match(/.\/(spawn|child-1|child-2)\.js/)
             }
           },
           {
@@ -285,7 +289,7 @@ describe('nyc', function () {
         cwd: process.cwd(),
         reporter: reporters
       })
-      var proc = spawn(process.execPath, ['./test/fixtures/sigint.js'], {
+      var proc = spawn(process.execPath, ['./test/fixtures/child-1.js'], {
         cwd: process.cwd(),
         env: process.env,
         stdio: 'inherit'
@@ -397,7 +401,7 @@ describe('nyc', function () {
       nyc.addAllFiles()
 
       var reports = _.filter(nyc._loadReports(), function (report) {
-        return report['./test/fixtures/not-loaded.js']
+        return ap(report)['./test/fixtures/not-loaded.js']
       })
       var report = reports[0]['./test/fixtures/not-loaded.js']
 
