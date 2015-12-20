@@ -157,7 +157,7 @@ describe('nyc', function () {
     describe('custom require hooks are installed', function () {
       it('wraps modules with coverage counters when the custom require hook compiles them', function () {
         var hook = sinon.spy(function (module, filename) {
-          module._compile(fs.readFileSync(filename, 'utf8'))
+          module._compile(fs.readFileSync(filename, 'utf8'), filename)
         })
 
         var nyc = new NYC({
