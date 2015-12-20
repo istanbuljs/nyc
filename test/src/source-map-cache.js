@@ -2,6 +2,7 @@
 
 var _ = require('lodash')
 var ap = require('any-path')
+var expect = require('chai').expect
 var path = require('path')
 
 var convertSourceMap = require('convert-source-map')
@@ -44,9 +45,8 @@ _.forOwn(covered, function (fixture) {
 })
 
 var getReport = function () {
-  return _.cloneDeep(require('../fixtures/report'))
+  return ap(_.cloneDeep(require('../fixtures/report')))
 }
-var coverage = ap(require('../fixtures/coverage'))
 var fixture = covered.inline
 
 require('chai').should()
@@ -69,13 +69,13 @@ describe('source-map-cache', function () {
     it('does not rewrite path if the source map has more than one source', function () {
       var report = getReport()
       sourceMapCache.applySourceMaps(report)
-      report.should.have.property(covered.bundle.relpath)
+      expect(report[covered.bundle.relpath]).to.not.equal(undefined)
     })
 
-    it('rewrites path if the source map exactly one source', function () {
-      var report = _.pick(getReport(), fixture.relpath)
+    it('rewrites path if the source map has exactly one source', function () {
+      var report = ap(_.pick(getReport(), fixture.relpath))
       sourceMapCache.applySourceMaps(report)
-      report.should.not.have.property(fixture.relpath)
+      expect(report[fixture.relpath]).to.equal(undefined)
       report.should.have.property(fixture.mappedPath)
     })
   })
