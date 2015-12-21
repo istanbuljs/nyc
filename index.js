@@ -4,12 +4,12 @@ var glob = require('glob')
 var micromatch = require('micromatch')
 var mkdirp = require('mkdirp')
 var appendTransform = require('append-transform')
+var cachingTransform = require('caching-transform')
 var path = require('path')
 var rimraf = require('rimraf')
 var onExit = require('signal-exit')
 var stripBom = require('strip-bom')
 var resolveFrom = require('resolve-from')
-var md5 = require('md5-hex')
 var arrify = require('arrify')
 var SourceMapCache = require('./lib/source-map-cache')
 var convertSourceMap = require('convert-source-map')
@@ -47,6 +47,12 @@ function NYC (opts) {
   this.require = arrify(config.require || opts.require)
 
   this._createDatastoreDirectories()
+
+  this.transform = cachingTransform({
+    factory: this._transformFactory.bind(this),
+    cacheDir: this.cacheDirectory(),
+    ext: '.js'
+  })
 
   this.hashCache = {}
   this.loadedMaps = null
@@ -152,21 +158,29 @@ NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
     return null
   }
 
-  var hash = md5(code)
-  this.hashCache['./' + relFile] = hash
-  var cacheFilePath = path.join(this.cacheDirectory(), hash + '.js')
+  return this.transform(code, filename)
+}
 
-  try {
-    return fs.readFileSync(cacheFilePath, 'utf8')
-  } catch (e) {
+NYC.prototype._transformFactory = function (cacheDir) {
+  var _this = this
+  var instrumenter = this.instrumenter()
+
+  return function (code, filename, hash) {
+    var relFile = './' + path.relative(_this.cwd, filename)
+
     var sourceMap = convertSourceMap.fromSource(code) || convertSourceMap.fromMapFileSource(code, path.dirname(filename))
-    if (sourceMap) {
-      var mapPath = path.join(this.cacheDirectory(), hash + '.map')
-      fs.writeFileSync(mapPath, sourceMap.toJSON())
+
+    if (hash) {
+      _this.hashCache[relFile] = hash
+      if (sourceMap) {
+        var mapPath = path.join(cacheDir, hash + '.map')
+        fs.writeFileSync(mapPath, sourceMap.toJSON())
+      }
+    } else {
+      _this.sourceMapCache.addMap(relFile, sourceMap)
     }
-    var instrumented = this.instrumenter().instrumentSync(code, './' + relFile)
-    fs.writeFileSync(cacheFilePath, instrumented)
-    return instrumented
+
+    return instrumenter.instrumentSync(code, relFile)
   }
 }
 
@@ -188,7 +202,6 @@ NYC.prototype.clearCache = function () {
 
 NYC.prototype._createDatastoreDirectories = function () {
   mkdirp.sync(this.tempDirectory())
-  mkdirp.sync(this.cacheDirectory())
 }
 
 NYC.prototype._wrapExit = function () {
