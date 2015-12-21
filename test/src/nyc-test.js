@@ -167,6 +167,8 @@ describe('nyc', function () {
         })
         nyc.wrap()
 
+        // the `require` call to istanbul is deferred, loaded here so it doesn't mess with the hooks callCount
+        require('istanbul')
         // install the custom require hook
         require.extensions['.js'] = hook
 
@@ -174,7 +176,7 @@ describe('nyc', function () {
         check().should.be.true
 
         // and the hook should have been called
-        hook.calledOnce.should.be.true
+        hook.callCount.should.equal(1)
       })
     })
 

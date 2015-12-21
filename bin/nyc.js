@@ -12,7 +12,8 @@ var sw = require('spawn-wrap')
 
 if (process.env.NYC_CWD) {
   ;(new NYC({
-    require: process.env.NYC_REQUIRE ? process.env.NYC_REQUIRE.split(',') : []
+    require: process.env.NYC_REQUIRE ? process.env.NYC_REQUIRE.split(',') : [],
+    enableCache: process.env.NYC_CACHE === 'enable'
   })).wrap()
 
   sw.runMain()
@@ -80,6 +81,12 @@ if (process.env.NYC_CWD) {
       default: [],
       describe: 'a list of additional modules that nyc should attempt to require in its subprocess, e.g., babel-register, babel-polyfill.'
     })
+    .option('c', {
+      alias: 'cache',
+      default: false,
+      type: 'boolean',
+      describe: 'cache instrumentation results for improved performance'
+    })
     .help('h')
     .alias('h', 'help')
     .version(require('../package.json').version)
@@ -117,7 +124,8 @@ if (process.env.NYC_CWD) {
 
     sw([__filename], {
       NYC_CWD: process.cwd(),
-      NYC_REQUIRE: argv.require.join(',')
+      NYC_REQUIRE: argv.require.join(','),
+      NYC_CACHE: argv.cache ? 'enable' : 'disable'
     })
 
     foreground(nyc.mungeArgs(argv), function (done) {

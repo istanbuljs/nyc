@@ -43,6 +43,8 @@ function NYC (opts) {
     ['**/node_modules/**'].concat(arrify(config.exclude || ['test/**', 'test{,-*}.js']))
   )
 
+  this.enableCache = opts.enableCache === true || process.env.NYC_CACHE === 'enable'
+
   // require extensions can be provided as config in package.json.
   this.require = arrify(config.require || opts.require)
 
@@ -51,8 +53,11 @@ function NYC (opts) {
   this.transform = cachingTransform({
     factory: this._transformFactory.bind(this),
     cacheDir: this.cacheDirectory(),
+    disableCache: !this.enableCache,
     ext: '.js'
   })
+
+  this.sourceMapCache = new SourceMapCache()
 
   this.hashCache = {}
   this.loadedMaps = null
@@ -176,8 +181,8 @@ NYC.prototype._transformFactory = function (cacheDir) {
         var mapPath = path.join(cacheDir, hash + '.map')
         fs.writeFileSync(mapPath, sourceMap.toJSON())
       }
-    } else {
-      _this.sourceMapCache.addMap(relFile, sourceMap)
+    } else if (sourceMap) {
+      _this.sourceMapCache.addMap(relFile, sourceMap.toJSON())
     }
 
     return instrumenter.instrumentSync(code, relFile)
@@ -226,11 +231,15 @@ NYC.prototype.writeCoverageFile = function () {
   if (typeof __coverage__ === 'object') coverage = __coverage__
   if (!coverage) return
 
-  Object.keys(coverage).forEach(function (relFile) {
-    if (this.hashCache[relFile] && coverage[relFile]) {
-      coverage[relFile].contentHash = this.hashCache[relFile]
-    }
-  }, this)
+  if (this.enableCache) {
+    Object.keys(coverage).forEach(function (relFile) {
+      if (this.hashCache[relFile] && coverage[relFile]) {
+        coverage[relFile].contentHash = this.hashCache[relFile]
+      }
+    }, this)
+  } else {
+    this.sourceMapCache.applySourceMaps(coverage)
+  }
 
   fs.writeFileSync(
     path.resolve(this.tempDirectory(), './', process.pid + '.json'),
@@ -265,8 +274,6 @@ NYC.prototype._loadReports = function () {
   var _this = this
   var files = fs.readdirSync(this.tempDirectory())
 
-  var sourceMapCache = new SourceMapCache()
-
   var cacheDir = _this.cacheDirectory()
 
   var loadedMaps = this.loadedMaps || (this.loadedMaps = {})
@@ -280,6 +287,10 @@ NYC.prototype._loadReports = function () {
       ))
     } catch (e) { // handle corrupt JSON output.
       return {}
+    }
+
+    if (!_this.enableCache) {
+      return report
     }
 
     Object.keys(report).forEach(function (relFile) {
@@ -296,11 +307,11 @@ NYC.prototype._loadReports = function () {
           }
         }
         if (loadedMaps[hash]) {
-          sourceMapCache.addMap(relFile, loadedMaps[hash])
+          _this.sourceMapCache.addMap(relFile, loadedMaps[hash])
         }
       }
     })
-    sourceMapCache.applySourceMaps(report)
+    _this.sourceMapCache.applySourceMaps(report)
     return report
   })
 }
