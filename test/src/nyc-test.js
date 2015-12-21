@@ -4,12 +4,21 @@ require('source-map-support').install()
 var _ = require('lodash')
 var ap = require('any-path')
 var fs = require('fs')
-var NYC
+var enableCache = false
+var _NYC
 
 try {
-  NYC = require('../../index.covered.js')
+  _NYC = require('../../index.covered.js')
 } catch (e) {
-  NYC = require('../../')
+  _NYC = require('../../')
+}
+
+function NYC (opts) {
+  opts = opts || {}
+  if (!opts.hasOwnProperty('enableCache')) {
+    opts.enableCache = enableCache
+  }
+  return new _NYC(opts)
 }
 
 var path = require('path')
@@ -59,7 +68,7 @@ describe('nyc', function () {
 
   describe('_prepGlobPatterns', function () {
     it('should adjust patterns appropriately', function () {
-      var _prepGlobPatterns = NYC.prototype._prepGlobPatterns
+      var _prepGlobPatterns = new NYC()._prepGlobPatterns
 
       var result = _prepGlobPatterns(['./foo', 'bar/**', 'baz/'])
 
@@ -411,7 +420,7 @@ describe('nyc', function () {
       })
       var report = reports[0]['./test/fixtures/not-loaded.js']
 
-      reports.length.should.equal(1)
+      reports.length.should.equal(enableCache ? 2 : 1)
       report.s['1'].should.equal(0)
       report.s['2'].should.equal(0)
       return done()
@@ -429,7 +438,7 @@ describe('nyc', function () {
       })
       var report = reports[0]['./not-loaded.js']
 
-      reports.length.should.equal(1)
+      reports.length.should.equal(enableCache ? 2 : 1)
       report.s['1'].should.equal(1)
       report.s['2'].should.equal(1)
 
