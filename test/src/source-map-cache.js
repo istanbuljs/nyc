@@ -1,6 +1,7 @@
 /* global describe, it */
 
 var _ = require('lodash')
+var ap = require('any-path')
 var path = require('path')
 
 var convertSourceMap = require('convert-source-map')
@@ -43,7 +44,7 @@ _.forOwn(covered, function (fixture) {
 })
 
 var getReport = function () {
-  return _.cloneDeep(require('../fixtures/report'))
+  return ap(_.cloneDeep(require('../fixtures/report')))
 }
 var fixture = covered.inline
 
