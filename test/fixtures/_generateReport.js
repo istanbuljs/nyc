@@ -20,6 +20,8 @@ var fixtures = {
   none: sourceMapFixtures.none('branching')
 }
 
+require('istanbul')
+
 // Inject nyc into this process.
 var nyc = (new NYC({
   cwd: path.join(__dirname, '..', '..')
