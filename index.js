@@ -297,10 +297,6 @@ NYC.prototype._loadReports = function () {
       return {}
     }
 
-    if (!_this.enableCache) {
-      return report
-    }
-
     Object.keys(report).forEach(function (relFile) {
       var fileReport = report[relFile]
       if (fileReport && fileReport.contentHash) {
