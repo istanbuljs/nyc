@@ -71,21 +71,7 @@ nyc report
 
 To view your coverage report:
 
-```shell
---------------------|-----------|-----------|-----------|-----------|
-File                |   % Stmts |% Branches |   % Funcs |   % Lines |
---------------------|-----------|-----------|-----------|-----------|
-   ./               |     85.96 |        50 |        75 |     92.31 |
-      index.js      |     85.96 |        50 |        75 |     92.31 |
-   ./test/          |     98.08 |        50 |        95 |     98.04 |
-      nyc-test.js   |     98.08 |        50 |        95 |     98.04 |
-   ./test/fixtures/ |       100 |       100 |       100 |       100 |
-      sigint.js     |       100 |       100 |       100 |       100 |
-      sigterm.js    |       100 |       100 |       100 |       100 |
---------------------|-----------|-----------|-----------|-----------|
-All files           |     91.89 |        50 |     86.11 |     95.24 |
---------------------|-----------|-----------|-----------|-----------|
-```
+<img width="500" src="screen.png">
 
 you can use any reporters that are supported by istanbul:
 
@@ -193,4 +179,4 @@ after_success: npm run coverage
 
 That's all there is to it!
 
-> Note: by default coveralls.io adds comments to pull-requests on GitHub, this can feel intrusive. To disable this, click on your repo on coveralls.io and uncheck `LEAVE COMMENTS?`._
+> Note: by default coveralls.io adds comments to pull-requests on GitHub, this can feel intrusive. To disable this, click on your repo on coveralls.io and uncheck `LEAVE COMMENTS?`.
