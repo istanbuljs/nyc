@@ -13,6 +13,7 @@ var resolveFrom = require('resolve-from')
 var arrify = require('arrify')
 var SourceMapCache = require('./lib/source-map-cache')
 var convertSourceMap = require('convert-source-map')
+var md5hex = require('md5-hex')
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -51,6 +52,13 @@ function NYC (opts) {
   this._createDatastoreDirectories()
 
   this.transform = cachingTransform({
+    salt: JSON.stringify({
+      istanbul: require('istanbul/package.json').version,
+      nyc: require('./package.json').version
+    }),
+    hash: function (code, filename, salt) {
+      return md5hex([code, filename, salt])
+    },
     factory: this._transformFactory.bind(this),
     cacheDir: this.cacheDirectory(),
     disableCache: !this.enableCache,
