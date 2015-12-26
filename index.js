@@ -51,24 +51,31 @@ function NYC (opts) {
 
   this._createDatastoreDirectories()
 
-  this.transform = cachingTransform({
+  this.transform = this._createTransform()
+
+  this.sourceMapCache = new SourceMapCache()
+
+  this.hashCache = {}
+  this.loadedMaps = null
+}
+
+NYC.prototype._createTransform = function () {
+  var _this = this
+  return cachingTransform({
     salt: JSON.stringify({
       istanbul: require('istanbul/package.json').version,
       nyc: require('./package.json').version
     }),
-    hash: function (code, filename, salt) {
-      return md5hex([code, filename, salt])
+    hash: function (code, metadata, salt) {
+      var hash = md5hex([code, metadata.filename, salt])
+      _this.hashCache['./' + metadata.relFile] = hash
+      return hash
     },
     factory: this._transformFactory.bind(this),
     cacheDir: this.cacheDirectory(),
     disableCache: !this.enableCache,
     ext: '.js'
   })
-
-  this.sourceMapCache = new SourceMapCache()
-
-  this.hashCache = {}
-  this.loadedMaps = null
 }
 
 NYC.prototype._loadAdditionalModules = function () {
@@ -171,26 +178,26 @@ NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
     return null
   }
 
-  return this.transform(code, filename)
+  return this.transform(code, {filename: filename, relFile: relFile})
 }
 
 NYC.prototype._transformFactory = function (cacheDir) {
   var _this = this
   var instrumenter = this.instrumenter()
 
-  return function (code, filename, hash) {
-    var relFile = './' + path.relative(_this.cwd, filename)
+  return function (code, metadata, hash) {
+    var filename = metadata.filename
+    var relFile = './' + metadata.relFile
 
     var sourceMap = convertSourceMap.fromSource(code) || convertSourceMap.fromMapFileSource(code, path.dirname(filename))
 
-    if (hash) {
-      _this.hashCache[relFile] = hash
-      if (sourceMap) {
+    if (sourceMap) {
+      if (hash) {
         var mapPath = path.join(cacheDir, hash + '.map')
         fs.writeFileSync(mapPath, sourceMap.toJSON())
+      } else {
+        _this.sourceMapCache.addMap(relFile, sourceMap.toJSON())
       }
-    } else if (sourceMap) {
-      _this.sourceMapCache.addMap(relFile, sourceMap.toJSON())
     }
 
     return instrumenter.instrumentSync(code, relFile)
