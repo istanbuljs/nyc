@@ -75,7 +75,7 @@
     "rimraf": "^2.5.0",
     "signal-exit": "^2.1.1",
     "source-map": "^0.5.3",
-    "spawn-wrap": "^1.0.1",
+    "spawn-wrap": "^1.1.0",
     "strip-bom": "^2.0.0",
     "yargs": "^3.15.0"
   },
@@ -95,9 +95,6 @@
     "win-spawn": "^2.0.0",
     "zero-fill": "^2.2.1"
   },
-  "bundleDependencies": [
-    "spawn-wrap"
-  ],
   "repository": {
     "type": "git",
     "url": "git@github.com:bcoe/nyc.git"
