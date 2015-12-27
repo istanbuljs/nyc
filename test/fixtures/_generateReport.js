@@ -1,6 +1,6 @@
 'use strict'
 
-// Generates the test/fixtures/coverage.js file, not otherwise used in the
+// Generates the test/fixtures/report.js file, not otherwise used in the
 // tests.
 
 var fs = require('fs')
@@ -19,6 +19,8 @@ var fixtures = {
   istanbulIgnore: sourceMapFixtures.inline('istanbul-ignore'),
   none: sourceMapFixtures.none('branching')
 }
+
+require('istanbul')
 
 // Inject nyc into this process.
 var nyc = (new NYC({
@@ -50,8 +52,8 @@ if (reports.length !== 4) {
   process.exit(1)
 }
 
-var out = fs.createWriteStream(path.join(__dirname, 'coverage.js'))
-out.write('// Generated using node test/fixtures/_generateCoverage.js\n')
+var out = fs.createWriteStream(path.join(__dirname, 'report.js'))
+out.write('// Generated using node test/fixtures/_generateReport.js\n')
 reports.forEach(function (coverage) {
   out.write('exports[' + JSON.stringify(coverage.path) + '] = ' + JSON.stringify(coverage, null, 2) + '\n')
 })

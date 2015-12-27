@@ -4,18 +4,27 @@ require('source-map-support').install()
 var _ = require('lodash')
 var ap = require('any-path')
 var fs = require('fs')
-var NYC
+var enableCache = false
+var _NYC
 
 try {
-  NYC = require('../../index.covered.js')
+  _NYC = require('../../index.covered.js')
 } catch (e) {
-  NYC = require('../../')
+  _NYC = require('../../')
+}
+
+function NYC (opts) {
+  opts = opts || {}
+  if (!opts.hasOwnProperty('enableCache')) {
+    opts.enableCache = enableCache
+  }
+  return new _NYC(opts)
 }
 
 var path = require('path')
 var rimraf = require('rimraf')
 var sinon = require('sinon')
-var isWindows = require('is-windows')
+var isWindows = require('is-windows')()
 var spawn = require('win-spawn')
 var fixtures = path.resolve(__dirname, '../fixtures')
 var bin = path.resolve(__dirname, '../../bin/nyc')
@@ -59,16 +68,16 @@ describe('nyc', function () {
 
   describe('_prepGlobPatterns', function () {
     it('should adjust patterns appropriately', function () {
-      var _prepGlobPatterns = NYC.prototype._prepGlobPatterns
+      var _prepGlobPatterns = new NYC()._prepGlobPatterns
 
       var result = _prepGlobPatterns(['./foo', 'bar/**', 'baz/'])
 
       result.should.deep.equal([
+        './foo/**', // Appended `/**`
         './foo',
         'bar/**',
-        'baz/',
-        './foo/**', // Appended `/**`
-        'baz/**'  // Removed trailing slash before appending `/**`
+        'baz/**',  // Removed trailing slash before appending `/**`
+        'baz/'
       ])
     })
   })
@@ -167,6 +176,8 @@ describe('nyc', function () {
         })
         nyc.wrap()
 
+        // the `require` call to istanbul is deferred, loaded here so it doesn't mess with the hooks callCount
+        require('istanbul')
         // install the custom require hook
         require.extensions['.js'] = hook
 
@@ -174,7 +185,7 @@ describe('nyc', function () {
         check().should.be.true
 
         // and the hook should have been called
-        hook.calledOnce.should.be.true
+        hook.callCount.should.equal(1)
       })
     })
 
@@ -250,7 +261,7 @@ describe('nyc', function () {
             },
             write: function () {
               // we should have output a report for the new subprocess.
-              var stop = fs.readdirSync(nyc.tmpDirectory()).length
+              var stop = fs.readdirSync(nyc.tempDirectory()).length
               stop.should.be.eql(3)
               return done()
             }
@@ -345,6 +356,8 @@ describe('nyc', function () {
       })
       nyc.wrap()
 
+      nyc.instrumenter()
+
       istanbul.config.loadFile.calledWithMatch('.istanbul.yml').should.equal(true)
       istanbul.Instrumenter.calledWith({
         coverageVariable: '__coverage__',
@@ -363,6 +376,8 @@ describe('nyc', function () {
         cwd: './test/fixtures'
       })
       nyc.wrap()
+
+      nyc.instrumenter()
 
       istanbul.config.loadFile.calledWithMatch(path.join('test', 'fixtures', '.istanbul.yml')).should.equal(true)
       istanbul.Instrumenter.calledWith({
@@ -405,7 +420,7 @@ describe('nyc', function () {
       })
       var report = reports[0]['./test/fixtures/not-loaded.js']
 
-      reports.length.should.equal(1)
+      reports.length.should.equal(enableCache ? 2 : 1)
       report.s['1'].should.equal(0)
       report.s['2'].should.equal(0)
       return done()
@@ -423,11 +438,32 @@ describe('nyc', function () {
       })
       var report = reports[0]['./not-loaded.js']
 
-      reports.length.should.equal(1)
+      reports.length.should.equal(enableCache ? 2 : 1)
       report.s['1'].should.equal(1)
       report.s['2'].should.equal(1)
 
       return done()
+    })
+  })
+
+  describe('cache', function () {
+    it('handles collisions', function (done) {
+      var nyc = new NYC({cwd: fixtures})
+      nyc.clearCache()
+
+      var args = isWindows ? [bin] : [bin, process.execPath]
+      args = args.concat(['./cache-collision-runner.js'])
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixtures,
+        env: {},
+        stdio: 'inherit'
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        done()
+      })
     })
   })
 })

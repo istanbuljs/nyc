@@ -22,10 +22,16 @@ var individualTests = forkingTap(originalTestSource, {
   attachComment: true
 })
 
-individualTests.forEach(function (test, i) {
+function writeTest (test, i, enableCache) {
   var filename = ['built', zeroFill(3, i)]
       .concat(test.nestedName)
-      .join('-') + '.js'
+      .join('-')
+
+  if (enableCache) {
+    filename += '-cache'
+  }
+
+  filename += '.js'
 
   // file names with spaces are legal, but annoying to use w/ CLI commands
   filename = filename.replace(/\s/g, '_')
@@ -36,5 +42,15 @@ individualTests.forEach(function (test, i) {
   // remove any illegal chars
   filename = sanitizeFilename(filename)
 
-  fs.writeFileSync(path.join(buildDir, filename), test.code)
+  var code = test.code
+  if (enableCache) {
+    code = code.replace('var enableCache = false', 'var enableCache = true')
+  }
+
+  fs.writeFileSync(path.join(buildDir, filename), code)
+}
+
+individualTests.forEach(function (test, i) {
+  writeTest(test, i * 2, false)
+  writeTest(test, i * 2 + 1, true)
 })
