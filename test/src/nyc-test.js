@@ -456,8 +456,7 @@ describe('nyc', function () {
 
       var proc = spawn(process.execPath, args, {
         cwd: fixtures,
-        env: {},
-        stdio: 'inherit'
+        env: {}
       })
 
       proc.on('close', function (code) {
