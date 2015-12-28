@@ -1,5 +1,11 @@
 ## Change Log
 
+### Upcoming
+
+- [#118](https://github.com/bcoe/nyc/pull/118) Stop bundling spawn-wrap dependency (@bcoe)
+- [#114](https://github.com/bcoe/nyc/pull/114) Update to latest versions of tap, glob, rimraf (@isaacs)
+- [#107](https://github.com/bcoe/nyc/pull/107) Get test-suite running on Windows (@bcoe)
+
 ### v5.0.1 (2015/12/14 09:09 -07:00)
 
 - [#94](https://github.com/bcoe/nyc/pull/93) Windows failed if argument had no replace() method. (@bcoe)
