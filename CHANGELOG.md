@@ -1,7 +1,8 @@
 ## Change Log
 
-### Upcoming
+### v5.1.0 (2015/12/27 20:36 -08:00)
 
+- [#108](https://github.com/bcoe/nyc/pull/108) Adds cache functionality. this is a big one, thanks! (@jamestalmage)
 - [#118](https://github.com/bcoe/nyc/pull/118) Stop bundling spawn-wrap dependency (@bcoe)
 - [#114](https://github.com/bcoe/nyc/pull/114) Update to latest versions of tap, glob, rimraf (@isaacs)
 - [#107](https://github.com/bcoe/nyc/pull/107) Get test-suite running on Windows (@bcoe)

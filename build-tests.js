@@ -2,7 +2,7 @@
 
 var fs = require('fs')
 var path = require('path')
-var del = require('del')
+var rimraf = require('rimraf')
 var mkdirp = require('mkdirp')
 var forkingTap = require('forking-tap')
 var zeroFill = require('zero-fill')
@@ -10,7 +10,7 @@ var sanitizeFilename = require('sanitize-filename')
 
 // Delete previous files.
 process.chdir(__dirname)
-del.sync(['test/build'])
+rimraf.sync('test/build')
 mkdirp.sync(path.join(__dirname, 'test/build'))
 
 var testDir = path.join(__dirname, 'test/src')
