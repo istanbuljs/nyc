@@ -49,8 +49,6 @@ function NYC (opts) {
   // require extensions can be provided as config in package.json.
   this.require = arrify(config.require || opts.require)
 
-  this._createDatastoreDirectories()
-
   this.transform = this._createTransform()
 
   this.sourceMapCache = new SourceMapCache()
@@ -220,8 +218,13 @@ NYC.prototype.clearCache = function () {
   rimraf.sync(this.cacheDirectory())
 }
 
-NYC.prototype._createDatastoreDirectories = function () {
+NYC.prototype.createTempDirectory = function () {
   mkdirp.sync(this.tempDirectory())
+}
+
+NYC.prototype.reset = function () {
+  this.cleanup()
+  this.createTempDirectory()
 }
 
 NYC.prototype._wrapExit = function () {

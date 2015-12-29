@@ -117,7 +117,7 @@ if (process.env.NYC_CWD) {
   } else if (argv._.length) {
     // wrap subprocesses and execute argv[1]
     var nyc = (new NYC())
-    nyc.cleanup()
+    nyc.reset()
 
     if (argv.all) nyc.addAllFiles()
     if (!Array.isArray(argv.require)) argv.require = [argv.require]

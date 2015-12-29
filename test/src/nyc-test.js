@@ -27,23 +27,29 @@ var sinon = require('sinon')
 var isWindows = require('is-windows')()
 var spawn = require('win-spawn')
 var fixtures = path.resolve(__dirname, '../fixtures')
+var projectDir = path.resolve(__dirname, '../..')
+var projectTempDir = path.join(projectDir, '.nyc_output')
+var projectCacheDir = path.join(projectDir, 'node_modules', '.cache', 'nyc')
+var fixtureTempDir = path.join(fixtures, '.nyc_output')
+var fixtureCacheDir = path.join(fixtures, 'node_modules', '.cache', 'nyc')
 var bin = path.resolve(__dirname, '../../bin/nyc')
+
+// beforeEach
+rimraf.sync(projectTempDir)
+rimraf.sync(fixtureTempDir)
+rimraf.sync(projectCacheDir)
+rimraf.sync(fixtureCacheDir)
+delete process.env.NYC_CWD
 
 require('chai').should()
 require('tap').mochaGlobals()
 
 describe('nyc', function () {
   describe('cwd', function () {
-    function afterEach () {
-      delete process.env.NYC_CWD
-      rimraf.sync(path.resolve(fixtures, '../nyc_output'))
-    }
-
     it('sets cwd to process.cwd() if no environment variable is set', function () {
       var nyc = new NYC()
 
       nyc.cwd.should.eql(process.cwd())
-      afterEach()
     })
 
     it('uses NYC_CWD environment variable for cwd if it is set', function () {
@@ -52,7 +58,6 @@ describe('nyc', function () {
       var nyc = new NYC()
 
       nyc.cwd.should.equal(path.resolve(__dirname, '../fixtures'))
-      afterEach()
     })
   })
 
@@ -159,6 +164,7 @@ describe('nyc', function () {
       var nyc = new NYC({
         cwd: process.cwd()
       })
+      nyc.reset()
       nyc.wrap()
 
       var check = require('../fixtures/check-instrumented')
@@ -171,13 +177,15 @@ describe('nyc', function () {
           module._compile(fs.readFileSync(filename, 'utf8'), filename)
         })
 
+        // the `require` call to istanbul is deferred, loaded here so it doesn't mess with the hooks callCount
+        require('istanbul')
+
         var nyc = new NYC({
           cwd: process.cwd()
         })
+        nyc.reset()
         nyc.wrap()
 
-        // the `require` call to istanbul is deferred, loaded here so it doesn't mess with the hooks callCount
-        require('istanbul')
         // install the custom require hook
         require.extensions['.js'] = hook
 
@@ -222,7 +230,9 @@ describe('nyc', function () {
     it('does not output coverage for files that have not been included, by default', function (done) {
       var nyc = (new NYC({
         cwd: process.cwd()
-      })).wrap()
+      }))
+      nyc.wrap()
+      nyc.reset()
 
       var reports = _.filter(nyc._loadReports(), function (report) {
         return report['./test/fixtures/not-loaded.js']
@@ -274,6 +284,7 @@ describe('nyc', function () {
       var nyc = new NYC({
         cwd: process.cwd()
       })
+      nyc.reset()
 
       fs.writeFileSync('./.nyc_output/bad.json', '}', 'utf-8')
 
@@ -300,6 +311,8 @@ describe('nyc', function () {
         cwd: process.cwd(),
         reporter: reporters
       })
+      nyc.reset()
+
       var proc = spawn(process.execPath, ['./test/fixtures/child-1.js'], {
         cwd: process.cwd(),
         env: process.env,
@@ -413,6 +426,7 @@ describe('nyc', function () {
   describe('addAllFiles', function () {
     it('outputs an empty coverage report for all files that are not excluded', function (done) {
       var nyc = (new NYC())
+      nyc.reset()
       nyc.addAllFiles()
 
       var reports = _.filter(nyc._loadReports(), function (report) {
@@ -420,7 +434,7 @@ describe('nyc', function () {
       })
       var report = reports[0]['./test/fixtures/not-loaded.js']
 
-      reports.length.should.equal(enableCache ? 2 : 1)
+      reports.length.should.equal(1)
       report.s['1'].should.equal(0)
       report.s['2'].should.equal(0)
       return done()
@@ -429,7 +443,10 @@ describe('nyc', function () {
     it('tracks coverage appropriately once the file is required', function (done) {
       var nyc = (new NYC({
         cwd: fixtures
-      })).wrap()
+      }))
+      nyc.reset()
+      nyc.wrap()
+
       require('../fixtures/not-loaded')
 
       nyc.writeCoverageFile()
@@ -438,7 +455,7 @@ describe('nyc', function () {
       })
       var report = reports[0]['./not-loaded.js']
 
-      reports.length.should.equal(enableCache ? 2 : 1)
+      reports.length.should.equal(1)
       report.s['1'].should.equal(1)
       report.s['2'].should.equal(1)
 
