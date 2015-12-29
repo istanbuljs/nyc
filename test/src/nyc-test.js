@@ -159,6 +159,7 @@ describe('nyc', function () {
       var nyc = new NYC({
         cwd: process.cwd()
       })
+      nyc.reset()
       nyc.wrap()
 
       var check = require('../fixtures/check-instrumented')
