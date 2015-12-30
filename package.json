@@ -95,7 +95,7 @@
     "source-map-support": "^0.4.0",
     "split-lines": "^1.0.0",
     "standard": "^5.2.1",
-    "tap": "^2.3.5",
+    "tap": "^2.3.4",
     "win-spawn": "^2.0.0",
     "zero-fill": "^2.2.1"
   },

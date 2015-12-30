@@ -1,5 +1,9 @@
 ## Change Log
 
+### v5.1.1 (2015/12/30 14:52 -08:00)
+
+- [#121](https://github.com/bcoe/nyc/pull/121) Fix for --all functionality. (@jamestalmage)
+
 ### v5.1.0 (2015/12/27 20:36 -08:00)
 
 - [#108](https://github.com/bcoe/nyc/pull/108) Adds cache functionality. this is a big one, thanks! (@jamestalmage)
