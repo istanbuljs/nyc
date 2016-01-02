@@ -341,15 +341,6 @@ NYC.prototype.cacheDirectory = function () {
 NYC.prototype.mungeArgs = function (yargv) {
   var argv = process.argv.slice(1)
   argv = argv.slice(argv.indexOf(yargv._[0]))
-  if (!/^(node|iojs)$/.test(argv[0]) &&
-      process.platform === 'win32' &&
-      (/\.js$/.test(argv[0]) ||
-        (!/\.(cmd|exe)$/.test(argv[0]) &&
-        !fs.existsSync(argv[0] + '.cmd') &&
-        !fs.existsSync(argv[0] + '.exe')))) {
-    argv.unshift(process.execPath)
-  }
-
   return argv
 }
 

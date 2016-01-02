@@ -25,7 +25,7 @@ var path = require('path')
 var rimraf = require('rimraf')
 var sinon = require('sinon')
 var isWindows = require('is-windows')()
-var spawn = require('win-spawn')
+var spawn = require('child_process').spawn
 var fixtures = path.resolve(__dirname, '../fixtures')
 var projectDir = path.resolve(__dirname, '../..')
 var projectTempDir = path.join(projectDir, '.nyc_output')
@@ -468,8 +468,7 @@ describe('nyc', function () {
       var nyc = new NYC({cwd: fixtures})
       nyc.clearCache()
 
-      var args = isWindows ? [bin] : [bin, process.execPath]
-      args = args.concat(['./cache-collision-runner.js'])
+      var args = [bin, process.execPath, './cache-collision-runner.js']
 
       var proc = spawn(process.execPath, args, {
         cwd: fixtures,
