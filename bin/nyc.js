@@ -122,11 +122,14 @@ if (process.env.NYC_CWD) {
     if (argv.all) nyc.addAllFiles()
     if (!Array.isArray(argv.require)) argv.require = [argv.require]
 
-    sw([__filename], {
+    var env = {
       NYC_CWD: process.cwd(),
-      NYC_REQUIRE: argv.require.join(','),
       NYC_CACHE: argv.cache ? 'enable' : 'disable'
-    })
+    }
+    if (argv.require.length) {
+      env.NYC_REQUIRE = argv.require.join(',')
+    }
+    sw([__filename], env)
 
     foreground(nyc.mungeArgs(argv), function (done) {
       if (!argv.silent) report(argv)
