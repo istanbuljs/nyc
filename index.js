@@ -14,6 +14,7 @@ var arrify = require('arrify')
 var SourceMapCache = require('./lib/source-map-cache')
 var convertSourceMap = require('convert-source-map')
 var md5hex = require('md5-hex')
+var findCacheDir = require('find-cache-dir')
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -26,7 +27,6 @@ function NYC (opts) {
   this._istanbul = opts.istanbul
   this.subprocessBin = opts.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
   this._tempDirectory = opts.tempDirectory || './.nyc_output'
-  this._cacheDirectory = opts.cacheDirectory || './node_modules/.cache/nyc'
   this.cwd = opts.cwd || process.env.NYC_CWD || process.cwd()
   this.reporter = arrify(opts.reporter || 'text')
 
@@ -45,6 +45,11 @@ function NYC (opts) {
   )
 
   this.enableCache = opts.enableCache === true || process.env.NYC_CACHE === 'enable'
+
+  if (this.enableCache) {
+    this.cacheDirectory = findCacheDir({name: 'nyc', cwd: this.cwd})
+    this.enableCache = Boolean(this.cacheDirectory)
+  }
 
   // require extensions can be provided as config in package.json.
   this.require = arrify(config.require || opts.require)
@@ -70,7 +75,7 @@ NYC.prototype._createTransform = function () {
       return hash
     },
     factory: this._transformFactory.bind(this),
-    cacheDir: this.cacheDirectory(),
+    cacheDir: this.cacheDirectory,
     disableCache: !this.enableCache,
     ext: '.js'
   })
@@ -215,7 +220,9 @@ NYC.prototype.cleanup = function () {
 }
 
 NYC.prototype.clearCache = function () {
-  rimraf.sync(this.cacheDirectory())
+  if (this.enableCache) {
+    rimraf.sync(this.cacheDirectory)
+  }
 }
 
 NYC.prototype.createTempDirectory = function () {
@@ -292,7 +299,7 @@ NYC.prototype._loadReports = function () {
   var _this = this
   var files = fs.readdirSync(this.tempDirectory())
 
-  var cacheDir = _this.cacheDirectory()
+  var cacheDir = _this.cacheDirectory
 
   var loadedMaps = this.loadedMaps || (this.loadedMaps = {})
 
@@ -332,10 +339,6 @@ NYC.prototype._loadReports = function () {
 
 NYC.prototype.tempDirectory = function () {
   return path.resolve(this.cwd, './', this._tempDirectory)
-}
-
-NYC.prototype.cacheDirectory = function () {
-  return path.resolve(this.cwd, './', this._cacheDirectory)
 }
 
 NYC.prototype.mungeArgs = function (yargv) {
