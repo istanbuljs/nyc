@@ -44,12 +44,9 @@ function NYC (opts) {
     ['**/node_modules/**'].concat(arrify(config.exclude || ['test/**', 'test{,-*}.js']))
   )
 
-  this.enableCache = opts.enableCache === true || process.env.NYC_CACHE === 'enable'
+  this.cacheDirectory = findCacheDir({name: 'nyc', cwd: this.cwd})
 
-  if (this.enableCache) {
-    this.cacheDirectory = findCacheDir({name: 'nyc', cwd: this.cwd})
-    this.enableCache = Boolean(this.cacheDirectory)
-  }
+  this.enableCache = Boolean(this.cacheDirectory && (opts.enableCache === true || process.env.NYC_CACHE === 'enable'))
 
   // require extensions can be provided as config in package.json.
   this.require = arrify(config.require || opts.require)
