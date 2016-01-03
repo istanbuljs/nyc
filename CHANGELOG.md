@@ -1,5 +1,11 @@
 ## Change Log
 
+### v5.2.0 (2016/01/02 17:13 -08:00)
+
+- [#126](https://github.com/bcoe/nyc/pull/126) Add --check-coverage shorthand, which fails tests if coverage slips below threshold (@bcoe)
+- [#123](https://github.com/bcoe/nyc/pull/123) Upgrade spawn-wrap, foreground-child (@isaacs)
+- [#122](https://github.com/bcoe/nyc/pull/122) Use module for finding cache directory (@jamestalmage)
+
 ### v5.1.1 (2015/12/30 14:52 -08:00)
 
 - [#121](https://github.com/bcoe/nyc/pull/121) Fix for --all functionality. (@jamestalmage)
