@@ -87,6 +87,27 @@ if (process.env.NYC_CWD) {
       type: 'boolean',
       describe: 'cache instrumentation results for improved performance'
     })
+    .option('check-coverage', {
+      type: 'boolean',
+      default: false,
+      describe: 'check whether coverage is within thresholds provided'
+    })
+    .option('branches', {
+      default: 0,
+      description: 'what % of branches must be covered?'
+    })
+    .option('functions', {
+      default: 0,
+      description: 'what % of functions must be covered?'
+    })
+    .option('lines', {
+      default: 90,
+      description: 'what % of lines must be covered?'
+    })
+    .option('statements', {
+      default: 0,
+      description: 'what % of statements must be covered?'
+    })
     .help('h')
     .alias('h', 'help')
     .version(require('../package.json').version)
@@ -102,18 +123,7 @@ if (process.env.NYC_CWD) {
 
     report(argv)
   } else if (~argv._.indexOf('check-coverage')) {
-    foreground(
-      process.execPath,
-      [
-        require.resolve('istanbul/lib/cli'),
-        'check-coverage',
-        '--lines=' + argv.lines,
-        '--functions=' + argv.functions,
-        '--branches=' + argv.branches,
-        '--statements=' + argv.statements,
-        path.resolve(process.cwd(), './.nyc_output/*.json')
-      ]
-    )
+    checkCoverage(argv)
   } else if (argv._.length) {
     // wrap subprocesses and execute argv[1]
     var nyc = (new NYC())
@@ -132,8 +142,15 @@ if (process.env.NYC_CWD) {
     sw([__filename], env)
 
     foreground(nyc.mungeArgs(argv), function (done) {
-      if (!argv.silent) report(argv)
-      return done()
+      if (argv.checkCoverage) {
+        checkCoverage(argv, function (done) {
+          if (!argv.silent) report(argv)
+          return done()
+        })
+      } else {
+        if (!argv.silent) report(argv)
+        return done()
+      }
     })
   } else {
     // I don't have a clue what you're doing.
@@ -147,4 +164,20 @@ function report (argv) {
   ;(new NYC({
     reporter: argv.reporter
   })).report()
+}
+
+function checkCoverage (argv, cb) {
+  foreground(
+    process.execPath,
+    [
+      require.resolve('istanbul/lib/cli'),
+      'check-coverage',
+      '--lines=' + argv.lines,
+      '--functions=' + argv.functions,
+      '--branches=' + argv.branches,
+      '--statements=' + argv.statements,
+      path.resolve(process.cwd(), './.nyc_output/*.json')
+    ],
+    cb
+  )
 }
