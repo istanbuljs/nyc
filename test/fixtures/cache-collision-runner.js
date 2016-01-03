@@ -3,7 +3,7 @@ var path = require('path')
 
 var assert = require('assert')
 
-var spawn = require('win-spawn')
+var spawn = require('child_process').spawn
 
 var time = process.hrtime()
 
