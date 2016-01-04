@@ -82,7 +82,7 @@ nyc report --reporter=lcov
 ## Excluding Files
 
 You can tell nyc to exclude specific files and directories by adding
-an `config.nyc.exclude` array to your `package.json`. Each element of
+an `nyc.exclude` array to your `package.json`. Each element of
 the array is a glob pattern indicating which paths should be omitted.
 
 Globs are matched using [micromatch](https://www.npmjs.com/package/micromatch)
@@ -90,19 +90,18 @@ Globs are matched using [micromatch](https://www.npmjs.com/package/micromatch)
 In addition to patterns specified in the package, nyc will always exclude
 files in `node_modules`.
 
-For example, the following config will exclude all `node_modules`,
+For example, the following config will exclude everything in `node_modules`,
 any files with the extension `.spec.js`, and anything in the `build`
 directory:
 
 ```json
-{"config": {
-  "nyc": {
-    "exclude": [
+{"nyc": {
+  "exclude": [
       "**/*.spec.js",
       "build"
     ]
   }
-}}
+}
 ```
 
 > Note: exclude defaults to `['test', 'test{,-*}.js']`, which would exclude

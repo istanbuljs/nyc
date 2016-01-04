@@ -59,15 +59,28 @@ describe('nyc', function () {
 
       nyc.cwd.should.equal(path.resolve(__dirname, '../fixtures'))
     })
+
+    it('will look upwards for package.json from cwd', function () {
+      var nyc = new NYC({cwd: __dirname})
+      nyc.cwd.should.eql(path.join(__dirname, '../..'))
+    })
   })
 
   describe('config', function () {
-    it("loads 'exclude' patterns from package.json", function () {
+    it("loads 'exclude' patterns from package.json#config.nyc", function () {
       var nyc = new NYC({
         cwd: path.resolve(__dirname, '../fixtures')
       })
 
       nyc.exclude.length.should.eql(5)
+    })
+
+    it("loads 'exclude' patterns from package.json#nyc", function () {
+      var nyc = new NYC({
+        cwd: path.resolve(__dirname, '../..')
+      })
+
+      nyc.exclude.length.should.eql(19)
     })
   })
 
