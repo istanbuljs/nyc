@@ -1,6 +1,6 @@
 {
   "name": "nyc",
-  "version": "5.2.0",
+  "version": "5.3.0",
   "description": "a code coverage tool that works well with subprocesses.",
   "main": "index.js",
   "scripts": {
