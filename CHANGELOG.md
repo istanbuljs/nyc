@@ -1,5 +1,9 @@
 ## Change Log
 
+### v5.3.0 (2016/01/05 14:07 -08:00)
+
+- [#132](https://github.com/bcoe/nyc/pull/132/files) Move config to top level nyc argument. (@jamestalmage)
+
 ### v5.2.0 (2016/01/02 17:13 -08:00)
 
 - [#126](https://github.com/bcoe/nyc/pull/126) Add --check-coverage shorthand, which fails tests if coverage slips below threshold (@bcoe)
