@@ -10,7 +10,7 @@ try {
 var path = require('path')
 var sw = require('spawn-wrap')
 
-if (process.env.NYC_CWD) {
+if (process.env.NYC_CWD && process.argv[2] !== __filename) {
   ;(new NYC({
     require: process.env.NYC_REQUIRE ? process.env.NYC_REQUIRE.split(',') : [],
     enableCache: process.env.NYC_CACHE === 'enable'
