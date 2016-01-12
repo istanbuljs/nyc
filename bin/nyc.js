@@ -110,12 +110,12 @@ var yargs = require('yargs')
   .epilog('visit http://git.io/vTJJB for list of available reporters')
 var argv = yargs.argv
 
-if (~argv._.indexOf('report')) {
+if (argv._[0] === 'report') {
   // run a report.
   process.env.NYC_CWD = process.cwd()
 
   report(argv)
-} else if (~argv._.indexOf('check-coverage')) {
+} else if (argv._[0] === 'check-coverage') {
   checkCoverage(argv)
 } else if (argv._.length) {
   // wrap subprocesses and execute argv[1]
