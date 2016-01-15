@@ -5,30 +5,17 @@
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
 [![Windows Tests](https://img.shields.io/appveyor/ci/bcoe/nyc/master.svg?label=Windows%20Tests)](https://ci.appveyor.com/project/bcoe/nyc)
 
-
-```shell
-nyc npm test
-```
-
 a code coverage tool built on [istanbul](https://www.npmjs.com/package/istanbul)
 that works for applications that spawn subprocesses.
 
 ## Instrumenting Your Code
 
-Simply run your tests with `nyc`, and it will collect coverage information for
-each process and store it in `.nyc_output`.
+You can install nyc as a development dependency and add it to the test stanza
+in your package.json.
 
 ```shell
-nyc npm test
+npm i nyc --save-dev
 ```
-
-you can pass a list of Istanbul reporters that you'd like to run:
-
-```shell
-nyc --reporter=lcov --reporter=text-lcov npm test
-```
-
-If you're so inclined, you can simply add nyc to the test stanza in your package.json:
 
 ```json
 {
@@ -36,6 +23,28 @@ If you're so inclined, you can simply add nyc to the test stanza in your package
     "test": "nyc tap ./test/*.js"
   }
 }
+```
+
+Alternatively, you can install nyc globally and use it to execute `npm test`:
+
+```shell
+npm i nyc -g
+```
+
+```shell
+nyc npm test
+```
+
+nyc accepts a wide variety of configuration arguments, run `nyc --help` for
+thorough documentation.
+
+Configuration arguments should be provided prior to the program that nyc
+is executing. As an example, the following command executes `npm test`,
+and indicates to nyc that it should output both an `lcov`
+and a `text-lcov` coverage report.
+
+```shell
+nyc --reporter=lcov --reporter=text-lcov npm test
 ```
 
 ## Support For Custom Require Hooks (Babel! ES2015!)
@@ -60,6 +69,15 @@ nyc check-coverage --lines 95 --functions 95 --branches 95
 ```
 
 This feature makes it easy to fail your tests if coverage drops below a given threshold.
+
+nyc also accepts a `--check-coverage` shorthand, which can be used to
+both run tests and check that coverage falls within the threshold provided:
+
+```shell
+nyc --check-coverage --lines 100 npm test
+```
+
+The above check fails if coverage falls below 100%.
 
 ## Running Reports
 
@@ -133,6 +151,12 @@ The `--require` flag can be provided to `nyc` to indicate that additional
 modules should be required in the subprocess collecting coverage:
 
 `nyc --require babel-core/register --require babel-polyfill mocha`
+
+## Caching
+
+You can run `nyc` with the optional `--cache` flag, to prevent it from
+instrumenting the same files multiple times. This can signficantly
+improve runtime performance.
 
 ## Configuring Istanbul
 
