@@ -474,6 +474,32 @@ describe('nyc', function () {
 
       return done()
     })
+
+    it('transpiles files added via addAllFiles', function (done) {
+      fs.writeFileSync(
+        './test/fixtures/needs-transpile.js',
+        '--> pork chop sandwiches <--\nvar a = 99',
+        'utf-8'
+      )
+
+      var nyc = (new NYC({
+        require: './test/fixtures/transpile-hook'
+      }))
+
+      nyc.reset()
+      nyc.addAllFiles()
+
+      var reports = _.filter(nyc._loadReports(), function (report) {
+        return ap(report)['./test/fixtures/needs-transpile.js']
+      })
+      var report = reports[0]['./test/fixtures/needs-transpile.js']
+
+      reports.length.should.equal(1)
+      report.s['1'].should.equal(0)
+
+      fs.unlinkSync('./test/fixtures/needs-transpile.js')
+      return done()
+    })
   })
 
   describe('cache', function () {

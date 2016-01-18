@@ -119,11 +119,14 @@ if (argv._[0] === 'report') {
   checkCoverage(argv)
 } else if (argv._.length) {
   // wrap subprocesses and execute argv[1]
-  var nyc = (new NYC())
+  if (!Array.isArray(argv.require)) argv.require = [argv.require]
+
+  var nyc = (new NYC({
+    require: argv.require
+  }))
   nyc.reset()
 
   if (argv.all) nyc.addAllFiles()
-  if (!Array.isArray(argv.require)) argv.require = [argv.require]
 
   var env = {
     NYC_CWD: process.cwd(),

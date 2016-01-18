@@ -3,12 +3,12 @@ var fs = require('fs')
 var glob = require('glob')
 var micromatch = require('micromatch')
 var mkdirp = require('mkdirp')
+var Module = require('module')
 var appendTransform = require('append-transform')
 var cachingTransform = require('caching-transform')
 var path = require('path')
 var rimraf = require('rimraf')
 var onExit = require('signal-exit')
-var stripBom = require('strip-bom')
 var resolveFrom = require('resolve-from')
 var arrify = require('arrify')
 var SourceMapCache = require('./lib/source-map-cache')
@@ -158,13 +158,24 @@ NYC.prototype._prepGlobPatterns = function (patterns) {
 
 NYC.prototype.addFile = function (filename) {
   var relFile = path.relative(this.cwd, filename)
-  var source = stripBom(fs.readFileSync(filename, 'utf8'))
+  var source = this._readTranspiledSource(path.resolve(this.cwd, filename))
   var instrumentedSource = this._maybeInstrumentSource(source, filename, relFile)
+
   return {
     instrument: !!instrumentedSource,
     relFile: relFile,
     content: instrumentedSource || source
   }
+}
+
+NYC.prototype._readTranspiledSource = function (path) {
+  var source = null
+  Module._extensions['.js']({
+    _compile: function (content, filename) {
+      source = content
+    }
+  }, path)
+  return source
 }
 
 NYC.prototype.shouldInstrumentFile = function (filename, relFile) {
@@ -177,8 +188,10 @@ NYC.prototype.shouldInstrumentFile = function (filename, relFile) {
 NYC.prototype.addAllFiles = function () {
   var _this = this
 
+  this._loadAdditionalModules()
+
   glob.sync('**/*.js', {nodir: true, ignore: this.exclude}).forEach(function (filename) {
-    var obj = _this.addFile(filename, true)
+    var obj = _this.addFile(filename)
     if (obj.instrument) {
       module._compile(
         _this.instrumenter().getPreamble(obj.content, obj.relFile),
