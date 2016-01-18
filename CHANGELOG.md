@@ -1,5 +1,10 @@
 ## Change Log
 
+### Upcoming
+
+- [#139](https://github.com/bcoe/nyc/pull/139) documentation updates (@tcurdt)
+- [#138](https://github.com/bcoe/nyc/pull/138) Split CLI from spawn wrapper (@isaacs)
+
 ### v5.3.0 (2016/01/05 14:07 -08:00)
 
 - [#132](https://github.com/bcoe/nyc/pull/132/files) Move config to top level nyc argument. (@jamestalmage)
