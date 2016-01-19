@@ -21,6 +21,10 @@ var yargs = require('yargs')
         describe: 'coverage reporter(s) to use',
         default: 'text'
       })
+      .option('report-dir', {
+        describe: 'default directory to output coverage reports in',
+        default: 'coverage'
+      })
       .help('h')
       .alias('h', 'help')
       .example('$0 report --reporter=lcov', 'output an HTML lcov report to ./coverage')
@@ -56,6 +60,10 @@ var yargs = require('yargs')
     alias: 'reporter',
     describe: 'coverage reporter(s) to use',
     default: 'text'
+  })
+  .option('report-dir', {
+    describe: 'default directory to output coverage reports in',
+    default: 'coverage'
   })
   .option('s', {
     alias: 'silent',
@@ -154,7 +162,8 @@ function report (argv) {
   process.env.NYC_CWD = process.cwd()
 
   ;(new NYC({
-    reporter: argv.reporter
+    reporter: argv.reporter,
+    reportDir: argv.reportDir
   })).report()
 }
 
