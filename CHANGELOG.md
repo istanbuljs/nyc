@@ -1,9 +1,10 @@
 ## Change Log
 
-### Upcoming
+### v5.4.0 (2016/01/20 +07:00)
 
 - [#147](https://github.com/bcoe/nyc/pull/147) fix for foreground-child on Windows (@isaacs)
 - [#145](https://github.com/bcoe/nyc/pull/145) allow coverage output directory to be specified (@bcoe)
+- [#143](https://github.com/bcoe/nyc/pull/143) run files included via --all through transpilers (@bcoe)
 - [#139](https://github.com/bcoe/nyc/pull/139) documentation updates (@tcurdt)
 - [#138](https://github.com/bcoe/nyc/pull/138) Split CLI from spawn wrapper (@isaacs)
 
