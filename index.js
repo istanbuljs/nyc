@@ -29,6 +29,7 @@ function NYC (opts) {
   this._istanbul = opts.istanbul
   this.subprocessBin = opts.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
   this._tempDirectory = opts.tempDirectory || './.nyc_output'
+  this._reportDir = opts.reportDir
 
   var config = this._loadConfig(opts)
   this.cwd = config.cwd
@@ -298,7 +299,7 @@ NYC.prototype.report = function (cb, _collector, _reporter) {
 
   var istanbul = this.istanbul()
   var collector = _collector || new istanbul.Collector()
-  var reporter = _reporter || new istanbul.Reporter()
+  var reporter = _reporter || new istanbul.Reporter(null, this._reportDir)
 
   this._loadReports().forEach(function (report) {
     collector.add(report)

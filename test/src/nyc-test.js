@@ -22,6 +22,7 @@ function NYC (opts) {
 }
 
 var path = require('path')
+var existsSync = require('exists-sync')
 var rimraf = require('rimraf')
 var sinon = require('sinon')
 var isWindows = require('is-windows')()
@@ -348,6 +349,29 @@ describe('nyc', function () {
             }
           }
         )
+      })
+    })
+
+    it('allows coverage report to be output in an alternative directory', function (done) {
+      var reporters = ['lcov']
+      var nyc = new NYC({
+        cwd: process.cwd(),
+        reporter: reporters,
+        reportDir: './alternative-report'
+      })
+      nyc.reset()
+
+      var proc = spawn(process.execPath, ['./test/fixtures/child-1.js'], {
+        cwd: process.cwd(),
+        env: process.env,
+        stdio: 'inherit'
+      })
+
+      proc.on('close', function () {
+        nyc.report()
+        existsSync('./alternative-report/lcov.info').should.equal(true)
+        rimraf.sync('./alternative-report')
+        return done()
       })
     })
   })
