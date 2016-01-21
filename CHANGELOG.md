@@ -2,6 +2,8 @@
 
 ### Upcoming
 
+- [#147](https://github.com/bcoe/nyc/pull/147) fix for foreground-child on Windows (@isaacs)
+- [#145](https://github.com/bcoe/nyc/pull/145) allow coverage output directory to be specified (@bcoe)
 - [#139](https://github.com/bcoe/nyc/pull/139) documentation updates (@tcurdt)
 - [#138](https://github.com/bcoe/nyc/pull/138) Split CLI from spawn wrapper (@isaacs)
 
