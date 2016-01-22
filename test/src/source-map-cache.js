@@ -65,6 +65,19 @@ describe('source-map-cache', function () {
     report[covered.istanbulIgnore.mappedPath].statementMap['3'].should.have.property('skip', true)
   })
 
+  it('does not fail if istanbul returns illegal positions', function () {
+    var report = getReport()
+    sourceMapCache.applySourceMaps(report)
+
+    var busted = getReport()
+    var start = busted[covered.inline.relpath].statementMap['1'].start
+    start.line = 0
+    start.column = -2
+    sourceMapCache.applySourceMaps(busted)
+
+    expect(busted[covered.inline.mappedPath]).to.deep.equal(report[covered.inline.mappedPath])
+  })
+
   describe('path', function () {
     it('does not rewrite path if the source map has more than one source', function () {
       var report = getReport()
