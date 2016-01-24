@@ -1,5 +1,10 @@
 ## Change Log
 
+### v5.5.0 (2016/01/24 +07:00)
+
+- [#152](https://github.com/bcoe/nyc/pull/152) upgrade to newest version of foreground-child (@isaacs)
+- [#150](https://github.com/bcoe/nyc/pull/150) guard against illegal positions in source-map (@novemberborn)
+
 ### v5.4.0 (2016/01/20 +07:00)
 
 - [#147](https://github.com/bcoe/nyc/pull/147) fix for foreground-child on Windows (@isaacs)
