@@ -93,7 +93,7 @@
     "newline-regex": "^0.2.1",
     "sanitize-filename": "^1.5.3",
     "sinon": "^1.15.3",
-    "source-map-fixtures": "^0.4.0",
+    "source-map-fixtures": "^2.1.0",
     "source-map-support": "^0.4.0",
     "split-lines": "^1.0.0",
     "standard": "^5.2.1",

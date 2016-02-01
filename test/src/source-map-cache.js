@@ -13,6 +13,7 @@ var covered = _.mapValues({
   bundle: sourceMapFixtures.inline('bundle'),
   inline: sourceMapFixtures.inline('branching'),
   istanbulIgnore: sourceMapFixtures.inline('istanbul-ignore'),
+  istanbulIgnoreFn: sourceMapFixtures.inline('istanbul-ignore-fn'),
   none: sourceMapFixtures.none('branching')
 }, function (fixture) {
   return _.assign({
@@ -63,6 +64,7 @@ describe('source-map-cache', function () {
     var report = getReport()
     sourceMapCache.applySourceMaps(report)
     report[covered.istanbulIgnore.mappedPath].statementMap['3'].should.have.property('skip', true)
+    report[covered.istanbulIgnoreFn.mappedPath].fnMap['2'].should.have.property('skip', true)
   })
 
   it('does not fail if istanbul returns illegal positions', function () {
