@@ -103,7 +103,9 @@ describe('nyc', function () {
 
   describe('shouldInstrumentFile', function () {
     it('should exclude appropriately with defaults', function () {
-      var nyc = new NYC()
+      var nyc = new NYC({
+        cwd: '/cwd/'
+      })
 
       // Root package contains config.exclude
       // Restore exclude to default patterns
@@ -116,14 +118,14 @@ describe('nyc', function () {
       var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
 
       // nyc always excludes "node_modules/**"
-      shouldInstrumentFile('foo', 'foo').should.equal(true)
-      shouldInstrumentFile('node_modules/bar', 'node_modules/bar').should.equal(false)
-      shouldInstrumentFile('foo/node_modules/bar', 'foo/node_modules/bar').should.equal(false)
-      shouldInstrumentFile('test.js', 'test.js').should.equal(false)
-      shouldInstrumentFile('testfoo.js', 'testfoo.js').should.equal(true)
-      shouldInstrumentFile('test-foo.js', 'test-foo.js').should.equal(false)
-      shouldInstrumentFile('lib/test.js', 'lib/test.js').should.equal(true)
-      shouldInstrumentFile('/foo/bar/test.js', './test.js').should.equal(false)
+      shouldInstrumentFile('/cwd/foo', 'foo').should.equal(true)
+      shouldInstrumentFile('/cwd/node_modules/bar', 'node_modules/bar').should.equal(false)
+      shouldInstrumentFile('/cwd/foo/node_modules/bar', 'foo/node_modules/bar').should.equal(false)
+      shouldInstrumentFile('/cwd/test.js', 'test.js').should.equal(false)
+      shouldInstrumentFile('/cwd/testfoo.js', 'testfoo.js').should.equal(true)
+      shouldInstrumentFile('/cwd/test-foo.js', 'test-foo.js').should.equal(false)
+      shouldInstrumentFile('/cwd/lib/test.js', 'lib/test.js').should.equal(true)
+      shouldInstrumentFile('/cwd/foo/bar/test.js', './test.js').should.equal(false)
     })
 
     it('should exclude appropriately with config.exclude', function () {
@@ -139,20 +141,38 @@ describe('nyc', function () {
       shouldInstrumentFile('./blerg', './blerg').should.equal(false)
     })
 
+    it('should exclude outside of the current working directory', function () {
+      var nyc = new NYC({
+        cwd: '/cwd/foo/'
+      })
+      nyc.shouldInstrumentFile('/cwd/bar', '../bar').should.equal(false)
+    })
+
+    it('should not exclude if the current working directory is inside node_modules', function () {
+      var nyc = new NYC({
+        cwd: '/cwd/node_modules/foo/'
+      })
+      nyc.shouldInstrumentFile('/cwd/node_modules/foo/bar', './bar').should.equal(true)
+    })
+
     it('allows files to be explicitly included, rather than excluded', function () {
-      var nyc = new NYC()
+      var nyc = new NYC({
+        cwd: '/cwd/'
+      })
 
       nyc.include = nyc._prepGlobPatterns([
         'foo.js'
       ])
 
       var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
-      shouldInstrumentFile('foo.js', 'foo.js').should.equal(true)
-      shouldInstrumentFile('index.js', 'index.js').should.equal(false)
+      shouldInstrumentFile('/cwd/foo.js', 'foo.js').should.equal(true)
+      shouldInstrumentFile('/cwd/index.js', 'index.js').should.equal(false)
     })
 
     it('exclude overrides include', function () {
-      var nyc = new NYC()
+      var nyc = new NYC({
+        cwd: '/cwd/'
+      })
 
       nyc.include = nyc._prepGlobPatterns([
         'foo.js',
@@ -166,8 +186,8 @@ describe('nyc', function () {
       ])
 
       var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
-      shouldInstrumentFile('foo.js', 'foo.js').should.equal(true)
-      shouldInstrumentFile('test.js', 'test.js').should.equal(false)
+      shouldInstrumentFile('/cwd/foo.js', 'foo.js').should.equal(true)
+      shouldInstrumentFile('/cwd/test.js', 'test.js').should.equal(false)
     })
   })
 
@@ -460,14 +480,16 @@ describe('nyc', function () {
 
   describe('addAllFiles', function () {
     it('outputs an empty coverage report for all files that are not excluded', function (done) {
-      var nyc = (new NYC())
+      var nyc = new NYC({
+        cwd: fixtures
+      })
       nyc.reset()
       nyc.addAllFiles()
 
       var reports = _.filter(nyc._loadReports(), function (report) {
-        return ap(report)['./test/fixtures/not-loaded.js']
+        return ap(report)['./not-loaded.js']
       })
-      var report = reports[0]['./test/fixtures/not-loaded.js']
+      var report = reports[0]['./not-loaded.js']
 
       reports.length.should.equal(1)
       report.s['1'].should.equal(0)

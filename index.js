@@ -180,10 +180,11 @@ NYC.prototype._readTranspiledSource = function (path) {
 }
 
 NYC.prototype.shouldInstrumentFile = function (filename, relFile) {
-  relFile = relFile.replace(/^\.\//, '') // remove leading './'.
+  // Don't instrument files that are outside of the current working directory.
+  if (/^\.\./.test(path.relative(this.cwd, filename))) return false
 
-  return (!this.include || micromatch.any(filename, this.include) || micromatch.any(relFile, this.include)) &&
-    !(micromatch.any(filename, this.exclude) || micromatch.any(relFile, this.exclude))
+  relFile = relFile.replace(/^\.\//, '') // remove leading './'.
+  return (!this.include || micromatch.any(relFile, this.include)) && !micromatch.any(relFile, this.exclude)
 }
 
 NYC.prototype.addAllFiles = function () {
@@ -191,8 +192,8 @@ NYC.prototype.addAllFiles = function () {
 
   this._loadAdditionalModules()
 
-  glob.sync('**/*.js', {nodir: true, ignore: this.exclude}).forEach(function (filename) {
-    var obj = _this.addFile(filename)
+  glob.sync('**/*.js', {cwd: this.cwd, nodir: true, ignore: this.exclude}).forEach(function (filename) {
+    var obj = _this.addFile(path.join(_this.cwd, filename))
     if (obj.instrument) {
       module._compile(
         _this.instrumenter().getPreamble(obj.content, obj.relFile),
