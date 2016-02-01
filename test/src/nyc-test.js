@@ -139,25 +139,6 @@ describe('nyc', function () {
       shouldInstrumentFile('./blerg', './blerg').should.equal(false)
     })
 
-    it('should handle example symlinked node_module', function () {
-      var nyc = new NYC({
-        cwd: fixtures
-      })
-      var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
-
-      var relPath = '../../../nyc/node_modules/glob/glob.js'
-      var fullPath = '/Users/user/nyc/node_modules/glob/glob.js'
-
-      shouldInstrumentFile(fullPath, relPath).should.equal(false)
-
-      // Full path should be excluded (node_modules)
-      shouldInstrumentFile(fullPath, relPath).should.equal(false)
-
-      // Send both relative and absolute path
-      // Results in exclusion (include = false)
-      shouldInstrumentFile(fullPath, relPath).should.equal(false)
-    })
-
     it('allows a file to be included rather than excluded', function () {
       var nyc = new NYC()
 
