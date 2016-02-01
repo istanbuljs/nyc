@@ -139,18 +139,35 @@ describe('nyc', function () {
       shouldInstrumentFile('./blerg', './blerg').should.equal(false)
     })
 
-    it('allows a file to be included rather than excluded', function () {
+    it('allows files to be explicitly included, rather than excluded', function () {
       var nyc = new NYC()
 
-      // Root package contains config.exclude
-      // Restore exclude to default patterns
       nyc.include = nyc._prepGlobPatterns([
-        'test.js'
+        'foo.js'
       ])
 
       var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
-      shouldInstrumentFile('test.js', 'test.js').should.equal(true)
+      shouldInstrumentFile('foo.js', 'foo.js').should.equal(true)
       shouldInstrumentFile('index.js', 'index.js').should.equal(false)
+    })
+
+    it('exclude overrides include', function () {
+      var nyc = new NYC()
+
+      nyc.include = nyc._prepGlobPatterns([
+        'foo.js',
+        'test.js'
+      ])
+      // Ensure default exclude patterns apply, which excludes test.js
+      nyc.exclude = nyc._prepGlobPatterns([
+        '**/node_modules/**',
+        'test/**',
+        'test{,-*}.js'
+      ])
+
+      var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
+      shouldInstrumentFile('foo.js', 'foo.js').should.equal(true)
+      shouldInstrumentFile('test.js', 'test.js').should.equal(false)
     })
   })
 
