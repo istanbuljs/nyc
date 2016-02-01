@@ -23,12 +23,17 @@ var fixtures = {
 require('istanbul')
 
 // Inject nyc into this process.
-var nyc = (new NYC({
+var nyc = new NYC({
   cwd: path.join(__dirname, '..', '..')
-})).wrap()
+})
 // Override the exclude option, source-map-fixtures is inside node_modules but
 // should not be excluded when generating the coverage report.
 nyc.exclude = []
+// Monkey-patch _wrapExit(), it shouldn't run when generating the coverage
+// report.
+nyc._wrapExit = function () {}
+// Now wrap the process.
+nyc.wrap()
 
 // Require the fixture so nyc can instrument it, then run it so there's code
 // coverage.
@@ -59,5 +64,5 @@ reports.forEach(function (coverage) {
 })
 out.end()
 out.on('finish', function () {
-  console.log('Written coverage report.')
+  console.log('Wrote coverage report.')
 })
