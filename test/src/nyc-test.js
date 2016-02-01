@@ -132,7 +132,7 @@ describe('nyc', function () {
       })
       var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
 
-      // config.excludes: "blarg", "blerg"
+      // fixtures/package.json configures excludes: "blarg", "blerg"
       shouldInstrumentFile('blarg', 'blarg').should.equal(false)
       shouldInstrumentFile('blarg/foo.js', 'blarg/foo.js').should.equal(false)
       shouldInstrumentFile('blerg', 'blerg').should.equal(false)
