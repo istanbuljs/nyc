@@ -17,24 +17,31 @@ var fixtures = {
   bundle: sourceMapFixtures.inline('bundle'),
   inline: sourceMapFixtures.inline('branching'),
   istanbulIgnore: sourceMapFixtures.inline('istanbul-ignore'),
+  istanbulIgnoreFn: sourceMapFixtures.inline('istanbul-ignore-fn'),
   none: sourceMapFixtures.none('branching')
 }
 
 require('istanbul')
 
 // Inject nyc into this process.
-var nyc = (new NYC({
+var nyc = new NYC({
   cwd: path.join(__dirname, '..', '..')
-})).wrap()
+})
 // Override the exclude option, source-map-fixtures is inside node_modules but
 // should not be excluded when generating the coverage report.
 nyc.exclude = []
+// Monkey-patch _wrapExit(), it shouldn't run when generating the coverage
+// report.
+nyc._wrapExit = function () {}
+// Now wrap the process.
+nyc.wrap()
 
 // Require the fixture so nyc can instrument it, then run it so there's code
 // coverage.
 fixtures.bundle.require().branching()
 fixtures.inline.require().run(42)
 fixtures.istanbulIgnore.require().run(99)
+fixtures.istanbulIgnoreFn.require().run(99)
 fixtures.none.require().run()
 
 // Copy NYC#writeCoverageFile() behavior to get the coverage object, before
@@ -47,8 +54,8 @@ if (!coverage) {
 }
 
 var reports = _.values(coverage)
-if (reports.length !== 4) {
-  console.error('Expected 4 reports to be generated, got ' + reports.length)
+if (reports.length !== 5) {
+  console.error('Expected 5 reports to be generated, got ' + reports.length)
   process.exit(1)
 }
 
@@ -59,5 +66,5 @@ reports.forEach(function (coverage) {
 })
 out.end()
 out.on('finish', function () {
-  console.log('Written coverage report.')
+  console.log('Wrote coverage report.')
 })
