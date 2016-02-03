@@ -126,6 +126,7 @@ describe('nyc', function () {
       shouldInstrumentFile('/cwd/test-foo.js', 'test-foo.js').should.equal(false)
       shouldInstrumentFile('/cwd/lib/test.js', 'lib/test.js').should.equal(true)
       shouldInstrumentFile('/cwd/foo/bar/test.js', './test.js').should.equal(false)
+      shouldInstrumentFile('/cwd/foo/bar/test.js', '.\\test.js').should.equal(false)
     })
 
     it('should exclude appropriately with config.exclude', function () {
@@ -139,6 +140,7 @@ describe('nyc', function () {
       shouldInstrumentFile('blarg/foo.js', 'blarg/foo.js').should.equal(false)
       shouldInstrumentFile('blerg', 'blerg').should.equal(false)
       shouldInstrumentFile('./blerg', './blerg').should.equal(false)
+      shouldInstrumentFile('./blerg', '.\\blerg').should.equal(false)
     })
 
     it('should exclude outside of the current working directory', function () {
@@ -153,6 +155,7 @@ describe('nyc', function () {
         cwd: '/cwd/node_modules/foo/'
       })
       nyc.shouldInstrumentFile('/cwd/node_modules/foo/bar', './bar').should.equal(true)
+      nyc.shouldInstrumentFile('/cwd/node_modules/foo/bar', '.\\bar').should.equal(true)
     })
 
     it('allows files to be explicitly included, rather than excluded', function () {

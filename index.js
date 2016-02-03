@@ -183,7 +183,7 @@ NYC.prototype.shouldInstrumentFile = function (filename, relFile) {
   // Don't instrument files that are outside of the current working directory.
   if (/^\.\./.test(path.relative(this.cwd, filename))) return false
 
-  relFile = relFile.replace(/^\.\//, '') // remove leading './'.
+  relFile = relFile.replace(/^\.[\\\/]/, '') // remove leading './' or '.\'.
   return (!this.include || micromatch.any(relFile, this.include)) && !micromatch.any(relFile, this.exclude)
 }
 
