@@ -1,5 +1,10 @@
 ## Change Log
 
+### v5.6.0 (2016/02/03 +7:00)
+
+- [#159](https://github.com/bcoe/nyc/pull/159) skip should continue working with source-maps (@novemberborn)
+- [#160](https://github.com/bcoe/nyc/pull/160) don't instrument files outside of the current working directory (@novemberborn)
+
 ### v5.5.0 (2016/01/24 +07:00)
 
 - [#152](https://github.com/bcoe/nyc/pull/152) upgrade to newest version of foreground-child (@isaacs)
