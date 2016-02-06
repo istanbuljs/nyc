@@ -88,6 +88,11 @@ var yargs = require('yargs')
     type: 'boolean',
     describe: 'cache instrumentation results for improved performance'
   })
+  .options('e', {
+    alias: 'extension',
+    default: [],
+    describe: 'a list of extensions that nyc should handle in addition to .js'
+  })
   .option('check-coverage', {
     type: 'boolean',
     default: false,
@@ -128,6 +133,7 @@ if (argv._[0] === 'report') {
 } else if (argv._.length) {
   // wrap subprocesses and execute argv[1]
   if (!Array.isArray(argv.require)) argv.require = [argv.require]
+  if (!Array.isArray(argv.extension)) argv.extension = [argv.extension]
 
   var nyc = (new NYC({
     require: argv.require
@@ -142,6 +148,9 @@ if (argv._[0] === 'report') {
   }
   if (argv.require.length) {
     env.NYC_REQUIRE = argv.require.join(',')
+  }
+  if (argv.extension.length) {
+    env.NYC_EXTENSION = argv.extension.join(',')
   }
   sw([wrapper], env)
 

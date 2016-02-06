@@ -59,6 +59,23 @@ of the pre-transpiled code. You'll have to configure your custom require hook
 to inline the source map in the transpiled code. For Babel that means setting
 the `sourceMaps` option to `inline`.
 
+## Support For Custom File Extensions (.jsx, .es6)
+Supporting file extensions can be configured through either the configuration arguments or with the `nyc` config section in `package.json`.
+
+```shell
+nyc --extension .jsx --extension .es6 npm test
+```
+
+```json
+{"nyc": {
+  "extensions": [
+      ".jsx",
+      ".es6"
+    ]
+  }
+}
+```
+
 ## Checking Coverage
 
 nyc exposes istanbul's check-coverage tool. After running your tests with nyc,
