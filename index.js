@@ -88,7 +88,7 @@ NYC.prototype._createTransform = function () {
     }),
     hash: function (code, metadata, salt) {
       var hash = md5hex([code, metadata.filename, salt])
-      _this.hashCache['./' + metadata.relFile] = hash
+      _this.hashCache[metadata.filename] = hash
       return hash
     },
     factory: this._transformFactory.bind(this),
@@ -221,20 +221,18 @@ NYC.prototype._transformFactory = function (cacheDir) {
 
   return function (code, metadata, hash) {
     var filename = metadata.filename
-    var relFile = './' + metadata.relFile
 
     var sourceMap = convertSourceMap.fromSource(code) || convertSourceMap.fromMapFileSource(code, path.dirname(filename))
-
     if (sourceMap) {
       if (hash) {
         var mapPath = path.join(cacheDir, hash + '.map')
         fs.writeFileSync(mapPath, sourceMap.toJSON())
       } else {
-        _this.sourceMapCache.addMap(relFile, sourceMap.toJSON())
+        _this.sourceMapCache.addMap(filename, sourceMap.toJSON())
       }
     }
 
-    return instrumenter.instrumentSync(code, relFile)
+    return instrumenter.instrumentSync(code, filename)
   }
 }
 
@@ -288,9 +286,9 @@ NYC.prototype.writeCoverageFile = function () {
   if (!coverage) return
 
   if (this.enableCache) {
-    Object.keys(coverage).forEach(function (relFile) {
-      if (this.hashCache[relFile] && coverage[relFile]) {
-        coverage[relFile].contentHash = this.hashCache[relFile]
+    Object.keys(coverage).forEach(function (absFile) {
+      if (this.hashCache[absFile] && coverage[absFile]) {
+        coverage[absFile].contentHash = this.hashCache[absFile]
       }
     }, this)
   } else {
@@ -345,8 +343,8 @@ NYC.prototype._loadReports = function () {
       return {}
     }
 
-    Object.keys(report).forEach(function (relFile) {
-      var fileReport = report[relFile]
+    Object.keys(report).forEach(function (absFile) {
+      var fileReport = report[absFile]
       if (fileReport && fileReport.contentHash) {
         var hash = fileReport.contentHash
         if (!(hash in loadedMaps)) {
@@ -359,7 +357,7 @@ NYC.prototype._loadReports = function () {
           }
         }
         if (loadedMaps[hash]) {
-          _this.sourceMapCache.addMap(relFile, loadedMaps[hash])
+          _this.sourceMapCache.addMap(absFile, loadedMaps[hash])
         }
       }
     })

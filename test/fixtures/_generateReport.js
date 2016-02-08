@@ -62,6 +62,7 @@ if (reports.length !== 5) {
 var out = fs.createWriteStream(path.join(__dirname, 'report.js'))
 out.write('// Generated using node test/fixtures/_generateReport.js\n')
 reports.forEach(function (coverage) {
+  coverage.path = path.relative(nyc.cwd, coverage.path)
   out.write('exports[' + JSON.stringify(coverage.path) + '] = ' + JSON.stringify(coverage, null, 2) + '\n')
 })
 out.end()

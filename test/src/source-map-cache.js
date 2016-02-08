@@ -8,6 +8,8 @@ var path = require('path')
 var convertSourceMap = require('convert-source-map')
 var sourceMapFixtures = require('source-map-fixtures')
 
+var nycDir = path.join(__dirname, '../..')
+
 // Load source map fixtures.
 var covered = _.mapValues({
   bundle: sourceMapFixtures.inline('bundle'),
@@ -19,9 +21,9 @@ var covered = _.mapValues({
   return _.assign({
     // Coverage for the fixture is stored relative to the root directory. Here
     // compute the path to the fixture file relative to the root directory.
-    relpath: './' + path.relative(path.join(__dirname, '../..'), fixture.file),
+    absPath: path.resolve(nycDir, fixture.file),
     // the sourcemap itself remaps the path.
-    mappedPath: './' + path.relative(path.join(__dirname, '../..'), fixture.sourceFile),
+    mappedPath: path.resolve(nycDir, fixture.sourceFile),
     // Compute the number of lines in the original source, excluding any line
     // break at the end of the file.
     maxLine: fixture.sourceContentSync().trimRight().split(/\r?\n/).length
@@ -39,15 +41,24 @@ try {
 var sourceMapCache = new SourceMapCache()
 _.forOwn(covered, function (fixture) {
   var source = fixture.contentSync()
-  var sourceMap = convertSourceMap.fromSource(source) || convertSourceMap.fromMapFileSource(source, fixture.relpath)
+  var sourceMap = convertSourceMap.fromSource(source) || convertSourceMap.fromMapFileSource(source, fixture.absPath)
   if (sourceMap) {
-    sourceMapCache.addMap(fixture.relpath, sourceMap.sourcemap)
+    sourceMapCache.addMap(fixture.absPath, sourceMap.sourcemap)
   }
 })
 
-var getReport = function () {
-  return ap(_.cloneDeep(require('../fixtures/report')))
-}
+var getReport = (function () {
+  var report = _.reduce(require('../fixtures/report'), function (result, fileReport, relpath) {
+    var absPath = path.resolve(nycDir, relpath)
+    fileReport.path = absPath
+    result[absPath] = fileReport
+    return result
+  }, {})
+
+  return function () {
+    return ap(_.cloneDeep(report))
+  }
+})()
 var fixture = covered.inline
 
 require('chai').should()
@@ -57,7 +68,7 @@ describe('source-map-cache', function () {
   it('does not rewrite if there is no source map', function () {
     var report = getReport()
     sourceMapCache.applySourceMaps(report)
-    report.should.have.property(covered.none.relpath)
+    report.should.have.property(covered.none.absPath)
   })
 
   it('retains /* istanbul ignore … */ results', function () {
@@ -72,7 +83,7 @@ describe('source-map-cache', function () {
     sourceMapCache.applySourceMaps(report)
 
     var busted = getReport()
-    var start = busted[covered.inline.relpath].statementMap['1'].start
+    var start = busted[covered.inline.absPath].statementMap['1'].start
     start.line = 0
     start.column = -2
     sourceMapCache.applySourceMaps(busted)
@@ -84,13 +95,13 @@ describe('source-map-cache', function () {
     it('does not rewrite path if the source map has more than one source', function () {
       var report = getReport()
       sourceMapCache.applySourceMaps(report)
-      expect(report[covered.bundle.relpath]).to.not.equal(undefined)
+      expect(report[covered.bundle.absPath]).to.not.equal(undefined)
     })
 
     it('rewrites path if the source map has exactly one source', function () {
-      var report = ap(_.pick(getReport(), fixture.relpath))
+      var report = ap(_.pick(getReport(), fixture.absPath))
       sourceMapCache.applySourceMaps(report)
-      expect(report[fixture.relpath]).to.equal(undefined)
+      expect(report[fixture.absPath]).to.equal(undefined)
       report.should.have.property(fixture.mappedPath)
     })
   })
@@ -98,7 +109,7 @@ describe('source-map-cache', function () {
   describe('statements', function () {
     it('drops statements that have no mapping back to the original source code', function () {
       var report = getReport()
-      var originalS = report[fixture.relpath].s
+      var originalS = report[fixture.absPath].s
       sourceMapCache.applySourceMaps(report)
       Object.keys(report[fixture.mappedPath].s)
         .should.be.lt(originalS)
@@ -120,7 +131,7 @@ describe('source-map-cache', function () {
   describe('functions', function () {
     it('drops functions that have no mapping back to the original source code', function () {
       var report = getReport()
-      var originalF = report[fixture.relpath].f
+      var originalF = report[fixture.absPath].f
       sourceMapCache.applySourceMaps(report)
       Object.keys(report[fixture.mappedPath].f)
         .should.be.lt(originalF)
@@ -142,7 +153,7 @@ describe('source-map-cache', function () {
   describe('branches', function () {
     it('drops branches that have no mapping back to the original source code', function () {
       var report = getReport()
-      var originalB = report[fixture.relpath].b
+      var originalB = report[fixture.absPath].b
       sourceMapCache.applySourceMaps(report)
       Object.keys(report[fixture.mappedPath].b)
         .should.be.lt(originalB)
