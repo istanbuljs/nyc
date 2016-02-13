@@ -83,6 +83,22 @@ describe('nyc', function () {
 
       nyc.exclude.length.should.eql(19)
     })
+
+    it("loads 'extension' patterns from package.json#config.nyc", function () {
+      var nyc = new NYC({
+        cwd: path.resolve(__dirname, '../fixtures')
+      })
+
+      nyc.extensions.length.should.eql(3)
+    })
+
+    it("loads 'extension' from package.json#nyc", function () {
+      var nyc = new NYC({
+        cwd: path.resolve(__dirname, '../..')
+      })
+
+      nyc.extensions.length.should.eql(2)
+    })
   })
 
   describe('_prepGlobPatterns', function () {
@@ -229,6 +245,42 @@ describe('nyc', function () {
 
         // and the hook should have been called
         hook.callCount.should.equal(1)
+      })
+    })
+
+    describe('compile handlers for custom extensions are assigned', function () {
+      it('assigns a function to custom extensions', function () {
+        var nyc = new NYC({
+          cwd: path.resolve(__dirname, '../fixtures')
+        })
+        nyc.reset()
+        nyc.wrap()
+
+        require.extensions['.es6'].should.be.a.function
+        require.extensions['.foo.bar'].should.be.a.function
+
+        // default should still exist
+        require.extensions['.js'].should.be.a.function
+      })
+
+      it('calls the `_handleJs` function for custom file extensions', function () {
+        // the `require` call to istanbul is deferred, loaded here so it doesn't mess with the hooks callCount
+        require('istanbul')
+
+        var nyc = new NYC({
+          cwd: path.resolve(__dirname, '../fixtures')
+        })
+
+        sinon.spy(nyc, '_handleJs')
+
+        nyc.reset()
+        nyc.wrap()
+
+        var check1 = require('../fixtures/check-instrumented.es6')
+        var check2 = require('../fixtures/check-instrumented.foo.bar')
+        check1().should.be.true
+        check2().should.be.true
+        nyc._handleJs.callCount.should.equal(2)
       })
     })
 

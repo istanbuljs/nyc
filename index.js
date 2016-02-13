@@ -17,6 +17,7 @@ var md5hex = require('md5-hex')
 var findCacheDir = require('find-cache-dir')
 var pkgUp = require('pkg-up')
 var readPkg = require('read-pkg')
+var js = require('default-require-extensions/js')
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -53,7 +54,14 @@ function NYC (opts) {
   // require extensions can be provided as config in package.json.
   this.require = arrify(config.require || opts.require)
 
-  this.transform = this._createTransform()
+  this.extensions = arrify(config.extension || opts.extension).concat('.js').map(function (ext) {
+    return ext.toLowerCase()
+  })
+
+  this.transforms = this.extensions.reduce(function (transforms, ext) {
+    transforms[ext] = this._createTransform(ext)
+    return transforms
+  }.bind(this), {})
 
   this.sourceMapCache = new SourceMapCache()
 
@@ -79,7 +87,7 @@ NYC.prototype._loadConfig = function (opts) {
   return config
 }
 
-NYC.prototype._createTransform = function () {
+NYC.prototype._createTransform = function (ext) {
   var _this = this
   return cachingTransform({
     salt: JSON.stringify({
@@ -94,7 +102,7 @@ NYC.prototype._createTransform = function () {
     factory: this._transformFactory.bind(this),
     cacheDir: this.cacheDirectory,
     disableCache: !this.enableCache,
-    ext: '.js'
+    ext: ext
   })
 }
 
@@ -212,7 +220,15 @@ NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
     return null
   }
 
-  return this.transform(code, {filename: filename, relFile: relFile})
+  var ext, transform
+  for (ext in this.transforms) {
+    if (filename.toLowerCase().substr(-ext.length) === ext) {
+      transform = this.transforms[ext]
+      break
+    }
+  }
+
+  return transform ? transform(code, {filename: filename, relFile: relFile}) : null
 }
 
 NYC.prototype._transformFactory = function (cacheDir) {
@@ -236,11 +252,17 @@ NYC.prototype._transformFactory = function (cacheDir) {
   }
 }
 
+NYC.prototype._handleJs = function (code, filename) {
+  var relFile = path.relative(this.cwd, filename)
+  return this._maybeInstrumentSource(code, filename, relFile) || code
+}
+
 NYC.prototype._wrapRequire = function () {
-  var _this = this
-  appendTransform(function (code, filename) {
-    var relFile = path.relative(_this.cwd, filename)
-    return _this._maybeInstrumentSource(code, filename, relFile) || code
+  var handleJs = this._handleJs.bind(this)
+
+  this.extensions.forEach(function (ext) {
+    require.extensions[ext] = js
+    appendTransform(handleJs, ext)
   })
 }
 

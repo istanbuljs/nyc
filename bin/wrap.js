@@ -8,6 +8,7 @@ try {
 
 ;(new NYC({
   require: process.env.NYC_REQUIRE ? process.env.NYC_REQUIRE.split(',') : [],
+  extension: process.env.NYC_EXTENSION ? process.env.NYC_EXTENSION.split(',') : [],
   enableCache: process.env.NYC_CACHE === 'enable'
 })).wrap()
 
