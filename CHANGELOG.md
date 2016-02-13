@@ -1,5 +1,10 @@
 ## Change Log
 
+### Upcoming
+
+- [#164](https://github.com/bcoe/nyc/pull/164) coverage tracking now uses absolute paths, awesome \o/ (@novemberborn)
+- [#163](https://github.com/bcoe/nyc/pull/163) support for extensions other than .js (@lloydcotten)
+
 ### v5.6.0 (2016/02/03 +7:00)
 
 - [#159](https://github.com/bcoe/nyc/pull/159) skip should continue working with source-maps (@novemberborn)
