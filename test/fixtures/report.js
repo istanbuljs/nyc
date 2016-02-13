@@ -1,6 +1,6 @@
 // Generated using node test/fixtures/_generateReport.js
-exports["./node_modules/source-map-fixtures/fixtures/bundle-inline.js"] = {
-  "path": "./node_modules/source-map-fixtures/fixtures/bundle-inline.js",
+exports["node_modules/source-map-fixtures/fixtures/bundle-inline.js"] = {
+  "path": "node_modules/source-map-fixtures/fixtures/bundle-inline.js",
   "s": {
     "1": 1,
     "2": 1,
@@ -301,8 +301,8 @@ exports["./node_modules/source-map-fixtures/fixtures/bundle-inline.js"] = {
     }
   }
 }
-exports["./node_modules/source-map-fixtures/fixtures/branching-inline.js"] = {
-  "path": "./node_modules/source-map-fixtures/fixtures/branching-inline.js",
+exports["node_modules/source-map-fixtures/fixtures/branching-inline.js"] = {
+  "path": "node_modules/source-map-fixtures/fixtures/branching-inline.js",
   "s": {
     "1": 1,
     "2": 1,
@@ -416,8 +416,8 @@ exports["./node_modules/source-map-fixtures/fixtures/branching-inline.js"] = {
     }
   }
 }
-exports["./node_modules/source-map-fixtures/fixtures/istanbul-ignore-inline.js"] = {
-  "path": "./node_modules/source-map-fixtures/fixtures/istanbul-ignore-inline.js",
+exports["node_modules/source-map-fixtures/fixtures/istanbul-ignore-inline.js"] = {
+  "path": "node_modules/source-map-fixtures/fixtures/istanbul-ignore-inline.js",
   "s": {
     "1": 1,
     "2": 1,
@@ -533,8 +533,8 @@ exports["./node_modules/source-map-fixtures/fixtures/istanbul-ignore-inline.js"]
     }
   }
 }
-exports["./node_modules/source-map-fixtures/fixtures/istanbul-ignore-fn-inline.js"] = {
-  "path": "./node_modules/source-map-fixtures/fixtures/istanbul-ignore-fn-inline.js",
+exports["node_modules/source-map-fixtures/fixtures/istanbul-ignore-fn-inline.js"] = {
+  "path": "node_modules/source-map-fixtures/fixtures/istanbul-ignore-fn-inline.js",
   "s": {
     "1": 1,
     "2": 1,
@@ -676,8 +676,8 @@ exports["./node_modules/source-map-fixtures/fixtures/istanbul-ignore-fn-inline.j
     }
   }
 }
-exports["./node_modules/source-map-fixtures/fixtures/branching-none.js"] = {
-  "path": "./node_modules/source-map-fixtures/fixtures/branching-none.js",
+exports["node_modules/source-map-fixtures/fixtures/branching-none.js"] = {
+  "path": "node_modules/source-map-fixtures/fixtures/branching-none.js",
   "s": {
     "1": 1,
     "2": 1,

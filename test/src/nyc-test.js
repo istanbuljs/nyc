@@ -245,7 +245,7 @@ describe('nyc', function () {
 
       proc.on('close', function () {
         var reports = _.filter(nyc._loadReports(), function (report) {
-          return report['./' + signal + '.js']
+          return report[path.join(fixtures, signal + '.js')]
         })
         reports.length.should.equal(1)
         return done()
@@ -296,7 +296,14 @@ describe('nyc', function () {
             add: function (report) {
               // the subprocess we ran should output reports
               // for files in the fixtures directory.
-              Object.keys(report).should.match(/.\/(spawn|child-1|child-2)\.js/)
+              var expected = [
+                'spawn.js',
+                'child-1.js',
+                'child-2.js'
+              ].map(function (relFile) {
+                return path.join(fixtures, relFile)
+              })
+              expected.should.include.members(Object.keys(report))
             }
           },
           {
@@ -489,10 +496,11 @@ describe('nyc', function () {
       nyc.reset()
       nyc.addAllFiles()
 
+      var notLoadedPath = path.join(fixtures, './not-loaded.js')
       var reports = _.filter(nyc._loadReports(), function (report) {
-        return ap(report)['./not-loaded.js']
+        return ap(report)[notLoadedPath]
       })
-      var report = reports[0]['./not-loaded.js']
+      var report = reports[0][notLoadedPath]
 
       reports.length.should.equal(1)
       report.s['1'].should.equal(0)
@@ -510,10 +518,12 @@ describe('nyc', function () {
       require('../fixtures/not-loaded')
 
       nyc.writeCoverageFile()
+
+      var notLoadedPath = path.join(fixtures, './not-loaded.js')
       var reports = _.filter(nyc._loadReports(), function (report) {
-        return report['./not-loaded.js']
+        return report[notLoadedPath]
       })
-      var report = reports[0]['./not-loaded.js']
+      var report = reports[0][notLoadedPath]
 
       reports.length.should.equal(1)
       report.s['1'].should.equal(1)
@@ -530,21 +540,23 @@ describe('nyc', function () {
       )
 
       var nyc = (new NYC({
+        cwd: fixtures,
         require: './test/fixtures/transpile-hook'
       }))
 
       nyc.reset()
       nyc.addAllFiles()
 
+      var needsTranspilePath = path.join(fixtures, './needs-transpile.js')
       var reports = _.filter(nyc._loadReports(), function (report) {
-        return ap(report)['./test/fixtures/needs-transpile.js']
+        return ap(report)[needsTranspilePath]
       })
-      var report = reports[0]['./test/fixtures/needs-transpile.js']
+      var report = reports[0][needsTranspilePath]
 
       reports.length.should.equal(1)
       report.s['1'].should.equal(0)
 
-      fs.unlinkSync('./test/fixtures/needs-transpile.js')
+      fs.unlinkSync(needsTranspilePath)
       return done()
     })
   })
