@@ -7,13 +7,11 @@
     "nyc": "./bin/nyc.js",
     "nyc-report": "./bin/nyc-report.js"
   },
-  "config": {
-    "nyc": {
-      "exclude": [
-        "**/blarg",
-        "**/blerg"
-      ],
-      "extension": [".es6", ".foo.BAR"]
-    }
+  "nyc": {
+    "exclude": [
+      "**/blarg",
+      "**/blerg"
+    ],
+    "extension": [".es6", ".foo.BAR"]
   }
 }

@@ -15,9 +15,9 @@ var SourceMapCache = require('./lib/source-map-cache')
 var convertSourceMap = require('convert-source-map')
 var md5hex = require('md5-hex')
 var findCacheDir = require('find-cache-dir')
-var pkgUp = require('pkg-up')
-var readPkg = require('read-pkg')
 var js = require('default-require-extensions/js')
+var pkgUp = require('pkg-up')
+var yargs = require('yargs')
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -25,17 +25,15 @@ if (/index\.covered\.js$/.test(__filename)) {
 }
 
 function NYC (opts) {
-  opts = opts || {}
+  var config = this._loadConfig(opts || {})
 
-  this._istanbul = opts.istanbul
-  this.subprocessBin = opts.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
-  this._tempDirectory = opts.tempDirectory || './.nyc_output'
-  this._reportDir = opts.reportDir
-
-  var config = this._loadConfig(opts)
+  this._istanbul = config.istanbul
+  this.subprocessBin = config.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
+  this._tempDirectory = config.tempDirectory || './.nyc_output'
+  this._reportDir = config.reportDir
   this.cwd = config.cwd
 
-  this.reporter = arrify(opts.reporter || 'text')
+  this.reporter = arrify(config.reporter || 'text')
 
   // load exclude stanza from config.
   this.include = false
@@ -49,12 +47,12 @@ function NYC (opts) {
 
   this.cacheDirectory = findCacheDir({name: 'nyc', cwd: this.cwd})
 
-  this.enableCache = Boolean(this.cacheDirectory && (opts.enableCache === true || process.env.NYC_CACHE === 'enable'))
+  this.enableCache = Boolean(this.cacheDirectory && (config.enableCache === true || process.env.NYC_CACHE === 'enable'))
 
   // require extensions can be provided as config in package.json.
-  this.require = arrify(config.require || opts.require)
+  this.require = arrify(config.require)
 
-  this.extensions = arrify(config.extension || opts.extension).concat('.js').map(function (ext) {
+  this.extensions = arrify(config.extension).concat('.js').map(function (ext) {
     return ext.toLowerCase()
   })
 
@@ -73,18 +71,16 @@ NYC.prototype._loadConfig = function (opts) {
   var cwd = opts.cwd || process.env.NYC_CWD || process.cwd()
   var pkgPath = pkgUp.sync(cwd)
 
-  // you can specify config in the nyc stanza of package.json.
-  var config
   if (pkgPath) {
     cwd = path.dirname(pkgPath)
-    var pkg = readPkg.sync(pkgPath, {normalize: false})
-    config = pkg.nyc || (pkg.config && pkg.config.nyc)
   }
-  config = config || {}
 
-  config.cwd = cwd
+  opts.cwd = cwd
 
-  return config
+  return yargs([])
+    .pkgConf('nyc', cwd)
+    .default(opts)
+    .argv
 }
 
 NYC.prototype._createTransform = function (ext) {
