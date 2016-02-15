@@ -34,9 +34,6 @@
       "test/source-map-cache.js",
       "index.covered.js",
       "test/fixtures/_generateCoverage.js"
-    ],
-    "extension": [
-      ".es6"
     ]
   },
   "standard": {

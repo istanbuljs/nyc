@@ -69,7 +69,7 @@ describe('nyc', function () {
   })
 
   describe('config', function () {
-    it("loads 'exclude' patterns from package.json#config.nyc", function () {
+    it("loads 'exclude' patterns from package.json#nyc", function () {
       var nyc = new NYC({
         cwd: path.resolve(__dirname, '../fixtures')
       })
@@ -77,28 +77,12 @@ describe('nyc', function () {
       nyc.exclude.length.should.eql(5)
     })
 
-    it("loads 'exclude' patterns from package.json#nyc", function () {
-      var nyc = new NYC({
-        cwd: path.resolve(__dirname, '../..')
-      })
-
-      nyc.exclude.length.should.eql(19)
-    })
-
-    it("loads 'extension' patterns from package.json#config.nyc", function () {
+    it("loads 'extension' patterns from package.json#nyc", function () {
       var nyc = new NYC({
         cwd: path.resolve(__dirname, '../fixtures')
       })
 
       nyc.extensions.length.should.eql(3)
-    })
-
-    it("loads 'extension' from package.json#nyc", function () {
-      var nyc = new NYC({
-        cwd: path.resolve(__dirname, '../..')
-      })
-
-      nyc.extensions.length.should.eql(2)
     })
   })
 
