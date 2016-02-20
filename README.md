@@ -60,6 +60,7 @@ to inline the source map in the transpiled code. For Babel that means setting
 the `sourceMaps` option to `inline`.
 
 ## Support For Custom File Extensions (.jsx, .es6)
+
 Supporting file extensions can be configured through either the configuration arguments or with the `nyc` config section in `package.json`.
 
 ```shell
@@ -148,11 +149,11 @@ As an alternative to providing a list of files to `exclude`, you can provide
 an `include` key to specify specific files that should be covered:
 
 ```json
-{"config": {
+{
   "nyc": {
     "include": ["**/build/umd/moment.js"]
   }
-}}
+}
 ```
 
 > Note: include defaults to `['**']`
@@ -174,6 +175,21 @@ modules should be required in the subprocess collecting coverage:
 You can run `nyc` with the optional `--cache` flag, to prevent it from
 instrumenting the same files multiple times. This can signficantly
 improve runtime performance.
+
+## Configuring nyc
+
+Any configuration options that can be set via the command line
+can also be specified in the `nyc` stanza of your package.json:
+
+```json
+{
+  "nyc": {
+    "lines": 99,
+    "check-coverage": false,
+    "report-dir": "./alternative"
+  },
+}
+```
 
 ## Configuring Istanbul
 
