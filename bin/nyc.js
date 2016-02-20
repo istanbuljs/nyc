@@ -14,56 +14,25 @@ var wrapper = require.resolve('./wrap.js')
 var yargs = require('yargs')
   .usage('$0 [command] [options]\n\nrun your tests with the nyc bin to instrument them with coverage')
   .command('report', 'run coverage report for .nyc_output', function (yargs) {
-    yargs
+    return yargs
       .usage('$0 report [options]')
-      .option('r', {
-        alias: 'reporter',
-        describe: 'coverage reporter(s) to use',
-        default: 'text'
-      })
-      .option('report-dir', {
-        describe: 'default directory to output coverage reports in',
-        default: 'coverage'
-      })
-      .help('h')
-      .alias('h', 'help')
       .example('$0 report --reporter=lcov', 'output an HTML lcov report to ./coverage')
   })
   .command('check-coverage', 'check whether coverage is within thresholds provided', function (yargs) {
-    yargs
+    return yargs
       .usage('$0 check-coverage [options]')
-      .option('b', {
-        alias: 'branches',
-        default: 0,
-        description: 'what % of branches must be covered?'
-      })
-      .option('f', {
-        alias: 'functions',
-        default: 0,
-        description: 'what % of functions must be covered?'
-      })
-      .option('l', {
-        alias: 'lines',
-        default: 90,
-        description: 'what % of lines must be covered?'
-      })
-      .option('s', {
-        alias: 'statements',
-        default: 0,
-        description: 'what % of statements must be covered?'
-      })
-      .help('h')
-      .alias('h', 'help')
       .example('$0 check-coverage --lines 95', "check whether the JSON in nyc's output folder meets the thresholds provided")
   })
   .option('r', {
     alias: 'reporter',
     describe: 'coverage reporter(s) to use',
-    default: 'text'
+    default: 'text',
+    global: true
   })
   .option('report-dir', {
     describe: 'default directory to output coverage reports in',
-    default: 'coverage'
+    default: 'coverage',
+    global: true
   })
   .option('s', {
     alias: 'silent',
@@ -100,27 +69,33 @@ var yargs = require('yargs')
   })
   .option('branches', {
     default: 0,
-    description: 'what % of branches must be covered?'
+    description: 'what % of branches must be covered?',
+    global: true
   })
   .option('functions', {
     default: 0,
-    description: 'what % of functions must be covered?'
+    description: 'what % of functions must be covered?',
+    global: true
   })
   .option('lines', {
     default: 90,
-    description: 'what % of lines must be covered?'
+    description: 'what % of lines must be covered?',
+    global: true
   })
   .option('statements', {
     default: 0,
-    description: 'what % of statements must be covered?'
+    description: 'what % of statements must be covered?',
+    global: true
   })
   .help('h')
   .alias('h', 'help')
-  .version(require('../package.json').version)
+  .version()
+  .pkgConf('nyc', process.cwd())
   .example('$0 npm test', 'instrument your tests with coverage')
   .example('$0 --require babel-core/polyfill --require babel-core/register npm test', 'instrument your tests with coverage and babel')
   .example('$0 report --reporter=text-lcov', 'output lcov report after running your tests')
   .epilog('visit http://git.io/vTJJB for list of available reporters')
+
 var argv = yargs.argv
 
 if (argv._[0] === 'report') {
