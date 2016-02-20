@@ -55,8 +55,12 @@
       "website": "https://github.com/isaacs"
     },
     {
-      "name": "Ollie Buck",
-      "website": "https://github.com/shackpank"
+      "name": "Mark Wubben",
+      "website": "https://novemberborn.net"
+    },
+    {
+      "name": "James Talmage",
+      "website": "https://twitter.com/jamestalmage"
     }
   ],
   "author": "Ben Coe <ben@npmjs.com>",
