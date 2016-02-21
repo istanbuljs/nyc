@@ -1,7 +1,9 @@
 ## Change Log
 
-### Upcoming
+### v6.0.0 (2016/02/20 +7:00)
 
+- [#167](https://github.com/bcoe/nyc/pull/167) all of nyc's settings can now
+  be configured in package.json (@bcoe)
 - [#164](https://github.com/bcoe/nyc/pull/164) coverage tracking now uses absolute paths, awesome \o/ (@novemberborn)
 - [#163](https://github.com/bcoe/nyc/pull/163) support for extensions other than .js (@lloydcotten)
 
