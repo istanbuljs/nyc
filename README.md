@@ -68,8 +68,9 @@ nyc --extension .jsx --extension .es6 npm test
 ```
 
 ```json
-{"nyc": {
-  "extensions": [
+{
+  "nyc": {
+    "extensions": [
       ".jsx",
       ".es6"
     ]
@@ -121,7 +122,7 @@ You can tell nyc to exclude specific files and directories by adding
 an `nyc.exclude` array to your `package.json`. Each element of
 the array is a glob pattern indicating which paths should be omitted.
 
-Globs are matched using [micromatch](https://www.npmjs.com/package/micromatch)
+Globs are matched using [micromatch](https://www.npmjs.com/package/micromatch).
 
 In addition to patterns specified in the package, nyc will always exclude
 files in `node_modules`.
@@ -131,8 +132,9 @@ any files with the extension `.spec.js`, and anything in the `build`
 directory:
 
 ```json
-{"nyc": {
-  "exclude": [
+{
+  "nyc": {
+    "exclude": [
       "**/*.spec.js",
       "build"
     ]
@@ -176,7 +178,7 @@ You can run `nyc` with the optional `--cache` flag, to prevent it from
 instrumenting the same files multiple times. This can signficantly
 improve runtime performance.
 
-## Configuring nyc
+## Configuring `nyc`
 
 Any configuration options that can be set via the command line
 can also be specified in the `nyc` stanza of your package.json:
@@ -187,7 +189,7 @@ can also be specified in the `nyc` stanza of your package.json:
     "lines": 99,
     "check-coverage": false,
     "report-dir": "./alternative"
-  },
+  }
 }
 ```
 
@@ -210,28 +212,28 @@ integrated with coveralls and travis-ci.org:
 
 1. add the coveralls and nyc dependencies to your module:
 
-```shell
-npm install coveralls nyc --save
-```
+  ```shell
+  npm install coveralls nyc --save
+  ```
 
 2. update the scripts in your package.json to include these bins:
 
-```bash
-{
-  "script": {
-    "test": "nyc tap ./test/*.js",
-    "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
+  ```json
+  {
+     "script": {
+       "test": "nyc tap ./test/*.js",
+       "coverage": "nyc report --reporter=text-lcov | coveralls"
+     }
   }
-}
-```
+  ```
 
 3. For private repos, add the environment variable `COVERALLS_REPO_TOKEN` to travis.
 
 4. add the following to your `.travis.yml`:
 
-```yaml
-after_success: npm run coverage
-```
+  ```yaml
+  after_success: npm run coverage
+  ```
 
 That's all there is to it!
 
