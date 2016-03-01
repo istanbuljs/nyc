@@ -534,15 +534,23 @@ describe('nyc', function () {
       nyc.reset()
       nyc.addAllFiles()
 
-      var notLoadedPath = path.join(fixtures, './not-loaded.js')
+      var notLoadedPath1 = path.join(fixtures, './not-loaded.es6')
+      var notLoadedPath2 = path.join(fixtures, './not-loaded.js')
       var reports = _.filter(nyc._loadReports(), function (report) {
-        return ap(report)[notLoadedPath]
+        var apr = ap(report)
+        return apr[notLoadedPath1] || apr[notLoadedPath2]
       })
-      var report = reports[0][notLoadedPath]
 
       reports.length.should.equal(1)
-      report.s['1'].should.equal(0)
-      report.s['2'].should.equal(0)
+
+      var report1 = reports[0][notLoadedPath1]
+      report1.s['1'].should.equal(0)
+      report1.s['2'].should.equal(0)
+
+      var report2 = reports[0][notLoadedPath2]
+      report2.s['1'].should.equal(0)
+      report2.s['2'].should.equal(0)
+
       return done()
     })
 
