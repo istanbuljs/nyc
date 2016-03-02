@@ -534,6 +534,25 @@ describe('nyc', function () {
       nyc.reset()
       nyc.addAllFiles()
 
+      var notLoadedPath = path.join(fixtures, './not-loaded.js')
+      var reports = _.filter(nyc._loadReports(), function (report) {
+        return ap(report)[notLoadedPath]
+      })
+      var report = reports[0][notLoadedPath]
+
+      reports.length.should.equal(1)
+      report.s['1'].should.equal(0)
+      report.s['2'].should.equal(0)
+      return done()
+    })
+
+    it('outputs an empty coverage report for multiple configured extensions', function (done) {
+      var nyc = new NYC({
+        cwd: fixtures
+      })
+      nyc.reset()
+      nyc.addAllFiles()
+
       var notLoadedPath1 = path.join(fixtures, './not-loaded.es6')
       var notLoadedPath2 = path.join(fixtures, './not-loaded.js')
       var reports = _.filter(nyc._loadReports(), function (report) {
