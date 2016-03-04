@@ -71,7 +71,7 @@ NYC.prototype._loadConfig = function (opts) {
   var cwd = opts.cwd || process.env.NYC_CWD || process.cwd()
   var pkgPath = pkgUp.sync(cwd)
 
-  if (pkgPath) {
+  if (pkgPath && pkgPath !== 'package.json') {
     cwd = path.dirname(pkgPath)
   }
 
