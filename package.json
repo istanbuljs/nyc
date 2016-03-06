@@ -1,6 +1,6 @@
 {
   "name": "nyc",
-  "version": "5.5.0",
+  "version": "6.0.0",
   "description": "a code coverage tool that works well with subprocesses.",
   "main": "index.js",
   "scripts": {
@@ -71,6 +71,7 @@
     "convert-source-map": "^1.1.2",
     "default-require-extensions": "^1.0.0",
     "find-cache-dir": "^0.1.1",
+    "find-up": "^1.1.2",
     "foreground-child": "^1.3.5",
     "glob": "^6.0.2",
     "istanbul": "^0.4.1",
