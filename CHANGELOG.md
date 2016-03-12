@@ -1,5 +1,10 @@
 ## Change Log
 
+### v6.1.0 (2016/03/12 15:00 +7:00)
+
+- [#180](https://github.com/bcoe/nyc/pull/180) fix bug with findUp (@bcoe)
+
+
 ### v6.0.0 (2016/02/20 +7:00)
 
 - [#167](https://github.com/bcoe/nyc/pull/167) all of nyc's settings can now
