@@ -23,8 +23,8 @@ var yargs = require('yargs')
       .usage('$0 check-coverage [options]')
       .example('$0 check-coverage --lines 95', "check whether the JSON in nyc's output folder meets the thresholds provided")
   })
-  .option('r', {
-    alias: 'reporter',
+  .option('reporter', {
+    alias: 'r',
     describe: 'coverage reporter(s) to use',
     default: 'text',
     global: true
