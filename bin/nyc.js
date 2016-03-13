@@ -34,31 +34,31 @@ var yargs = require('yargs')
     default: 'coverage',
     global: true
   })
-  .option('s', {
-    alias: 'silent',
+  .option('silent', {
+    alias: 's',
     default: false,
     type: 'boolean',
     describe: "don't output a report after tests finish running"
   })
-  .option('a', {
-    alias: 'all',
+  .option('all', {
+    alias: 'a',
     default: false,
     type: 'boolean',
     describe: 'whether or not to instrument all files of the project (not just the ones touched by your test suite)'
   })
-  .option('i', {
-    alias: 'require',
+  .option('require', {
+    alias: 'i',
     default: [],
     describe: 'a list of additional modules that nyc should attempt to require in its subprocess, e.g., babel-register, babel-polyfill.'
   })
-  .option('c', {
-    alias: 'cache',
+  .option('cache', {
+    alias: 'c',
     default: false,
     type: 'boolean',
     describe: 'cache instrumentation results for improved performance'
   })
-  .options('e', {
-    alias: 'extension',
+  .options('extension', {
+    alias: 'e',
     default: [],
     describe: 'a list of extensions that nyc should handle in addition to .js'
   })
