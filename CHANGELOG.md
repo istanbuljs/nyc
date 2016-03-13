@@ -2,6 +2,7 @@
 
 ### v6.1.0 (2016/03/12 15:00 +7:00)
 
+- [#191](https://github.com/bcoe/nyc/pull/191) upgrade to non-singleton verison of yargs (@bcoe)
 - [#185](https://github.com/bcoe/nyc/pull/185) default to long-form option names so that they can be overridden in package.json (@rapzo)
 - [#180](https://github.com/bcoe/nyc/pull/180) fix bug with findUp (@bcoe)
 - [#178](https://github.com/bcoe/nyc/pull/178) --all should handle extensions other than .js. (@lloydcotten)
