@@ -17,7 +17,7 @@ var md5hex = require('md5-hex')
 var findCacheDir = require('find-cache-dir')
 var js = require('default-require-extensions/js')
 var pkgUp = require('pkg-up')
-var yargs = require('yargs')
+var yargs = require('yargs/yargs')
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {

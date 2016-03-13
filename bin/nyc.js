@@ -11,7 +11,7 @@ var path = require('path')
 var sw = require('spawn-wrap')
 var wrapper = require.resolve('./wrap.js')
 
-var yargs = require('yargs')
+var yargs = require('yargs/yargs')(process.argv.slice(2))
   .usage('$0 [command] [options]\n\nrun your tests with the nyc bin to instrument them with coverage')
   .command('report', 'run coverage report for .nyc_output', function (yargs) {
     return yargs
