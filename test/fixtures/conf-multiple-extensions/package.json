@@ -11,6 +11,7 @@
     "exclude": [
       "**/blarg",
       "**/blerg"
-    ]
+    ],
+    "extension": [".es6", ".foo.BAR"]
   }
 }

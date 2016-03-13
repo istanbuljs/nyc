@@ -23,23 +23,19 @@ function NYC (opts) {
 
 var path = require('path')
 var existsSync = require('exists-sync')
+var glob = require('glob')
 var rimraf = require('rimraf')
 var sinon = require('sinon')
 var isWindows = require('is-windows')()
 var spawn = require('child_process').spawn
 var fixtures = path.resolve(__dirname, '../fixtures')
-var projectDir = path.resolve(__dirname, '../..')
-var projectTempDir = path.join(projectDir, '.nyc_output')
-var projectCacheDir = path.join(projectDir, 'node_modules', '.cache', 'nyc')
-var fixtureTempDir = path.join(fixtures, '.nyc_output')
-var fixtureCacheDir = path.join(fixtures, 'node_modules', '.cache', 'nyc')
 var bin = path.resolve(__dirname, '../../bin/nyc')
 
 // beforeEach
-rimraf.sync(projectTempDir)
-rimraf.sync(fixtureTempDir)
-rimraf.sync(projectCacheDir)
-rimraf.sync(fixtureCacheDir)
+glob.sync('**/*/{.nyc_output,.cache}').forEach(function (path) {
+  rimraf.sync(path)
+})
+
 delete process.env.NYC_CWD
 
 require('chai').should()
@@ -78,7 +74,7 @@ describe('nyc', function () {
 
     it("loads 'extension' patterns from package.json#nyc", function () {
       var nyc = new NYC({
-        cwd: path.resolve(__dirname, '../fixtures')
+        cwd: path.resolve(__dirname, '../fixtures/conf-multiple-extensions')
       })
 
       nyc.extensions.length.should.eql(3)
@@ -235,7 +231,7 @@ describe('nyc', function () {
     describe('compile handlers for custom extensions are assigned', function () {
       it('assigns a function to custom extensions', function () {
         var nyc = new NYC({
-          cwd: path.resolve(__dirname, '../fixtures')
+          cwd: path.resolve(__dirname, '../fixtures/conf-multiple-extensions')
         })
         nyc.reset()
         nyc.wrap()
@@ -252,7 +248,7 @@ describe('nyc', function () {
         require('istanbul')
 
         var nyc = new NYC({
-          cwd: path.resolve(__dirname, '../fixtures')
+          cwd: path.resolve(__dirname, '../fixtures/conf-multiple-extensions')
         })
 
         sinon.spy(nyc, '_handleJs')
@@ -260,8 +256,8 @@ describe('nyc', function () {
         nyc.reset()
         nyc.wrap()
 
-        var check1 = require('../fixtures/check-instrumented.es6')
-        var check2 = require('../fixtures/check-instrumented.foo.bar')
+        var check1 = require('../fixtures/conf-multiple-extensions/check-instrumented.es6')
+        var check2 = require('../fixtures/conf-multiple-extensions/check-instrumented.foo.bar')
         check1().should.be.true
         check2().should.be.true
         nyc._handleJs.callCount.should.equal(2)
@@ -545,14 +541,15 @@ describe('nyc', function () {
     })
 
     it('outputs an empty coverage report for multiple configured extensions', function (done) {
+      var cwd = path.resolve(fixtures, './conf-multiple-extensions')
       var nyc = new NYC({
-        cwd: fixtures
+        cwd: cwd
       })
       nyc.reset()
       nyc.addAllFiles()
 
-      var notLoadedPath1 = path.join(fixtures, './not-loaded.es6')
-      var notLoadedPath2 = path.join(fixtures, './not-loaded.js')
+      var notLoadedPath1 = path.join(cwd, './not-loaded.es6')
+      var notLoadedPath2 = path.join(cwd, './not-loaded.js')
       var reports = _.filter(nyc._loadReports(), function (report) {
         var apr = ap(report)
         return apr[notLoadedPath1] || apr[notLoadedPath2]
