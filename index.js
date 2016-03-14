@@ -196,7 +196,13 @@ NYC.prototype.addAllFiles = function () {
 
   this._loadAdditionalModules()
 
-  var pattern = '**/*{' + this.extensions.join() + '}'
+  var pattern = null
+  if (this.extensions.length === 1) {
+    pattern = '**/*' + this.extensions[0]
+  } else {
+    pattern = '**/*{' + this.extensions.join() + '}'
+  }
+
   glob.sync(pattern, {cwd: this.cwd, nodir: true, ignore: this.exclude}).forEach(function (filename) {
     var obj = _this.addFile(path.join(_this.cwd, filename))
     if (obj.instrument) {
