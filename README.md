@@ -70,7 +70,7 @@ nyc --extension .jsx --extension .es6 npm test
 ```json
 {
   "nyc": {
-    "extensions": [
+    "extension": [
       ".jsx",
       ".es6"
     ]
