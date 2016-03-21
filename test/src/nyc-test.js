@@ -108,7 +108,9 @@ describe('nyc', function () {
       nyc.exclude = nyc._prepGlobPatterns([
         '**/node_modules/**',
         'test/**',
-        'test{,-*}.js'
+        'test{,-*}.js',
+        '*.test.js',
+        '**/__tests__/**'
       ])
 
       var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
