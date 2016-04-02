@@ -129,9 +129,17 @@ if (argv._[0] === 'report') {
   }
   sw([wrapper], env)
 
+  // Both running the test script invocation and the check-coverage run may
+  // set process.exitCode. Keep track so that both children are run, but
+  // a non-zero exit codes in either one leads to an overall non-zero exit code.
+  process.exitCode = 0
   foreground(nyc.mungeArgs(argv), function (done) {
+    var mainChildExitCode = process.exitCode
+
     if (argv.checkCoverage) {
       checkCoverage(argv, function (done) {
+        process.exitCode = process.exitCode || mainChildExitCode
+
         if (!argv.silent) report(argv)
         return done()
       })
