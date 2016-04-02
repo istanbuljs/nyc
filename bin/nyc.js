@@ -46,6 +46,11 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
     type: 'boolean',
     describe: 'whether or not to instrument all files of the project (not just the ones touched by your test suite)'
   })
+  .option('include', {
+    alias: 'in',
+    default: [],
+    describe: 'a list of files that should be covered'
+  })
   .option('require', {
     alias: 'i',
     default: [],
