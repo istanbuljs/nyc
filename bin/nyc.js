@@ -116,7 +116,8 @@ if (argv._[0] === 'report') {
   if (!Array.isArray(argv.extension)) argv.extension = [argv.extension]
 
   var nyc = (new NYC({
-    require: argv.require
+    require: argv.require,
+    include: argv.include
   }))
   nyc.reset()
 
