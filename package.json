@@ -108,5 +108,28 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:bcoe/nyc.git"
-  }
+  },
+  "bundledDependencies": [
+    "append-transform",
+    "arrify",
+    "caching-transform",
+    "convert-source-map",
+    "default-require-extensions",
+    "find-cache-dir",
+    "find-up",
+    "foreground-child",
+    "glob",
+    "istanbul",
+    "md5-hex",
+    "micromatch",
+    "mkdirp",
+    "pkg-up",
+    "resolve-from",
+    "rimraf",
+    "signal-exit",
+    "source-map",
+    "spawn-wrap",
+    "strip-bom",
+    "yargs"
+  ]
 }
