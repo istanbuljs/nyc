@@ -42,7 +42,7 @@ function NYC (opts) {
   }
 
   this.exclude = this._prepGlobPatterns(
-    ['**/node_modules/**'].concat(arrify(config.exclude || ['test/**', 'test{,-*}.js', '*.test.js', '**/__tests__/**']))
+    ['**/node_modules/**'].concat(arrify(config.exclude || ['test/**', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**']))
   )
 
   this.cacheDirectory = findCacheDir({name: 'nyc', cwd: this.cwd})
