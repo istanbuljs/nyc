@@ -48,8 +48,8 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
   })
   .option('include', {
     alias: 'in',
-    default: [],
-    describe: 'a list of files that should be covered'
+    default: ['**'],
+    describe: 'a list of specific files that should be covered, glob patterns are supported'
   })
   .option('require', {
     alias: 'i',
