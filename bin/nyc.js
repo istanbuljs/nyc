@@ -119,6 +119,7 @@ if (argv._[0] === 'report') {
   // wrap subprocesses and execute argv[1]
   if (!Array.isArray(argv.require)) argv.require = [argv.require]
   if (!Array.isArray(argv.extension)) argv.extension = [argv.extension]
+  if (!Array.isArray(argv.exclude)) argv.exclude = [argv.exclude]
 
   var nyc = (new NYC({
     require: argv.require,
@@ -138,6 +139,9 @@ if (argv._[0] === 'report') {
   }
   if (argv.extension.length) {
     env.NYC_EXTENSION = argv.extension.join(',')
+  }
+  if (argv.exclude.length) {
+    env.NYC_EXCLUDE = argv.exclude.join(',')
   }
   sw([wrapper], env)
 
