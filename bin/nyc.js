@@ -46,6 +46,11 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
     type: 'boolean',
     describe: 'whether or not to instrument all files of the project (not just the ones touched by your test suite)'
   })
+  .option('exclude', {
+    alias: 'ex',
+    default: [],
+    describe: 'a list of specific files and directories that should be excluded from coverage, glob patterns are supported, node_modules is always excluded'
+  })
   .option('include', {
     alias: 'in',
     default: ['**'],
@@ -117,7 +122,8 @@ if (argv._[0] === 'report') {
 
   var nyc = (new NYC({
     require: argv.require,
-    include: argv.include
+    include: argv.include,
+    exclude: argv.exclude
   }))
   nyc.reset()
 
