@@ -37,7 +37,7 @@ function NYC (opts) {
 
   // load exclude stanza from config.
   this.include = false
-  if (config.include) {
+  if (config.include && config.include.length > 0) {
     this.include = this._prepGlobPatterns(arrify(config.include))
   }
 
