@@ -1,4 +1,3 @@
-/* global __coverage__ */
 var fs = require('fs')
 var glob = require('glob')
 var micromatch = require('micromatch')
@@ -8,16 +7,16 @@ var appendTransform = require('append-transform')
 var cachingTransform = require('caching-transform')
 var path = require('path')
 var rimraf = require('rimraf')
-var onExit = require('signal-exit')
 var resolveFrom = require('resolve-from')
 var arrify = require('arrify')
-var SourceMapCache = require('./lib/source-map-cache')
 var convertSourceMap = require('convert-source-map')
 var md5hex = require('md5-hex')
 var findCacheDir = require('find-cache-dir')
 var js = require('default-require-extensions/js')
 var pkgUp = require('pkg-up')
 var yargs = require('yargs/yargs')
+var sourceMapSupport = require('source-map-support')
+var md5Hex = require('md5-hex')
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -47,7 +46,10 @@ function NYC (opts) {
 
   this.cacheDirectory = findCacheDir({name: 'nyc', cwd: this.cwd})
 
-  this.enableCache = Boolean(this.cacheDirectory && (config.enableCache === true || process.env.NYC_CACHE === 'enable'))
+  // Disable caching until cache-transform has been updated to store multiple
+  // results (instrumented code, source maps, generated reporting code) for a
+  // single 'transform'.
+  this.enableCache = false
 
   // require extensions can be provided as config in package.json.
   this.require = arrify(config.require)
@@ -60,8 +62,6 @@ function NYC (opts) {
     transforms[ext] = this._createTransform(ext)
     return transforms
   }.bind(this), {})
-
-  this.sourceMapCache = new SourceMapCache()
 
   this.hashCache = {}
   this.loadedMaps = null
@@ -88,6 +88,8 @@ NYC.prototype._createTransform = function (ext) {
   return cachingTransform({
     salt: JSON.stringify({
       istanbul: require('istanbul/package.json').version,
+      // A dedicated salt for caches like these!
+      copenhagen: require('copenhagen').cacheSalt,
       nyc: require('./package.json').version
     }),
     hash: function (code, metadata, salt) {
@@ -122,20 +124,33 @@ NYC.prototype.instrumenter = function () {
 }
 
 NYC.prototype._createInstrumenter = function () {
-  var configFile = path.resolve(this.cwd, './.istanbul.yml')
+  var tempDir = this.tempDirectory()
 
-  if (!fs.existsSync(configFile)) configFile = undefined
-
-  var istanbul = this.istanbul()
-
-  var instrumenterConfig = istanbul.config.loadFile(configFile).instrumentation.config
-
-  return new istanbul.Instrumenter({
-    coverageVariable: '__coverage__',
-    embedSource: instrumenterConfig['embed-source'],
-    noCompact: !instrumenterConfig.compact,
-    preserveComments: instrumenterConfig['preserve-comments']
+  // Quick hack which corrects error stack traces for instrumented code. May
+  // collide with AVA or Babel which also install source-map-support, but at
+  // least it proves that we can now add instrumentation without messing up
+  // stack traces.
+  //
+  // We'll likely have to submit a patch to source-map-support so it uses
+  // default-require-extensions. This would allow us to provide the transformed
+  // code. Currently source-map-support goes straight to disk and reads the
+  // non-transformed source file.
+  sourceMapSupport.install({
+    retrieveSourceMap: function (source) {
+      try {
+        return {
+          url: source,
+          map: fs.readFileSync(path.join(tempDir, md5Hex(source) + '.js.map'), 'utf8')
+        }
+      } catch (_) {
+        return null
+      }
+    }
   })
+
+  // Only load the instrumentation code when needed. This is good because there
+  // are transitive dependencies on Babel.
+  return require('copenhagen/instrument')
 }
 
 NYC.prototype._prepGlobPatterns = function (patterns) {
@@ -192,9 +207,8 @@ NYC.prototype.shouldInstrumentFile = function (filename, relFile) {
 }
 
 NYC.prototype.addAllFiles = function () {
-  var _this = this
-
-  this._loadAdditionalModules()
+  // Note that we no longer load additional modules. We don't need custom
+  // precompilers in order to instrument ES2015 files.
 
   var pattern = null
   if (this.extensions.length === 1) {
@@ -203,17 +217,13 @@ NYC.prototype.addAllFiles = function () {
     pattern = '**/*{' + this.extensions.join() + '}'
   }
 
+  var _this = this
   glob.sync(pattern, {cwd: this.cwd, nodir: true, ignore: this.exclude}).forEach(function (filename) {
-    var obj = _this.addFile(path.join(_this.cwd, filename))
-    if (obj.instrument) {
-      module._compile(
-        _this.instrumenter().getPreamble(obj.content, obj.relFile),
-        filename
-      )
-    }
+    // Somewhat indirectly adding the files causes the reporting file to be
+    // written to .nyc_output. Then when reports are loaded we'll automatically
+    // include coverage for all files matched here.
+    _this.addFile(path.join(_this.cwd, filename))
   })
-
-  this.writeCoverageFile()
 }
 
 NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
@@ -235,23 +245,37 @@ NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
 }
 
 NYC.prototype._transformFactory = function (cacheDir) {
-  var _this = this
   var instrumenter = this.instrumenter()
+
+  // Ensure the instrumented code uses *our* singleton collector.
+  var collectorModuleId = require.resolve('copenhagen/collector')
+  var tempDir = this.tempDirectory()
 
   return function (code, metadata, hash) {
     var filename = metadata.filename
 
     var sourceMap = convertSourceMap.fromSource(code) || convertSourceMap.fromMapFileSource(code, path.dirname(filename))
-    if (sourceMap) {
-      if (hash) {
-        var mapPath = path.join(cacheDir, hash + '.map')
-        fs.writeFileSync(mapPath, sourceMap.toJSON())
-      } else {
-        _this.sourceMapCache.addMap(filename, sourceMap.toJSON())
-      }
-    }
+    var result = instrumenter.instrument({
+      filename: filename,
+      code: code,
+      // Note that Copenhagen does not yet support mapping coverage based on the
+      // input source map. Anyway, this is how it would be provided.
+      inputSourceMap: sourceMap && sourceMap.toObject(),
+      collectorModuleId: collectorModuleId
+    })
 
-    return instrumenter.instrumentSync(code, filename)
+    // The reporting file is required when loading reports. It provides the
+    // initial coverage data. The hash is based on the filename and the parsed
+    // tokens in the code.
+    var reportingFile = path.join(tempDir, result.hash + '.js')
+    fs.writeFileSync(reportingFile, result.reportingCode)
+
+    // Write the resulting source map file for use with source-map-support.
+    var mapFile = path.join(tempDir, md5Hex(filename) + '.js.map')
+    fs.writeFileSync(mapFile, JSON.stringify(result.map))
+
+    // Ideally we'd add a source map comment here, pointing towards the mapFile.
+    return result.code
   }
 }
 
@@ -288,43 +312,19 @@ NYC.prototype.reset = function () {
   this.createTempDirectory()
 }
 
-NYC.prototype._wrapExit = function () {
-  var _this = this
-
-  // we always want to write coverage
-  // regardless of how the process exits.
-  onExit(function () {
-    _this.writeCoverageFile()
-  }, {alwaysLast: true})
+NYC.prototype._startUsageStream = function () {
+  // Usage data is streamed to disk. This means there's no need for Istanbul's
+  // __coverage__ global. Hopefully we won't need to handle exits either, though
+  // it's possible the process could exit before all data has flushed.
+  var outputStream = fs.createWriteStream(path.join(this.tempDirectory(), process.pid + '.csv'))
+  require('copenhagen/collector').getStream().pipe(outputStream)
 }
 
 NYC.prototype.wrap = function (bin) {
   this._wrapRequire()
-  this._wrapExit()
   this._loadAdditionalModules()
+  this._startUsageStream()
   return this
-}
-
-NYC.prototype.writeCoverageFile = function () {
-  var coverage = global.__coverage__
-  if (typeof __coverage__ === 'object') coverage = __coverage__
-  if (!coverage) return
-
-  if (this.enableCache) {
-    Object.keys(coverage).forEach(function (absFile) {
-      if (this.hashCache[absFile] && coverage[absFile]) {
-        coverage[absFile].contentHash = this.hashCache[absFile]
-      }
-    }, this)
-  } else {
-    this.sourceMapCache.applySourceMaps(coverage)
-  }
-
-  fs.writeFileSync(
-    path.resolve(this.tempDirectory(), './', process.pid + '.json'),
-    JSON.stringify(coverage),
-    'utf-8'
-  )
 }
 
 NYC.prototype.istanbul = function () {
@@ -335,59 +335,40 @@ NYC.prototype.report = function (cb, _collector, _reporter) {
   cb = cb || function () {}
 
   var istanbul = this.istanbul()
-  var collector = _collector || new istanbul.Collector()
   var reporter = _reporter || new istanbul.Reporter(null, this._reportDir)
-
-  this._loadReports().forEach(function (report) {
-    collector.add(report)
-  })
-
   this.reporter.forEach(function (_reporter) {
     reporter.add(_reporter)
   })
 
-  reporter.write(collector, true, cb)
-}
+  var coverage = require('copenhagen/coverage')
+  var tempDir = this.tempDirectory()
 
-NYC.prototype._loadReports = function () {
-  var _this = this
-  var files = fs.readdirSync(this.tempDirectory())
+  // Load initial file coverage (without usage data).
+  var report = {}
+  var coverageLookup = {}
+  glob.sync('*.js', { cwd: tempDir }).forEach(function (f) {
+    var reportingModule = require(path.join(tempDir, f))
+    var fileCoverage = reportingModule.getInitialCoverage()
+    report[fileCoverage.path] = fileCoverage
+    coverageLookup[reportingModule.hash] = fileCoverage
+  })
 
-  var cacheDir = _this.cacheDirectory
+  // Asynchronously load usage data (probably breaks if there's lots of files)
+  var streams = glob.sync('*.csv', { cwd: tempDir }).map(function (f) {
+    return fs.createReadStream(path.join(tempDir, f))
+  })
 
-  var loadedMaps = this.loadedMaps || (this.loadedMaps = {})
-
-  return files.map(function (f) {
-    var report
-    try {
-      report = JSON.parse(fs.readFileSync(
-        path.resolve(_this.tempDirectory(), './', f),
-        'utf-8'
-      ))
-    } catch (e) { // handle corrupt JSON output.
-      return {}
+  return coverage.collectUsageData(streams).then(function (data) {
+    for (var hash in data) {
+      // Update the initial coverage with the usage data
+      coverage.addCounts(coverageLookup[hash], data[hash])
     }
 
-    Object.keys(report).forEach(function (absFile) {
-      var fileReport = report[absFile]
-      if (fileReport && fileReport.contentHash) {
-        var hash = fileReport.contentHash
-        if (!(hash in loadedMaps)) {
-          try {
-            var mapPath = path.join(cacheDir, hash + '.map')
-            loadedMaps[hash] = JSON.parse(fs.readFileSync(mapPath, 'utf8'))
-          } catch (e) {
-            // set to false to avoid repeatedly trying to load the map
-            loadedMaps[hash] = false
-          }
-        }
-        if (loadedMaps[hash]) {
-          _this.sourceMapCache.addMap(absFile, loadedMaps[hash])
-        }
-      }
-    })
-    _this.sourceMapCache.applySourceMaps(report)
-    return report
+    var collector = _collector || new istanbul.Collector()
+    collector.add(report)
+    reporter.write(collector, true, cb)
+  }).catch(function (err) {
+    process.nextTick(function () { throw err })
   })
 }
 

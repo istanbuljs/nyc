@@ -136,7 +136,9 @@ if (argv._[0] === 'report') {
         return done()
       })
     } else {
-      if (!argv.silent) report(argv)
+      if (!argv.silent) {
+        return report(argv).then(done)
+      }
       return done()
     }
   })
@@ -148,7 +150,7 @@ if (argv._[0] === 'report') {
 function report (argv) {
   process.env.NYC_CWD = process.cwd()
 
-  ;(new NYC({
+  return (new NYC({
     reporter: argv.reporter,
     reportDir: argv.reportDir
   })).report()
