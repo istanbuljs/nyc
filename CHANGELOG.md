@@ -1,5 +1,3 @@
-## Change Log
-
 ### v6.1.1 (2016/03/13 14:23 +7:00)
 
 - [#194](https://github.com/bcoe/nyc/pull/194) hot-fix for --all with multiple extensions (@bcoe)
