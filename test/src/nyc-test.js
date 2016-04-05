@@ -643,4 +643,56 @@ describe('nyc', function () {
       })
     })
   })
+
+  describe('--check-coverage (CLI)', function () {
+    it('fails when the expected coverage is below a threshold', function (done) {
+      var args = [bin, '--check-coverage', '--lines', '51', process.execPath, './half-covered.js']
+      var message = 'ERROR: Coverage for lines (50%) does not meet global threshold (51%)'
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixtures,
+        env: {}
+      })
+
+      var stderr = ''
+      proc.stderr.on('data', function (chunk) {
+        stderr += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.not.equal(0)
+        stderr.trim().should.equal(message)
+        done()
+      })
+    })
+
+    it('succeeds when the expected coverage is above a threshold', function (done) {
+      var args = [bin, '--check-coverage', '--lines', '49', process.execPath, './half-covered.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixtures,
+        env: {}
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        done()
+      })
+    })
+
+    // https://github.com/bcoe/nyc/issues/209
+    it('fails in any case when the underlying test failed', function (done) {
+      var args = [bin, '--check-coverage', '--lines', '49', process.execPath, './half-covered-failing.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixtures,
+        env: {}
+      })
+
+      proc.on('close', function (code) {
+        code.should.not.equal(0)
+        done()
+      })
+    })
+  })
 })
