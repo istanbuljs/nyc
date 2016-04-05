@@ -9,7 +9,7 @@
     "clean": "rimraf ./.nyc_output ./node_modules/.cache ./.self_coverage ./test/fixtures/.nyc_output ./test/fixtures/node_modules/.cache *covered.js ./lib/*covered.js",
     "build": "node ./build-tests",
     "instrument": "node ./build-self-coverage.js",
-    "run-tests": "tap --no-cov -b ./test/build/*.js ./test/src/source-map-cache.js",
+    "run-tests": "tap --no-cov -b ./test/build/*.js ./test/src/source-map-cache.js ./test/src/nyc-bin.js",
     "report": "istanbul report --include=./.self_coverage/*.json lcov text",
     "cover": "npm run clean && npm run build && npm run instrument && npm run run-tests && npm run report",
     "dev": "npm run clean && npm run build && npm run run-tests",
