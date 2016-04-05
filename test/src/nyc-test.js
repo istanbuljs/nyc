@@ -695,4 +695,35 @@ describe('nyc', function () {
       })
     })
   })
+
+  // https://github.com/bcoe/nyc/issues/190
+  describe('running "npm test" (CLI)', function () {
+    it('can run "npm test" which directly invokes a test file', function (done) {
+      var args = [bin, 'npm', 'test']
+      var directory = path.resolve(fixtures, 'run-npm-test')
+      var proc = spawn(process.execPath, args, {
+        cwd: directory,
+        env: { PATH: process.env.PATH }
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        done()
+      })
+    })
+
+    it('can run "npm test" which indirectly invokes a test file', function (done) {
+      var args = [bin, 'npm', 'test']
+      var directory = path.resolve(fixtures, 'run-npm-test-recursive')
+      var proc = spawn(process.execPath, args, {
+        cwd: directory,
+        env: { PATH: process.env.PATH }
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        done()
+      })
+    })
+  })
 })

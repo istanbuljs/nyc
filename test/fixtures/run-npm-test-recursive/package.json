@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "scripts": {
+    "test": "npm run test:deeper",
+    "test:deeper": "npm run test:even-deeper",
+    "test:even-deeper": "node ./half-covered.js"
+  }
+}
