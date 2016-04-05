@@ -1,7 +1,6 @@
 .nyc_output
 coverage
 node_modules
-!node_modules/spawn-wrap
 test/build/
 .self_coverage
 *.covered.js
