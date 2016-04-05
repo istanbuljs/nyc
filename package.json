@@ -94,7 +94,7 @@
     "exists-sync": "0.0.3",
     "forking-tap": "^0.1.1",
     "is-windows": "^0.1.0",
-    "lodash": "^4.6.1",
+    "lodash": "^4.8.2",
     "newline-regex": "^0.2.1",
     "sanitize-filename": "^1.5.3",
     "sinon": "^1.15.3",
