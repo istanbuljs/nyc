@@ -1,3 +1,20 @@
+<a name="6.2.0"></a>
+# [6.2.0](https://github.com/bcoe/nyc/compare/v6.1.1...v6.2.0) (2016-04-05)
+
+
+### Bug Fixes
+
+* **bundle dependencies:** start bundling dependencies, which should address some issues we have seen with  ([6116077](https://github.com/bcoe/nyc/commit/6116077))
+* **exit code:** use test program’s exit code even with `--check-coverage` ([00bbeb2](https://github.com/bcoe/nyc/commit/00bbeb2))
+
+### Features
+
+* **conventional changelog:** introducing conventional-changelog for changelog generation ([f594c5e](https://github.com/bcoe/nyc/commit/f594c5e))
+* **exclude patterns:** introduces new exclude-patterns based on @kentcdodds' coding conventions. ([51b1777](https://github.com/bcoe/nyc/commit/51b1777))
+* **update dependencies:** new foreground-child and spawn-wrap have landed \o/ ([1a0ad0b](https://github.com/bcoe/nyc/commit/1a0ad0b))
+
+
+
 ### v6.1.1 (2016/03/13 14:23 +7:00)
 
 - [#194](https://github.com/bcoe/nyc/pull/194) hot-fix for --all with multiple extensions (@bcoe)
