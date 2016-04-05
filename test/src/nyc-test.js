@@ -109,7 +109,7 @@ describe('nyc', function () {
         '**/node_modules/**',
         'test/**',
         'test{,-*}.js',
-        '*.test.js',
+        '**/*.test.js',
         '**/__tests__/**'
       ])
 
@@ -125,6 +125,8 @@ describe('nyc', function () {
       shouldInstrumentFile('/cwd/lib/test.js', 'lib/test.js').should.equal(true)
       shouldInstrumentFile('/cwd/foo/bar/test.js', './test.js').should.equal(false)
       shouldInstrumentFile('/cwd/foo/bar/test.js', '.\\test.js').should.equal(false)
+      shouldInstrumentFile('/cwd/foo/bar/foo.test.js', './foo.test.js').should.equal(false)
+      shouldInstrumentFile('/cwd/foo/bar/__tests__/foo.js', './__tests__/foo.js').should.equal(false)
     })
 
     it('should exclude appropriately with config.exclude', function () {
