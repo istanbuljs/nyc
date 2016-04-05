@@ -1,3 +1,13 @@
+<a name="6.2.1"></a>
+## [6.2.1](https://github.com/bcoe/nyc/compare/v6.2.0...v6.2.1) (2016-04-05)
+
+
+### Bug Fixes
+
+* **bundling:** .gitignore was interfering with bundle ([0e4adae](https://github.com/bcoe/nyc/commit/0e4adae))
+
+
+
 <a name="6.2.0"></a>
 # [6.2.0](https://github.com/bcoe/nyc/compare/v6.1.1...v6.2.0) (2016-04-05)
 
