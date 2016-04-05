@@ -142,8 +142,9 @@ directory:
 }
 ```
 
-> Note: exclude defaults to `['test', 'test{,-*}.js']`, which would exclude
-the `test` directory as well as `test.js` and `test-*.js` files
+> Note: exclude defaults to `['test', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**']`,
+which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`,
+and `test-*.js` files. Specifying your own exclude property overrides these defaults.
 
 ## Including Files
 
