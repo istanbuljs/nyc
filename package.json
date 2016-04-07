@@ -106,6 +106,7 @@
     "standard": "^6.0.8",
     "standard-version": "^1.1.0",
     "tap": "^5.7.1",
+    "which": "^1.2.4",
     "zero-fill": "^2.2.3"
   },
   "repository": {
