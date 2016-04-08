@@ -4,6 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/bcoe/nyc/badge.svg?branch=)](https://coveralls.io/r/bcoe/nyc?branch=)
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
 [![Windows Tests](https://img.shields.io/appveyor/ci/bcoe/nyc/master.svg?label=Windows%20Tests)](https://ci.appveyor.com/project/bcoe/nyc)
+[![Standard Version](https://img.shields.io/badge/standard-version-brightgreen.svg)](https://github.com/conventional-changelog/standard-version)
 
 a code coverage tool built on [istanbul](https://www.npmjs.com/package/istanbul)
 that works for applications that spawn subprocesses.
