@@ -1,3 +1,18 @@
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="6.3.0"></a>
+# [6.3.0](https://github.com/bcoe/nyc/compare/v6.2.1...v6.3.0) (2016-04-08)
+
+
+### Features
+
+* better docs for excluding, thanks @kentdodds \o/  ([22b06fe](https://github.com/bcoe/nyc/commit/22b06fe))
+* updating dependencies (spawn wrap with npm patches \o/) ([ac841b8](https://github.com/bcoe/nyc/commit/ac841b8))
+
+
+
 <a name="6.2.1"></a>
 ## [6.2.1](https://github.com/bcoe/nyc/compare/v6.2.0...v6.2.1) (2016-04-05)
 
