@@ -81,33 +81,33 @@ describe('nyc', function () {
     })
 
     it("ignores 'include' option if it's falsy or []", function () {
-      var nyc = new NYC({
-        cwd: path.resolve(__dirname, '../fixtures/conf-empty'),
+      var nyc1 = new NYC({
+        cwd: path.resolve(__dirname, '../fixtures/conf-empty')
       })
 
-      nyc.include.should.equal(false)
+      nyc1.include.should.equal(false)
 
-      var nyc = new NYC({
+      var nyc2 = new NYC({
         cwd: path.resolve(__dirname, '../fixtures/conf-empty'),
-        include: [],
+        include: []
       })
 
-      nyc.include.should.equal(false)
+      nyc2.include.should.equal(false)
     })
 
     it("ignores 'exclude' option if it's falsy or []", function () {
-      var nyc = new NYC({
-        cwd: path.resolve(__dirname, '../fixtures/conf-empty'),
+      var nyc1 = new NYC({
+        cwd: path.resolve(__dirname, '../fixtures/conf-empty')
       })
 
-      nyc.exclude.length.should.eql(7)
+      nyc1.exclude.length.should.eql(7)
 
-      var nyc = new NYC({
+      var nyc2 = new NYC({
         cwd: path.resolve(__dirname, '../fixtures/conf-empty'),
-        exclude: [],
+        exclude: []
       })
 
-      nyc.exclude.length.should.eql(7)
+      nyc2.exclude.length.should.eql(7)
     })
   })
 
