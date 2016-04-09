@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "scripts": {
+    "test": "node ./half-covered.js"
+  }
+}
