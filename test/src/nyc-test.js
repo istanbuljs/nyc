@@ -79,6 +79,36 @@ describe('nyc', function () {
 
       nyc.extensions.length.should.eql(3)
     })
+
+    it("ignores 'include' option if it's falsy or []", function () {
+      var nyc = new NYC({
+        cwd: path.resolve(__dirname, '../fixtures/conf-empty'),
+      })
+
+      nyc.include.should.equal(false)
+
+      var nyc = new NYC({
+        cwd: path.resolve(__dirname, '../fixtures/conf-empty'),
+        include: [],
+      })
+
+      nyc.include.should.equal(false)
+    })
+
+    it("ignores 'exclude' option if it's falsy or []", function () {
+      var nyc = new NYC({
+        cwd: path.resolve(__dirname, '../fixtures/conf-empty'),
+      })
+
+      nyc.exclude.length.should.eql(7)
+
+      var nyc = new NYC({
+        cwd: path.resolve(__dirname, '../fixtures/conf-empty'),
+        exclude: [],
+      })
+
+      nyc.exclude.length.should.eql(7)
+    })
   })
 
   describe('_prepGlobPatterns', function () {
