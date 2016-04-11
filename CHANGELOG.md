@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.4.0"></a>
+# [6.4.0](https://github.com/bcoe/nyc/compare/v6.3.0...v6.4.0) (2016-04-11)
+
+
+### Bug Fixes
+
+* adds CLI integration testing, where there was no integration testing before. ([3403ca1](https://github.com/bcoe/nyc/commit/3403ca1))
+
+### Features
+
+* **cli:** --include and --exclude are now accepted as CLI options, thanks [@rpominov](https://github.com/rpominov) \o/ see [#207](https://github.com/bcoe/nyc/issues/207) ([f8a02b4](https://github.com/bcoe/nyc/commit/f8a02b4))
+
+
+
 <a name="6.3.0"></a>
 # [6.3.0](https://github.com/bcoe/nyc/compare/v6.2.1...v6.3.0) (2016-04-08)
 
