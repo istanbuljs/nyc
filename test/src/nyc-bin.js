@@ -7,12 +7,64 @@ var isWindows = require('is-windows')()
 var fixturesCLI = path.resolve(__dirname, '../fixtures/cli')
 var fakebin = path.resolve(fixturesCLI, 'fakebin')
 var bin = path.resolve(__dirname, '../../bin/nyc')
+var rimraf = require('rimraf')
 
 require('chai').should()
 require('tap').mochaGlobals()
 
+// beforeEach
+rimraf.sync(path.resolve(fakebin, 'node'))
+rimraf.sync(path.resolve(fakebin, 'npm'))
+
 describe('the nyc cli', function () {
   var env = { PATH: process.env.PATH }
+
+  describe('--include', function () {
+    it('can be used to limit bin to instrumenting specific files', function (done) {
+      var args = [bin, '--all', '--include', 'half-covered.js', process.execPath, './half-covered.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdout.should.match(/half-covered\.js/)
+        stdout.should.not.match(/half-covered-failing\.js/)
+        stdout.should.not.match(/test\.js/)
+        done()
+      })
+    })
+  })
+
+  describe('--exclude', function () {
+    it('should allow default exclude rules to be overridden', function (done) {
+      var args = [bin, '--all', '--exclude', '**/half-covered.js', process.execPath, './half-covered.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdout.should.not.match(/half-covered\.js/)
+        stdout.should.match(/test\.js/)
+        done()
+      })
+    })
+  })
 
   describe('--check-coverage', function () {
     it('fails when the expected coverage is below a threshold', function (done) {

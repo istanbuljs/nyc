@@ -46,6 +46,16 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
     type: 'boolean',
     describe: 'whether or not to instrument all files of the project (not just the ones touched by your test suite)'
   })
+  .option('exclude', {
+    alias: 'x',
+    default: [],
+    describe: 'a list of specific files and directories that should be excluded from coverage, glob patterns are supported, node_modules is always excluded'
+  })
+  .option('include', {
+    alias: 'n',
+    default: [],
+    describe: 'a list of specific files that should be covered, glob patterns are supported'
+  })
   .option('require', {
     alias: 'i',
     default: [],
@@ -109,9 +119,13 @@ if (argv._[0] === 'report') {
   // wrap subprocesses and execute argv[1]
   if (!Array.isArray(argv.require)) argv.require = [argv.require]
   if (!Array.isArray(argv.extension)) argv.extension = [argv.extension]
+  if (!Array.isArray(argv.exclude)) argv.exclude = [argv.exclude]
+  if (!Array.isArray(argv.include)) argv.include = [argv.include]
 
   var nyc = (new NYC({
-    require: argv.require
+    require: argv.require,
+    include: argv.include,
+    exclude: argv.exclude
   }))
   nyc.reset()
 
@@ -126,6 +140,12 @@ if (argv._[0] === 'report') {
   }
   if (argv.extension.length) {
     env.NYC_EXTENSION = argv.extension.join(',')
+  }
+  if (argv.exclude.length) {
+    env.NYC_EXCLUDE = argv.exclude.join(',')
+  }
+  if (argv.include.length) {
+    env.NYC_INCLUDE = argv.include.join(',')
   }
   sw([wrapper], env)
 

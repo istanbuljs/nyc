@@ -37,12 +37,16 @@ function NYC (opts) {
 
   // load exclude stanza from config.
   this.include = false
-  if (config.include) {
+  if (config.include && config.include.length > 0) {
     this.include = this._prepGlobPatterns(arrify(config.include))
   }
 
   this.exclude = this._prepGlobPatterns(
-    ['**/node_modules/**'].concat(arrify(config.exclude || ['test/**', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**']))
+    ['**/node_modules/**'].concat(arrify(
+      config.exclude && config.exclude.length > 0
+        ? config.exclude
+        : ['test/**', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**']
+      ))
   )
 
   this.cacheDirectory = findCacheDir({name: 'nyc', cwd: this.cwd})
