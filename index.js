@@ -58,6 +58,9 @@ function NYC (opts) {
 
   this.extensions = arrify(config.extension).concat('.js').map(function (ext) {
     return ext.toLowerCase()
+  }).filter(function (item, pos, arr) {
+    // avoid duplicate extensions
+    return arr.indexOf(item) === pos
   })
 
   this.transforms = this.extensions.reduce(function (transforms, ext) {
