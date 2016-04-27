@@ -244,7 +244,7 @@ That's all there is to it!
 
 ## Integrating with codecov
 
-nyc npm test && nyc report --reporter=text-lcov > coverage.lcov && codecov
+`nyc npm test && nyc report --reporter=text-lcov > coverage.lcov && codecov`
 
 [codecov](https://codecov.io/) is a great tool for adding
 coverage reports to your GitHub project, even viewing them inline on GitHub with a browser extension:
