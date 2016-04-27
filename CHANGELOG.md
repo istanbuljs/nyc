@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.4.1"></a>
+## [6.4.1](https://github.com/bcoe/nyc/compare/v6.4.0...v6.4.1) (2016-04-27)
+
+
+### Bug Fixes
+
+* strip any duplicate extensions from --extension ([#237](https://github.com/bcoe/nyc/issues/237)) ([0946f82](https://github.com/bcoe/nyc/commit/0946f82))
+
+
+
 <a name="6.4.0"></a>
 # [6.4.0](https://github.com/bcoe/nyc/compare/v6.3.0...v6.4.0) (2016-04-11)
 
