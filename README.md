@@ -240,3 +240,42 @@ integrated with coveralls and travis-ci.org:
 That's all there is to it!
 
 > Note: by default coveralls.io adds comments to pull-requests on GitHub, this can feel intrusive. To disable this, click on your repo on coveralls.io and uncheck `LEAVE COMMENTS?`.
+
+
+## Integrating with codecov
+
+nyc npm test && nyc report --reporter=text-lcov > coverage.lcov && codecov
+
+[codecov](https://codecov.io/) is a great tool for adding
+coverage reports to your GitHub project, even viewing them inline on GitHub with a browser extension:
+
+![browser extension](https://d234q63orb21db.cloudfront.net/ad63907877249140772dff929ad1c340e424962a/media/images/next/extension.png)
+
+Here's how to get `nyc` integrated with codecov and travis-ci.org:
+
+1. add the codecov and nyc dependencies to your module:
+
+  ```shell
+  npm install codecov nyc --save-dev
+  ```
+
+2. update the scripts in your package.json to include these bins:
+
+  ```json
+  {
+     "script": {
+       "test": "nyc tap ./test/*.js",
+       "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+     }
+  }
+  ```
+
+3. For private repos, add the environment variable `CODECOV_TOKEN` to travis.
+
+4. add the following to your `.travis.yml`:
+
+  ```yaml
+  after_success: npm run coverage
+  ```
+
+That's all there is to it!
