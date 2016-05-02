@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.4.2"></a>
+## [6.4.2](https://github.com/bcoe/nyc/compare/v6.4.1...v6.4.2) (2016-05-02)
+
+
+### Bug Fixes
+
+* **update:** update strip-bom to version 3.0.0 ([#240](https://github.com/bcoe/nyc/issues/240))([24f55e7](https://github.com/bcoe/nyc/commit/24f55e7))
+* upgrade spawn-wrap to version that works with new shelljs ([#242](https://github.com/bcoe/nyc/issues/242))([b16053c](https://github.com/bcoe/nyc/commit/b16053c))
+
+
+
 <a name="6.4.1"></a>
 ## [6.4.1](https://github.com/bcoe/nyc/compare/v6.4.0...v6.4.1) (2016-04-27)
 
