@@ -85,7 +85,7 @@
     "rimraf": "^2.5.0",
     "signal-exit": "^2.1.1",
     "source-map": "^0.5.3",
-    "spawn-wrap": "^1.2.1",
+    "spawn-wrap": "^1.2.2",
     "strip-bom": "^3.0.0",
     "yargs": "^4.4.0"
   },
