@@ -104,7 +104,7 @@
     "source-map-support": "^0.4.0",
     "split-lines": "^1.0.0",
     "standard": "^6.0.8",
-    "standard-version": "^2.2.0",
+    "standard-version": "^2.2.1",
     "tap": "^5.7.1",
     "which": "^1.2.4",
     "zero-fill": "^2.2.3"
