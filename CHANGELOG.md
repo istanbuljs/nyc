@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.4.3"></a>
+## [6.4.3](https://github.com/bcoe/nyc/compare/v6.4.2...v6.4.3) (2016-05-06)
+
+
+### Bug Fixes
+
+* must bundle dependencies on npm<3.x or they will flatten (we need a better long-term solution)([9826f11](https://github.com/bcoe/nyc/commit/9826f11))
+
+
+
 <a name="6.4.2"></a>
 ## [6.4.2](https://github.com/bcoe/nyc/compare/v6.4.1...v6.4.2) (2016-05-02)
 
