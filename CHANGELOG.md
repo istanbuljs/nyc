@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.4.4"></a>
+## [6.4.4](https://github.com/bcoe/nyc/compare/v6.4.3...v6.4.4) (2016-05-07)
+
+
+### Bug Fixes
+
+* upgraded dependencies, add missing lodash bundled dependency ([#250](https://github.com/bcoe/nyc/issues/250))([32042fc](https://github.com/bcoe/nyc/commit/32042fc))
+
+
+
 <a name="6.4.3"></a>
 ## [6.4.3](https://github.com/bcoe/nyc/compare/v6.4.2...v6.4.3) (2016-05-06)
 
