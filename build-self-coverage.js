@@ -10,7 +10,7 @@ var path = require('path')
   var source = fs.readFileSync(indexPath, 'utf8')
 
   var instrumentor = new istanbul.Instrumenter({
-    coverageVariable: '___nyc_self_coverage___',
+    coverageVariable: '___NYC_SELF_COVERAGE___',
     esModules: true,
     noAutoWrap: true
   })
