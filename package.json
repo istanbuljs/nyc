@@ -87,7 +87,7 @@
     "source-map": "^0.5.3",
     "spawn-wrap": "^1.2.2",
     "strip-bom": "^3.0.0",
-    "yargs": "^4.4.0"
+    "yargs": "^4.7.0"
   },
   "devDependencies": {
     "any-path": "^1.3.0",
