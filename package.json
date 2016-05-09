@@ -85,7 +85,6 @@
     "signal-exit": "^2.1.1",
     "source-map": "^0.5.3",
     "spawn-wrap": "^1.2.2",
-    "strip-bom": "^3.0.0",
     "yargs": "^4.7.0"
   },
   "devDependencies": {
@@ -132,7 +131,6 @@
     "signal-exit",
     "source-map",
     "spawn-wrap",
-    "strip-bom",
     "yargs"
   ]
 }
