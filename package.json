@@ -76,7 +76,6 @@
     "foreground-child": "^1.4.0",
     "glob": "^7.0.3",
     "istanbul": "^0.4.3",
-    "lodash": "^4.12.0",
     "md5-hex": "^1.2.0",
     "micromatch": "^2.3.7",
     "mkdirp": "^0.5.0",
@@ -86,7 +85,6 @@
     "signal-exit": "^2.1.1",
     "source-map": "^0.5.3",
     "spawn-wrap": "^1.2.2",
-    "strip-bom": "^3.0.0",
     "yargs": "^4.7.0"
   },
   "devDependencies": {
@@ -96,7 +94,7 @@
     "exists-sync": "0.0.3",
     "forking-tap": "^0.1.1",
     "is-windows": "^0.1.0",
-    "lodash": "^4.6.1",
+    "lodash": "^4.12.0",
     "newline-regex": "^0.2.1",
     "sanitize-filename": "^1.5.3",
     "sinon": "^1.15.3",
@@ -124,7 +122,6 @@
     "foreground-child",
     "glob",
     "istanbul",
-    "lodash",
     "md5-hex",
     "micromatch",
     "mkdirp",
@@ -134,7 +131,6 @@
     "signal-exit",
     "source-map",
     "spawn-wrap",
-    "strip-bom",
     "yargs"
   ]
 }
