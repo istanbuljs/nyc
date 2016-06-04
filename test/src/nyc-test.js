@@ -69,7 +69,7 @@ describe('nyc', function () {
         cwd: path.resolve(__dirname, '../fixtures')
       })
 
-      nyc.exclude.length.should.eql(5)
+      nyc.exclude.length.should.eql(7)
     })
 
     it("loads 'extension' patterns from package.json#nyc", function () {
