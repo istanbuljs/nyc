@@ -97,6 +97,16 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
     description: 'what % of statements must be covered?',
     global: true
   })
+  .option('source-map', {
+    default: true,
+    type: 'boolean',
+    description: 'should nyc detect and handle source maps?'
+  })
+  .option('instrumenter', {
+    default: './lib/instrumenters/istanbul',
+    type: 'string',
+    description: 'what library should be used to instrument coverage?'
+  })
   .help('h')
   .alias('h', 'help')
   .version()
@@ -125,7 +135,8 @@ if (argv._[0] === 'report') {
   var nyc = (new NYC({
     require: argv.require,
     include: argv.include,
-    exclude: argv.exclude
+    exclude: argv.exclude,
+    sourceMap: !!argv.sourceMap
   }))
   nyc.reset()
 
@@ -133,7 +144,8 @@ if (argv._[0] === 'report') {
 
   var env = {
     NYC_CWD: process.cwd(),
-    NYC_CACHE: argv.cache ? 'enable' : 'disable'
+    NYC_CACHE: argv.cache ? 'enable' : 'disable',
+    NYC_INSTRUMENTER: argv.instrumenter
   }
   if (argv.require.length) {
     env.NYC_REQUIRE = argv.require.join(',')
@@ -146,6 +158,9 @@ if (argv._[0] === 'report') {
   }
   if (argv.include.length) {
     env.NYC_INCLUDE = argv.include.join(',')
+  }
+  if (argv.sourcMap) {
+    env.NYC_SOURCE_MAP = argv.sourceMap
   }
   sw([wrapper], env)
 

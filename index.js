@@ -30,7 +30,9 @@ function NYC (opts) {
   this._istanbul = config.istanbul
   this.subprocessBin = config.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
   this._tempDirectory = config.tempDirectory || './.nyc_output'
+  this._instrumenterLib = require(config.instrumenter || './lib/instrumenters/istanbul')
   this._reportDir = config.reportDir
+  this._sourceMap = config.sourceMap
   this.cwd = config.cwd
 
   this.reporter = arrify(config.reporter || 'text')
@@ -129,20 +131,7 @@ NYC.prototype.instrumenter = function () {
 }
 
 NYC.prototype._createInstrumenter = function () {
-  var configFile = path.resolve(this.cwd, './.istanbul.yml')
-
-  if (!fs.existsSync(configFile)) configFile = undefined
-
-  var istanbul = this.istanbul()
-
-  var instrumenterConfig = istanbul.config.loadFile(configFile).instrumentation.config
-
-  return new istanbul.Instrumenter({
-    coverageVariable: '__coverage__',
-    embedSource: instrumenterConfig['embed-source'],
-    noCompact: !instrumenterConfig.compact,
-    preserveComments: instrumenterConfig['preserve-comments']
-  })
+  return this._instrumenterLib(this.cwd)
 }
 
 NYC.prototype._prepGlobPatterns = function (patterns) {
@@ -248,17 +237,21 @@ NYC.prototype._transformFactory = function (cacheDir) {
   return function (code, metadata, hash) {
     var filename = metadata.filename
 
-    var sourceMap = convertSourceMap.fromSource(code) || convertSourceMap.fromMapFileSource(code, path.dirname(filename))
-    if (sourceMap) {
-      if (hash) {
-        var mapPath = path.join(cacheDir, hash + '.map')
-        fs.writeFileSync(mapPath, sourceMap.toJSON())
-      } else {
-        _this.sourceMapCache.addMap(filename, sourceMap.toJSON())
-      }
-    }
+    if (_this._sourceMap) _this._handleSourceMap(cacheDir, code, hash, filename)
 
     return instrumenter.instrumentSync(code, filename)
+  }
+}
+
+NYC.prototype._handleSourceMap = function (cacheDir, code, hash, filename) {
+  var sourceMap = convertSourceMap.fromSource(code) || convertSourceMap.fromMapFileSource(code, path.dirname(filename))
+  if (sourceMap) {
+    if (hash) {
+      var mapPath = path.join(cacheDir, hash + '.map')
+      fs.writeFileSync(mapPath, sourceMap.toJSON())
+    } else {
+      this.sourceMapCache.addMap(filename, sourceMap.toJSON())
+    }
   }
 }
 
