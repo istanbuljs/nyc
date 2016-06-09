@@ -1,7 +1,6 @@
 /* global __coverage__ */
 var fs = require('fs')
 var glob = require('glob')
-var micromatch = require('micromatch')
 var mkdirp = require('mkdirp')
 var Module = require('module')
 var appendTransform = require('append-transform')
@@ -17,7 +16,8 @@ var md5hex = require('md5-hex')
 var findCacheDir = require('find-cache-dir')
 var js = require('default-require-extensions/js')
 var pkgUp = require('pkg-up')
-var yargs = require('yargs/yargs')
+var testExclude = require('test-exclude')
+var yargs = require('yargs')
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -37,23 +37,15 @@ function NYC (opts) {
 
   this.reporter = arrify(config.reporter || 'text')
 
-  // load exclude stanza from config.
-  this.include = false
-  if (config.include && config.include.length > 0) {
-    this.include = this._prepGlobPatterns(arrify(config.include))
-  }
-
-  this.exclude = this._prepGlobPatterns(
-    ['**/node_modules/**'].concat(arrify(
-      config.exclude && config.exclude.length > 0
-        ? config.exclude
-        : ['test/**', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**']
-      ))
-  )
-
   this.cacheDirectory = findCacheDir({name: 'nyc', cwd: this.cwd})
 
   this.enableCache = Boolean(this.cacheDirectory && (config.enableCache === true || process.env.NYC_CACHE === 'enable'))
+
+  this.exclude = testExclude({
+    cwd: this.cwd,
+    include: config.include,
+    exclude: config.exclude
+  })
 
   // require extensions can be provided as config in package.json.
   this.require = arrify(config.require)
@@ -134,29 +126,6 @@ NYC.prototype._createInstrumenter = function () {
   return this._instrumenterLib(this.cwd)
 }
 
-NYC.prototype._prepGlobPatterns = function (patterns) {
-  if (!patterns) return patterns
-
-  var result = []
-
-  function add (pattern) {
-    if (result.indexOf(pattern) === -1) {
-      result.push(pattern)
-    }
-  }
-
-  patterns.forEach(function (pattern) {
-    // Allow gitignore style of directory exclusion
-    if (!/\/\*\*$/.test(pattern)) {
-      add(pattern.replace(/\/$/, '') + '/**')
-    }
-
-    add(pattern)
-  })
-
-  return result
-}
-
 NYC.prototype.addFile = function (filename) {
   var relFile = path.relative(this.cwd, filename)
   var source = this._readTranspiledSource(path.resolve(this.cwd, filename))
@@ -179,14 +148,6 @@ NYC.prototype._readTranspiledSource = function (path) {
   return source
 }
 
-NYC.prototype.shouldInstrumentFile = function (filename, relFile) {
-  // Don't instrument files that are outside of the current working directory.
-  if (/^\.\./.test(path.relative(this.cwd, filename))) return false
-
-  relFile = relFile.replace(/^\.[\\\/]/, '') // remove leading './' or '.\'.
-  return (!this.include || micromatch.any(relFile, this.include)) && !micromatch.any(relFile, this.exclude)
-}
-
 NYC.prototype.addAllFiles = function () {
   var _this = this
 
@@ -199,7 +160,7 @@ NYC.prototype.addAllFiles = function () {
     pattern = '**/*{' + this.extensions.join() + '}'
   }
 
-  glob.sync(pattern, {cwd: this.cwd, nodir: true, ignore: this.exclude}).forEach(function (filename) {
+  glob.sync(pattern, {cwd: this.cwd, nodir: true, ignore: this.exclude.exclude}).forEach(function (filename) {
     var obj = _this.addFile(path.join(_this.cwd, filename))
     if (obj.instrument) {
       module._compile(
@@ -213,7 +174,7 @@ NYC.prototype.addAllFiles = function () {
 }
 
 NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
-  var instrument = this.shouldInstrumentFile(filename, relFile)
+  var instrument = this.exclude.shouldInstrument(filename, relFile)
 
   if (!instrument) {
     return null
