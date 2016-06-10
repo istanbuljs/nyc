@@ -85,6 +85,7 @@
     "signal-exit": "^2.1.1",
     "source-map": "^0.5.3",
     "spawn-wrap": "^1.2.2",
+    "test-exclude": "^1.1.0",
     "yargs": "^4.7.0"
   },
   "devDependencies": {
@@ -131,6 +132,7 @@
     "signal-exit",
     "source-map",
     "spawn-wrap",
+    "test-exclude",
     "yargs"
   ]
 }
