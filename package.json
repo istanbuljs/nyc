@@ -74,7 +74,7 @@
     "default-require-extensions": "^1.0.0",
     "find-cache-dir": "^0.1.1",
     "find-up": "^1.1.2",
-    "foreground-child": "^1.4.0",
+    "foreground-child": "^1.5.0",
     "glob": "^7.0.3",
     "istanbul": "^0.4.3",
     "md5-hex": "^1.2.0",
