@@ -62,7 +62,7 @@ the `sourceMaps` option to `inline`.
 
 ## Use babel-plugin__coverage__ for Better ES6/ES7 Support
 
-[babel-plugin-__coverage__](https://github.com/dtinth/babel-plugin-__coverage__) can be used to enable better first-class ES6 support.
+[`babel-plugin-__coverage__`](https://github.com/dtinth/babel-plugin-__coverage__) can be used to enable better first-class ES6 support.
 
 1. enable the `__coverage__` plugin:
 
@@ -94,7 +94,7 @@ the `sourceMaps` option to `inline`.
 
 That's all there is to it, better ES6 syntax highlighting awaits:
 
-<img width="500" src="screen.png">
+<img width="500" src="screen2.png">
 
 ## Support For Custom File Extensions (.jsx, .es6)
 
