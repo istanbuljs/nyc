@@ -197,4 +197,46 @@ describe('the nyc cli', function () {
       })
     })
   })
+
+  it('passes configuration via environment variables', function (done) {
+    var args = [
+      bin,
+      '--silent',
+      '--require=mkdirp',
+      '--include=env.js',
+      '--exclude=batman.js',
+      '--extension=.js',
+      '--cache=true',
+      '--source-map=true',
+      '--instrumenter=./lib/instrumenters/istanbul.js',
+      process.execPath,
+      './env.js'
+    ]
+    var expected = {
+      NYC_REQUIRE: 'mkdirp',
+      NYC_INCLUDE: 'env.js',
+      NYC_EXCLUDE: 'batman.js',
+      NYC_EXTENSION: '.js',
+      NYC_CACHE: 'enable',
+      NYC_SOURCE_MAP: 'enable',
+      NYC_INSTRUMENTER: './lib/instrumenters/istanbul.js'
+    }
+
+    var proc = spawn(process.execPath, args, {
+      cwd: fixturesCLI,
+      env: env
+    })
+
+    var stdout = ''
+    proc.stdout.on('data', function (chunk) {
+      stdout += chunk
+    })
+
+    proc.on('close', function (code) {
+      code.should.equal(0)
+      var env = JSON.parse(stdout)
+      env.should.include(expected)
+      done()
+    })
+  })
 })

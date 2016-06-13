@@ -69,7 +69,7 @@ describe('nyc', function () {
         cwd: path.resolve(__dirname, '../fixtures')
       })
 
-      nyc.exclude.length.should.eql(5)
+      nyc.exclude.exclude.length.should.eql(5)
     })
 
     it("loads 'extension' patterns from package.json#nyc", function () {
@@ -85,14 +85,14 @@ describe('nyc', function () {
         cwd: path.resolve(__dirname, '../fixtures/conf-empty')
       })
 
-      nyc1.include.should.equal(false)
+      nyc1.exclude.include.should.equal(false)
 
       var nyc2 = new NYC({
         cwd: path.resolve(__dirname, '../fixtures/conf-empty'),
         include: []
       })
 
-      nyc2.include.should.equal(false)
+      nyc2.exclude.include.should.equal(false)
     })
 
     it("ignores 'exclude' option if it's falsy or []", function () {
@@ -100,127 +100,98 @@ describe('nyc', function () {
         cwd: path.resolve(__dirname, '../fixtures/conf-empty')
       })
 
-      nyc1.exclude.length.should.eql(7)
+      nyc1.exclude.exclude.length.should.eql(7)
 
       var nyc2 = new NYC({
         cwd: path.resolve(__dirname, '../fixtures/conf-empty'),
         exclude: []
       })
 
-      nyc2.exclude.length.should.eql(7)
-    })
-  })
-
-  describe('_prepGlobPatterns', function () {
-    it('should adjust patterns appropriately', function () {
-      var _prepGlobPatterns = new NYC()._prepGlobPatterns
-
-      var result = _prepGlobPatterns(['./foo', 'bar/**', 'baz/'])
-
-      result.should.deep.equal([
-        './foo/**', // Appended `/**`
-        './foo',
-        'bar/**',
-        'baz/**',  // Removed trailing slash before appending `/**`
-        'baz/'
-      ])
+      nyc2.exclude.exclude.length.should.eql(7)
     })
   })
 
   describe('shouldInstrumentFile', function () {
     it('should exclude appropriately with defaults', function () {
       var nyc = new NYC({
-        cwd: '/cwd/'
+        cwd: '/cwd/',
+        exclude: [
+          '**/node_modules/**',
+          'test/**',
+          'test{,-*}.js',
+          '**/*.test.js',
+          '**/__tests__/**'
+        ]
       })
 
-      // Root package contains config.exclude
-      // Restore exclude to default patterns
-      nyc.exclude = nyc._prepGlobPatterns([
-        '**/node_modules/**',
-        'test/**',
-        'test{,-*}.js',
-        '**/*.test.js',
-        '**/__tests__/**'
-      ])
-
-      var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
-
       // nyc always excludes "node_modules/**"
-      shouldInstrumentFile('/cwd/foo', 'foo').should.equal(true)
-      shouldInstrumentFile('/cwd/node_modules/bar', 'node_modules/bar').should.equal(false)
-      shouldInstrumentFile('/cwd/foo/node_modules/bar', 'foo/node_modules/bar').should.equal(false)
-      shouldInstrumentFile('/cwd/test.js', 'test.js').should.equal(false)
-      shouldInstrumentFile('/cwd/testfoo.js', 'testfoo.js').should.equal(true)
-      shouldInstrumentFile('/cwd/test-foo.js', 'test-foo.js').should.equal(false)
-      shouldInstrumentFile('/cwd/lib/test.js', 'lib/test.js').should.equal(true)
-      shouldInstrumentFile('/cwd/foo/bar/test.js', './test.js').should.equal(false)
-      shouldInstrumentFile('/cwd/foo/bar/test.js', '.\\test.js').should.equal(false)
-      shouldInstrumentFile('/cwd/foo/bar/foo.test.js', './foo.test.js').should.equal(false)
-      shouldInstrumentFile('/cwd/foo/bar/__tests__/foo.js', './__tests__/foo.js').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/foo', 'foo').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/node_modules/bar', 'node_modules/bar').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/foo/node_modules/bar', 'foo/node_modules/bar').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/test.js', 'test.js').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/testfoo.js', 'testfoo.js').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/test-foo.js', 'test-foo.js').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/lib/test.js', 'lib/test.js').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/foo/bar/test.js', './test.js').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/foo/bar/test.js', '.\\test.js').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/foo/bar/foo.test.js', './foo.test.js').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/foo/bar/__tests__/foo.js', './__tests__/foo.js').should.equal(false)
     })
 
     it('should exclude appropriately with config.exclude', function () {
       var nyc = new NYC({
         cwd: fixtures
       })
-      var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
 
       // fixtures/package.json configures excludes: "blarg", "blerg"
-      shouldInstrumentFile('blarg', 'blarg').should.equal(false)
-      shouldInstrumentFile('blarg/foo.js', 'blarg/foo.js').should.equal(false)
-      shouldInstrumentFile('blerg', 'blerg').should.equal(false)
-      shouldInstrumentFile('./blerg', './blerg').should.equal(false)
-      shouldInstrumentFile('./blerg', '.\\blerg').should.equal(false)
+      nyc.exclude.shouldInstrument('blarg', 'blarg').should.equal(false)
+      nyc.exclude.shouldInstrument('blarg/foo.js', 'blarg/foo.js').should.equal(false)
+      nyc.exclude.shouldInstrument('blerg', 'blerg').should.equal(false)
+      nyc.exclude.shouldInstrument('./blerg', './blerg').should.equal(false)
+      nyc.exclude.shouldInstrument('./blerg', '.\\blerg').should.equal(false)
     })
 
     it('should exclude outside of the current working directory', function () {
       var nyc = new NYC({
         cwd: '/cwd/foo/'
       })
-      nyc.shouldInstrumentFile('/cwd/bar', '../bar').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/bar', '../bar').should.equal(false)
     })
 
     it('should not exclude if the current working directory is inside node_modules', function () {
       var nyc = new NYC({
         cwd: '/cwd/node_modules/foo/'
       })
-      nyc.shouldInstrumentFile('/cwd/node_modules/foo/bar', './bar').should.equal(true)
-      nyc.shouldInstrumentFile('/cwd/node_modules/foo/bar', '.\\bar').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/node_modules/foo/bar', './bar').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/node_modules/foo/bar', '.\\bar').should.equal(true)
     })
 
     it('allows files to be explicitly included, rather than excluded', function () {
       var nyc = new NYC({
-        cwd: '/cwd/'
+        cwd: '/cwd/',
+        include: 'foo.js'
       })
 
-      nyc.include = nyc._prepGlobPatterns([
-        'foo.js'
-      ])
-
-      var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
-      shouldInstrumentFile('/cwd/foo.js', 'foo.js').should.equal(true)
-      shouldInstrumentFile('/cwd/index.js', 'index.js').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/foo.js', 'foo.js').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/index.js', 'index.js').should.equal(false)
     })
 
     it('exclude overrides include', function () {
       var nyc = new NYC({
-        cwd: '/cwd/'
+        cwd: '/cwd/',
+        include: [
+          'foo.js',
+          'test.js'
+        ],
+        exclude: [
+          '**/node_modules/**',
+          'test/**',
+          'test{,-*}.js'
+        ]
       })
 
-      nyc.include = nyc._prepGlobPatterns([
-        'foo.js',
-        'test.js'
-      ])
-      // Ensure default exclude patterns apply, which excludes test.js
-      nyc.exclude = nyc._prepGlobPatterns([
-        '**/node_modules/**',
-        'test/**',
-        'test{,-*}.js'
-      ])
-
-      var shouldInstrumentFile = nyc.shouldInstrumentFile.bind(nyc)
-      shouldInstrumentFile('/cwd/foo.js', 'foo.js').should.equal(true)
-      shouldInstrumentFile('/cwd/test.js', 'test.js').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/foo.js', 'foo.js').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/test.js', 'test.js').should.equal(false)
     })
   })
 
