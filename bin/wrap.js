@@ -12,7 +12,7 @@ try {
   exclude: process.env.NYC_EXCLUDE ? process.env.NYC_EXCLUDE.split(',') : [],
   include: process.env.NYC_INCLUDE ? process.env.NYC_INCLUDE.split(',') : [],
   enableCache: process.env.NYC_CACHE === 'enable',
-  sourceMap: !!process.env.NYC_SOURCE_MAP,
+  sourceMap: process.env.NYC_SOURCE_MAP === 'enable',
   instrumenter: process.env.NYC_INSTRUMENTER
 })).wrap()
 

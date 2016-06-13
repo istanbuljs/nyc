@@ -145,6 +145,7 @@ if (argv._[0] === 'report') {
   var env = {
     NYC_CWD: process.cwd(),
     NYC_CACHE: argv.cache ? 'enable' : 'disable',
+    NYC_SOURCE_MAP: argv.sourceMap ? 'enable' : 'disable',
     NYC_INSTRUMENTER: argv.instrumenter
   }
   if (argv.require.length) {
@@ -158,9 +159,6 @@ if (argv._[0] === 'report') {
   }
   if (argv.include.length) {
     env.NYC_INCLUDE = argv.include.join(',')
-  }
-  if (argv.sourcMap) {
-    env.NYC_SOURCE_MAP = argv.sourceMap
   }
   sw([wrapper], env)
 
