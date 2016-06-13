@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.5.0"></a>
+# [6.5.0](https://github.com/bcoe/nyc/compare/v6.4.4...v6.5.0) (2016-06-13)
+
+
+### Bug Fixes
+
+* cleanup dependencies ([#254](https://github.com/bcoe/nyc/issues/254)) ([a20d03d](https://github.com/bcoe/nyc/commit/a20d03d))
+* discard more bad source map positions ([#255](https://github.com/bcoe/nyc/issues/255)) ([0838a0e](https://github.com/bcoe/nyc/commit/0838a0e))
+* Update AppVeyor config with ~faster npm install ([#252](https://github.com/bcoe/nyc/issues/252)) ([df591f4](https://github.com/bcoe/nyc/commit/df591f4))
+
+
+### Features
+
+* make `__coverage__` the default approach we advocate for ES2015 coverage ([#268](https://github.com/bcoe/nyc/issues/268)) ([9fd2295](https://github.com/bcoe/nyc/commit/9fd2295))
+
+
+
 <a name="6.4.4"></a>
 ## [6.4.4](https://github.com/bcoe/nyc/compare/v6.4.3...v6.4.4) (2016-05-07)
 
