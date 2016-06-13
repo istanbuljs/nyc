@@ -60,6 +60,42 @@ of the pre-transpiled code. You'll have to configure your custom require hook
 to inline the source map in the transpiled code. For Babel that means setting
 the `sourceMaps` option to `inline`.
 
+## Use babel-plugin__coverage__ for Better ES6/ES7 Support
+
+[babel-plugin-__coverage__](https://github.com/dtinth/babel-plugin-__coverage__) can be used to enable better first-class ES6 support.
+
+1. enable the `__coverage__` plugin:
+
+  ```json
+    {
+      "babel": {
+        "presets": ["es2015"],
+        "plugins": ["__coverage__"]
+      }
+    }
+  ```
+
+2. disable nyc's instrumentation and source-maps:
+
+  ```json
+  {
+    "nyc": {
+      "include": [
+        "src/*.js"
+      ],
+      "require": [
+        "babel-register"
+      ],
+      "sourceMap": false,
+      "instrumenter": "./lib/instrumenters/noop"
+    }
+  }
+  ```
+
+That's all there is to it, better ES6 syntax highlighting awaits:
+
+<img width="500" src="screen.png">
+
 ## Support For Custom File Extensions (.jsx, .es6)
 
 Supporting file extensions can be configured through either the configuration arguments or with the `nyc` config section in `package.json`.
@@ -248,8 +284,6 @@ That's all there is to it!
 
 [codecov](https://codecov.io/) is a great tool for adding
 coverage reports to your GitHub project, even viewing them inline on GitHub with a browser extension:
-
-![browser extension](https://d234q63orb21db.cloudfront.net/ad63907877249140772dff929ad1c340e424962a/media/images/next/extension.png)
 
 Here's how to get `nyc` integrated with codecov and travis-ci.org:
 
