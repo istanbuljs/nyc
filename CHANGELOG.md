@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.6.1"></a>
+## [6.6.1](https://github.com/bcoe/nyc/compare/v6.6.0...v6.6.1) (2016-06-14)
+
+
+### Bug Fixes
+
+* the package tree of bundled dependencies was incorrect ([7bdccf5](https://github.com/bcoe/nyc/commit/7bdccf5))
+
+
+
 <a name="6.6.0"></a>
 # [6.6.0](https://github.com/bcoe/nyc/compare/v6.5.1...v6.6.0) (2016-06-14)
 
