@@ -87,7 +87,7 @@ the `sourceMaps` option to `inline`.
         "babel-register"
       ],
       "sourceMap": false,
-      "instrumenter": "./lib/instrumenters/noop"
+      "instrument": false
     }
   }
   ```

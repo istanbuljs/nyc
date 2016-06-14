@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+var arrify = require('arrify')
 var foreground = require('foreground-child')
 var NYC
 try {
@@ -102,6 +103,11 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
     type: 'boolean',
     description: 'should nyc detect and handle source maps?'
   })
+  .option('instrument', {
+    default: true,
+    type: 'boolean',
+    description: 'should nyc handle instrumentation?'
+  })
   .option('instrumenter', {
     default: './lib/instrumenters/istanbul',
     type: 'string',
@@ -127,10 +133,14 @@ if (argv._[0] === 'report') {
   checkCoverage(argv)
 } else if (argv._.length) {
   // wrap subprocesses and execute argv[1]
-  if (!Array.isArray(argv.require)) argv.require = [argv.require]
-  if (!Array.isArray(argv.extension)) argv.extension = [argv.extension]
-  if (!Array.isArray(argv.exclude)) argv.exclude = [argv.exclude]
-  if (!Array.isArray(argv.include)) argv.include = [argv.include]
+  argv.require = arrify(argv.require)
+  argv.extension = arrify(argv.extension)
+  argv.exclude = arrify(argv.exclude)
+  argv.include = arrify(argv.include)
+
+  // if instrument is set to false,
+  // enable a noop instrumenter.
+  if (!argv.instrument) argv.instrumenter = './lib/instrumenters/noop'
 
   var nyc = (new NYC({
     require: argv.require,
