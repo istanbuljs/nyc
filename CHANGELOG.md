@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.6.0"></a>
+# [6.6.0](https://github.com/bcoe/nyc/compare/v6.5.1...v6.6.0) (2016-06-14)
+
+
+### Features
+
+* add "instrument" option as alternative to specifying noop instrumenter ([#278](https://github.com/bcoe/nyc/issues/278)) ([ea028b9](https://github.com/bcoe/nyc/commit/ea028b9))
+
+
+
 <a name="6.5.1"></a>
 ## [6.5.1](https://github.com/bcoe/nyc/compare/v6.5.0...v6.5.1) (2016-06-14)
 
