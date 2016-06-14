@@ -208,7 +208,6 @@ describe('the nyc cli', function () {
       '--extension=.js',
       '--cache=true',
       '--source-map=true',
-      '--instrumenter=./lib/instrumenters/istanbul.js',
       process.execPath,
       './env.js'
     ]
@@ -219,7 +218,39 @@ describe('the nyc cli', function () {
       NYC_EXTENSION: '.js',
       NYC_CACHE: 'enable',
       NYC_SOURCE_MAP: 'enable',
-      NYC_INSTRUMENTER: './lib/instrumenters/istanbul.js'
+      NYC_INSTRUMENTER: './lib/instrumenters/istanbul'
+    }
+
+    var proc = spawn(process.execPath, args, {
+      cwd: fixturesCLI,
+      env: env
+    })
+
+    var stdout = ''
+    proc.stdout.on('data', function (chunk) {
+      stdout += chunk
+    })
+
+    proc.on('close', function (code) {
+      code.should.equal(0)
+      var env = JSON.parse(stdout)
+      env.should.include(expected)
+      done()
+    })
+  })
+
+  it('setting instrument to "false" sets noop instrumenter', function (done) {
+    var args = [
+      bin,
+      '--silent',
+      '--no-instrument',
+      '--no-source-map',
+      process.execPath,
+      './env.js'
+    ]
+    var expected = {
+      NYC_SOURCE_MAP: 'disable',
+      NYC_INSTRUMENTER: './lib/instrumenters/noop'
     }
 
     var proc = spawn(process.execPath, args, {
