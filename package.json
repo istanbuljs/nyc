@@ -83,7 +83,7 @@
     "pkg-up": "^1.0.0",
     "resolve-from": "^2.0.0",
     "rimraf": "^2.5.0",
-    "signal-exit": "^2.1.1",
+    "signal-exit": "^3.0.0",
     "source-map": "^0.5.3",
     "spawn-wrap": "^1.2.2",
     "test-exclude": "^1.1.0",
