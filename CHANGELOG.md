@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.5.1"></a>
+## [6.5.1](https://github.com/bcoe/nyc/compare/v6.5.0...v6.5.1) (2016-06-14)
+
+
+### Bug Fixes
+
+* upgrade foreground-child dependency ([#276](https://github.com/bcoe/nyc/issues/276)) ([1b9e4a8](https://github.com/bcoe/nyc/commit/1b9e4a8))
+
+
+
 <a name="6.5.0"></a>
 # [6.5.0](https://github.com/bcoe/nyc/compare/v6.4.4...v6.5.0) (2016-06-13)
 
