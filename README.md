@@ -70,10 +70,16 @@ the `sourceMaps` option to `inline`.
     {
       "babel": {
         "presets": ["es2015"],
-        "plugins": ["__coverage__"]
+        "env": {
+          "test": {
+            "plugins": ["__coverage__"]
+          }
+        }
       }
     }
   ```
+
+  Note: With this configuration, the `__coverage__` will only be active when `NODE_ENV` or `BABEL_ENV` is `test`.
 
 2. disable nyc's instrumentation and source-maps:
 
