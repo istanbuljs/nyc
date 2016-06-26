@@ -69,6 +69,7 @@ function NYC (opts) {
 
   this.hashCache = {}
   this.loadedMaps = null
+  this.fakeRequire = null
 }
 
 NYC.prototype._loadConfig = function (opts) {
@@ -163,25 +164,24 @@ NYC.prototype.addAllFiles = function () {
     pattern = '**/*{' + this.extensions.join() + '}'
   }
 
+  this.fakeRequire = true
   glob.sync(pattern, {cwd: this.cwd, nodir: true, ignore: this.exclude.exclude}).forEach(function (filename) {
-    if (!_this.exclude.shouldInstrument(path.resolve(_this.cwd, filename))) return
-
     filename = path.resolve(_this.cwd, filename)
-    module._compile(
-      _this.instrumenter().getPreamble(
-        _this._readTranspiledSource(filename),
-        filename
-      ),
-      filename
-    )
+    _this.addFile(filename)
+
+    var coverage = coverageFinder()
+    var lastCoverage = _this.instrumenter().lastFileCoverage()
+    if (lastCoverage && _this.exclude.shouldInstrument(filename)) {
+      coverage[filename] = lastCoverage
+    }
   })
+  this.fakeRequire = false
 
   this.writeCoverageFile()
 }
 
 NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
   var instrument = this.exclude.shouldInstrument(filename, relFile)
-  console.log(filename, instrument)
   if (!instrument) {
     return null
   }
@@ -200,13 +200,19 @@ NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
 NYC.prototype._transformFactory = function (cacheDir) {
   var _this = this
   var instrumenter = this.instrumenter()
+  var instrumented
 
   return function (code, metadata, hash) {
     var filename = metadata.filename
 
     if (_this._sourceMap) _this._handleSourceMap(cacheDir, code, hash, filename)
 
-    return instrumenter.instrumentSync(code, filename)
+    instrumented = instrumenter.instrumentSync(code, filename)
+    if (_this.fakeRequire) {
+      return 'function x () {}'
+    } else {
+      return instrumented
+    }
   }
 }
 
@@ -273,8 +279,7 @@ NYC.prototype.wrap = function (bin) {
 }
 
 NYC.prototype.writeCoverageFile = function () {
-  var coverage = global.__coverage__
-  if (typeof __coverage__ === 'object') coverage = __coverage__
+  var coverage = coverageFinder()
   if (!coverage) return
 
   if (this.enableCache) {
@@ -292,6 +297,13 @@ NYC.prototype.writeCoverageFile = function () {
     JSON.stringify(coverage),
     'utf-8'
   )
+}
+
+function coverageFinder () {
+  var coverage = global.__coverage__
+  if (typeof __coverage__ === 'object') coverage = __coverage__
+  if (!coverage) coverage = global['__coverage__'] = {}
+  return coverage
 }
 
 NYC.prototype.report = function (cb, _collector) {
