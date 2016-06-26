@@ -92,7 +92,7 @@ NYC.prototype._createTransform = function (ext) {
   var _this = this
   return cachingTransform({
     salt: JSON.stringify({
-      istanbul: require('istanbul/package.json').version,
+      istanbul: require('istanbul-lib-coverage/package.json').version,
       nyc: require('./package.json').version
     }),
     hash: function (code, metadata, salt) {
@@ -306,9 +306,7 @@ function coverageFinder () {
   return coverage
 }
 
-NYC.prototype.report = function (cb, _collector) {
-  cb = cb || function () {}
-
+NYC.prototype.report = function () {
   var tree
   var map = libCoverage.createCoverageMap({})
   var context = libReport.createContext({
@@ -323,6 +321,30 @@ NYC.prototype.report = function (cb, _collector) {
 
   this.reporter.forEach(function (_reporter) {
     tree.visit(reports.create(_reporter), context)
+  })
+}
+
+NYC.prototype.checkCoverage = function (thresholds) {
+  var map = libCoverage.createCoverageMap({})
+  var summary = libCoverage.createCoverageSummary()
+
+  this._loadReports().forEach(function (report) {
+    map.merge(report)
+  })
+
+  map.files().forEach(function (f) {
+    var fc = map.fileCoverageFor(f)
+    var s = fc.toSummary()
+    summary.merge(s)
+  })
+
+  // ERROR: Coverage for lines (90.12%) does not meet global threshold (120%)
+  Object.keys(thresholds).forEach(function (key) {
+    var coverage = summary.data[key].pct
+    if (coverage < thresholds[key]) {
+      process.exitCode = 1
+      console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet global threshold (' + thresholds[key] + '%)')
+    }
   })
 }
 
