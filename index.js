@@ -1,6 +1,9 @@
 /* global __coverage__ */
 var fs = require('fs')
 var glob = require('glob')
+var libCoverage = require('istanbul-lib-coverage')
+var libReport = require('istanbul-lib-report')
+var reports = require('istanbul-reports')
 var mkdirp = require('mkdirp')
 var Module = require('module')
 var appendTransform = require('append-transform')
@@ -161,13 +164,16 @@ NYC.prototype.addAllFiles = function () {
   }
 
   glob.sync(pattern, {cwd: this.cwd, nodir: true, ignore: this.exclude.exclude}).forEach(function (filename) {
-    var obj = _this.addFile(path.join(_this.cwd, filename))
-    if (obj.instrument) {
-      module._compile(
-        _this.instrumenter().getPreamble(obj.content, obj.relFile),
+    if (!_this.exclude.shouldInstrument(path.resolve(_this.cwd, filename))) return
+
+    filename = path.resolve(_this.cwd, filename)
+    module._compile(
+      _this.instrumenter().getPreamble(
+        _this._readTranspiledSource(filename),
         filename
-      )
-    }
+      ),
+      filename
+    )
   })
 
   this.writeCoverageFile()
@@ -175,7 +181,7 @@ NYC.prototype.addAllFiles = function () {
 
 NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
   var instrument = this.exclude.shouldInstrument(filename, relFile)
-
+  console.log(filename, instrument)
   if (!instrument) {
     return null
   }
@@ -288,26 +294,24 @@ NYC.prototype.writeCoverageFile = function () {
   )
 }
 
-NYC.prototype.istanbul = function () {
-  return this._istanbul || (this._istanbul = require('istanbul'))
-}
-
-NYC.prototype.report = function (cb, _collector, _reporter) {
+NYC.prototype.report = function (cb, _collector) {
   cb = cb || function () {}
 
-  var istanbul = this.istanbul()
-  var collector = _collector || new istanbul.Collector()
-  var reporter = _reporter || new istanbul.Reporter(null, this._reportDir)
+  var tree
+  var map = libCoverage.createCoverageMap({})
+  var context = libReport.createContext({
+    dir: this._reportDir
+  })
 
   this._loadReports().forEach(function (report) {
-    collector.add(report)
+    map.merge(report)
   })
+
+  tree = libReport.summarizers.pkg(map)
 
   this.reporter.forEach(function (_reporter) {
-    reporter.add(_reporter)
+    tree.visit(reports.create(_reporter), context)
   })
-
-  reporter.write(collector, true, cb)
 }
 
 NYC.prototype._loadReports = function () {

@@ -64,7 +64,7 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
   })
   .option('cache', {
     alias: 'c',
-    default: false,
+    default: true,
     type: 'boolean',
     describe: 'cache instrumentation results for improved performance'
   })
