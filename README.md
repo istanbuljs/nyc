@@ -66,7 +66,7 @@ the `sourceMaps` option to `inline`.
 
 [`babel-plugin-istanbul`](https://github.com/istanbuljs/babel-plugin-istanbul) can be used to enable better first-class ES6 support.
 
-1. enable the `__coverage__` plugin:
+1. enable the `babel-plugin-istanbul` plugin:
 
   ```json
     {
@@ -81,7 +81,8 @@ the `sourceMaps` option to `inline`.
     }
   ```
 
-  Note: With this configuration, the `__coverage__` will only be active when `NODE_ENV` or `BABEL_ENV` is `test`.
+  Note: With this configuration, the Istanbul instrumentation will only be active when `NODE_ENV` or `BABEL_ENV` is `test`.
+
   We recommend using the [`cross-env`](https://npmjs.com/package/cross-env) package to set these environment variables
   in your `package.json` scripts in a way that works cross-platform.
 
