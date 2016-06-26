@@ -1,6 +1,6 @@
 {
   "name": "nyc",
-  "version": "7.0.0-candidate",
+  "version": "6.6.1",
   "description": "the Istanbul command line interface",
   "main": "index.js",
   "scripts": {
