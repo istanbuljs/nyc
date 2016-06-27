@@ -207,7 +207,14 @@ NYC.prototype._transformFactory = function (cacheDir) {
 
     if (_this._sourceMap) _this._handleSourceMap(cacheDir, code, hash, filename)
 
-    instrumented = instrumenter.instrumentSync(code, filename)
+    try {
+      instrumented = instrumenter.instrumentSync(code, filename)
+    } catch (e) {
+      // don't fail external tests due to instrumentation bugs.
+      console.warn('failed to instrument', filename, 'with error:', e.message)
+      instrumented = code
+    }
+
     if (_this.fakeRequire) {
       return 'function x () {}'
     } else {
