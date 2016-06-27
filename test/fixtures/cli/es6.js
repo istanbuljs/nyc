@@ -1,17 +1,23 @@
 'use strict'
 
-let probe = () => {
-  let missed = () => {
+class Yarsay {
+  constructor() {
+    console.log('sup')
+  }
+
+  hit() {
     console.log('do not hit')
+    let miss = () => {
+      console.log('do not hit')
+    }
+  }
+
+  miss() {
+    let miss = () => {
+      console.log('do not hit')
+    }
   }
 }
 
-let b = () => {
-  console.log('hit this method')
-}
-
-module.exports = () => {
-  console.log('do not hit')
-}
-
-b()
+let y = new Yarsay()
+y.hit()
