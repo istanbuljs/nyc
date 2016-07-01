@@ -105,7 +105,7 @@
     "split-lines": "^1.0.0",
     "standard": "^7.0.1",
     "standard-version": "^2.2.1",
-    "tap": "^5.7.1",
+    "tap": "^6.0.0",
     "which": "^1.2.4",
     "zero-fill": "^2.2.3"
   },
