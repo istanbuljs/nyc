@@ -101,7 +101,7 @@
     "sanitize-filename": "^1.5.3",
     "sinon": "^1.15.3",
     "source-map-fixtures": "^2.1.0",
-    "source-map-support": "^0.4.0",
+    "source-map-support": "^0.4.1",
     "split-lines": "^1.0.0",
     "standard": "^7.0.1",
     "standard-version": "^2.2.1",
