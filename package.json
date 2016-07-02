@@ -134,6 +134,7 @@
     "istanbul-lib-coverage",
     "istanbul-lib-instrument",
     "istanbul-lib-report",
+    "istanbul-lib-source-maps",
     "istanbul-reports",
     "md5-hex",
     "micromatch",
@@ -142,7 +143,6 @@
     "resolve-from",
     "rimraf",
     "signal-exit",
-    "source-map",
     "spawn-wrap",
     "test-exclude",
     "yargs"
