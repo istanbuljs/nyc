@@ -3,6 +3,7 @@ var fs = require('fs')
 var glob = require('glob')
 var libCoverage = require('istanbul-lib-coverage')
 var libReport = require('istanbul-lib-report')
+var libSourceMaps = require('istanbul-lib-source-maps')
 var reports = require('istanbul-reports')
 var mkdirp = require('mkdirp')
 var Module = require('module')
@@ -13,7 +14,6 @@ var rimraf = require('rimraf')
 var onExit = require('signal-exit')
 var resolveFrom = require('resolve-from')
 var arrify = require('arrify')
-var SourceMapCache = require('./lib/source-map-cache')
 var convertSourceMap = require('convert-source-map')
 var md5hex = require('md5-hex')
 var findCacheDir = require('find-cache-dir')
@@ -65,7 +65,7 @@ function NYC (opts) {
     return transforms
   }.bind(this), {})
 
-  this.sourceMapCache = new SourceMapCache()
+  this.sourceMapCache = libSourceMaps.createSourceMapStore()
 
   this.hashCache = {}
   this.loadedMaps = null
@@ -230,7 +230,7 @@ NYC.prototype._handleSourceMap = function (cacheDir, code, hash, filename) {
       var mapPath = path.join(cacheDir, hash + '.map')
       fs.writeFileSync(mapPath, sourceMap.toJSON())
     } else {
-      this.sourceMapCache.addMap(filename, sourceMap.toJSON())
+      this.sourceMapCache.registerMap(filename, sourceMap.sourcemap)
     }
   }
 }
@@ -296,7 +296,7 @@ NYC.prototype.writeCoverageFile = function () {
       }
     }, this)
   } else {
-    this.sourceMapCache.applySourceMaps(coverage)
+    coverage = this.sourceMapTransform(coverage)
   }
 
   fs.writeFileSync(
@@ -304,6 +304,13 @@ NYC.prototype.writeCoverageFile = function () {
     JSON.stringify(coverage),
     'utf-8'
   )
+}
+
+NYC.prototype.sourceMapTransform = function (obj) {
+  var transformed = this.sourceMapCache.transformCoverage(
+    libCoverage.createCoverageMap(obj)
+  )
+  return transformed.map.data
 }
 
 function coverageFinder () {
@@ -388,11 +395,11 @@ NYC.prototype._loadReports = function () {
           }
         }
         if (loadedMaps[hash]) {
-          _this.sourceMapCache.addMap(absFile, loadedMaps[hash])
+          _this.sourceMapCache.registerMap(absFile, loadedMaps[hash])
         }
       }
     })
-    _this.sourceMapCache.applySourceMaps(report)
+    report = _this.sourceMapTransform(report)
     return report
   })
 }

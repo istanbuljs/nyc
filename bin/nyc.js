@@ -141,7 +141,8 @@ if (argv._[0] === 'report') {
     require: argv.require,
     include: argv.include,
     exclude: argv.exclude,
-    sourceMap: !!argv.sourceMap
+    sourceMap: !!argv.sourceMap,
+    instrumenter: argv.instrumenter
   }))
   nyc.reset()
 

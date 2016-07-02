@@ -3,8 +3,7 @@ var fs = require('fs')
 var path = require('path')
 
 ;[
-  'index.js',
-  'lib/source-map-cache.js'
+  'index.js'
 ].forEach(function (name) {
   var indexPath = path.join(__dirname, name)
   var source = fs.readFileSync(indexPath, 'utf8')
