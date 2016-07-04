@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/istanbuljs/nyc.svg?branch=master)](https://travis-ci.org/istanbuljs/nyc)
 [![Coverage Status](https://coveralls.io/repos/istanbuljs/nyc/badge.svg?branch=)](https://coveralls.io/r/istanbuljs/nyc?branch=master)
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
-[![Windows Tests](https://img.shields.io/appveyor/ci/istanbuljs/nyc/master.svg?label=Windows%20Tests)](https://ci.appveyor.com/project/istanbuljs/nyc)
+[![Windows Tests](https://img.shields.io/appveyor/ci/bcoe/nyc-ilw23/master.svg?label=Windows%20Tests)](https://ci.appveyor.com/project/bcoe/nyc-ilw23)
 [![Standard Version](https://img.shields.io/badge/release-standard%20version-brightgreen.svg)](https://github.com/conventional-changelog/standard-version)
 
 Istanbul's high-tech command line interface, with support for:
