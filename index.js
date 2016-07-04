@@ -1,6 +1,10 @@
 /* global __coverage__ */
 var fs = require('fs')
 var glob = require('glob')
+var libCoverage = require('istanbul-lib-coverage')
+var libReport = require('istanbul-lib-report')
+var libSourceMaps = require('istanbul-lib-source-maps')
+var reports = require('istanbul-reports')
 var mkdirp = require('mkdirp')
 var Module = require('module')
 var appendTransform = require('append-transform')
@@ -10,7 +14,6 @@ var rimraf = require('rimraf')
 var onExit = require('signal-exit')
 var resolveFrom = require('resolve-from')
 var arrify = require('arrify')
-var SourceMapCache = require('./lib/source-map-cache')
 var convertSourceMap = require('convert-source-map')
 var md5hex = require('md5-hex')
 var findCacheDir = require('find-cache-dir')
@@ -62,10 +65,11 @@ function NYC (opts) {
     return transforms
   }.bind(this), {})
 
-  this.sourceMapCache = new SourceMapCache()
+  this.sourceMapCache = libSourceMaps.createSourceMapStore()
 
   this.hashCache = {}
   this.loadedMaps = null
+  this.fakeRequire = null
 }
 
 NYC.prototype._loadConfig = function (opts) {
@@ -88,7 +92,7 @@ NYC.prototype._createTransform = function (ext) {
   var _this = this
   return cachingTransform({
     salt: JSON.stringify({
-      istanbul: require('istanbul/package.json').version,
+      istanbul: require('istanbul-lib-coverage/package.json').version,
       nyc: require('./package.json').version
     }),
     hash: function (code, metadata, salt) {
@@ -160,22 +164,24 @@ NYC.prototype.addAllFiles = function () {
     pattern = '**/*{' + this.extensions.join() + '}'
   }
 
+  this.fakeRequire = true
   glob.sync(pattern, {cwd: this.cwd, nodir: true, ignore: this.exclude.exclude}).forEach(function (filename) {
-    var obj = _this.addFile(path.join(_this.cwd, filename))
-    if (obj.instrument) {
-      module._compile(
-        _this.instrumenter().getPreamble(obj.content, obj.relFile),
-        filename
-      )
+    filename = path.resolve(_this.cwd, filename)
+    _this.addFile(filename)
+
+    var coverage = coverageFinder()
+    var lastCoverage = _this.instrumenter().lastFileCoverage()
+    if (lastCoverage && _this.exclude.shouldInstrument(filename)) {
+      coverage[filename] = lastCoverage
     }
   })
+  this.fakeRequire = false
 
   this.writeCoverageFile()
 }
 
 NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
   var instrument = this.exclude.shouldInstrument(filename, relFile)
-
   if (!instrument) {
     return null
   }
@@ -194,13 +200,26 @@ NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
 NYC.prototype._transformFactory = function (cacheDir) {
   var _this = this
   var instrumenter = this.instrumenter()
+  var instrumented
 
   return function (code, metadata, hash) {
     var filename = metadata.filename
 
     if (_this._sourceMap) _this._handleSourceMap(cacheDir, code, hash, filename)
 
-    return instrumenter.instrumentSync(code, filename)
+    try {
+      instrumented = instrumenter.instrumentSync(code, filename)
+    } catch (e) {
+      // don't fail external tests due to instrumentation bugs.
+      console.warn('failed to instrument', filename, 'with error:', e.message)
+      instrumented = code
+    }
+
+    if (_this.fakeRequire) {
+      return 'function x () {}'
+    } else {
+      return instrumented
+    }
   }
 }
 
@@ -211,7 +230,7 @@ NYC.prototype._handleSourceMap = function (cacheDir, code, hash, filename) {
       var mapPath = path.join(cacheDir, hash + '.map')
       fs.writeFileSync(mapPath, sourceMap.toJSON())
     } else {
-      this.sourceMapCache.addMap(filename, sourceMap.toJSON())
+      this.sourceMapCache.registerMap(filename, sourceMap.sourcemap)
     }
   }
 }
@@ -267,8 +286,7 @@ NYC.prototype.wrap = function (bin) {
 }
 
 NYC.prototype.writeCoverageFile = function () {
-  var coverage = global.__coverage__
-  if (typeof __coverage__ === 'object') coverage = __coverage__
+  var coverage = coverageFinder()
   if (!coverage) return
 
   if (this.enableCache) {
@@ -278,7 +296,7 @@ NYC.prototype.writeCoverageFile = function () {
       }
     }, this)
   } else {
-    this.sourceMapCache.applySourceMaps(coverage)
+    coverage = this.sourceMapTransform(coverage)
   }
 
   fs.writeFileSync(
@@ -288,26 +306,60 @@ NYC.prototype.writeCoverageFile = function () {
   )
 }
 
-NYC.prototype.istanbul = function () {
-  return this._istanbul || (this._istanbul = require('istanbul'))
+NYC.prototype.sourceMapTransform = function (obj) {
+  var transformed = this.sourceMapCache.transformCoverage(
+    libCoverage.createCoverageMap(obj)
+  )
+  return transformed.map.data
 }
 
-NYC.prototype.report = function (cb, _collector, _reporter) {
-  cb = cb || function () {}
+function coverageFinder () {
+  var coverage = global.__coverage__
+  if (typeof __coverage__ === 'object') coverage = __coverage__
+  if (!coverage) coverage = global['__coverage__'] = {}
+  return coverage
+}
 
-  var istanbul = this.istanbul()
-  var collector = _collector || new istanbul.Collector()
-  var reporter = _reporter || new istanbul.Reporter(null, this._reportDir)
+NYC.prototype.report = function () {
+  var tree
+  var map = libCoverage.createCoverageMap({})
+  var context = libReport.createContext({
+    dir: this._reportDir
+  })
 
   this._loadReports().forEach(function (report) {
-    collector.add(report)
+    map.merge(report)
   })
+
+  tree = libReport.summarizers.pkg(map)
 
   this.reporter.forEach(function (_reporter) {
-    reporter.add(_reporter)
+    tree.visit(reports.create(_reporter), context)
+  })
+}
+
+NYC.prototype.checkCoverage = function (thresholds) {
+  var map = libCoverage.createCoverageMap({})
+  var summary = libCoverage.createCoverageSummary()
+
+  this._loadReports().forEach(function (report) {
+    map.merge(report)
   })
 
-  reporter.write(collector, true, cb)
+  map.files().forEach(function (f) {
+    var fc = map.fileCoverageFor(f)
+    var s = fc.toSummary()
+    summary.merge(s)
+  })
+
+  // ERROR: Coverage for lines (90.12%) does not meet global threshold (120%)
+  Object.keys(thresholds).forEach(function (key) {
+    var coverage = summary.data[key].pct
+    if (coverage < thresholds[key]) {
+      process.exitCode = 1
+      console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet global threshold (' + thresholds[key] + '%)')
+    }
+  })
 }
 
 NYC.prototype._loadReports = function () {
@@ -343,11 +395,11 @@ NYC.prototype._loadReports = function () {
           }
         }
         if (loadedMaps[hash]) {
-          _this.sourceMapCache.addMap(absFile, loadedMaps[hash])
+          _this.sourceMapCache.registerMap(absFile, loadedMaps[hash])
         }
       }
     })
-    _this.sourceMapCache.applySourceMaps(report)
+    report = _this.sourceMapTransform(report)
     return report
   })
 }

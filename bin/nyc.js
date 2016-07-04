@@ -8,7 +8,6 @@ try {
   NYC = require('../index.js')
 }
 
-var path = require('path')
 var sw = require('spawn-wrap')
 var wrapper = require.resolve('./wrap.js')
 
@@ -64,7 +63,7 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
   })
   .option('cache', {
     alias: 'c',
-    default: false,
+    default: true,
     type: 'boolean',
     describe: 'cache instrumentation results for improved performance'
   })
@@ -108,19 +107,14 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
     type: 'boolean',
     description: 'should nyc handle instrumentation?'
   })
-  .option('instrumenter', {
-    default: './lib/instrumenters/istanbul',
-    type: 'string',
-    description: 'what library should be used to instrument coverage?'
-  })
   .help('h')
   .alias('h', 'help')
   .version()
   .pkgConf('nyc', process.cwd())
   .example('$0 npm test', 'instrument your tests with coverage')
-  .example('$0 --require babel-core/polyfill --require babel-core/register npm test', 'instrument your tests with coverage and babel')
+  .example('$0 --require --require babel-core/register npm test', 'instrument your tests with coverage and babel')
   .example('$0 report --reporter=text-lcov', 'output lcov report after running your tests')
-  .epilog('visit http://git.io/vTJJB for list of available reporters')
+  .epilog('visit https://git.io/voHar for list of available reporters')
 
 var argv = yargs.argv
 
@@ -141,12 +135,14 @@ if (argv._[0] === 'report') {
   // if instrument is set to false,
   // enable a noop instrumenter.
   if (!argv.instrument) argv.instrumenter = './lib/instrumenters/noop'
+  else argv.instrumenter = './lib/instrumenters/istanbul'
 
   var nyc = (new NYC({
     require: argv.require,
     include: argv.include,
     exclude: argv.exclude,
-    sourceMap: !!argv.sourceMap
+    sourceMap: !!argv.sourceMap,
+    instrumenter: argv.instrumenter
   }))
   nyc.reset()
 
@@ -180,12 +176,10 @@ if (argv._[0] === 'report') {
     var mainChildExitCode = process.exitCode
 
     if (argv.checkCoverage) {
-      checkCoverage(argv, function (done) {
-        process.exitCode = process.exitCode || mainChildExitCode
-
-        if (!argv.silent) report(argv)
-        return done()
-      })
+      checkCoverage(argv)
+      process.exitCode = process.exitCode || mainChildExitCode
+      if (!argv.silent) report(argv)
+      return done()
     } else {
       if (!argv.silent) report(argv)
       return done()
@@ -206,17 +200,12 @@ function report (argv) {
 }
 
 function checkCoverage (argv, cb) {
-  foreground(
-    process.execPath,
-    [
-      require.resolve('istanbul/lib/cli'),
-      'check-coverage',
-      '--lines=' + argv.lines,
-      '--functions=' + argv.functions,
-      '--branches=' + argv.branches,
-      '--statements=' + argv.statements,
-      path.resolve(process.cwd(), './.nyc_output/*.json')
-    ],
-    cb
-  )
+  process.env.NYC_CWD = process.cwd()
+
+  ;(new NYC()).checkCoverage({
+    lines: argv.lines,
+    functions: argv.functions,
+    branches: argv.branches,
+    statements: argv.statements
+  })
 }

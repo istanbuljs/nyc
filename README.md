@@ -1,13 +1,15 @@
 # nyc
 
-[![Build Status](https://travis-ci.org/bcoe/nyc.svg?branch=master)](https://travis-ci.org/bcoe/nyc)
-[![Coverage Status](https://coveralls.io/repos/bcoe/nyc/badge.svg?branch=)](https://coveralls.io/r/bcoe/nyc?branch=)
+[![Build Status](https://travis-ci.org/istanbuljs/nyc.svg?branch=master)](https://travis-ci.org/istanbuljs/nyc)
+[![Coverage Status](https://coveralls.io/repos/istanbuljs/nyc/badge.svg?branch=)](https://coveralls.io/r/istanbuljs/nyc?branch=master)
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
-[![Windows Tests](https://img.shields.io/appveyor/ci/bcoe/nyc/master.svg?label=Windows%20Tests)](https://ci.appveyor.com/project/bcoe/nyc)
+[![Windows Tests](https://img.shields.io/appveyor/ci/istanbuljs/nyc/master.svg?label=Windows%20Tests)](https://ci.appveyor.com/project/istanbuljs/nyc)
 [![Standard Version](https://img.shields.io/badge/release-standard%20version-brightgreen.svg)](https://github.com/conventional-changelog/standard-version)
 
-a code coverage tool built on [istanbul](https://www.npmjs.com/package/istanbul)
-that works for applications that spawn subprocesses.
+Istanbul's high-tech command line interface, with support for:
+
+* applications that spawn subprocesses.
+* ES2015 transforms, via [babel-plugin-istanbul](https://github.com/istanbuljs/babel-plugin-istanbul), or source-maps.
 
 ## Instrumenting Your Code
 
@@ -60,11 +62,11 @@ of the pre-transpiled code. You'll have to configure your custom require hook
 to inline the source map in the transpiled code. For Babel that means setting
 the `sourceMaps` option to `inline`.
 
-## Use babel-plugin__coverage__ for Better ES6/ES7 Support
+## Use with babel-plugin-istanbul for Better ES6/ES7 Support
 
-[`babel-plugin-__coverage__`](https://github.com/dtinth/babel-plugin-__coverage__) can be used to enable better first-class ES6 support.
+[`babel-plugin-istanbul`](https://github.com/istanbuljs/babel-plugin-istanbul) can be used to enable better first-class ES6 support.
 
-1. enable the `__coverage__` plugin:
+1. enable the `babel-plugin-istanbul` plugin:
 
   ```json
     {
@@ -72,14 +74,15 @@ the `sourceMaps` option to `inline`.
         "presets": ["es2015"],
         "env": {
           "test": {
-            "plugins": ["__coverage__"]
+            "plugins": ["istanbul"]
           }
         }
       }
     }
   ```
 
-  Note: With this configuration, the `__coverage__` will only be active when `NODE_ENV` or `BABEL_ENV` is `test`.
+  Note: With this configuration, the Istanbul instrumentation will only be active when `NODE_ENV` or `BABEL_ENV` is `test`.
+
   We recommend using the [`cross-env`](https://npmjs.com/package/cross-env) package to set these environment variables
   in your `package.json` scripts in a way that works cross-platform.
 
@@ -125,14 +128,12 @@ nyc --extension .jsx --extension .es6 npm test
 
 ## Checking Coverage
 
-nyc exposes istanbul's check-coverage tool. After running your tests with nyc,
-simply run:
+nyc can fail tests if coverage falls below a threshold.
+After running your tests with nyc, simply run:
 
 ```shell
 nyc check-coverage --lines 95 --functions 95 --branches 95
 ```
-
-This feature makes it easy to fail your tests if coverage drops below a given threshold.
 
 nyc also accepts a `--check-coverage` shorthand, which can be used to
 both run tests and check that coverage falls within the threshold provided:
@@ -239,17 +240,6 @@ can also be specified in the `nyc` stanza of your package.json:
 }
 ```
 
-## Configuring Istanbul
-
-Behind the scenes nyc uses [istanbul](https://www.npmjs.com/package/istanbul). You
-can place a `.istanbul.yml` file in your project's root directory to pass config
-setings to istanbul's code instrumenter:
-
-```yml
-instrumentation:
-  preserve-comments: true
-```
-
 ## Integrating With Coveralls
 
 [coveralls.io](https://coveralls.io) is a great tool for adding
@@ -284,7 +274,6 @@ integrated with coveralls and travis-ci.org:
 That's all there is to it!
 
 > Note: by default coveralls.io adds comments to pull-requests on GitHub, this can feel intrusive. To disable this, click on your repo on coveralls.io and uncheck `LEAVE COMMENTS?`.
-
 
 ## Integrating with codecov
 

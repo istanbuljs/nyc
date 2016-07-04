@@ -270,4 +270,28 @@ describe('the nyc cli', function () {
       done()
     })
   })
+
+  describe('coverage', function () {
+    if (parseInt(process.versions.node.split('.')[0]) < 4) return
+    it('reports appropriate coverage information for es6 source files', function (done) {
+      var args = [bin, '--reporter=lcov', '--reporter=text', process.execPath, './es6.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        // we should miss covering the appropriate lines.
+        stdout.should.match(/11,16,17/)
+        done()
+      })
+    })
+  })
 })

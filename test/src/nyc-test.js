@@ -214,7 +214,7 @@ describe('nyc', function () {
         })
 
         // the `require` call to istanbul is deferred, loaded here so it doesn't mess with the hooks callCount
-        require('istanbul')
+        require('istanbul-lib-instrument')
 
         var nyc = new NYC({
           cwd: process.cwd()
@@ -250,7 +250,7 @@ describe('nyc', function () {
 
       it('calls the `_handleJs` function for custom file extensions', function () {
         // the `require` call to istanbul is deferred, loaded here so it doesn't mess with the hooks callCount
-        require('istanbul')
+        require('istanbul-lib-instrument')
 
         var nyc = new NYC({
           cwd: path.resolve(__dirname, '../fixtures/conf-multiple-extensions')
@@ -315,108 +315,6 @@ describe('nyc', function () {
   })
 
   describe('report', function () {
-    it('runs reports for all JSON in output directory', function (done) {
-      var nyc = new NYC({
-        cwd: fixtures
-      })
-
-      var proc = spawn(process.execPath, [bin, './spawn.js'], {
-        cwd: fixtures,
-        env: {},
-        stdio: 'ignore'
-      })
-
-      proc.on('close', function () {
-        nyc.report(
-          null,
-          {
-            add: function (report) {
-              // the subprocess we ran should output reports
-              // for files in the fixtures directory.
-              var expected = [
-                'spawn.js',
-                'child-1.js',
-                'child-2.js'
-              ].map(function (relFile) {
-                return path.join(fixtures, relFile)
-              })
-              expected.should.include.members(Object.keys(report))
-            }
-          },
-          {
-            add: function (reporter) {
-              // reporter defaults to 'text'/
-              reporter.should.equal('text')
-            },
-            write: function () {
-              // we should have output a report for the new subprocess.
-              var stop = fs.readdirSync(nyc.tempDirectory()).length
-              stop.should.be.eql(3)
-              return done()
-            }
-          }
-        )
-      })
-    })
-
-    it('handles corrupt JSON files', function (done) {
-      var nyc = new NYC({
-        cwd: process.cwd()
-      })
-      nyc.reset()
-
-      fs.writeFileSync('./.nyc_output/bad.json', '}', 'utf-8')
-
-      nyc.report(
-        null,
-        {
-          add: function (report) {}
-        },
-        {
-          add: function (reporter) {},
-          write: function () {
-            // we should get here without exception.
-            fs.unlinkSync('./.nyc_output/bad.json')
-            return done()
-          }
-        }
-      )
-    })
-
-    it('handles multiple reporters', function (done) {
-      var reporters = ['text-summary', 'text-lcov']
-      var incr = 0
-      var nyc = new NYC({
-        cwd: process.cwd(),
-        reporter: reporters
-      })
-      nyc.reset()
-
-      var proc = spawn(process.execPath, ['./test/fixtures/child-1.js'], {
-        cwd: process.cwd(),
-        env: process.env,
-        stdio: 'inherit'
-      })
-
-      proc.on('close', function () {
-        nyc.report(
-          null,
-          {
-            add: function (report) {}
-          },
-          {
-            add: function (reporter) {
-              incr += !!~reporters.indexOf(reporter)
-            },
-            write: function () {
-              incr.should.eql(reporters.length)
-              return done()
-            }
-          }
-        )
-      })
-    })
-
     it('allows coverage report to be output in an alternative directory', function (done) {
       var reporters = ['lcov']
       var nyc = new NYC({
@@ -438,72 +336,6 @@ describe('nyc', function () {
         rimraf.sync('./alternative-report')
         return done()
       })
-    })
-  })
-
-  describe('.istanbul.yml configuration', function () {
-    var istanbul = require('istanbul')
-    var configSpy = sinon.spy(istanbul.config, 'loadFile')
-    var instrumenterSpy = sinon.spy(istanbul, 'Instrumenter')
-
-    function writeConfig () {
-      fs.writeFileSync('./.istanbul.yml', 'instrumentation:\n\tpreserve-comments: true', 'utf-8')
-    }
-
-    function afterEach () {
-      configSpy.reset()
-      instrumenterSpy.reset()
-      rimraf.sync('./.istanbul.yml')
-    }
-
-    it('it handles having no .istanbul.yml in the root directory', function (done) {
-      afterEach()
-      var nyc = new NYC()
-      nyc.wrap()
-      return done()
-    })
-
-    it('uses the values in .istanbul.yml to instantiate the instrumenter', function (done) {
-      writeConfig()
-
-      var nyc = new NYC({
-        istanbul: istanbul
-      })
-      nyc.wrap()
-
-      nyc.instrumenter()
-
-      istanbul.config.loadFile.calledWithMatch('.istanbul.yml').should.equal(true)
-      istanbul.Instrumenter.calledWith({
-        coverageVariable: '__coverage__',
-        embedSource: false,
-        noCompact: false,
-        preserveComments: false
-      }).should.equal(true)
-
-      afterEach()
-      return done()
-    })
-
-    it('loads the .istanbul.yml configuration from NYC_CWD', function (done) {
-      var nyc = new NYC({
-        istanbul: istanbul,
-        cwd: './test/fixtures'
-      })
-      nyc.wrap()
-
-      nyc.instrumenter()
-
-      istanbul.config.loadFile.calledWithMatch(path.join('test', 'fixtures', '.istanbul.yml')).should.equal(true)
-      istanbul.Instrumenter.calledWith({
-        coverageVariable: '__coverage__',
-        embedSource: false,
-        noCompact: false,
-        preserveComments: true
-      }).should.equal(true)
-
-      afterEach()
-      return done()
     })
   })
 
