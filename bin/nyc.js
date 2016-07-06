@@ -16,23 +16,47 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
   .command('report', 'run coverage report for .nyc_output', function (yargs) {
     return yargs
       .usage('$0 report [options]')
+      .option('reporter', {
+        alias: 'r',
+        describe: 'coverage reporter(s) to use',
+        default: 'text'
+      })
+      .option('report-dir', {
+        describe: 'default directory to output coverage reports in',
+        default: 'coverage'
+      })
       .example('$0 report --reporter=lcov', 'output an HTML lcov report to ./coverage')
   })
   .command('check-coverage', 'check whether coverage is within thresholds provided', function (yargs) {
     return yargs
       .usage('$0 check-coverage [options]')
+      .option('branches', {
+        default: 0,
+        description: 'what % of branches must be covered?'
+      })
+      .option('functions', {
+        default: 0,
+        description: 'what % of functions must be covered?'
+      })
+      .option('lines', {
+        default: 90,
+        description: 'what % of lines must be covered?'
+      })
+      .option('statements', {
+        default: 0,
+        description: 'what % of statements must be covered?'
+      })
       .example('$0 check-coverage --lines 95', "check whether the JSON in nyc's output folder meets the thresholds provided")
   })
+  .command(require('../lib/commands/instrument'))
   .option('reporter', {
     alias: 'r',
     describe: 'coverage reporter(s) to use',
-    default: 'text',
-    global: true
+    default: 'text'
   })
   .option('report-dir', {
     describe: 'default directory to output coverage reports in',
-    default: 'coverage',
-    global: true
+    default: 'coverage'
   })
   .option('silent', {
     alias: 's',
@@ -67,7 +91,7 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
     type: 'boolean',
     describe: 'cache instrumentation results for improved performance'
   })
-  .options('extension', {
+  .option('extension', {
     alias: 'e',
     default: [],
     describe: 'a list of extensions that nyc should handle in addition to .js'
@@ -79,23 +103,19 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
   })
   .option('branches', {
     default: 0,
-    description: 'what % of branches must be covered?',
-    global: true
+    description: 'what % of branches must be covered?'
   })
   .option('functions', {
     default: 0,
-    description: 'what % of functions must be covered?',
-    global: true
+    description: 'what % of functions must be covered?'
   })
   .option('lines', {
     default: 90,
-    description: 'what % of lines must be covered?',
-    global: true
+    description: 'what % of lines must be covered?'
   })
   .option('statements', {
     default: 0,
-    description: 'what % of statements must be covered?',
-    global: true
+    description: 'what % of statements must be covered?'
   })
   .option('source-map', {
     default: true,
@@ -112,7 +132,7 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
   .version()
   .pkgConf('nyc', process.cwd())
   .example('$0 npm test', 'instrument your tests with coverage')
-  .example('$0 --require --require babel-core/register npm test', 'instrument your tests with coverage and babel')
+  .example('$0 --require babel-core/register npm test', 'instrument your tests with coverage and babel')
   .example('$0 report --reporter=text-lcov', 'output lcov report after running your tests')
   .epilog('visit https://git.io/voHar for list of available reporters')
 
@@ -125,6 +145,8 @@ if (argv._[0] === 'report') {
   report(argv)
 } else if (argv._[0] === 'check-coverage') {
   checkCoverage(argv)
+} else if (argv._[0] === 'instrument') {
+  // noop, let the command handler do its thing.
 } else if (argv._.length) {
   // wrap subprocesses and execute argv[1]
   argv.require = arrify(argv.require)

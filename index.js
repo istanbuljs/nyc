@@ -157,18 +157,10 @@ NYC.prototype.addAllFiles = function () {
 
   this._loadAdditionalModules()
 
-  var pattern = null
-  if (this.extensions.length === 1) {
-    pattern = '**/*' + this.extensions[0]
-  } else {
-    pattern = '**/*{' + this.extensions.join() + '}'
-  }
-
   this.fakeRequire = true
-  glob.sync(pattern, {cwd: this.cwd, nodir: true, ignore: this.exclude.exclude}).forEach(function (filename) {
+  this.walkAllFiles(this.cwd, function (filename) {
     filename = path.resolve(_this.cwd, filename)
     _this.addFile(filename)
-
     var coverage = coverageFinder()
     var lastCoverage = _this.instrumenter().lastFileCoverage()
     if (lastCoverage && _this.exclude.shouldInstrument(filename)) {
@@ -178,6 +170,63 @@ NYC.prototype.addAllFiles = function () {
   this.fakeRequire = false
 
   this.writeCoverageFile()
+}
+
+NYC.prototype.instrumentAllFiles = function (input, output, cb) {
+  var _this = this
+  var inputDir = '.' + path.sep
+  var visitor = function (filename) {
+    var ext
+    var transform
+    var inFile = path.relative(_this.cwd, path.resolve(inputDir, filename))
+    var code = fs.readFileSync(inFile, 'utf-8')
+
+    for (ext in _this.transforms) {
+      if (filename.toLowerCase().substr(-ext.length) === ext) {
+        transform = _this.transforms[ext]
+        break
+      }
+    }
+
+    if (transform) {
+      code = transform(code, {filename: filename, relFile: inFile})
+    }
+
+    if (!output) {
+      console.log(code)
+    } else {
+      var outFile = path.relative(_this.cwd, path.resolve(output, filename))
+      mkdirp.sync(path.dirname(outFile))
+      fs.writeFileSync(outFile, code, 'utf-8')
+    }
+  }
+
+  this._loadAdditionalModules()
+
+  try {
+    var stats = fs.lstatSync(input)
+    if (stats.isDirectory()) {
+      inputDir = input
+      this.walkAllFiles(input, visitor)
+    } else {
+      visitor(input)
+    }
+  } catch (err) {
+    return cb(err)
+  }
+}
+
+NYC.prototype.walkAllFiles = function (dir, visitor) {
+  var pattern = null
+  if (this.extensions.length === 1) {
+    pattern = '**/*' + this.extensions[0]
+  } else {
+    pattern = '**/*{' + this.extensions.join() + '}'
+  }
+
+  glob.sync(pattern, {cwd: dir, nodir: true, ignore: this.exclude.exclude}).forEach(function (filename) {
+    visitor(filename)
+  })
 }
 
 NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
