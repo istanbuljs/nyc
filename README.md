@@ -6,12 +6,12 @@
 [![Windows Tests](https://img.shields.io/appveyor/ci/bcoe/nyc-ilw23/master.svg?label=Windows%20Tests)](https://ci.appveyor.com/project/bcoe/nyc-ilw23)
 [![Standard Version](https://img.shields.io/badge/release-standard%20version-brightgreen.svg)](https://github.com/conventional-changelog/standard-version)
 
-Istanbul's high-tech command line interface, with support for:
+Istanbul's state of the art command line interface, with support for:
 
 * applications that spawn subprocesses.
 * ES2015 transforms, via [babel-plugin-istanbul](https://github.com/istanbuljs/babel-plugin-istanbul), or source-maps.
 
-## Instrumenting Your Code
+## Instrumenting your code
 
 You can install nyc as a development dependency and add it to the test stanza
 in your package.json.
@@ -50,7 +50,7 @@ and a `text-lcov` coverage report.
 nyc --reporter=lcov --reporter=text-lcov npm test
 ```
 
-## Support For Custom Require Hooks (babel, webpack, etc.)
+## Support for custom require hooks (babel, webpack, etc.)
 
 nyc supports custom require hooks like
 [`babel-register`](http://babeljs.io/docs/usage/require/). nyc can
@@ -107,7 +107,7 @@ That's all there is to it, better ES6 syntax highlighting awaits:
 
 <img width="500" src="screen2.png">
 
-## Support For Custom File Extensions (.jsx, .es6)
+## Support for alternate file extensions (.jsx, .es6)
 
 Supporting file extensions can be configured through either the configuration arguments or with the `nyc` config section in `package.json`.
 
@@ -126,7 +126,7 @@ nyc --extension .jsx --extension .es6 npm test
 }
 ```
 
-## Checking Coverage
+## Checking coverage
 
 nyc can fail tests if coverage falls below a threshold.
 After running your tests with nyc, simply run:
@@ -144,7 +144,7 @@ nyc --check-coverage --lines 100 npm test
 
 The above check fails if coverage falls below 100%.
 
-## Running Reports
+## Running reports
 
 Once you've run your tests with nyc, simply run:
 
@@ -162,7 +162,7 @@ you can use any reporters that are supported by istanbul:
 nyc report --reporter=lcov
 ```
 
-## Excluding Files
+## Excluding files
 
 You can tell nyc to exclude specific files and directories by adding
 an `nyc.exclude` array to your `package.json`. Each element of
@@ -192,7 +192,7 @@ directory:
 which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`,
 and `test-*.js` files. Specifying your own exclude property overrides these defaults.
 
-## Including Files
+## Including files
 
 As an alternative to providing a list of files to `exclude`, you can provide
 an `include` key to specify specific files that should be covered:
@@ -207,7 +207,7 @@ an `include` key to specify specific files that should be covered:
 
 > Note: include defaults to `['**']`
 
-## Include Reports For Files That Are Not Required
+## Include reports for files that are not required
 
 By default nyc does not collect coverage for files that have not
 been required, run nyc with the flag `--all` to enable this.
@@ -240,7 +240,7 @@ can also be specified in the `nyc` stanza of your package.json:
 }
 ```
 
-## Instrumenting Source Files
+## Instrumenting source files
 
 nyc's `instrument` command can be used to instrument
 source files outside of the context of your unit-tests:
@@ -249,7 +249,7 @@ __instrument the entire ./lib folder:__
 
 `nyc instrument ./lib ./output`
 
-## Integrating With Coveralls
+## Integrating with coveralls
 
 [coveralls.io](https://coveralls.io) is a great tool for adding
 coverage reports to your GitHub project. Here's how to get nyc
