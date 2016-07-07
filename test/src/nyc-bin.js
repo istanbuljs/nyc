@@ -294,4 +294,98 @@ describe('the nyc cli', function () {
       })
     })
   })
+
+  describe('instrument', function () {
+    describe('no output folder', function () {
+      it('allows a single file to be instrumented', function (done) {
+        var args = [bin, 'instrument', './half-covered.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdout.should.match(/path:"\.\/half-covered\.js"/)
+          done()
+        })
+      })
+
+      it('allows a directory of files to be instrumented', function (done) {
+        var args = [bin, 'instrument', './']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdout.should.match(/half-covered\.js"/)
+          stdout.should.match(/half-covered-failing\.js"/)
+          stdout.should.not.match(/spawn\.js"/)
+          done()
+        })
+      })
+    })
+
+    describe('output folder specified', function () {
+      it('allows a single file to be instrumented', function (done) {
+        var args = [bin, 'instrument', './half-covered.js', './output']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          files.length.should.equal(1)
+          files.should.include('half-covered.js')
+          rimraf.sync(path.resolve(fixturesCLI, 'output'))
+          done()
+        })
+      })
+
+      it('allows a directory of files to be instrumented', function (done) {
+        var args = [bin, 'instrument', './', './output']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          files.should.include('env.js')
+          files.should.include('es6.js')
+          rimraf.sync(path.resolve(fixturesCLI, 'output'))
+          done()
+        })
+      })
+    })
+  })
 })
