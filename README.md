@@ -50,10 +50,10 @@ and a `text-lcov` coverage report.
 nyc --reporter=lcov --reporter=text-lcov npm test
 ```
 
-## Support For Custom Require Hooks (Babel! ES2015!)
+## Support For Custom Require Hooks (babel, webpack, etc.)
 
 nyc supports custom require hooks like
-[`babel-register`](http://babeljs.io/docs/usage/require/). If necessary nyc can
+[`babel-register`](http://babeljs.io/docs/usage/require/). nyc can
 load the hooks for you, [using the `--require`
 flag](#require-additional-modules).
 
@@ -62,7 +62,7 @@ of the pre-transpiled code. You'll have to configure your custom require hook
 to inline the source map in the transpiled code. For Babel that means setting
 the `sourceMaps` option to `inline`.
 
-## Use with babel-plugin-istanbul for Better ES6/ES7 Support
+## Use with babel-plugin-istanbul for ES6/ES7/ES2015 Support
 
 [`babel-plugin-istanbul`](https://github.com/istanbuljs/babel-plugin-istanbul) can be used to enable better first-class ES6 support.
 
@@ -239,6 +239,15 @@ can also be specified in the `nyc` stanza of your package.json:
   }
 }
 ```
+
+## Instrumenting Source Files
+
+nyc's `instrument` command can be used to instrument
+source files outside of the context of your unit-tests:
+
+__instrument the entire ./lib folder:__
+
+`nyc instrument ./lib ./output`
 
 ## Integrating With Coveralls
 
