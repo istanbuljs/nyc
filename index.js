@@ -299,8 +299,12 @@ NYC.prototype.writeCoverageFile = function () {
     coverage = this.sourceMapTransform(coverage)
   }
 
+  var id = md5hex(
+    process.hrtime().concat(process.pid).map(String)
+  )
+
   fs.writeFileSync(
-    path.resolve(this.tempDirectory(), './', process.pid + '.json'),
+    path.resolve(this.tempDirectory(), './', id + '.json'),
     JSON.stringify(coverage),
     'utf-8'
   )
