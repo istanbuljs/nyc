@@ -22,7 +22,7 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
         default: 'text'
       })
       .option('report-dir', {
-        describe: 'default directory to output coverage reports in',
+        describe: 'directory to output coverage reports in',
         default: 'coverage'
       })
       .example('$0 report --reporter=lcov', 'output an HTML lcov report to ./coverage')
@@ -55,7 +55,7 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
     default: 'text'
   })
   .option('report-dir', {
-    describe: 'default directory to output coverage reports in',
+    describe: 'directory to output coverage reports in',
     default: 'coverage'
   })
   .option('silent', {
