@@ -23,6 +23,7 @@
     "index.js",
     "bin/*.js",
     "lib/*.js",
+    "lib/commands/*.js",
     "lib/instrumenters/*.js",
     "!**/*covered.js"
   ],

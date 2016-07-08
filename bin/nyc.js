@@ -87,7 +87,7 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
   })
   .option('cache', {
     alias: 'c',
-    default: true,
+    default: false,
     type: 'boolean',
     describe: 'cache instrumentation results for improved performance'
   })
@@ -174,7 +174,8 @@ if (argv._[0] === 'report') {
     NYC_CWD: process.cwd(),
     NYC_CACHE: argv.cache ? 'enable' : 'disable',
     NYC_SOURCE_MAP: argv.sourceMap ? 'enable' : 'disable',
-    NYC_INSTRUMENTER: argv.instrumenter
+    NYC_INSTRUMENTER: argv.instrumenter,
+    BABEL_DISABLE_CACHE: 1
   }
   if (argv.require.length) {
     env.NYC_REQUIRE = argv.require.join(',')
