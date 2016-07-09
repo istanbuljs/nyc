@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.0.0"></a>
+# [7.0.0](https://github.com/bcoe/nyc/compare/v6.6.1...v7.0.0) (2016-07-09)
+
+
+### Bug Fixes
+
+* avoid pid collisions. ([#301](https://github.com/bcoe/nyc/issues/301)) ([f67bff7](https://github.com/bcoe/nyc/commit/f67bff7))
+* disable the babel/nyc cache ([#303](https://github.com/bcoe/nyc/issues/303)) ([104b3da](https://github.com/bcoe/nyc/commit/104b3da))
+
+
+### Features
+
+* adds instrument command line option ([#298](https://github.com/bcoe/nyc/issues/298)) ([e45b51b](https://github.com/bcoe/nyc/commit/e45b51b))
+* nyc is being refactored to become the official Istanbul 1.0 bin ([#286](https://github.com/bcoe/nyc/issues/286)) ([61a05ea](https://github.com/bcoe/nyc/commit/61a05ea))
+
+
+### BREAKING CHANGES
+
+* significant chunks of nyc's API have been reworked, to use the Istanbul 1.0 API: source-map support, instrumentation, the check-coverage command, etc.
+
+
+
 <a name="6.6.1"></a>
 ## [6.6.1](https://github.com/bcoe/nyc/compare/v6.6.0...v6.6.1) (2016-06-14)
 
