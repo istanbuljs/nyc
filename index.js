@@ -2,12 +2,12 @@
 var fs = require('fs')
 var glob = require('glob')
 var libCoverage = require('istanbul-lib-coverage')
+var libHook = require('istanbul-lib-hook')
 var libReport = require('istanbul-lib-report')
 var libSourceMaps = require('istanbul-lib-source-maps')
 var reports = require('istanbul-reports')
 var mkdirp = require('mkdirp')
 var Module = require('module')
-var appendTransform = require('append-transform')
 var cachingTransform = require('caching-transform')
 var path = require('path')
 var rimraf = require('rimraf')
@@ -66,6 +66,9 @@ function NYC (opts) {
   }.bind(this), {})
 
   this.sourceMapCache = libSourceMaps.createSourceMapStore()
+
+  this.hookRunInContext = config.hookRunInContext
+  this.hookCreateScript = config.hookCreateScript
 
   this.hashCache = {}
   this.loadedMaps = null
@@ -289,13 +292,26 @@ NYC.prototype._handleJs = function (code, filename) {
   return this._maybeInstrumentSource(code, filename, relFile) || code
 }
 
-NYC.prototype._wrapRequire = function () {
+NYC.prototype._addHook = function (type) {
   var handleJs = this._handleJs.bind(this)
+  var dummyMatcher = function () { return true } // we do all processing in transformer
+  libHook['hook' + type](dummyMatcher, handleJs, { extensions: this.extensions })
+}
 
+NYC.prototype._wrapRequire = function () {
   this.extensions.forEach(function (ext) {
     require.extensions[ext] = js
-    appendTransform(handleJs, ext)
   })
+  this._addHook('Require')
+}
+
+NYC.prototype._addOtherHooks = function () {
+  if (this.hookRunInContext) {
+    this._addHook('RunInThisContext')
+  }
+  if (this.hookCreateScript) {
+    this._addHook('CreateScript')
+  }
 }
 
 NYC.prototype.cleanup = function () {
@@ -329,6 +345,7 @@ NYC.prototype._wrapExit = function () {
 
 NYC.prototype.wrap = function (bin) {
   this._wrapRequire()
+  this._addOtherHooks()
   this._wrapExit()
   this._loadAdditionalModules()
   return this

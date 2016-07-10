@@ -5,6 +5,7 @@ var fs = require('fs')
 var spawn = require('child_process').spawn
 var isWindows = require('is-windows')()
 var fixturesCLI = path.resolve(__dirname, '../fixtures/cli')
+var fixturesHooks = path.resolve(__dirname, '../fixtures/hooks')
 var fakebin = path.resolve(fixturesCLI, 'fakebin')
 var bin = path.resolve(__dirname, '../../bin/nyc')
 var rimraf = require('rimraf')
@@ -385,6 +386,27 @@ describe('the nyc cli', function () {
           rimraf.sync(path.resolve(fixturesCLI, 'output'))
           done()
         })
+      })
+    })
+  })
+
+  describe('hooks', function () {
+    it('provides coverage for requireJS and AMD modules', function (done) {
+      var args = [bin, '--hook-run-in-context', process.execPath, './index.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesHooks,
+        env: process.env
+      })
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdout.should.match(/ipsum\.js/)
+        stdout.should.match(/lorem\.js/)
+        done()
       })
     })
   })
