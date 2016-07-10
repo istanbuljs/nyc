@@ -123,7 +123,6 @@
     "url": "git@github.com:bcoe/nyc.git"
   },
   "bundledDependencies": [
-    "append-transform",
     "arrify",
     "caching-transform",
     "convert-source-map",
@@ -134,6 +133,7 @@
     "glob",
     "istanbul-lib-coverage",
     "istanbul-lib-instrument",
+    "istanbul-lib-hook",
     "istanbul-lib-report",
     "istanbul-lib-source-maps",
     "istanbul-reports",
