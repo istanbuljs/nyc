@@ -132,14 +132,9 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
     description: 'should nyc handle instrumentation?'
   })
   .option('hook-run-in-context', {
-    default: false,
+    default: true,
     type: 'boolean',
     description: 'should nyc wrap vm.runInThisContext?'
-  })
-  .option('hook-create-script', {
-    default: false,
-    type: 'boolean',
-    description: 'should nyc wrap vm.createScript?'
   })
   .help('h')
   .alias('h', 'help')
@@ -179,8 +174,7 @@ if (argv._[0] === 'report') {
     exclude: argv.exclude,
     sourceMap: !!argv.sourceMap,
     instrumenter: argv.instrumenter,
-    hookRunInContext: argv.hookRunInContext,
-    hookCreateScript: argv.hookCreateScript
+    hookRunInContext: argv.hookRunInContext
   }))
   nyc.reset()
 
@@ -191,8 +185,7 @@ if (argv._[0] === 'report') {
     NYC_CACHE: argv.cache ? 'enable' : 'disable',
     NYC_SOURCE_MAP: argv.sourceMap ? 'enable' : 'disable',
     NYC_INSTRUMENTER: argv.instrumenter,
-    NYC_HOOK_RUN_IN_CONTEXT: argv.hookRunInContext,
-    NYC_HOOK_CREATE_SCRIPT: argv.hookCreateScript,
+    NYC_HOOK_RUN_IN_CONTEXT: argv.hookRunInContext ? 'enable' : 'disable',
     BABEL_DISABLE_CACHE: 1
   }
   if (argv.require.length) {

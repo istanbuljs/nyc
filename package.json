@@ -123,6 +123,7 @@
     "url": "git@github.com:bcoe/nyc.git"
   },
   "bundledDependencies": [
+    "append-transform",
     "arrify",
     "caching-transform",
     "convert-source-map",

@@ -68,8 +68,6 @@ function NYC (opts) {
   this.sourceMapCache = libSourceMaps.createSourceMapStore()
 
   this.hookRunInContext = config.hookRunInContext
-  this.hookCreateScript = config.hookCreateScript
-
   this.hashCache = {}
   this.loadedMaps = null
   this.fakeRequire = null
@@ -308,9 +306,6 @@ NYC.prototype._wrapRequire = function () {
 NYC.prototype._addOtherHooks = function () {
   if (this.hookRunInContext) {
     this._addHook('RunInThisContext')
-  }
-  if (this.hookCreateScript) {
-    this._addHook('CreateScript')
   }
 }
 

@@ -14,8 +14,7 @@ try {
   enableCache: process.env.NYC_CACHE === 'enable',
   sourceMap: process.env.NYC_SOURCE_MAP === 'enable',
   instrumenter: process.env.NYC_INSTRUMENTER,
-  hookRunInContext: process.env.NYC_HOOK_RUN_IN_CONTEXT === 'true',
-  hookCreateScript: process.env.NYC_HOOK_CREATE_SCRIPT === 'true'
+  hookRunInContext: process.env.NYC_HOOK_RUN_IN_CONTEXT === 'enable'
 })).wrap()
 
 sw.runMain()
