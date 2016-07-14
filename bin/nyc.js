@@ -25,6 +25,10 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
         describe: 'directory to output coverage reports in',
         default: 'coverage'
       })
+      .option('temp-directory', {
+        describe: 'directory from which coverage JSON files are read',
+        default: './.nyc_output'
+      })
       .example('$0 report --reporter=lcov', 'output an HTML lcov report to ./coverage')
   })
   .command('check-coverage', 'check whether coverage is within thresholds provided', function (yargs) {
@@ -127,6 +131,11 @@ var yargs = require('yargs/yargs')(process.argv.slice(2))
     type: 'boolean',
     description: 'should nyc handle instrumentation?'
   })
+  .option('hook-run-in-context', {
+    default: true,
+    type: 'boolean',
+    description: 'should nyc wrap vm.runInThisContext?'
+  })
   .help('h')
   .alias('h', 'help')
   .version()
@@ -164,7 +173,8 @@ if (argv._[0] === 'report') {
     include: argv.include,
     exclude: argv.exclude,
     sourceMap: !!argv.sourceMap,
-    instrumenter: argv.instrumenter
+    instrumenter: argv.instrumenter,
+    hookRunInContext: argv.hookRunInContext
   }))
   nyc.reset()
 
@@ -175,6 +185,7 @@ if (argv._[0] === 'report') {
     NYC_CACHE: argv.cache ? 'enable' : 'disable',
     NYC_SOURCE_MAP: argv.sourceMap ? 'enable' : 'disable',
     NYC_INSTRUMENTER: argv.instrumenter,
+    NYC_HOOK_RUN_IN_CONTEXT: argv.hookRunInContext ? 'enable' : 'disable',
     BABEL_DISABLE_CACHE: 1
   }
   if (argv.require.length) {
@@ -218,7 +229,8 @@ function report (argv) {
 
   ;(new NYC({
     reporter: argv.reporter,
-    reportDir: argv.reportDir
+    reportDir: argv.reportDir,
+    tempDirectory: argv.tempDirectory
   })).report()
 }
 

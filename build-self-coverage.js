@@ -1,4 +1,4 @@
-var istanbul = require('istanbul')
+var istanbul = require('istanbul-lib-instrument')
 var fs = require('fs')
 var path = require('path')
 
@@ -8,10 +8,9 @@ var path = require('path')
   var indexPath = path.join(__dirname, name)
   var source = fs.readFileSync(indexPath, 'utf8')
 
-  var instrumentor = new istanbul.Instrumenter({
+  var instrumentor = istanbul.createInstrumenter({
     coverageVariable: '___NYC_SELF_COVERAGE___',
-    esModules: true,
-    noAutoWrap: true
+    esModules: true
   })
 
   var instrumentedSource = instrumentor.instrumentSync(source, indexPath)
