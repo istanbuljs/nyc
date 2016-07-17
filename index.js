@@ -473,10 +473,4 @@ NYC.prototype.tempDirectory = function () {
   return path.resolve(this.cwd, './', this._tempDirectory)
 }
 
-NYC.prototype.mungeArgs = function (yargv) {
-  var argv = process.argv.slice(1)
-  argv = argv.slice(argv.indexOf(yargv._[0]))
-  return argv
-}
-
 module.exports = NYC

@@ -410,4 +410,29 @@ describe('the nyc cli', function () {
       })
     })
   })
+
+  describe('args', function () {
+    it('does not interpret args intended for instrumented bin', function (done) {
+      var args = [bin, '--silent', process.execPath, 'args.js', '--help', '--version']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        var args = JSON.parse(stdout)
+        args.should.include('--help')
+        args.should.include('--version')
+        args.should.not.include('--silent')
+        done()
+      })
+    })
+  })
 })
