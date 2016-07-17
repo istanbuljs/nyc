@@ -222,19 +222,40 @@ modules should be required in the subprocess collecting coverage:
 ## Caching
 
 You can run `nyc` with the optional `--cache` flag, to prevent it from
-instrumenting the same files multiple times. This can signficantly
+instrumenting the same files multiple times. This can significantly
 improve runtime performance.
 
 ## Configuring `nyc`
 
-Any configuration options that can be set via the command line
-can also be specified in the `nyc` stanza of your package.json:
+Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json (these will not affect `nyc` subcommands):
 
 ```json
 {
+  "description": "These are just examples for demonstration, nothing prescriptive",
   "nyc": {
     "lines": 99,
-    "check-coverage": false,
+    "statements": 99,
+    "functions": 99,
+    "branches": 99,
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "src/**/*.spec.js"
+    ],
+    "reporter": [
+      "lcov",
+      "text-summary"
+    ],
+    "require": [
+      "./test/helpers/some-helper.js"
+    ],
+    "extension": [
+      ".jsx"
+    ],
+    "cache": true,
+    "all": true,
+    "check-coverage": true,
     "report-dir": "./alternative"
   }
 }
