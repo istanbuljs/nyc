@@ -287,6 +287,7 @@ NYC.prototype._handleSourceMap = function (cacheDir, code, hash, filename) {
 
 NYC.prototype._handleJs = function (code, filename) {
   var relFile = path.relative(this.cwd, filename)
+  filename = path.resolve(this.cwd, relFile) // ensure the path has correct casing (see https://github.com/istanbuljs/nyc/issues/269)
   return this._maybeInstrumentSource(code, filename, relFile) || code
 }
 
