@@ -143,13 +143,14 @@ NYC.prototype.addFile = function (filename) {
   }
 }
 
-NYC.prototype._readTranspiledSource = function (path) {
+NYC.prototype._readTranspiledSource = function (filePath) {
   var source = null
-  Module._extensions['.js']({
+  var ext = path.extname(filePath)
+  Module._extensions[ext]({
     _compile: function (content, filename) {
       source = content
     }
-  }, path)
+  }, filePath)
   return source
 }
 
