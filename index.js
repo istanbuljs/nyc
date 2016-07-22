@@ -146,7 +146,7 @@ NYC.prototype.addFile = function (filename) {
 NYC.prototype._readTranspiledSource = function (filePath) {
   var source = null
   var ext = path.extname(filePath)
-  if (Module._extensions[ext] === 'undefined') {
+  if (typeof Module._extensions[ext] === 'undefined') {
     ext = '.js'
   }
   Module._extensions[ext]({
