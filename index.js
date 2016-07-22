@@ -147,7 +147,7 @@ NYC.prototype._readTranspiledSource = function (filePath) {
   var source = null
   var ext = path.extname(filePath)
   if (Module._extensions[ext] === 'undefined') {
-    ext = '.js';
+    ext = '.js'
   }
   Module._extensions[ext]({
     _compile: function (content, filename) {
