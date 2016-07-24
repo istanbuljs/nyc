@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.1.0"></a>
+# [7.1.0](https://github.com/bcoe/nyc/compare/v7.0.0...v7.1.0) (2016-07-24)
+
+
+### Bug Fixes
+
+* make --all flag work with files with extensions other than .js ([#326](https://github.com/bcoe/nyc/issues/326)) ([d0a8674](https://github.com/bcoe/nyc/commit/d0a8674))
+* work around for Windows path issue nodejs/node[#6624](https://github.com/bcoe/nyc/issues/6624) ([6b1fed0](https://github.com/bcoe/nyc/commit/6b1fed0))
+
+
+### Features
+
+* nyc no longer tries to run arguments passed to the instrumented bin ([#322](https://github.com/bcoe/nyc/issues/322)) ([e0a8c0b](https://github.com/bcoe/nyc/commit/e0a8c0b))
+* use istanbul-lib-hook to wrap require and support vm hooks ([#308](https://github.com/bcoe/nyc/issues/308)) ([2b64cf8](https://github.com/bcoe/nyc/commit/2b64cf8))
+
+
+
 <a name="7.0.0"></a>
 # [7.0.0](https://github.com/bcoe/nyc/compare/v6.6.1...v7.0.0) (2016-07-09)
 
