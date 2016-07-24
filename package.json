@@ -10,7 +10,7 @@
     "clean": "rimraf ./.nyc_output ./node_modules/.cache ./.self_coverage ./test/fixtures/.nyc_output ./test/fixtures/node_modules/.cache *covered.js ./lib/*covered.js",
     "build": "node ./build-tests",
     "instrument": "node ./build-self-coverage.js",
-    "run-tests": "tap -t120 --no-cov -b ./test/build/*.js ./test/src/nyc-bin.js",
+    "run-tests": "tap -t120 --no-cov -b ./test/build/*.js ./test/src/nyc-bin.js ./test/src/process-args.js",
     "report": "node ./bin/nyc  --temp-directory ./.self_coverage/ -r text -r lcov report",
     "cover": "npm run clean && npm run build && npm run instrument && npm run run-tests && npm run report",
     "dev": "npm run clean && npm run build && npm run run-tests",
@@ -95,7 +95,8 @@
     "signal-exit": "^3.0.0",
     "spawn-wrap": "^1.2.4",
     "test-exclude": "^1.1.0",
-    "yargs": "^4.8.0"
+    "yargs": "^4.8.1",
+    "yargs-parser": "^2.4.1"
   },
   "devDependencies": {
     "any-path": "^1.3.0",
@@ -123,7 +124,6 @@
     "url": "git@github.com:bcoe/nyc.git"
   },
   "bundledDependencies": [
-    "append-transform",
     "arrify",
     "caching-transform",
     "convert-source-map",
@@ -133,8 +133,8 @@
     "foreground-child",
     "glob",
     "istanbul-lib-coverage",
-    "istanbul-lib-instrument",
     "istanbul-lib-hook",
+    "istanbul-lib-instrument",
     "istanbul-lib-report",
     "istanbul-lib-source-maps",
     "istanbul-reports",
@@ -147,6 +147,7 @@
     "signal-exit",
     "spawn-wrap",
     "test-exclude",
-    "yargs"
+    "yargs",
+    "yargs-parser"
   ]
 }

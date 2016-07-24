@@ -339,24 +339,6 @@ describe('nyc', function () {
     })
   })
 
-  describe('mungeArgs', function () {
-    it('removes dashed options that proceed bin', function () {
-      process.argv = ['/Users/benjamincoe/bin/iojs',
-        '/Users/benjamincoe/bin/nyc.js',
-        '--reporter',
-        'lcov',
-        'node',
-        'test/nyc-test.js'
-      ]
-
-      var yargv = require('yargs/yargs')(process.argv.slice(2)).argv
-
-      var munged = (new NYC()).mungeArgs(yargv)
-
-      munged.should.eql(['node', 'test/nyc-test.js'])
-    })
-  })
-
   describe('addAllFiles', function () {
     it('outputs an empty coverage report for all files that are not excluded', function (done) {
       var nyc = new NYC({

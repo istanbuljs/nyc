@@ -7,145 +7,14 @@ try {
 } catch (e) {
   NYC = require('../index.js')
 }
+var processArgs = require('../lib/process-args')
 
 var sw = require('spawn-wrap')
 var wrapper = require.resolve('./wrap.js')
+var Yargs = require('yargs/yargs')
 
-var yargs = require('yargs/yargs')(process.argv.slice(2))
-  .usage('$0 [command] [options]\n\nrun your tests with the nyc bin to instrument them with coverage')
-  .command('report', 'run coverage report for .nyc_output', function (yargs) {
-    return yargs
-      .usage('$0 report [options]')
-      .option('reporter', {
-        alias: 'r',
-        describe: 'coverage reporter(s) to use',
-        default: 'text'
-      })
-      .option('report-dir', {
-        describe: 'directory to output coverage reports in',
-        default: 'coverage'
-      })
-      .option('temp-directory', {
-        describe: 'directory from which coverage JSON files are read',
-        default: './.nyc_output'
-      })
-      .example('$0 report --reporter=lcov', 'output an HTML lcov report to ./coverage')
-  })
-  .command('check-coverage', 'check whether coverage is within thresholds provided', function (yargs) {
-    return yargs
-      .usage('$0 check-coverage [options]')
-      .option('branches', {
-        default: 0,
-        description: 'what % of branches must be covered?'
-      })
-      .option('functions', {
-        default: 0,
-        description: 'what % of functions must be covered?'
-      })
-      .option('lines', {
-        default: 90,
-        description: 'what % of lines must be covered?'
-      })
-      .option('statements', {
-        default: 0,
-        description: 'what % of statements must be covered?'
-      })
-      .example('$0 check-coverage --lines 95', "check whether the JSON in nyc's output folder meets the thresholds provided")
-  })
-  .command(require('../lib/commands/instrument'))
-  .option('reporter', {
-    alias: 'r',
-    describe: 'coverage reporter(s) to use',
-    default: 'text'
-  })
-  .option('report-dir', {
-    describe: 'directory to output coverage reports in',
-    default: 'coverage'
-  })
-  .option('silent', {
-    alias: 's',
-    default: false,
-    type: 'boolean',
-    describe: "don't output a report after tests finish running"
-  })
-  .option('all', {
-    alias: 'a',
-    default: false,
-    type: 'boolean',
-    describe: 'whether or not to instrument all files of the project (not just the ones touched by your test suite)'
-  })
-  .option('exclude', {
-    alias: 'x',
-    default: [],
-    describe: 'a list of specific files and directories that should be excluded from coverage, glob patterns are supported, node_modules is always excluded'
-  })
-  .option('include', {
-    alias: 'n',
-    default: [],
-    describe: 'a list of specific files that should be covered, glob patterns are supported'
-  })
-  .option('require', {
-    alias: 'i',
-    default: [],
-    describe: 'a list of additional modules that nyc should attempt to require in its subprocess, e.g., babel-register, babel-polyfill.'
-  })
-  .option('cache', {
-    alias: 'c',
-    default: false,
-    type: 'boolean',
-    describe: 'cache instrumentation results for improved performance'
-  })
-  .option('extension', {
-    alias: 'e',
-    default: [],
-    describe: 'a list of extensions that nyc should handle in addition to .js'
-  })
-  .option('check-coverage', {
-    type: 'boolean',
-    default: false,
-    describe: 'check whether coverage is within thresholds provided'
-  })
-  .option('branches', {
-    default: 0,
-    description: 'what % of branches must be covered?'
-  })
-  .option('functions', {
-    default: 0,
-    description: 'what % of functions must be covered?'
-  })
-  .option('lines', {
-    default: 90,
-    description: 'what % of lines must be covered?'
-  })
-  .option('statements', {
-    default: 0,
-    description: 'what % of statements must be covered?'
-  })
-  .option('source-map', {
-    default: true,
-    type: 'boolean',
-    description: 'should nyc detect and handle source maps?'
-  })
-  .option('instrument', {
-    default: true,
-    type: 'boolean',
-    description: 'should nyc handle instrumentation?'
-  })
-  .option('hook-run-in-context', {
-    default: true,
-    type: 'boolean',
-    description: 'should nyc wrap vm.runInThisContext?'
-  })
-  .help('h')
-  .alias('h', 'help')
-  .version()
-  .pkgConf('nyc', process.cwd())
-  .example('$0 npm test', 'instrument your tests with coverage')
-  .example('$0 --require babel-core/register npm test', 'instrument your tests with coverage and babel')
-  .example('$0 report --reporter=text-lcov', 'output lcov report after running your tests')
-  .epilog('visit https://git.io/voHar for list of available reporters')
-
-var argv = yargs.argv
+var yargs = decorateYargs(buildYargs())
+var argv = yargs.parse(processArgs.hideInstrumenteeArgs())
 
 if (argv._[0] === 'report') {
   // run a report.
@@ -155,7 +24,7 @@ if (argv._[0] === 'report') {
 } else if (argv._[0] === 'check-coverage') {
   checkCoverage(argv)
 } else if (argv._[0] === 'instrument') {
-  // noop, let the command handler do its thing.
+  // look in lib/commands/instrument.js for logic.
 } else if (argv._.length) {
   // wrap subprocesses and execute argv[1]
   argv.require = arrify(argv.require)
@@ -206,7 +75,11 @@ if (argv._[0] === 'report') {
   // set process.exitCode. Keep track so that both children are run, but
   // a non-zero exit codes in either one leads to an overall non-zero exit code.
   process.exitCode = 0
-  foreground(nyc.mungeArgs(argv), function (done) {
+  foreground(processArgs.hideInstrumenterArgs(
+    // use the same argv descrption, but don't exit
+    // for flags like --help.
+    buildYargs().parse(process.argv.slice(2))
+  ), function (done) {
     var mainChildExitCode = process.exitCode
 
     if (argv.checkCoverage) {
@@ -243,4 +116,149 @@ function checkCoverage (argv, cb) {
     branches: argv.branches,
     statements: argv.statements
   })
+}
+
+function buildYargs () {
+  return Yargs([])
+    .usage('$0 [command] [options]\n\nrun your tests with the nyc bin to instrument them with coverage')
+    .command('report', 'run coverage report for .nyc_output', function (yargs) {
+      return yargs
+        .usage('$0 report [options]')
+        .option('reporter', {
+          alias: 'r',
+          describe: 'coverage reporter(s) to use',
+          default: 'text'
+        })
+        .option('report-dir', {
+          describe: 'directory to output coverage reports in',
+          default: 'coverage'
+        })
+        .option('temp-directory', {
+          describe: 'directory from which coverage JSON files are read',
+          default: './.nyc_output'
+        })
+        .example('$0 report --reporter=lcov', 'output an HTML lcov report to ./coverage')
+    })
+    .command('check-coverage', 'check whether coverage is within thresholds provided', function (yargs) {
+      return yargs
+        .usage('$0 check-coverage [options]')
+        .option('branches', {
+          default: 0,
+          description: 'what % of branches must be covered?'
+        })
+        .option('functions', {
+          default: 0,
+          description: 'what % of functions must be covered?'
+        })
+        .option('lines', {
+          default: 90,
+          description: 'what % of lines must be covered?'
+        })
+        .option('statements', {
+          default: 0,
+          description: 'what % of statements must be covered?'
+        })
+        .example('$0 check-coverage --lines 95', "check whether the JSON in nyc's output folder meets the thresholds provided")
+    })
+    .option('reporter', {
+      alias: 'r',
+      describe: 'coverage reporter(s) to use',
+      default: 'text'
+    })
+    .option('report-dir', {
+      describe: 'directory to output coverage reports in',
+      default: 'coverage'
+    })
+    .option('silent', {
+      alias: 's',
+      default: false,
+      type: 'boolean',
+      describe: "don't output a report after tests finish running"
+    })
+    .option('all', {
+      alias: 'a',
+      default: false,
+      type: 'boolean',
+      describe: 'whether or not to instrument all files of the project (not just the ones touched by your test suite)'
+    })
+    .option('exclude', {
+      alias: 'x',
+      default: [],
+      describe: 'a list of specific files and directories that should be excluded from coverage, glob patterns are supported, node_modules is always excluded'
+    })
+    .option('include', {
+      alias: 'n',
+      default: [],
+      describe: 'a list of specific files that should be covered, glob patterns are supported'
+    })
+    .option('require', {
+      alias: 'i',
+      default: [],
+      describe: 'a list of additional modules that nyc should attempt to require in its subprocess, e.g., babel-register, babel-polyfill.'
+    })
+    .option('cache', {
+      alias: 'c',
+      default: false,
+      type: 'boolean',
+      describe: 'cache instrumentation results for improved performance'
+    })
+    .option('extension', {
+      alias: 'e',
+      default: [],
+      describe: 'a list of extensions that nyc should handle in addition to .js'
+    })
+    .option('check-coverage', {
+      type: 'boolean',
+      default: false,
+      describe: 'check whether coverage is within thresholds provided'
+    })
+    .option('branches', {
+      default: 0,
+      description: 'what % of branches must be covered?'
+    })
+    .option('functions', {
+      default: 0,
+      description: 'what % of functions must be covered?'
+    })
+    .option('lines', {
+      default: 90,
+      description: 'what % of lines must be covered?'
+    })
+    .option('statements', {
+      default: 0,
+      description: 'what % of statements must be covered?'
+    })
+    .option('source-map', {
+      default: true,
+      type: 'boolean',
+      description: 'should nyc detect and handle source maps?'
+    })
+    .option('instrument', {
+      default: true,
+      type: 'boolean',
+      description: 'should nyc handle instrumentation?'
+    })
+    .option('hook-run-in-context', {
+      default: true,
+      type: 'boolean',
+      description: 'should nyc wrap vm.runInThisContext?'
+    })
+    .pkgConf('nyc', process.cwd())
+    .example('$0 npm test', 'instrument your tests with coverage')
+    .example('$0 --require babel-core/register npm test', 'instrument your tests with coverage and babel')
+    .example('$0 report --reporter=text-lcov', 'output lcov report after running your tests')
+    .epilog('visit https://git.io/voHar for list of available reporters')
+    .boolean('help')
+    .boolean('h')
+    .boolean('version')
+}
+
+// decorate yargs with all the actions
+// that would make it exit: help, version, command.
+function decorateYargs (yargs) {
+  return yargs
+    .help('h')
+    .alias('h', 'help')
+    .version()
+    .command(require('../lib/commands/instrument'))
 }
