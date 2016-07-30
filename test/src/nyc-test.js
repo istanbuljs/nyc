@@ -411,7 +411,7 @@ describe('nyc', function () {
       return done()
     })
 
-    it('transpiles files added via addAllFiles', function (done) {
+    it('transpiles .js files added via addAllFiles', function (done) {
       fs.writeFileSync(
         './test/fixtures/needs-transpile.js',
         '--> pork chop sandwiches <--\nvar a = 99',
@@ -438,6 +438,35 @@ describe('nyc', function () {
       fs.unlinkSync(needsTranspilePath)
       return done()
     })
+  })
+
+  it('transpiles non-.js files added via addAllFiles', function (done) {
+    fs.writeFileSync(
+      './test/fixtures/needs-transpile.whatever',
+      '--> pork chop sandwiches <--\nvar a = 99',
+      'utf-8'
+    )
+
+    var nyc = (new NYC({
+      cwd: fixtures,
+      require: './test/fixtures/transpile-hook',
+      extension: ['.whatever']
+    }))
+
+    nyc.reset()
+    nyc.addAllFiles()
+
+    var needsTranspilePath = path.join(fixtures, './needs-transpile.whatever')
+    var reports = _.filter(nyc._loadReports(), function (report) {
+      return ap(report)[needsTranspilePath]
+    })
+    var report = reports[0][needsTranspilePath]
+
+    reports.length.should.equal(1)
+    report.s['1'].should.equal(0)
+
+    fs.unlinkSync(needsTranspilePath)
+    return done()
   })
 
   describe('cache', function () {
