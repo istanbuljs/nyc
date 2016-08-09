@@ -183,7 +183,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
   var visitor = function (filename) {
     var ext
     var transform
-    var inFile = path.relative(_this.cwd, path.resolve(inputDir, filename))
+    var inFile = path.resolve(inputDir, filename)
     var code = fs.readFileSync(inFile, 'utf-8')
 
     for (ext in _this.transforms) {
@@ -200,7 +200,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     if (!output) {
       console.log(code)
     } else {
-      var outFile = path.relative(_this.cwd, path.resolve(output, filename))
+      var outFile = path.resolve(output, filename)
       mkdirp.sync(path.dirname(outFile))
       fs.writeFileSync(outFile, code, 'utf-8')
     }
