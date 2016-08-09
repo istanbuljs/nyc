@@ -16,6 +16,7 @@ require('tap').mochaGlobals()
 // beforeEach
 rimraf.sync(path.resolve(fakebin, 'node'))
 rimraf.sync(path.resolve(fakebin, 'npm'))
+rimraf.sync(path.resolve(fixturesCLI, 'subdir', 'output-dir'))
 
 describe('the nyc cli', function () {
   var env = { PATH: process.env.PATH }
@@ -336,6 +337,24 @@ describe('the nyc cli', function () {
           stdout.should.match(/half-covered\.js"/)
           stdout.should.match(/half-covered-failing\.js"/)
           stdout.should.not.match(/spawn\.js"/)
+          done()
+        })
+      })
+
+      it('works in directories without a package.json', function (done) {
+        var args = [bin, 'instrument', './input-dir', './output-dir']
+
+        var subdir = path.resolve(fixturesCLI, 'subdir')
+        var proc = spawn(process.execPath, args, {
+          cwd: subdir,
+          env: env
+        })
+
+        proc.on('exit', function (code) {
+          code.should.equal(0)
+          var target = path.resolve(subdir, 'output-dir', 'index.js')
+          fs.readFileSync(target, 'utf8')
+              .should.match(/console.log\('Hello, World!'\)/)
           done()
         })
       })
