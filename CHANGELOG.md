@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.0.0"></a>
+# [8.0.0](https://github.com/bcoe/nyc/compare/v7.1.0...v8.0.0) (2016-08-12)
+
+
+### Bug Fixes
+
+* make `nyc instrument` work in subdirectories ([#343](https://github.com/bcoe/nyc/issues/343)) ([a82cf49](https://github.com/bcoe/nyc/commit/a82cf49))
+* upgrade to versions of coverage/instrument that solve out-of-bound errors ([#349](https://github.com/bcoe/nyc/issues/349)) ([bee0328](https://github.com/bcoe/nyc/commit/bee0328))
+
+
+### Features
+
+* upgrade to new test-exclude; with suppport for node_modules, and empty exclude ([#348](https://github.com/bcoe/nyc/issues/348)) ([d616ffc](https://github.com/bcoe/nyc/commit/d616ffc))
+
+
+### BREAKING CHANGES
+
+* node_modules is no longer automatically excluded, and an empty array of exclude rules can now be provided.
+
+
+
 <a name="7.1.0"></a>
 # [7.1.0](https://github.com/bcoe/nyc/compare/v7.0.0...v7.1.0) (2016-07-24)
 
