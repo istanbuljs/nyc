@@ -69,7 +69,7 @@ describe('nyc', function () {
         cwd: path.resolve(__dirname, '../fixtures')
       })
 
-      nyc.exclude.exclude.length.should.eql(5)
+      nyc.exclude.exclude.length.should.eql(4)
     })
 
     it("loads 'extension' patterns from package.json#nyc", function () {
@@ -95,19 +95,21 @@ describe('nyc', function () {
       nyc2.exclude.include.should.equal(false)
     })
 
-    it("ignores 'exclude' option if it's falsy or []", function () {
+    it("ignores 'exclude' option if it's falsy", function () {
       var nyc1 = new NYC({
         cwd: path.resolve(__dirname, '../fixtures/conf-empty')
       })
 
       nyc1.exclude.exclude.length.should.eql(7)
+    })
 
+    it("allows for empty 'exclude'", function () {
       var nyc2 = new NYC({
         cwd: path.resolve(__dirname, '../fixtures/conf-empty'),
         exclude: []
       })
 
-      nyc2.exclude.exclude.length.should.eql(7)
+      nyc2.exclude.exclude.length.should.eql(0)
     })
   })
 

@@ -10,6 +10,7 @@ try {
 var processArgs = require('../lib/process-args')
 
 var sw = require('spawn-wrap')
+var testExclude = require('test-exclude')
 var wrapper = require.resolve('./wrap.js')
 var Yargs = require('yargs/yargs')
 
@@ -183,7 +184,7 @@ function buildYargs () {
     })
     .option('exclude', {
       alias: 'x',
-      default: [],
+      default: testExclude.defaultExclude,
       describe: 'a list of specific files and directories that should be excluded from coverage, glob patterns are supported, node_modules is always excluded'
     })
     .option('include', {
