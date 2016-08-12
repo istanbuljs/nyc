@@ -22,6 +22,21 @@ describe('process-args', function () {
 
       munged.should.eql(['node', 'test/nyc-test.js'])
     })
+
+    it('parses extra args directly after -- as Node execArgv', function () {
+      process.argv = ['/Users/benjamincoe/bin/iojs',
+        '/Users/benjamincoe/bin/nyc.js',
+        '--',
+        '--expose-gc',
+        'index.js'
+      ]
+
+      var yargv = require('yargs/yargs')(process.argv.slice(2)).argv
+
+      var munged = processArgs.hideInstrumenterArgs(yargv)
+
+      munged.should.eql([process.execPath, '--expose-gc', 'index.js'])
+    })
   })
 
   describe('hideInstrumenteeArgs', function () {
