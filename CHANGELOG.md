@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.1.0"></a>
+# [8.1.0](https://github.com/bcoe/nyc/compare/v8.0.0...v8.1.0) (2016-08-14)
+
+
+### Bug Fixes
+
+* serialization using ',' was breaking globs ([#353](https://github.com/bcoe/nyc/issues/353)) ([22929db](https://github.com/bcoe/nyc/commit/22929db))
+
+
+### Features
+
+* implicitly assume `node` when the command starts with an option ([#350](https://github.com/bcoe/nyc/issues/350)) ([2bb52cd](https://github.com/bcoe/nyc/commit/2bb52cd))
+
+
+
 <a name="8.0.0"></a>
 # [8.0.0](https://github.com/bcoe/nyc/compare/v7.1.0...v8.0.0) (2016-08-12)
 
