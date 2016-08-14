@@ -65,10 +65,10 @@ if (argv._[0] === 'report') {
     env.NYC_EXTENSION = argv.extension.join(',')
   }
   if (argv.exclude.length) {
-    env.NYC_EXCLUDE = argv.exclude.join(',')
+    env.NYC_EXCLUDE = argv.exclude.join(':')
   }
   if (argv.include.length) {
-    env.NYC_INCLUDE = argv.include.join(',')
+    env.NYC_INCLUDE = argv.include.join(':')
   }
   sw([wrapper], env)
 
