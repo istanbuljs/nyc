@@ -170,9 +170,6 @@ the array is a glob pattern indicating which paths should be omitted.
 
 Globs are matched using [micromatch](https://www.npmjs.com/package/micromatch).
 
-In addition to patterns specified in the package, nyc will always exclude
-files in `node_modules`.
-
 For example, the following config will exclude everything in `node_modules`,
 any files with the extension `.spec.js`, and anything in the `build`
 directory:
