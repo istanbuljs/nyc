@@ -453,5 +453,26 @@ describe('the nyc cli', function () {
         done()
       })
     })
+
+    it('interprets first args after -- as Node.js execArgv', function (done) {
+      var args = [bin, '--', '--expose-gc', path.resolve(fixturesCLI, 'gc.js')]
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.setEncoding('utf8')
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdout.should.include('still running')
+        done()
+      })
+    })
   })
 })
