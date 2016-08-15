@@ -9,7 +9,7 @@ Please use the template provided below, when reporting bugs:
 
 ## Forensic Information
 
-**Operating System:** _the operating system you observed the issue on._
+**Operating System:** the operating system you observed the issue on.
 **Environment Information:** information about your project's environment, see instructions below:
 
 1. run the following script:
