@@ -72,6 +72,7 @@
   "author": "Ben Coe <ben@npmjs.com>",
   "license": "ISC",
   "dependencies": {
+    "archy": "^1.0.0",
     "arrify": "^1.0.1",
     "caching-transform": "^1.0.0",
     "convert-source-map": "^1.3.0",
@@ -124,6 +125,7 @@
     "url": "git@github.com:istanbuljs/nyc.git"
   },
   "bundledDependencies": [
+    "archy",
     "arrify",
     "caching-transform",
     "convert-source-map",

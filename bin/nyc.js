@@ -44,7 +44,8 @@ if (argv._[0] === 'report') {
     exclude: argv.exclude,
     sourceMap: !!argv.sourceMap,
     instrumenter: argv.instrumenter,
-    hookRunInContext: argv.hookRunInContext
+    hookRunInContext: argv.hookRunInContext,
+    showProcessTree: argv.showProcessTree
   }))
   nyc.reset()
 
@@ -56,6 +57,8 @@ if (argv._[0] === 'report') {
     NYC_SOURCE_MAP: argv.sourceMap ? 'enable' : 'disable',
     NYC_INSTRUMENTER: argv.instrumenter,
     NYC_HOOK_RUN_IN_CONTEXT: argv.hookRunInContext ? 'enable' : 'disable',
+    NYC_SHOW_PROCESS_TREE: argv.showProcessTree ? 'enable' : 'disable',
+    NYC_ROOT_ID: nyc.rootId,
     BABEL_DISABLE_CACHE: 1
   }
   if (argv.require.length) {
@@ -101,11 +104,13 @@ if (argv._[0] === 'report') {
 function report (argv) {
   process.env.NYC_CWD = process.cwd()
 
-  ;(new NYC({
+  var nyc = new NYC({
     reporter: argv.reporter,
     reportDir: argv.reportDir,
-    tempDirectory: argv.tempDirectory
-  })).report()
+    tempDirectory: argv.tempDirectory,
+    showProcessTree: argv.showProcessTree
+  })
+  nyc.report()
 }
 
 function checkCoverage (argv, cb) {
@@ -137,6 +142,11 @@ function buildYargs () {
         .option('temp-directory', {
           describe: 'directory from which coverage JSON files are read',
           default: './.nyc_output'
+        })
+        .option('show-process-tree', {
+          describe: 'display the tree of spawned processes',
+          default: false,
+          type: 'boolean'
         })
         .example('$0 report --reporter=lcov', 'output an HTML lcov report to ./coverage')
     })
@@ -243,6 +253,11 @@ function buildYargs () {
       default: true,
       type: 'boolean',
       description: 'should nyc wrap vm.runInThisContext?'
+    })
+    .option('show-process-tree', {
+      describe: 'display the tree of spawned processes',
+      default: false,
+      type: 'boolean'
     })
     .pkgConf('nyc', process.cwd())
     .example('$0 npm test', 'instrument your tests with coverage')

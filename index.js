@@ -22,6 +22,13 @@ var pkgUp = require('pkg-up')
 var testExclude = require('test-exclude')
 var yargs = require('yargs')
 
+var ProcessInfo
+try {
+  ProcessInfo = require('./lib/process.covered.js')
+} catch (e) {
+  ProcessInfo = require('./lib/process.js')
+}
+
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
   require('./lib/self-coverage-helper')
@@ -36,6 +43,7 @@ function NYC (opts) {
   this._instrumenterLib = require(config.instrumenter || './lib/instrumenters/istanbul')
   this._reportDir = config.reportDir
   this._sourceMap = config.sourceMap
+  this._showProcessTree = config.showProcessTree
   this.cwd = config.cwd
 
   this.reporter = arrify(config.reporter || 'text')
@@ -71,6 +79,9 @@ function NYC (opts) {
   this.hashCache = {}
   this.loadedMaps = null
   this.fakeRequire = null
+
+  this.processInfo = new ProcessInfo(opts && opts._processInfo)
+  this.rootId = this.processInfo.root || this.generateUniqueID()
 }
 
 NYC.prototype._loadConfig = function (opts) {
@@ -327,6 +338,10 @@ NYC.prototype.clearCache = function () {
 
 NYC.prototype.createTempDirectory = function () {
   mkdirp.sync(this.tempDirectory())
+
+  if (this._showProcessTree) {
+    mkdirp.sync(this.processInfoDirectory())
+  }
 }
 
 NYC.prototype.reset = function () {
@@ -352,6 +367,12 @@ NYC.prototype.wrap = function (bin) {
   return this
 }
 
+NYC.prototype.generateUniqueID = function () {
+  return md5hex(
+    process.hrtime().concat(process.pid).map(String)
+  )
+}
+
 NYC.prototype.writeCoverageFile = function () {
   var coverage = coverageFinder()
   if (!coverage) return
@@ -366,13 +387,24 @@ NYC.prototype.writeCoverageFile = function () {
     coverage = this.sourceMapTransform(coverage)
   }
 
-  var id = md5hex(
-    process.hrtime().concat(process.pid).map(String)
-  )
+  var id = this.generateUniqueID()
+  var coverageFilename = path.resolve(this.tempDirectory(), id + '.json')
 
   fs.writeFileSync(
-    path.resolve(this.tempDirectory(), './', id + '.json'),
+    coverageFilename,
     JSON.stringify(coverage),
+    'utf-8'
+  )
+
+  if (!this._showProcessTree) {
+    return
+  }
+
+  this.processInfo.coverageFilename = coverageFilename
+
+  fs.writeFileSync(
+    path.resolve(this.processInfoDirectory(), id + '.json'),
+    JSON.stringify(this.processInfo),
     'utf-8'
   )
 }
@@ -407,6 +439,16 @@ NYC.prototype.report = function () {
   this.reporter.forEach(function (_reporter) {
     tree.visit(reports.create(_reporter), context)
   })
+
+  if (this._showProcessTree) {
+    this.showProcessTree()
+  }
+}
+
+NYC.prototype.showProcessTree = function () {
+  var processInfos = this._loadProcessInfos()
+
+  console.log(ProcessInfo.renderProcessTree(processInfos))
 }
 
 NYC.prototype.checkCoverage = function (thresholds) {
@@ -433,6 +475,22 @@ NYC.prototype.checkCoverage = function (thresholds) {
   })
 }
 
+NYC.prototype._loadProcessInfos = function () {
+  var _this = this
+  var files = fs.readdirSync(this.processInfoDirectory())
+
+  return files.map(function (f) {
+    try {
+      return new ProcessInfo(JSON.parse(fs.readFileSync(
+        path.resolve(_this.processInfoDirectory(), f),
+        'utf-8'
+      )))
+    } catch (e) { // handle corrupt JSON output.
+      return {}
+    }
+  })
+}
+
 NYC.prototype._loadReports = function () {
   var _this = this
   var files = fs.readdirSync(this.tempDirectory())
@@ -445,7 +503,7 @@ NYC.prototype._loadReports = function () {
     var report
     try {
       report = JSON.parse(fs.readFileSync(
-        path.resolve(_this.tempDirectory(), './', f),
+        path.resolve(_this.tempDirectory(), f),
         'utf-8'
       ))
     } catch (e) { // handle corrupt JSON output.
@@ -476,7 +534,11 @@ NYC.prototype._loadReports = function () {
 }
 
 NYC.prototype.tempDirectory = function () {
-  return path.resolve(this.cwd, './', this._tempDirectory)
+  return path.resolve(this.cwd, this._tempDirectory)
+}
+
+NYC.prototype.processInfoDirectory = function () {
+  return path.resolve(this.tempDirectory(), 'processinfo')
 }
 
 module.exports = NYC
