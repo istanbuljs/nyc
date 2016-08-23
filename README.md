@@ -1,5 +1,7 @@
 # nyc
 
+[![Join the chat at https://gitter.im/istanbuljs/nyc](https://badges.gitter.im/istanbuljs/nyc.svg)](https://gitter.im/istanbuljs/nyc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/istanbuljs/nyc.svg?branch=master)](https://travis-ci.org/istanbuljs/nyc)
 [![Coverage Status](https://coveralls.io/repos/bcoe/nyc/badge.svg?branch=)](https://coveralls.io/r/bcoe/nyc?branch=master)
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
