@@ -215,7 +215,7 @@ been required, run nyc with the flag `--all` to enable this.
 The `--require` flag can be provided to `nyc` to indicate that additional
 modules should be required in the subprocess collecting coverage:
 
-`nyc --require babel-core/register --require babel-polyfill mocha`
+`nyc --require babel-register --require babel-polyfill mocha`
 
 ## Caching
 
