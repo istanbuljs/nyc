@@ -171,9 +171,8 @@ the array is a glob pattern indicating which paths should be omitted.
 
 Globs are matched using [micromatch](https://www.npmjs.com/package/micromatch).
 
-For example, the following config will exclude everything in `node_modules`,
-any files with the extension `.spec.js`, and anything in the `build`
-directory:
+For example, the following config will exclude any files with the extension `.spec.js`, 
+and anything in the `build` directory:
 
 ```json
 {
@@ -185,6 +184,8 @@ directory:
   }
 }
 ```
+> Note: Since version 8.0 the `node_modules` folder is not automatically excluded,
+you need o explicit add in your exclude array
 
 > Note: exclude defaults to `['test', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**']`,
 which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`,
