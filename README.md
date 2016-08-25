@@ -185,7 +185,7 @@ and anything in the `build` directory:
 }
 ```
 > Note: Since version 8.0 if you add a "exclude" array the `node_modules`
-folder is not automatically excluded, you need to explicit add it to your exclude array
+folder is not automatically excluded, you will need to explicitly add it to your exclude array
 
 > Note: exclude defaults to `['test', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**']`,
 which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`,
