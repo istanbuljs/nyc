@@ -460,7 +460,24 @@ NYC.prototype.checkCoverage = function (thresholds) {
 }
 
 NYC.prototype._loadProcessInfoTree = function () {
-  return ProcessInfo.buildProcessTree(this._loadProcessInfos())
+  var _this = this
+  var processTree = ProcessInfo.buildProcessTree(this._loadProcessInfos())
+
+  processTree.getCoverageMap(function (filenames, maps) {
+    var map = libCoverage.createCoverageMap({})
+
+    _this._loadReports(filenames).forEach(function (report) {
+      map.merge(report)
+    })
+
+    maps.forEach(function (otherMap) {
+      map.merge(otherMap)
+    })
+
+    return map
+  })
+
+  return processTree
 }
 
 NYC.prototype._loadProcessInfos = function () {
@@ -479,9 +496,9 @@ NYC.prototype._loadProcessInfos = function () {
   })
 }
 
-NYC.prototype._loadReports = function () {
+NYC.prototype._loadReports = function (filenames) {
   var _this = this
-  var files = fs.readdirSync(this.tempDirectory())
+  var files = filenames || fs.readdirSync(this.tempDirectory())
 
   var cacheDir = _this.cacheDirectory
 
