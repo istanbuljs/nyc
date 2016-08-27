@@ -113,7 +113,7 @@
     "sinon": "^1.15.3",
     "source-map-support": "^0.4.2",
     "split-lines": "^1.0.0",
-    "standard": "^7.0.1",
+    "standard": "^8.0.0",
     "standard-version": "^2.4.0",
     "tap": "^7.0.0",
     "which": "^1.2.4",
