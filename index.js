@@ -391,15 +391,21 @@ function coverageFinder () {
   return coverage
 }
 
-NYC.prototype.report = function () {
-  var tree
+NYC.prototype._getCoverageMapFromAllCoverageFiles = function () {
   var map = libCoverage.createCoverageMap({})
-  var context = libReport.createContext({
-    dir: this._reportDir
-  })
 
   this._loadReports().forEach(function (report) {
     map.merge(report)
+  })
+
+  return map
+}
+
+NYC.prototype.report = function () {
+  var tree
+  var map = this._getCoverageMapFromAllCoverageFiles()
+  var context = libReport.createContext({
+    dir: this._reportDir
   })
 
   tree = libReport.summarizers.pkg(map)
@@ -410,22 +416,12 @@ NYC.prototype.report = function () {
 }
 
 NYC.prototype.checkCoverage = function (thresholds) {
-  var map = libCoverage.createCoverageMap({})
-  var summary = libCoverage.createCoverageSummary()
-
-  this._loadReports().forEach(function (report) {
-    map.merge(report)
-  })
-
-  map.files().forEach(function (f) {
-    var fc = map.fileCoverageFor(f)
-    var s = fc.toSummary()
-    summary.merge(s)
-  })
+  var map = this._getCoverageMapFromAllCoverageFiles()
+  var summary = map.getCoverageSummary()
 
   // ERROR: Coverage for lines (90.12%) does not meet global threshold (120%)
   Object.keys(thresholds).forEach(function (key) {
-    var coverage = summary.data[key].pct
+    var coverage = summary[key].pct
     if (coverage < thresholds[key]) {
       process.exitCode = 1
       console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet global threshold (' + thresholds[key] + '%)')
