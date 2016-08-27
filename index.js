@@ -446,9 +446,7 @@ NYC.prototype.report = function () {
 }
 
 NYC.prototype.showProcessTree = function () {
-  var processInfos = this._loadProcessInfos()
-
-  console.log(ProcessInfo.renderProcessTree(processInfos))
+  console.log(this._loadProcessInfoTree().render())
 }
 
 NYC.prototype.checkCoverage = function (thresholds) {
@@ -473,6 +471,10 @@ NYC.prototype.checkCoverage = function (thresholds) {
       console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet global threshold (' + thresholds[key] + '%)')
     }
   })
+}
+
+NYC.prototype._loadProcessInfoTree = function () {
+  return ProcessInfo.buildProcessTree(this._loadProcessInfos())
 }
 
 NYC.prototype._loadProcessInfos = function () {
