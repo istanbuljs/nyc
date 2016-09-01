@@ -84,7 +84,7 @@
     "istanbul-lib-hook": "^1.0.0-alpha.4",
     "istanbul-lib-instrument": "^1.1.0",
     "istanbul-lib-report": "^1.0.0-alpha.3",
-    "istanbul-lib-source-maps": "^1.0.0-alpha.10",
+    "istanbul-lib-source-maps": "^1.0.0",
     "istanbul-reports": "^1.0.0-alpha.8",
     "md5-hex": "^1.2.0",
     "micromatch": "^2.3.11",
