@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.2.0"></a>
+# [8.2.0](https://github.com/istanbuljs/nyc/compare/v8.1.0...v8.2.0) (2016-09-02)
+
+
+### Bug Fixes
+
+* upgrade standard, and a few other dependencies. fix standard nits ([#375](https://github.com/istanbuljs/nyc/issues/375)) ([64c68b7](https://github.com/istanbuljs/nyc/commit/64c68b7))
+
+
+### Features
+
+* gather process tree information ([#364](https://github.com/istanbuljs/nyc/issues/364)) ([fabe5f3](https://github.com/istanbuljs/nyc/commit/fabe5f3))
+
+
+
 <a name="8.1.0"></a>
 # [8.1.0](https://github.com/bcoe/nyc/compare/v8.0.0...v8.1.0) (2016-08-14)
 
