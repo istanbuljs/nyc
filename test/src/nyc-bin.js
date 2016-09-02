@@ -369,11 +369,6 @@ describe('the nyc cli', function () {
           env: env
         })
 
-        var stdout = ''
-        proc.stdout.on('data', function (chunk) {
-          stdout += chunk
-        })
-
         proc.on('close', function (code) {
           code.should.equal(0)
           var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
@@ -390,11 +385,6 @@ describe('the nyc cli', function () {
         var proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
           env: env
-        })
-
-        var stdout = ''
-        proc.stdout.on('data', function (chunk) {
-          stdout += chunk
         })
 
         proc.on('close', function (code) {
