@@ -465,4 +465,55 @@ describe('the nyc cli', function () {
       })
     })
   })
+
+  describe('--show-process-tree', function () {
+    it('displays a tree of spawned processes', function (done) {
+      var args = [bin, '--show-process-tree', process.execPath, 'selfspawn-fibonacci.js', '5']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.setEncoding('utf8')
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdout.should.match(new RegExp(
+          'nyc\n' +
+          '└─┬.*selfspawn-fibonacci.js 5\n' +
+          '  ├─┬.*selfspawn-fibonacci.js 4\n' +
+          '  │ ├─┬.*selfspawn-fibonacci.js 3\n' +
+          '  │ │ ├──.*selfspawn-fibonacci.js 2\n' +
+          '  │ │ └──.*selfspawn-fibonacci.js 1\n' +
+          '  │ └──.*selfspawn-fibonacci.js 2\n' +
+          '  └─┬.*selfspawn-fibonacci.js 3\n' +
+          '    ├──.*selfspawn-fibonacci.js 2\n' +
+          '    └──.*selfspawn-fibonacci.js 1\n'
+        ))
+        done()
+      })
+    })
+
+    it('doesn’t create the temp directory for process info files when not present', function (done) {
+      var args = [bin, process.execPath, 'selfspawn-fibonacci.js', '5']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      proc.on('exit', function (code) {
+        code.should.equal(0)
+        fs.stat(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'), function (err, stat) {
+          err.code.should.equal('ENOENT')
+          done()
+        })
+      })
+    })
+  })
 })
