@@ -162,7 +162,7 @@ you can use any reporters that are supported by istanbul and even use several at
 ```bash
 nyc report --reporter=<format> --reporter=<another format>
 ```
-<format> is one of:
+\<format\> is one of:
 * clover
  * XML coverage report that can be consumed by the clover tool
 * cobertura
