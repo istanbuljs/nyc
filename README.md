@@ -157,10 +157,44 @@ To view your coverage report:
 
 <img width="500" src="screen.png">
 
-you can use any reporters that are supported by istanbul:
+you can use any reporters that are supported by istanbul and even use several at once:
 
 ```bash
-nyc report --reporter=lcov
+nyc report --reporter=<format> --reporter=<another format>
+```
+<format> is one of:
+* clover
+ * XML coverage report that can be consumed by the clover tool
+* cobertura
+ * XML coverage report that can be consumed by the cobertura tool
+* html
+ * Navigable HTML coverage report for every file and directory
+* json
+ * prints the coverage object as JSON to a file
+* json-summary
+ * prints a summary coverage object as JSON to a file
+* lcov
+ * combined lcovonly and html report that generates an lcov.info file as well as HTML
+* lcovonly
+ * lcov coverage report that can be consumed by the lcov tool
+* none
+ * Does nothing. Useful to override default behavior and suppress reporting entirely
+* teamcity
+ * report with system messages that can be interpreted with TeamCity
+* text
+ * text report that prints a coverage line for every file, typically to console
+* text-lcov
+ * lcov coverage report that can be consumed by the lcov tool, printed to stdout
+* text-summary
+ * text report that prints a coverage summary across all files, typically to console
+
+Default format is lcov unless otherwise specified in the config file. 
+In addition you can tweak the file names for various reports using the config file
+
+For example, to get lcov, cobertura and a text summary, run like this
+
+```bash
+nyc report --reporter=lcov --reporter=cobertura --reporter=text-summary
 ```
 
 ## Excluding files
