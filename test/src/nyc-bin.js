@@ -90,6 +90,28 @@ describe('the nyc cli', function () {
       })
     })
 
+    // https://github.com/istanbuljs/nyc/issues/384
+    it('fails when check-coverage command is used rather than flag', function (done) {
+      var args = [bin, 'check-coverage', '--lines', '51', process.execPath, './half-covered.js']
+      var message = 'ERROR: Coverage for lines (50%) does not meet global threshold (51%)'
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stderr = ''
+      proc.stderr.on('data', function (chunk) {
+        stderr += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.not.equal(0)
+        stderr.trim().should.equal(message)
+        done()
+      })
+    })
+
     it('succeeds when the expected coverage is above a threshold', function (done) {
       var args = [bin, '--check-coverage', '--lines', '49', process.execPath, './half-covered.js']
 
