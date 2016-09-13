@@ -469,7 +469,7 @@ NYC.prototype.checkCoverage = function (thresholds) {
   })
 
   // process.exitCode was not implemented until v0.11.8.
-  if (/^v0\.[0-10]/.test(process.version) && process.exitCode !== 0) process.exit(process.exitCode)
+  if (/^v0\.(1[0-1]\.|[0-9]\.)/.test(process.version) && process.exitCode !== 0) process.exit(process.exitCode)
 }
 
 NYC.prototype._loadProcessInfoTree = function () {
