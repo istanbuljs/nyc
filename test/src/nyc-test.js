@@ -66,13 +66,11 @@ describe('nyc', function () {
   describe('config', function () {
     it("loads 'exclude' patterns from package.json#nyc", function () {
       var nyc = new NYC(configUtil.loadConfig([], path.resolve(__dirname, '../fixtures')))
-
       nyc.exclude.exclude.length.should.eql(4)
     })
 
     it("loads 'extension' patterns from package.json#nyc", function () {
       var nyc = new NYC(configUtil.loadConfig([], path.resolve(__dirname, '../fixtures/conf-multiple-extensions')))
-
       nyc.extensions.length.should.eql(3)
     })
 
@@ -93,7 +91,6 @@ describe('nyc', function () {
 
     it("ignores 'exclude' option if it's falsy", function () {
       var nyc1 = new NYC(configUtil.loadConfig([], path.resolve(__dirname, '../fixtures/conf-empty')))
-
       nyc1.exclude.exclude.length.should.eql(7)
     })
 
@@ -378,7 +375,6 @@ describe('nyc', function () {
       )
 
       var nyc = (new NYC(configUtil.loadConfig(['--require', './test/fixtures/transpile-hook'], fixtures)))
-
       nyc.reset()
       nyc.addAllFiles()
 
