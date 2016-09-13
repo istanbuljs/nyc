@@ -3,6 +3,7 @@
 require('source-map-support').install()
 var _ = require('lodash')
 var ap = require('any-path')
+var Config = require('../../lib/config')
 var fs = require('fs')
 var enableCache = false
 var _NYC
@@ -44,51 +45,46 @@ require('tap').mochaGlobals()
 describe('nyc', function () {
   describe('cwd', function () {
     it('sets cwd to process.cwd() if no environment variable is set', function () {
-      var nyc = new NYC()
+      var nyc = new NYC(Config())
 
       nyc.cwd.should.eql(process.cwd())
     })
 
     it('uses NYC_CWD environment variable for cwd if it is set', function () {
       process.env.NYC_CWD = path.resolve(__dirname, '../fixtures')
-
-      var nyc = new NYC()
+      var nyc = new NYC(Config())
 
       nyc.cwd.should.equal(path.resolve(__dirname, '../fixtures'))
     })
 
     it('will look upwards for package.json from cwd', function () {
-      var nyc = new NYC({cwd: __dirname})
+      var nyc = new NYC(Config([], __dirname))
       nyc.cwd.should.eql(path.join(__dirname, '../..'))
     })
   })
 
   describe('config', function () {
     it("loads 'exclude' patterns from package.json#nyc", function () {
-      var nyc = new NYC({
-        cwd: path.resolve(__dirname, '../fixtures')
-      })
+      var nyc = new NYC(Config([], path.resolve(__dirname, '../fixtures')))
 
       nyc.exclude.exclude.length.should.eql(4)
     })
 
     it("loads 'extension' patterns from package.json#nyc", function () {
-      var nyc = new NYC({
-        cwd: path.resolve(__dirname, '../fixtures/conf-multiple-extensions')
-      })
+      var nyc = new NYC(Config([], path.resolve(__dirname, '../fixtures/conf-multiple-extensions')))
 
       nyc.extensions.length.should.eql(3)
     })
 
     it("ignores 'include' option if it's falsy or []", function () {
-      var nyc1 = new NYC({
-        cwd: path.resolve(__dirname, '../fixtures/conf-empty')
-      })
+      var nyc1 = new NYC(Config(
+        [],
+        path.resolve(__dirname, '../fixtures/conf-empty')
+      ))
 
       nyc1.exclude.include.should.equal(false)
 
       var nyc2 = new NYC({
-        cwd: path.resolve(__dirname, '../fixtures/conf-empty'),
         include: []
       })
 
@@ -96,18 +92,13 @@ describe('nyc', function () {
     })
 
     it("ignores 'exclude' option if it's falsy", function () {
-      var nyc1 = new NYC({
-        cwd: path.resolve(__dirname, '../fixtures/conf-empty')
-      })
+      var nyc1 = new NYC(Config([], path.resolve(__dirname, '../fixtures/conf-empty')))
 
       nyc1.exclude.exclude.length.should.eql(7)
     })
 
     it("allows for empty 'exclude'", function () {
-      var nyc2 = new NYC({
-        cwd: path.resolve(__dirname, '../fixtures/conf-empty'),
-        exclude: []
-      })
+      var nyc2 = new NYC({exclude: []})
 
       nyc2.exclude.exclude.length.should.eql(0)
     })
@@ -115,16 +106,13 @@ describe('nyc', function () {
 
   describe('shouldInstrumentFile', function () {
     it('should exclude appropriately with defaults', function () {
-      var nyc = new NYC({
-        cwd: '/cwd/',
-        exclude: [
-          '**/node_modules/**',
-          'test/**',
-          'test{,-*}.js',
-          '**/*.test.js',
-          '**/__tests__/**'
-        ]
-      })
+      var nyc = new NYC(Config([
+        '--exclude=**/node_modules/**',
+        '--exclude=test/**',
+        '--exclude=test{,-*}.js',
+        '--exclude=**/*.test.js',
+        '--exclude=**/__tests__/**'
+      ], '/cwd'))
 
       // nyc always excludes "node_modules/**"
       nyc.exclude.shouldInstrument('/cwd/foo', 'foo').should.equal(true)
@@ -141,9 +129,7 @@ describe('nyc', function () {
     })
 
     it('should exclude appropriately with config.exclude', function () {
-      var nyc = new NYC({
-        cwd: fixtures
-      })
+      var nyc = new NYC(Config([], fixtures))
 
       // fixtures/package.json configures excludes: "blarg", "blerg"
       nyc.exclude.shouldInstrument('blarg', 'blarg').should.equal(false)
@@ -154,43 +140,31 @@ describe('nyc', function () {
     })
 
     it('should exclude outside of the current working directory', function () {
-      var nyc = new NYC({
-        cwd: '/cwd/foo/'
-      })
+      var nyc = new NYC(Config([], '/cwd/foo/'))
       nyc.exclude.shouldInstrument('/cwd/bar', '../bar').should.equal(false)
     })
 
     it('should not exclude if the current working directory is inside node_modules', function () {
-      var nyc = new NYC({
-        cwd: '/cwd/node_modules/foo/'
-      })
+      var nyc = new NYC(Config([], '/cwd/node_modules/foo/'))
       nyc.exclude.shouldInstrument('/cwd/node_modules/foo/bar', './bar').should.equal(true)
       nyc.exclude.shouldInstrument('/cwd/node_modules/foo/bar', '.\\bar').should.equal(true)
     })
 
     it('allows files to be explicitly included, rather than excluded', function () {
-      var nyc = new NYC({
-        cwd: '/cwd/',
-        include: 'foo.js'
-      })
+      var nyc = new NYC(Config(['--include=foo.js'], '/cwd/'))
 
       nyc.exclude.shouldInstrument('/cwd/foo.js', 'foo.js').should.equal(true)
       nyc.exclude.shouldInstrument('/cwd/index.js', 'index.js').should.equal(false)
     })
 
     it('exclude overrides include', function () {
-      var nyc = new NYC({
-        cwd: '/cwd/',
-        include: [
-          'foo.js',
-          'test.js'
-        ],
-        exclude: [
-          '**/node_modules/**',
-          'test/**',
-          'test{,-*}.js'
-        ]
-      })
+      var nyc = new NYC(Config([
+          '--include=foo.js',
+          '--include=test.js',
+          '--exclude=**/node_modules/**',
+          '--exclude=test/**',
+          '--exclude=test{,-*}.js'
+        ], '/cwd/'))
 
       nyc.exclude.shouldInstrument('/cwd/foo.js', 'foo.js').should.equal(true)
       nyc.exclude.shouldInstrument('/cwd/test.js', 'test.js').should.equal(false)
@@ -199,9 +173,7 @@ describe('nyc', function () {
 
   describe('wrap', function () {
     it('wraps modules with coverage counters when they are required', function () {
-      var nyc = new NYC({
-        cwd: process.cwd()
-      })
+      var nyc = new NYC(Config())
       nyc.reset()
       nyc.wrap()
 
@@ -218,9 +190,7 @@ describe('nyc', function () {
         // the `require` call to istanbul is deferred, loaded here so it doesn't mess with the hooks callCount
         require('istanbul-lib-instrument')
 
-        var nyc = new NYC({
-          cwd: process.cwd()
-        })
+        var nyc = new NYC(Config())
         nyc.reset()
         nyc.wrap()
 
@@ -237,9 +207,9 @@ describe('nyc', function () {
 
     describe('compile handlers for custom extensions are assigned', function () {
       it('assigns a function to custom extensions', function () {
-        var nyc = new NYC({
-          cwd: path.resolve(__dirname, '../fixtures/conf-multiple-extensions')
-        })
+        var nyc = new NYC(Config([],
+          path.resolve(__dirname, '../fixtures/conf-multiple-extensions')
+        ))
         nyc.reset()
         nyc.wrap()
 
@@ -254,9 +224,9 @@ describe('nyc', function () {
         // the `require` call to istanbul is deferred, loaded here so it doesn't mess with the hooks callCount
         require('istanbul-lib-instrument')
 
-        var nyc = new NYC({
-          cwd: path.resolve(__dirname, '../fixtures/conf-multiple-extensions')
-        })
+        var nyc = new NYC(Config([],
+          path.resolve(__dirname, '../fixtures/conf-multiple-extensions')
+        ))
 
         sinon.spy(nyc, '_handleJs')
 
@@ -272,9 +242,7 @@ describe('nyc', function () {
     })
 
     function testSignal (signal, done) {
-      var nyc = (new NYC({
-        cwd: fixtures
-      }))
+      var nyc = (new NYC(Config([], fixtures)))
 
       var proc = spawn(process.execPath, [bin, './' + signal + '.js'], {
         cwd: fixtures,
@@ -302,9 +270,7 @@ describe('nyc', function () {
     })
 
     it('does not output coverage for files that have not been included, by default', function (done) {
-      var nyc = (new NYC({
-        cwd: process.cwd()
-      }))
+      var nyc = (new NYC(Config([], process.cwd())))
       nyc.wrap()
       nyc.reset()
 
@@ -318,12 +284,9 @@ describe('nyc', function () {
 
   describe('report', function () {
     it('allows coverage report to be output in an alternative directory', function (done) {
-      var reporters = ['lcov']
-      var nyc = new NYC({
-        cwd: process.cwd(),
-        reporter: reporters,
-        reportDir: './alternative-report'
-      })
+      var nyc = new NYC(Config(
+        ['--report-dir=./alternative-report', '--reporter=lcov']
+      ))
       nyc.reset()
 
       var proc = spawn(process.execPath, ['./test/fixtures/child-1.js'], {
@@ -343,9 +306,7 @@ describe('nyc', function () {
 
   describe('addAllFiles', function () {
     it('outputs an empty coverage report for all files that are not excluded', function (done) {
-      var nyc = new NYC({
-        cwd: fixtures
-      })
+      var nyc = new NYC(Config([], fixtures))
       nyc.reset()
       nyc.addAllFiles()
 
@@ -363,9 +324,7 @@ describe('nyc', function () {
 
     it('outputs an empty coverage report for multiple configured extensions', function (done) {
       var cwd = path.resolve(fixtures, './conf-multiple-extensions')
-      var nyc = new NYC({
-        cwd: cwd
-      })
+      var nyc = new NYC(Config([], cwd))
       nyc.reset()
       nyc.addAllFiles()
 
@@ -390,9 +349,7 @@ describe('nyc', function () {
     })
 
     it('tracks coverage appropriately once the file is required', function (done) {
-      var nyc = (new NYC({
-        cwd: fixtures
-      }))
+      var nyc = (new NYC(Config([], fixtures)))
       nyc.reset()
       nyc.wrap()
 
@@ -420,10 +377,7 @@ describe('nyc', function () {
         'utf-8'
       )
 
-      var nyc = (new NYC({
-        cwd: fixtures,
-        require: './test/fixtures/transpile-hook'
-      }))
+      var nyc = (new NYC(Config(['--require', './test/fixtures/transpile-hook'], fixtures)))
 
       nyc.reset()
       nyc.addAllFiles()
@@ -449,11 +403,10 @@ describe('nyc', function () {
       'utf-8'
     )
 
-    var nyc = (new NYC({
-      cwd: fixtures,
-      require: './test/fixtures/transpile-hook',
-      extension: ['.whatever']
-    }))
+    var nyc = (new NYC(Config([
+      '--require=./test/fixtures/transpile-hook',
+      '--extension=.whatever'
+    ], fixtures)))
 
     nyc.reset()
     nyc.addAllFiles()
@@ -473,7 +426,7 @@ describe('nyc', function () {
 
   describe('cache', function () {
     it('handles collisions', function (done) {
-      var nyc = new NYC({cwd: fixtures})
+      var nyc = new NYC(Config([], fixtures))
       nyc.clearCache()
 
       var args = [bin, process.execPath, './cache-collision-runner.js']

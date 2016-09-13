@@ -222,44 +222,67 @@ describe('the nyc cli', function () {
     })
   })
 
-  it('passes configuration via environment variables', function (done) {
-    var args = [
-      bin,
-      '--silent',
-      '--require=mkdirp',
-      '--include=env.js',
-      '--exclude=batman.js',
-      '--extension=.js',
-      '--cache=true',
-      '--source-map=true',
-      process.execPath,
-      './env.js'
-    ]
-    var expected = {
-      NYC_REQUIRE: 'mkdirp',
-      NYC_INCLUDE: 'env.js',
-      NYC_EXCLUDE: 'batman.js',
-      NYC_EXTENSION: '.js',
-      NYC_CACHE: 'enable',
-      NYC_SOURCE_MAP: 'enable',
-      NYC_INSTRUMENTER: './lib/instrumenters/istanbul'
-    }
+  describe('configuration', function () {
+    it('passes configuration via environment variables', function (done) {
+      var args = [
+        bin,
+        '--silent',
+        '--require=mkdirp',
+        '--include=env.js',
+        '--exclude=batman.js',
+        '--extension=.js',
+        '--cache=true',
+        '--source-map=true',
+        process.execPath,
+        './env.js'
+      ]
+      var expected = {
+        instrumenter: './lib/instrumenters/istanbul',
+        silent: true,
+        cache: true,
+        sourceMap: true
+      }
 
-    var proc = spawn(process.execPath, args, {
-      cwd: fixturesCLI,
-      env: env
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        var env = JSON.parse(stdout)
+        var config = JSON.parse(env.NYC_CONFIG, null, 2)
+        config.should.include(expected)
+        config.include.should.include('env.js')
+        config.exclude.should.include('batman.js')
+        config.extension.should.include('.js')
+        done()
+      })
     })
 
-    var stdout = ''
-    proc.stdout.on('data', function (chunk) {
-      stdout += chunk
-    })
+    it('allows package.json configuration to be overridden with command line args', function (done) {
+      var args = [bin, '--reporter=text-lcov', process.execPath, './half-covered.js']
 
-    proc.on('close', function (code) {
-      code.should.equal(0)
-      var env = JSON.parse(stdout)
-      env.should.include(expected)
-      done()
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdout.should.match(/SF:.*half-covered\.js/)
+        done()
+      })
     })
   })
 
@@ -273,8 +296,10 @@ describe('the nyc cli', function () {
       './env.js'
     ]
     var expected = {
-      NYC_SOURCE_MAP: 'disable',
-      NYC_INSTRUMENTER: './lib/instrumenters/noop'
+      silent: true,
+      instrument: false,
+      sourceMap: false,
+      instrumenter: './lib/instrumenters/noop'
     }
 
     var proc = spawn(process.execPath, args, {
@@ -290,7 +315,8 @@ describe('the nyc cli', function () {
     proc.on('close', function (code) {
       code.should.equal(0)
       var env = JSON.parse(stdout)
-      env.should.include(expected)
+      var config = JSON.parse(env.NYC_CONFIG, null, 2)
+      config.should.include(expected)
       done()
     })
   })

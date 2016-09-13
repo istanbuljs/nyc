@@ -1,4 +1,5 @@
 /* global __coverage__ */
+var arrify = require('arrify')
 var fs = require('fs')
 var glob = require('glob')
 var libCoverage = require('istanbul-lib-coverage')
@@ -13,12 +14,10 @@ var path = require('path')
 var rimraf = require('rimraf')
 var onExit = require('signal-exit')
 var resolveFrom = require('resolve-from')
-var arrify = require('arrify')
 var convertSourceMap = require('convert-source-map')
 var md5hex = require('md5-hex')
 var findCacheDir = require('find-cache-dir')
 var js = require('default-require-extensions/js')
-var pkgUp = require('pkg-up')
 var testExclude = require('test-exclude')
 var yargs = require('yargs')
 
@@ -34,17 +33,16 @@ if (/index\.covered\.js$/.test(__filename)) {
   require('./lib/self-coverage-helper')
 }
 
-function NYC (opts) {
-  var config = this._loadConfig(opts || {})
+function NYC (config) {
+  config = config || {}
 
-  this._istanbul = config.istanbul
   this.subprocessBin = config.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
   this._tempDirectory = config.tempDirectory || './.nyc_output'
   this._instrumenterLib = require(config.instrumenter || './lib/instrumenters/istanbul')
-  this._reportDir = config.reportDir
-  this._sourceMap = config.sourceMap
-  this._showProcessTree = config.showProcessTree
-  this.cwd = config.cwd
+  this._reportDir = config.reportDir || 'coverage'
+  this._sourceMap = typeof config.sourceMap === 'boolean' ? config.sourceMap : true
+  this._showProcessTree = config.showProcessTree || false
+  this.cwd = config.cwd || process.cwd()
 
   this.reporter = arrify(config.reporter || 'text')
 
@@ -80,24 +78,8 @@ function NYC (opts) {
   this.loadedMaps = null
   this.fakeRequire = null
 
-  this.processInfo = new ProcessInfo(opts && opts._processInfo)
+  this.processInfo = new ProcessInfo(config && config._processInfo)
   this.rootId = this.processInfo.root || this.generateUniqueID()
-}
-
-NYC.prototype._loadConfig = function (opts) {
-  var cwd = opts.cwd || process.env.NYC_CWD || process.cwd()
-  var pkgPath = pkgUp.sync(cwd)
-
-  if (pkgPath) {
-    cwd = path.dirname(pkgPath)
-  }
-
-  opts.cwd = cwd
-
-  return yargs([])
-    .pkgConf('nyc', cwd)
-    .default(opts)
-    .argv
 }
 
 NYC.prototype._createTransform = function (ext) {

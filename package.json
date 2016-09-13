@@ -37,7 +37,8 @@
       "test/nyc-test.js",
       "index.covered.js",
       "test/fixtures/_generateCoverage.js"
-    ]
+    ],
+    "reporter": ["text-lcov"]
   },
   "standard": {
     "ignore": [
