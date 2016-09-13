@@ -19,7 +19,6 @@ var md5hex = require('md5-hex')
 var findCacheDir = require('find-cache-dir')
 var js = require('default-require-extensions/js')
 var testExclude = require('test-exclude')
-var yargs = require('yargs')
 
 var ProcessInfo
 try {

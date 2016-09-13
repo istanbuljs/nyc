@@ -159,12 +159,12 @@ describe('nyc', function () {
 
     it('exclude overrides include', function () {
       var nyc = new NYC(Config([
-          '--include=foo.js',
-          '--include=test.js',
-          '--exclude=**/node_modules/**',
-          '--exclude=test/**',
-          '--exclude=test{,-*}.js'
-        ], '/cwd/'))
+        '--include=foo.js',
+        '--include=test.js',
+        '--exclude=**/node_modules/**',
+        '--exclude=test/**',
+        '--exclude=test{,-*}.js'
+      ], '/cwd/'))
 
       nyc.exclude.shouldInstrument('/cwd/foo.js', 'foo.js').should.equal(true)
       nyc.exclude.shouldInstrument('/cwd/test.js', 'test.js').should.equal(false)
