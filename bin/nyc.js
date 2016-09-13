@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-var Config = require('../lib/config')
+var configUtil = require('../lib/config-util')
 var foreground = require('foreground-child')
 var NYC
 try {
@@ -16,10 +16,10 @@ var wrapper = require.resolve('./wrap.js')
 // we keep these values in a few different forms,
 // used in the various execution contexts of nyc:
 // reporting, instrumenting subprocesses, etc.
-var yargs = Config.decorateYargs(Config.buildYargs())
+var yargs = configUtil.decorateYargs(configUtil.buildYargs())
 var instrumenterArgs = processArgs.hideInstrumenteeArgs()
 var argv = yargs.parse(instrumenterArgs)
-var config = Config(instrumenterArgs)
+var config = configUtil.loadConfig(instrumenterArgs)
 
 if (argv._[0] === 'report') {
   // run a report.
@@ -58,7 +58,7 @@ if (argv._[0] === 'report') {
   foreground(processArgs.hideInstrumenterArgs(
     // use the same argv descrption, but don't exit
     // for flags like --help.
-    Config.buildYargs().parse(process.argv.slice(2))
+    configUtil.buildYargs().parse(process.argv.slice(2))
   ), function (done) {
     var mainChildExitCode = process.exitCode
 
