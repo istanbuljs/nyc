@@ -284,6 +284,52 @@ describe('the nyc cli', function () {
         done()
       })
     })
+
+    describe('.nycrc', function () {
+      var cwd = path.resolve(fixturesCLI, './nycrc')
+
+      it('loads configuration from package.json and .nycrc', function (done) {
+        var args = [bin, process.execPath, './index.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: cwd,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdout.should.match(/SF:.*index\.js/)
+          stdout.should.not.match(/SF:.*ignore\.js/)
+          done()
+        })
+      })
+
+      it('allows .nycrc configuration to be overridden with command line args', function (done) {
+        var args = [bin, '--exclude=foo.js', process.execPath, './index.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: cwd,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdout.should.match(/SF:.*index\.js/)
+          stdout.should.match(/SF:.*ignore\.js/)
+          done()
+        })
+      })
+    })
   })
 
   it('setting instrument to "false" sets noop instrumenter', function (done) {
