@@ -66,13 +66,11 @@ describe('nyc', function () {
   describe('config', function () {
     it("loads 'exclude' patterns from package.json#nyc", function () {
       var nyc = new NYC(configUtil.loadConfig([], path.resolve(__dirname, '../fixtures')))
-
       nyc.exclude.exclude.length.should.eql(4)
     })
 
     it("loads 'extension' patterns from package.json#nyc", function () {
       var nyc = new NYC(configUtil.loadConfig([], path.resolve(__dirname, '../fixtures/conf-multiple-extensions')))
-
       nyc.extensions.length.should.eql(3)
     })
 
@@ -93,7 +91,6 @@ describe('nyc', function () {
 
     it("ignores 'exclude' option if it's falsy", function () {
       var nyc1 = new NYC(configUtil.loadConfig([], path.resolve(__dirname, '../fixtures/conf-empty')))
-
       nyc1.exclude.exclude.length.should.eql(7)
     })
 
@@ -317,8 +314,8 @@ describe('nyc', function () {
       var report = reports[0][notLoadedPath]
 
       reports.length.should.equal(1)
+      report.s['0'].should.equal(0)
       report.s['1'].should.equal(0)
-      report.s['2'].should.equal(0)
       return done()
     })
 
@@ -338,12 +335,12 @@ describe('nyc', function () {
       reports.length.should.equal(1)
 
       var report1 = reports[0][notLoadedPath1]
+      report1.s['0'].should.equal(0)
       report1.s['1'].should.equal(0)
-      report1.s['2'].should.equal(0)
 
       var report2 = reports[0][notLoadedPath2]
+      report2.s['0'].should.equal(0)
       report2.s['1'].should.equal(0)
-      report2.s['2'].should.equal(0)
 
       return done()
     })
@@ -364,8 +361,8 @@ describe('nyc', function () {
       var report = reports[0][notLoadedPath]
 
       reports.length.should.equal(1)
+      report.s['0'].should.equal(1)
       report.s['1'].should.equal(1)
-      report.s['2'].should.equal(1)
 
       return done()
     })
@@ -378,7 +375,6 @@ describe('nyc', function () {
       )
 
       var nyc = (new NYC(configUtil.loadConfig(['--require', './test/fixtures/transpile-hook'], fixtures)))
-
       nyc.reset()
       nyc.addAllFiles()
 
@@ -389,7 +385,7 @@ describe('nyc', function () {
       var report = reports[0][needsTranspilePath]
 
       reports.length.should.equal(1)
-      report.s['1'].should.equal(0)
+      report.s['0'].should.equal(0)
 
       fs.unlinkSync(needsTranspilePath)
       return done()
@@ -418,7 +414,7 @@ describe('nyc', function () {
     var report = reports[0][needsTranspilePath]
 
     reports.length.should.equal(1)
-    report.s['1'].should.equal(0)
+    report.s['0'].should.equal(0)
 
     fs.unlinkSync(needsTranspilePath)
     return done()
