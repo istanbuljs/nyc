@@ -224,6 +224,8 @@ You can run `nyc` with the optional `--cache` flag, to prevent it from
 instrumenting the same files multiple times. This can significantly
 improve runtime performance.
 
+Changing your nyc configuration may lead to a corrupt cache. If you're seeing strange errors after updating nyc or it's configuration, try manually wiping the cache directory (`node_modules/.cache/nyc` by default). 
+
 ## Configuring `nyc`
 
 Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json (these will not affect `nyc` subcommands):
