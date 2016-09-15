@@ -27,6 +27,8 @@ try {
   ProcessInfo = require('./lib/process.js')
 }
 
+var CACHE_VERSION = '2'
+
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
   require('./lib/self-coverage-helper')
@@ -83,13 +85,14 @@ function NYC (config) {
 
 NYC.prototype._createTransform = function (ext) {
   var _this = this
+
   return cachingTransform({
     salt: JSON.stringify({
       istanbul: require('istanbul-lib-coverage/package.json').version,
       nyc: require('./package.json').version
     }),
     hash: function (code, metadata, salt) {
-      var hash = md5hex([code, metadata.filename, salt])
+      var hash = md5hex([code, metadata.filename, salt]) + '_' + CACHE_VERSION
       _this.hashCache[metadata.filename] = hash
       return hash
     },
