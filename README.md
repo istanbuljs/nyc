@@ -226,7 +226,9 @@ improve runtime performance.
 
 ## Configuring `nyc`
 
-Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json (these will not affect `nyc` subcommands):
+Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a `.nycrc` file:
+
+**package.json:**
 
 ```json
 {
@@ -257,6 +259,20 @@ Any configuration options that can be set via the command line can also be speci
     "check-coverage": true,
     "report-dir": "./alternative"
   }
+}
+```
+
+**.nycrc:**
+
+```json
+{
+  "reporter": [
+    "lcov",
+    "text-summary"
+  ],
+  "require": [
+    "./test/helpers/some-helper.js"
+  ]
 }
 ```
 
