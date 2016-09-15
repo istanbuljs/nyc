@@ -27,7 +27,9 @@ try {
   ProcessInfo = require('./lib/process.js')
 }
 
-var CACHE_VERSION = '2'
+// bust cache whenever nyc is upgraded, this prevents
+// crashers caused by instrumentation updates.
+var CACHE_VERSION = require('./package.json').version
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
