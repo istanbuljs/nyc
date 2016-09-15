@@ -24,8 +24,13 @@ var ProcessInfo
 try {
   ProcessInfo = require('./lib/process.covered.js')
 } catch (e) {
+  /* istanbul ignore next */
   ProcessInfo = require('./lib/process.js')
 }
+
+// bust cache whenever nyc is upgraded, this prevents
+// crashers caused by instrumentation updates.
+var CACHE_VERSION = require('./package.json').version
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -83,13 +88,14 @@ function NYC (config) {
 
 NYC.prototype._createTransform = function (ext) {
   var _this = this
+
   return cachingTransform({
     salt: JSON.stringify({
       istanbul: require('istanbul-lib-coverage/package.json').version,
       nyc: require('./package.json').version
     }),
     hash: function (code, metadata, salt) {
-      var hash = md5hex([code, metadata.filename, salt])
+      var hash = md5hex([code, metadata.filename, salt]) + '_' + CACHE_VERSION
       _this.hashCache[metadata.filename] = hash
       return hash
     },
