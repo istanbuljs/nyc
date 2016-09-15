@@ -24,6 +24,7 @@ var ProcessInfo
 try {
   ProcessInfo = require('./lib/process.covered.js')
 } catch (e) {
+  /* istanbul ignore next */
   ProcessInfo = require('./lib/process.js')
 }
 
