@@ -45,6 +45,7 @@ function NYC (config) {
   this._instrumenterLib = require(config.instrumenter || './lib/instrumenters/istanbul')
   this._reportDir = config.reportDir || 'coverage'
   this._sourceMap = typeof config.sourceMap === 'boolean' ? config.sourceMap : true
+  this._produceSourceMap = typeof config.produceSourceMap !== 'undefined' ? config.produceSourceMap : 'inline'
   this._showProcessTree = config.showProcessTree || false
   this.cwd = config.cwd || process.cwd()
 
@@ -128,7 +129,9 @@ NYC.prototype.instrumenter = function () {
 }
 
 NYC.prototype._createInstrumenter = function () {
-  return this._instrumenterLib(this.cwd)
+  return this._instrumenterLib(this.cwd, {
+    produceSourceMap: this._produceSourceMap
+  })
 }
 
 NYC.prototype.addFile = function (filename) {
@@ -266,6 +269,11 @@ NYC.prototype._transformFactory = function (cacheDir) {
 
     try {
       instrumented = instrumenter.instrumentSync(code, filename)
+
+      var lastSourceMap = instrumenter.lastSourceMap()
+      if (lastSourceMap) {
+        instrumented += '\n' + convertSourceMap.fromObject(lastSourceMap).toComment()
+      }
     } catch (e) {
       // don't fail external tests due to instrumentation bugs.
       console.warn('failed to instrument', filename, 'with error:', e.message)
