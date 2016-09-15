@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.3.0"></a>
+# [8.3.0](https://github.com/istanbuljs/nyc/compare/v8.2.0...v8.3.0) (2016-09-15)
+
+
+### Bug Fixes
+
+* add a feature which allows us to bust the cache when breaking changes are introduced ([#394](https://github.com/istanbuljs/nyc/issues/394)) ([b7a413a](https://github.com/istanbuljs/nyc/commit/b7a413a))
+* add shim for check-coverage on node 0.10 ([#386](https://github.com/istanbuljs/nyc/issues/386)) ([9ebaea8](https://github.com/istanbuljs/nyc/commit/9ebaea8))
+* upgrade to newer versions of source-map, signal-exit, and instrument ([#389](https://github.com/istanbuljs/nyc/issues/389)) ([a9bdf0f](https://github.com/istanbuljs/nyc/commit/a9bdf0f)), closes [#379](https://github.com/istanbuljs/nyc/issues/379)
+
+
+### Features
+
+* add support for .nycrc ([#391](https://github.com/istanbuljs/nyc/issues/391)) ([1c2349b](https://github.com/istanbuljs/nyc/commit/1c2349b))
+* refactored config to fix precedence of config vs. args ([#388](https://github.com/istanbuljs/nyc/issues/388)) ([99dbbb3](https://github.com/istanbuljs/nyc/commit/99dbbb3)), closes [#379](https://github.com/istanbuljs/nyc/issues/379)
+
+
+
 <a name="8.2.0"></a>
 # [8.2.0](https://github.com/istanbuljs/nyc/compare/v8.1.0...v8.2.0) (2016-09-02)
 
