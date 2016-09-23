@@ -149,5 +149,10 @@
     "test-exclude",
     "yargs",
     "yargs-parser"
-  ]
+  ],
+  "greenkeeper": {
+    "ignore": [
+      "find-up"
+    ]
+  }
 }
