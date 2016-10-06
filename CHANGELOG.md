@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.3.1"></a>
+## [8.3.1](https://github.com/istanbuljs/nyc/compare/v8.3.0...v8.3.1) (2016-10-06)
+
+
+### Bug Fixes
+
+* swap to version of test-exclude that does not warn ([#410](https://github.com/istanbuljs/nyc/issues/410)) ([78aac45](https://github.com/istanbuljs/nyc/commit/78aac45))
+* update istanbul-lib-source-maps to 1.0.2 ([#411](https://github.com/istanbuljs/nyc/issues/411)) ([9c89945](https://github.com/istanbuljs/nyc/commit/9c89945))
+
+
+
 <a name="8.3.0"></a>
 # [8.3.0](https://github.com/istanbuljs/nyc/compare/v8.2.0...v8.3.0) (2016-09-15)
 
