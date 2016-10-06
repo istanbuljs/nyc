@@ -14,7 +14,7 @@
     "report": "node ./bin/nyc  --temp-directory ./.self_coverage/ -r text -r lcov report",
     "cover": "npm run clean && npm run build && npm run instrument && npm run run-tests && npm run report",
     "dev": "npm run clean && npm run build && npm run run-tests",
-    "version": "standard-version"
+    "release": "standard-version"
   },
   "bin": {
     "nyc": "./bin/nyc.js"
