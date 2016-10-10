@@ -41,7 +41,6 @@ function NYC (config) {
   this._instrumenterLib = require(config.instrumenter || './lib/instrumenters/istanbul')
   this._reportDir = config.reportDir || 'coverage'
   this._sourceMap = typeof config.sourceMap === 'boolean' ? config.sourceMap : true
-  this._produceSourceMap = typeof config.produceSourceMap !== 'undefined' ? config.produceSourceMap : 'inline'
   this._showProcessTree = config.showProcessTree || false
   this.cwd = config.cwd || process.cwd()
 
@@ -123,7 +122,7 @@ NYC.prototype.instrumenter = function () {
 
 NYC.prototype._createInstrumenter = function () {
   return this._instrumenterLib(this.cwd, {
-    produceSourceMap: this._produceSourceMap
+    produceSourceMap: this._sourceMap ? 'inline' : ''
   })
 }
 
