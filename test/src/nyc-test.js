@@ -248,7 +248,7 @@ describe('nyc', function () {
       })
 
       proc.on('close', function () {
-        var reports = _.filter(nyc._loadReports(), function (report) {
+        var reports = _.filter(nyc.loadReports(), function (report) {
           return report[path.join(fixtures, signal + '.js')]
         })
         reports.length.should.equal(1)
@@ -271,7 +271,7 @@ describe('nyc', function () {
       nyc.wrap()
       nyc.reset()
 
-      var reports = _.filter(nyc._loadReports(), function (report) {
+      var reports = _.filter(nyc.loadReports(), function (report) {
         return report['./test/fixtures/not-loaded.js']
       })
       reports.length.should.equal(0)
@@ -308,7 +308,7 @@ describe('nyc', function () {
       nyc.addAllFiles()
 
       var notLoadedPath = path.join(fixtures, './not-loaded.js')
-      var reports = _.filter(nyc._loadReports(), function (report) {
+      var reports = _.filter(nyc.loadReports(), function (report) {
         return ap(report)[notLoadedPath]
       })
       var report = reports[0][notLoadedPath]
@@ -327,7 +327,7 @@ describe('nyc', function () {
 
       var notLoadedPath1 = path.join(cwd, './not-loaded.es6')
       var notLoadedPath2 = path.join(cwd, './not-loaded.js')
-      var reports = _.filter(nyc._loadReports(), function (report) {
+      var reports = _.filter(nyc.loadReports(), function (report) {
         var apr = ap(report)
         return apr[notLoadedPath1] || apr[notLoadedPath2]
       })
@@ -355,7 +355,7 @@ describe('nyc', function () {
       nyc.writeCoverageFile()
 
       var notLoadedPath = path.join(fixtures, './not-loaded.js')
-      var reports = _.filter(nyc._loadReports(), function (report) {
+      var reports = _.filter(nyc.loadReports(), function (report) {
         return report[notLoadedPath]
       })
       var report = reports[0][notLoadedPath]
@@ -379,7 +379,7 @@ describe('nyc', function () {
       nyc.addAllFiles()
 
       var needsTranspilePath = path.join(fixtures, './needs-transpile.js')
-      var reports = _.filter(nyc._loadReports(), function (report) {
+      var reports = _.filter(nyc.loadReports(), function (report) {
         return ap(report)[needsTranspilePath]
       })
       var report = reports[0][needsTranspilePath]
@@ -408,7 +408,7 @@ describe('nyc', function () {
     nyc.addAllFiles()
 
     var needsTranspilePath = path.join(fixtures, './needs-transpile.whatever')
-    var reports = _.filter(nyc._loadReports(), function (report) {
+    var reports = _.filter(nyc.loadReports(), function (report) {
       return ap(report)[needsTranspilePath]
     })
     var report = reports[0][needsTranspilePath]
