@@ -169,7 +169,7 @@ NYC.prototype.addAllFiles = function () {
     var coverage = coverageFinder()
     var lastCoverage = _this.instrumenter().lastFileCoverage()
     if (lastCoverage) {
-      filename = lastCoverage.data.path
+      filename = lastCoverage.path
     }
     if (lastCoverage && _this.exclude.shouldInstrument(filename)) {
       coverage[filename] = lastCoverage
