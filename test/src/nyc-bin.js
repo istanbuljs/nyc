@@ -635,7 +635,9 @@ describe('the nyc cli', function () {
           '--no-instrument',
           '--no-source-map',
           process.execPath,
-          './es6.js'
+          // any file other than external-instrument.js, which we
+          // want to ensure has its header loaded.
+          './env.js'
         ]
 
         var proc = spawn(process.execPath, args, {
