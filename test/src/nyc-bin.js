@@ -1,14 +1,16 @@
 /* global describe, it */
 
+var _ = require('lodash')
 var path = require('path')
-var fs = require('fs')
-var spawn = require('child_process').spawn
-var isWindows = require('is-windows')()
-var fixturesCLI = path.resolve(__dirname, '../fixtures/cli')
-var fixturesHooks = path.resolve(__dirname, '../fixtures/hooks')
-var fakebin = path.resolve(fixturesCLI, 'fakebin')
 var bin = path.resolve(__dirname, '../../bin/nyc')
+var fixturesCLI = path.resolve(__dirname, '../fixtures/cli')
+var fakebin = path.resolve(fixturesCLI, 'fakebin')
+var fixturesHooks = path.resolve(__dirname, '../fixtures/hooks')
+var fs = require('fs')
+var glob = require('glob')
+var isWindows = require('is-windows')()
 var rimraf = require('rimraf')
+var spawn = require('child_process').spawn
 
 require('chai').should()
 require('tap').mochaGlobals()
@@ -332,41 +334,6 @@ describe('the nyc cli', function () {
     })
   })
 
-  it('setting instrument to "false" sets noop instrumenter', function (done) {
-    var args = [
-      bin,
-      '--silent',
-      '--no-instrument',
-      '--no-source-map',
-      process.execPath,
-      './env.js'
-    ]
-    var expected = {
-      silent: true,
-      instrument: false,
-      sourceMap: false,
-      instrumenter: './lib/instrumenters/noop'
-    }
-
-    var proc = spawn(process.execPath, args, {
-      cwd: fixturesCLI,
-      env: env
-    })
-
-    var stdout = ''
-    proc.stdout.on('data', function (chunk) {
-      stdout += chunk
-    })
-
-    proc.on('close', function (code) {
-      code.should.equal(0)
-      var env = JSON.parse(stdout)
-      var config = JSON.parse(env.NYC_CONFIG, null, 2)
-      config.should.include(expected)
-      done()
-    })
-  })
-
   describe('coverage', function () {
     if (parseInt(process.versions.node.split('.')[0]) < 4) return
     it('reports appropriate coverage information for es6 source files', function (done) {
@@ -615,6 +582,88 @@ describe('the nyc cli', function () {
         fs.stat(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'), function (err, stat) {
           err.code.should.equal('ENOENT')
           done()
+        })
+      })
+    })
+  })
+
+  describe('noop instrumenter', function () {
+    it('setting instrument to "false" configures noop instrumenter', function (done) {
+      var args = [
+        bin,
+        '--silent',
+        '--no-instrument',
+        '--no-source-map',
+        process.execPath,
+        './env.js'
+      ]
+      var expected = {
+        silent: true,
+        instrument: false,
+        sourceMap: false,
+        instrumenter: './lib/instrumenters/noop'
+      }
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        var env = JSON.parse(stdout)
+        var config = JSON.parse(env.NYC_CONFIG, null, 2)
+        config.should.include(expected)
+        done()
+      })
+    })
+
+    describe('--all', function () {
+      it('extracts coverage headers from unexecuted files', function (done) {
+        var nycOutput = path.resolve(fixturesCLI, '.nyc_output')
+        rimraf.sync(nycOutput)
+
+        var args = [
+          bin,
+          '--all',
+          '--silent',
+          '--no-instrument',
+          '--no-source-map',
+          process.execPath,
+          './es6.js'
+        ]
+
+        var proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          glob(nycOutput + '/*.json', function (_err, files) {
+            // we should have extracted the coverage header from external-instrumenter.js.
+            var coverage = {}
+            files.forEach(function (file) {
+              _.assign(coverage, JSON.parse(
+                fs.readFileSync(file, 'utf-8')
+              ))
+            })
+            Object.keys(coverage)[0].should.equal('./external-instrumenter.js')
+
+            // we should not have executed file, so all counts sould be 0.
+            var sum = 0
+            ;Object.keys(coverage['./external-instrumenter.js'].s).forEach(function (k) {
+              sum += coverage['./external-instrumenter.js'].s[k]
+            })
+            sum.should.equal(0)
+
+            return done()
+          })
         })
       })
     })
