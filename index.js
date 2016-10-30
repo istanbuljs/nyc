@@ -238,7 +238,7 @@ NYC.prototype.walkAllFiles = function (dir, visitor) {
 }
 
 NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
-  var instrument = (!this.instrument && this.all) || this.exclude.shouldInstrument(filename, relFile)
+  var instrument = this.exclude.shouldInstrument(filename, relFile)
   if (!instrument) {
     return null
   }

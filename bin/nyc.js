@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+
+// the babel cache does not play nicely with nyc.
+process.env.BABEL_DISABLE_CACHE = '1'
+
 var configUtil = require('../lib/config-util')
 var foreground = require('foreground-child')
 var NYC
