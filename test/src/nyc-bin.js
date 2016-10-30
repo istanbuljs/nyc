@@ -580,14 +580,23 @@ describe('the nyc cli', function () {
         stdout.should.match(new RegExp(
           'nyc\n' +
           '└─┬.*selfspawn-fibonacci.js 5\n' +
+          '  │.* % Lines\n' +
           '  ├─┬.*selfspawn-fibonacci.js 4\n' +
+          '  │ │.* % Lines\n' +
           '  │ ├─┬.*selfspawn-fibonacci.js 3\n' +
+          '  │ │ │.* % Lines\n' +
           '  │ │ ├──.*selfspawn-fibonacci.js 2\n' +
+          '  │ │ │.* % Lines\n' +
           '  │ │ └──.*selfspawn-fibonacci.js 1\n' +
+          '  │ │    .* % Lines\n' +
           '  │ └──.*selfspawn-fibonacci.js 2\n' +
+          '  │    .* % Lines\n' +
           '  └─┬.*selfspawn-fibonacci.js 3\n' +
+          '    │.* % Lines\n' +
           '    ├──.*selfspawn-fibonacci.js 2\n' +
-          '    └──.*selfspawn-fibonacci.js 1\n'
+          '    │.* % Lines\n' +
+          '    └──.*selfspawn-fibonacci.js 1\n' +
+          '       .* % Lines\n'
         ))
         done()
       })

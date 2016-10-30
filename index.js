@@ -413,7 +413,7 @@ function coverageFinder () {
 NYC.prototype._getCoverageMapFromAllCoverageFiles = function () {
   var map = libCoverage.createCoverageMap({})
 
-  this._loadReports().forEach(function (report) {
+  this.loadReports().forEach(function (report) {
     map.merge(report)
   })
 
@@ -439,7 +439,9 @@ NYC.prototype.report = function () {
 }
 
 NYC.prototype.showProcessTree = function () {
-  console.log(this._loadProcessInfoTree().render())
+  var processTree = ProcessInfo.buildProcessTree(this._loadProcessInfos())
+
+  console.log(processTree.render(this))
 }
 
 NYC.prototype.checkCoverage = function (thresholds) {
@@ -459,10 +461,6 @@ NYC.prototype.checkCoverage = function (thresholds) {
   if (/^v0\.(1[0-1]\.|[0-9]\.)/.test(process.version) && process.exitCode !== 0) process.exit(process.exitCode)
 }
 
-NYC.prototype._loadProcessInfoTree = function () {
-  return ProcessInfo.buildProcessTree(this._loadProcessInfos())
-}
-
 NYC.prototype._loadProcessInfos = function () {
   var _this = this
   var files = fs.readdirSync(this.processInfoDirectory())
@@ -479,9 +477,9 @@ NYC.prototype._loadProcessInfos = function () {
   })
 }
 
-NYC.prototype._loadReports = function () {
+NYC.prototype.loadReports = function (filenames) {
   var _this = this
-  var files = fs.readdirSync(this.tempDirectory())
+  var files = filenames || fs.readdirSync(this.tempDirectory())
 
   var cacheDir = _this.cacheDirectory
 
