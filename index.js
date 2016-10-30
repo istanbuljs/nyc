@@ -84,6 +84,8 @@ function NYC (config) {
 
   this.processInfo = new ProcessInfo(config && config._processInfo)
   this.rootId = this.processInfo.root || this.generateUniqueID()
+  this.instrument = config.instrument
+  this.all = config.all
 }
 
 NYC.prototype._createTransform = function (ext) {
@@ -166,6 +168,9 @@ NYC.prototype.addAllFiles = function () {
     _this.addFile(filename)
     var coverage = coverageFinder()
     var lastCoverage = _this.instrumenter().lastFileCoverage()
+    if (lastCoverage) {
+      filename = lastCoverage.path
+    }
     if (lastCoverage && _this.exclude.shouldInstrument(filename)) {
       coverage[filename] = lastCoverage
     }
@@ -233,7 +238,7 @@ NYC.prototype.walkAllFiles = function (dir, visitor) {
 }
 
 NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
-  var instrument = this.exclude.shouldInstrument(filename, relFile)
+  var instrument = (!this.instrument && this.all) || this.exclude.shouldInstrument(filename, relFile)
   if (!instrument) {
     return null
   }
