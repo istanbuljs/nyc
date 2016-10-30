@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.4.0"></a>
+# [8.4.0](https://github.com/istanbuljs/nyc/compare/v8.3.1...v8.4.0) (2016-10-30)
+
+
+### Bug Fixes
+
+* hot-fix bad release of nyc ([c487eb3](https://github.com/istanbuljs/nyc/commit/c487eb3))
+* reverts _maybeInstrumentSource logic, so that exclude is still applied ([#429](https://github.com/istanbuljs/nyc/issues/429)) ([b90d26f](https://github.com/istanbuljs/nyc/commit/b90d26f))
+* update core istanbul libraries ([#426](https://github.com/istanbuljs/nyc/issues/426)) ([4945dac](https://github.com/istanbuljs/nyc/commit/4945dac))
+
+
+### Features
+
+* coverage information is now returned for process tree ([#416](https://github.com/istanbuljs/nyc/issues/416)) ([92dedda](https://github.com/istanbuljs/nyc/commit/92dedda))
+* read coverage header when using "noop" instrumenter ([#420](https://github.com/istanbuljs/nyc/issues/420)) ([63a8758](https://github.com/istanbuljs/nyc/commit/63a8758))
+
+
+
 <a name="8.3.1"></a>
 ## [8.3.1](https://github.com/istanbuljs/nyc/compare/v8.3.0...v8.3.1) (2016-10-06)
 
