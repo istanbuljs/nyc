@@ -55,8 +55,7 @@ nyc --reporter=lcov --reporter=text-lcov npm test
 
 When `source-map` handling enabled, then the instrumented source files will
 include inline source maps for the instrumenter transform. When combined with
-a supporting version of [source-map-support](https://github.com/evanw/node-source-map-support/pull/118)
-(currently published under `@kpdecker/source-map-support` while PR pending),
+[source-map-support](https://github.com/evanw/node-source-map-support),
 stack traces for instrumented code should reflect the original lines.
 
 This is enabled by default, but may be disabled by `nyc --source-map=false`.

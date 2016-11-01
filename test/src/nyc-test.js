@@ -1,6 +1,6 @@
 /* global describe, it */
 
-require('@kpdecker/source-map-support').install({hookRequire: true})
+require('source-map-support').install({hookRequire: true})
 var _ = require('lodash')
 var ap = require('any-path')
 var configUtil = require('../../lib/config-util')
