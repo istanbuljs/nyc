@@ -15,6 +15,7 @@ var rimraf = require('rimraf')
 var onExit = require('signal-exit')
 var resolveFrom = require('resolve-from')
 var convertSourceMap = require('convert-source-map')
+var mergeSourceMap = require('merge-source-map')
 var md5hex = require('md5-hex')
 var findCacheDir = require('find-cache-dir')
 var js = require('default-require-extensions/js')
@@ -128,7 +129,9 @@ NYC.prototype.instrumenter = function () {
 }
 
 NYC.prototype._createInstrumenter = function () {
-  return this._instrumenterLib(this.cwd)
+  return this._instrumenterLib(this.cwd, {
+    produceSourceMap: this._sourceMap ? 'inline' : ''
+  })
 }
 
 NYC.prototype.addFile = function (filename) {
@@ -261,14 +264,30 @@ NYC.prototype._transformFactory = function (cacheDir) {
 
   return function (code, metadata, hash) {
     var filename = metadata.filename
+    var sourceMap
 
-    if (_this._sourceMap) _this._handleSourceMap(cacheDir, code, hash, filename)
+    if (_this._sourceMap) {
+      sourceMap = convertSourceMap.fromSource(code) || convertSourceMap.fromMapFileSource(code, path.dirname(filename))
+
+      _this._handleSourceMap(cacheDir, code, hash, filename, sourceMap)
+    }
 
     try {
       instrumented = instrumenter.instrumentSync(code, filename)
+
+      var lastSourceMap = instrumenter.lastSourceMap()
+      if (lastSourceMap) {
+        if (sourceMap) {
+          lastSourceMap = mergeSourceMap(
+                sourceMap.toObject(),
+                lastSourceMap)
+        }
+
+        instrumented += '\n' + convertSourceMap.fromObject(lastSourceMap).toComment()
+      }
     } catch (e) {
       // don't fail external tests due to instrumentation bugs.
-      console.warn('failed to instrument', filename, 'with error:', e.message)
+      console.warn('failed to instrument', filename, 'with error:', e.stack)
       instrumented = code
     }
 
@@ -280,8 +299,7 @@ NYC.prototype._transformFactory = function (cacheDir) {
   }
 }
 
-NYC.prototype._handleSourceMap = function (cacheDir, code, hash, filename) {
-  var sourceMap = convertSourceMap.fromSource(code) || convertSourceMap.fromMapFileSource(code, path.dirname(filename))
+NYC.prototype._handleSourceMap = function (cacheDir, code, hash, filename, sourceMap) {
   if (sourceMap) {
     if (hash) {
       var mapPath = path.join(cacheDir, hash + '.map')
