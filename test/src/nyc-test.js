@@ -204,7 +204,7 @@ describe('nyc', function () {
 
     describe('produce source map', function () {
       it('handles stack traces', function () {
-        var nyc = new NYC(configUtil.loadConfig())
+        var nyc = new NYC(configUtil.loadConfig('--produce-source-map'))
         nyc.reset()
         nyc.wrap()
 
@@ -213,13 +213,15 @@ describe('nyc', function () {
       })
 
       it('does not handle stack traces when disabled', function () {
-        var nyc = new NYC(configUtil.loadConfig(['--source-map=false']))
+        var nyc = new NYC(configUtil.loadConfig())
         nyc.reset()
         nyc.wrap()
 
         var check = require('../fixtures/stack-trace')
         check().should.match(/stack-trace.js:1:/)
       })
+
+      // TODO: add test for merge source-map logic.
     })
 
     describe('compile handlers for custom extensions are assigned', function () {

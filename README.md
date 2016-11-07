@@ -51,14 +51,12 @@ and a `text-lcov` coverage report.
 nyc --reporter=lcov --reporter=text-lcov npm test
 ```
 
-## Stack Traces
+## Accurate stack traces using source maps
 
-When `source-map` handling enabled, then the instrumented source files will
+When `produce-source-map` is set to true, then the instrumented source files will
 include inline source maps for the instrumenter transform. When combined with
 [source-map-support](https://github.com/evanw/node-source-map-support),
-stack traces for instrumented code should reflect the original lines.
-
-This is enabled by default, but may be disabled by `nyc --source-map=false`.
+stack traces for instrumented code will reflect their original lines.
 
 ## Support for custom require hooks (babel, webpack, etc.)
 

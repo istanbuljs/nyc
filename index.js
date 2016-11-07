@@ -15,7 +15,6 @@ var rimraf = require('rimraf')
 var onExit = require('signal-exit')
 var resolveFrom = require('resolve-from')
 var convertSourceMap = require('convert-source-map')
-var mergeSourceMap = require('merge-source-map')
 var md5hex = require('md5-hex')
 var findCacheDir = require('find-cache-dir')
 var js = require('default-require-extensions/js')
@@ -40,6 +39,7 @@ if (/index\.covered\.js$/.test(__filename)) {
 
 function NYC (config) {
   config = config || {}
+  this.config = config
 
   this.subprocessBin = config.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
   this._tempDirectory = config.tempDirectory || './.nyc_output'
@@ -85,8 +85,6 @@ function NYC (config) {
 
   this.processInfo = new ProcessInfo(config && config._processInfo)
   this.rootId = this.processInfo.root || this.generateUniqueID()
-  this.instrument = config.instrument
-  this.all = config.all
 }
 
 NYC.prototype._createTransform = function (ext) {
@@ -130,7 +128,7 @@ NYC.prototype.instrumenter = function () {
 
 NYC.prototype._createInstrumenter = function () {
   return this._instrumenterLib(this.cwd, {
-    produceSourceMap: this._sourceMap ? 'inline' : ''
+    produceSourceMap: this.config.produceSourceMap
   })
 }
 
@@ -264,27 +262,12 @@ NYC.prototype._transformFactory = function (cacheDir) {
 
   return function (code, metadata, hash) {
     var filename = metadata.filename
-    var sourceMap
+    var sourceMap = null
 
-    if (_this._sourceMap) {
-      sourceMap = convertSourceMap.fromSource(code) || convertSourceMap.fromMapFileSource(code, path.dirname(filename))
-
-      _this._handleSourceMap(cacheDir, code, hash, filename, sourceMap)
-    }
+    if (_this._sourceMap) sourceMap = _this._handleSourceMap(cacheDir, code, hash, filename)
 
     try {
-      instrumented = instrumenter.instrumentSync(code, filename)
-
-      var lastSourceMap = instrumenter.lastSourceMap()
-      if (lastSourceMap) {
-        if (sourceMap) {
-          lastSourceMap = mergeSourceMap(
-                sourceMap.toObject(),
-                lastSourceMap)
-        }
-
-        instrumented += '\n' + convertSourceMap.fromObject(lastSourceMap).toComment()
-      }
+      instrumented = instrumenter.instrumentSync(code, filename, sourceMap)
     } catch (e) {
       // don't fail external tests due to instrumentation bugs.
       console.warn('failed to instrument', filename, 'with error:', e.stack)
@@ -299,7 +282,8 @@ NYC.prototype._transformFactory = function (cacheDir) {
   }
 }
 
-NYC.prototype._handleSourceMap = function (cacheDir, code, hash, filename, sourceMap) {
+NYC.prototype._handleSourceMap = function (cacheDir, code, hash, filename) {
+  var sourceMap = convertSourceMap.fromSource(code) || convertSourceMap.fromMapFileSource(code, path.dirname(filename))
   if (sourceMap) {
     if (hash) {
       var mapPath = path.join(cacheDir, hash + '.map')
@@ -308,6 +292,7 @@ NYC.prototype._handleSourceMap = function (cacheDir, code, hash, filename, sourc
       this.sourceMapCache.registerMap(filename, sourceMap.sourcemap)
     }
   }
+  return sourceMap
 }
 
 NYC.prototype._handleJs = function (code, filename) {
