@@ -314,7 +314,7 @@ integrated with coveralls and travis-ci.org:
 1. add the coveralls and nyc dependencies to your module:
 
   ```shell
-  npm install coveralls nyc --save
+  npm install coveralls nyc --save-dev
   ```
 
 2. update the scripts in your package.json to include these bins:
