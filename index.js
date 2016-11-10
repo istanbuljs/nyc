@@ -39,6 +39,7 @@ if (/index\.covered\.js$/.test(__filename)) {
 
 function NYC (config) {
   config = config || {}
+  this.config = config
 
   this.subprocessBin = config.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
   this._tempDirectory = config.tempDirectory || './.nyc_output'
@@ -84,8 +85,6 @@ function NYC (config) {
 
   this.processInfo = new ProcessInfo(config && config._processInfo)
   this.rootId = this.processInfo.root || this.generateUniqueID()
-  this.instrument = config.instrument
-  this.all = config.all
 }
 
 NYC.prototype._createTransform = function (ext) {
@@ -128,7 +127,9 @@ NYC.prototype.instrumenter = function () {
 }
 
 NYC.prototype._createInstrumenter = function () {
-  return this._instrumenterLib(this.cwd)
+  return this._instrumenterLib(this.cwd, {
+    produceSourceMap: this.config.produceSourceMap
+  })
 }
 
 NYC.prototype.addFile = function (filename) {
@@ -261,14 +262,15 @@ NYC.prototype._transformFactory = function (cacheDir) {
 
   return function (code, metadata, hash) {
     var filename = metadata.filename
+    var sourceMap = null
 
-    if (_this._sourceMap) _this._handleSourceMap(cacheDir, code, hash, filename)
+    if (_this._sourceMap) sourceMap = _this._handleSourceMap(cacheDir, code, hash, filename)
 
     try {
-      instrumented = instrumenter.instrumentSync(code, filename)
+      instrumented = instrumenter.instrumentSync(code, filename, sourceMap)
     } catch (e) {
       // don't fail external tests due to instrumentation bugs.
-      console.warn('failed to instrument', filename, 'with error:', e.message)
+      console.warn('failed to instrument', filename, 'with error:', e.stack)
       instrumented = code
     }
 
@@ -290,6 +292,7 @@ NYC.prototype._handleSourceMap = function (cacheDir, code, hash, filename) {
       this.sourceMapCache.registerMap(filename, sourceMap.sourcemap)
     }
   }
+  return sourceMap
 }
 
 NYC.prototype._handleJs = function (code, filename) {

@@ -1,6 +1,6 @@
 /* global describe, it */
 
-require('source-map-support').install()
+require('source-map-support').install({hookRequire: true})
 var _ = require('lodash')
 var ap = require('any-path')
 var configUtil = require('../../lib/config-util')
@@ -200,6 +200,28 @@ describe('nyc', function () {
         // and the hook should have been called
         hook.callCount.should.equal(1)
       })
+    })
+
+    describe('produce source map', function () {
+      it('handles stack traces', function () {
+        var nyc = new NYC(configUtil.loadConfig('--produce-source-map'))
+        nyc.reset()
+        nyc.wrap()
+
+        var check = require('../fixtures/stack-trace')
+        check().should.match(/stack-trace.js:4:/)
+      })
+
+      it('does not handle stack traces when disabled', function () {
+        var nyc = new NYC(configUtil.loadConfig())
+        nyc.reset()
+        nyc.wrap()
+
+        var check = require('../fixtures/stack-trace')
+        check().should.match(/stack-trace.js:1:/)
+      })
+
+      // TODO: add test for merge source-map logic.
     })
 
     describe('compile handlers for custom extensions are assigned', function () {
