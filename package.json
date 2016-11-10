@@ -141,6 +141,7 @@
     "istanbul-lib-source-maps",
     "istanbul-reports",
     "md5-hex",
+    "merge-source-map",
     "micromatch",
     "mkdirp",
     "resolve-from",
