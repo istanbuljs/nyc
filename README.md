@@ -191,10 +191,10 @@ and anything in the `build` directory:
   }
 }
 ```
-> Note: Since version 8.0 if you add a "exclude" array the `node_modules`
-folder is not automatically excluded, you will need to explicitly add it to your exclude array
+> Note: Since version 9.0 files under `node_modules/` are excluded by default.
+  add the exclude rule `!**/node_modules/` to stop this.
 
-> Note: exclude defaults to `['test', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**']`,
+> Note: exclude defaults to `['test', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**', '**/node_modules/**']`,
 which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`,
 and `test-*.js` files. Specifying your own exclude property overrides these defaults.
 
