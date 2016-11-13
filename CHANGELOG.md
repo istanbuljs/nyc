@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.0.0"></a>
+# [9.0.0](https://github.com/istanbuljs/nyc/compare/v8.4.0...v9.0.0) (2016-11-13)
+
+
+### Features
+
+* adds support for source-map production ([#439](https://github.com/istanbuljs/nyc/issues/439)) ([31488f5](https://github.com/istanbuljs/nyc/commit/31488f5))
+* allow an alternate cache folder to be provided ([#443](https://github.com/istanbuljs/nyc/issues/443)) ([b6713a3](https://github.com/istanbuljs/nyc/commit/b6713a3))
+* node_modules is again excluded by default when custom exclude is provided ([#442](https://github.com/istanbuljs/nyc/issues/442)) ([2828538](https://github.com/istanbuljs/nyc/commit/2828538))
+
+
+### BREAKING CHANGES
+
+* **/node_modules/** is again excluded by default.
+
+
+
 <a name="8.4.0"></a>
 # [8.4.0](https://github.com/istanbuljs/nyc/compare/v8.3.1...v8.4.0) (2016-10-30)
 
