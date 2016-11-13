@@ -670,4 +670,23 @@ describe('the nyc cli', function () {
       })
     })
   })
+
+  it('allows an alternative cache folder to be specified', function (done) {
+    var args = [bin, '--cache-dir=./foo-cache', '--cache=true', process.execPath, './half-covered.js']
+
+    var proc = spawn(process.execPath, args, {
+      cwd: fixturesCLI,
+      env: env
+    })
+    proc.on('close', function (code) {
+      code.should.equal(0)
+      // we should have created ./foo-cache rather
+      // than the default ./node_modules/.cache.
+      fs.readdirSync(path.resolve(
+        fixturesCLI, './foo-cache'
+      )).length.should.equal(1)
+      rimraf.sync(path.resolve(fixturesCLI, 'foo-cache'))
+      done()
+    })
+  })
 })

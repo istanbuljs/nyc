@@ -51,7 +51,7 @@ function NYC (config) {
 
   this.reporter = arrify(config.reporter || 'text')
 
-  this.cacheDirectory = findCacheDir({name: 'nyc', cwd: this.cwd})
+  this.cacheDirectory = config.cacheDir || findCacheDir({name: 'nyc', cwd: this.cwd})
 
   this.enableCache = Boolean(this.cacheDirectory && (config.enableCache === true || process.env.NYC_CACHE === 'enable'))
 
