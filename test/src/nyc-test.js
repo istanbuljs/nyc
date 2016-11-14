@@ -66,7 +66,7 @@ describe('nyc', function () {
   describe('config', function () {
     it("loads 'exclude' patterns from package.json#nyc", function () {
       var nyc = new NYC(configUtil.loadConfig([], path.resolve(__dirname, '../fixtures')))
-      nyc.exclude.exclude.length.should.eql(5)
+      nyc.exclude.exclude.length.should.eql(8)
     })
 
     it("loads 'extension' patterns from package.json#nyc", function () {
@@ -91,14 +91,14 @@ describe('nyc', function () {
 
     it("ignores 'exclude' option if it's falsy", function () {
       var nyc1 = new NYC(configUtil.loadConfig([], path.resolve(__dirname, '../fixtures/conf-empty')))
-      nyc1.exclude.exclude.length.should.eql(7)
+      nyc1.exclude.exclude.length.should.eql(10)
     })
 
     it("allows for empty 'exclude'", function () {
       var nyc2 = new NYC({exclude: []})
 
-      // an empty exclude still has !**/node_modules/** added.
-      nyc2.exclude.exclude.length.should.eql(1)
+      // an empty exclude still has **/node_modules/**, node_modules/** and added.
+      nyc2.exclude.exclude.length.should.eql(2)
     })
   })
 
