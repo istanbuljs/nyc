@@ -8,12 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* and another broken test ([c3d8975](https://github.com/istanbuljs/nyc/commit/c3d8975))
-* finished test-exclude yak-shave. ([21a9a70](https://github.com/istanbuljs/nyc/commit/21a9a70))
-* one other test was broken by changing # of exclude rules ([eaaa07a](https://github.com/istanbuljs/nyc/commit/eaaa07a))
-* there's one more exluce rule now ([177f3b4](https://github.com/istanbuljs/nyc/commit/177f3b4))
-
-
+* addresses several test-exclude edge-cases. addresses perf issue with yargs ([#442](https://github.com/istanbuljs/nyc/issues/444))
 
 <a name="9.0.0"></a>
 # [9.0.0](https://github.com/istanbuljs/nyc/compare/v8.4.0...v9.0.0) (2016-11-13)
