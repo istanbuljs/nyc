@@ -97,8 +97,8 @@ describe('nyc', function () {
     it("allows for empty 'exclude'", function () {
       var nyc2 = new NYC({exclude: []})
 
-      // an empty exclude still has !**/node_modules/** added.
-      nyc2.exclude.exclude.length.should.eql(1)
+      // an empty exclude still has **/node_modules/**, node_modules/** and added.
+      nyc2.exclude.exclude.length.should.eql(2)
     })
   })
 
