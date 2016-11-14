@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.0.1"></a>
+## [9.0.1](https://github.com/istanbuljs/nyc/compare/v9.0.0...v9.0.1) (2016-11-14)
+
+
+### Bug Fixes
+
+* and another broken test ([c3d8975](https://github.com/istanbuljs/nyc/commit/c3d8975))
+* finished test-exclude yak-shave. ([21a9a70](https://github.com/istanbuljs/nyc/commit/21a9a70))
+* one other test was broken by changing # of exclude rules ([eaaa07a](https://github.com/istanbuljs/nyc/commit/eaaa07a))
+* there's one more exluce rule now ([177f3b4](https://github.com/istanbuljs/nyc/commit/177f3b4))
+
+
+
 <a name="9.0.0"></a>
 # [9.0.0](https://github.com/istanbuljs/nyc/compare/v8.4.0...v9.0.0) (2016-11-13)
 
