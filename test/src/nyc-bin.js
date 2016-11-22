@@ -655,7 +655,7 @@ describe('the nyc cli', function () {
                 fs.readFileSync(file, 'utf-8')
               ))
             })
-            Object.keys(coverage)[0].should.equal('./external-instrumenter.js')
+            Object.keys(coverage).should.include('./external-instrumenter.js')
 
             // we should not have executed file, so all counts sould be 0.
             var sum = 0
