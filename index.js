@@ -1,5 +1,6 @@
 /* global __coverage__ */
 var arrify = require('arrify')
+var debugLog = require('debug-log')('nyc')
 var fs = require('fs')
 var glob = require('glob')
 var libCoverage = require('istanbul-lib-coverage')
@@ -270,7 +271,7 @@ NYC.prototype._transformFactory = function (cacheDir) {
       instrumented = instrumenter.instrumentSync(code, filename, sourceMap)
     } catch (e) {
       // don't fail external tests due to instrumentation bugs.
-      console.warn('failed to instrument', filename, 'with error:', e.stack)
+      debugLog('failed to instrument ' + filename + 'with error: ' + e.stack)
       instrumented = code
     }
 
