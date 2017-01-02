@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.0.2"></a>
+## [10.0.2](https://github.com/istanbuljs/nyc/compare/v10.0.1...v10.0.2) (2017-01-02)
+
+
+### Bug Fixes
+
+* upgrade to newer istanbul-lib-instrument, with fixes for inferred function names ([#479](https://github.com/istanbuljs/nyc/issues/479)) ([e01ec8c](https://github.com/istanbuljs/nyc/commit/e01ec8c))
+
+
+
 <a name="10.0.1"></a>
 ## [10.0.1](https://github.com/istanbuljs/nyc/compare/v10.0.0...v10.0.1) (2016-12-27)
 
