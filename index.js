@@ -433,7 +433,8 @@ NYC.prototype.report = function () {
   var tree
   var map = this._getCoverageMapFromAllCoverageFiles()
   var context = libReport.createContext({
-    dir: this._reportDir
+    dir: this._reportDir,
+    watermarks: this.config.watermarks
   })
 
   tree = libReport.summarizers.pkg(map)
