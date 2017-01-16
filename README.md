@@ -312,6 +312,29 @@ nyc
     └── /usr/local/bin/node /path/to/your/project/node_modules/ava/lib/test-worker.js …
 ```
 
+## High and low watermarks
+
+Several of the coverage reporters supported by nyc display special information
+for high and low watermarks:
+
+* high-watermarks represent healthy test coverage (in many reports
+  this is represented with green highlighting).
+* low-watermarks represent sub-optimal coverage levels (in many reports
+  this is represented with red highlighting).
+
+You can specify custom high and low watermarks in nyc's configuration:
+
+```json
+{"nyc": {
+  "watermarks": {
+    "lines": [80, 95],
+    "functions": [80, 95],
+    "branches": [80, 95],
+    "statements": [80, 95]
+  }
+}}
+```
+
 ## Integrating with coveralls
 
 [coveralls.io](https://coveralls.io) is a great tool for adding

@@ -689,4 +689,39 @@ describe('the nyc cli', function () {
       done()
     })
   })
+
+  it('allows alternative high and low watermarks to be configured', function (done) {
+    var args = [
+      bin,
+      '--watermarks.lines=90',
+      '--watermarks.lines=100',
+      '--watermarks.statements=30',
+      '--watermarks.statements=40',
+      '--cache=true',
+      process.execPath,
+      './half-covered.js'
+    ]
+
+    var proc = spawn(process.execPath, args, {
+      cwd: fixturesCLI,
+      env: {
+        PATH: process.env.PATH,
+        FORCE_COLOR: true
+      }
+    })
+
+    var stdout = ''
+    proc.stdout.on('data', function (chunk) {
+      stdout += chunk
+    })
+
+    proc.on('close', function (code) {
+      code.should.equal(0)
+      // 50% line coverage is below our low watermark (so it's red).
+      stdout.should.match(/\[91m\W+50\W+/)
+      // 50% statement coverage is above our high-watermark (so it's green).
+      stdout.should.match(/\[92m\W+50\W+/)
+      done()
+    })
+  })
 })
