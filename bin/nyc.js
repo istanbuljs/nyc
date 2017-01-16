@@ -91,7 +91,7 @@ function report (argv) {
 function checkCoverage (argv, cb) {
   process.env.NYC_CWD = process.cwd()
 
-  ;(new NYC()).checkCoverage({
+  ;(new NYC(argv)).checkCoverage({
     lines: argv.lines,
     functions: argv.functions,
     branches: argv.branches,
