@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.1.0"></a>
+# [10.1.0](https://github.com/istanbuljs/nyc/compare/v10.0.2...v10.1.0) (2017-01-17)
+
+
+### Bug Fixes
+
+* address edge-cases related to --all when instrumentation is disabled ([#482](https://github.com/istanbuljs/nyc/issues/482)) ([8c58d68](https://github.com/istanbuljs/nyc/commit/8c58d68))
+* pass configuration options to --check-coverage ([#483](https://github.com/istanbuljs/nyc/issues/483)) ([1022b16](https://github.com/istanbuljs/nyc/commit/1022b16))
+
+
+### Features
+
+* allow eager instantiation of instrumenter ([#490](https://github.com/istanbuljs/nyc/issues/490)) ([8b58c05](https://github.com/istanbuljs/nyc/commit/8b58c05))
+* reporting watermarks can now be set in nyc config stanza ([#469](https://github.com/istanbuljs/nyc/issues/469)) ([0a1d72a](https://github.com/istanbuljs/nyc/commit/0a1d72a))
+* upgrade to istanbul-lib-instrument with support for 'const foo = function () {}' name preservation. upgrade to istanbul-lib-hook with fix for ts-node. ([#494](https://github.com/istanbuljs/nyc/issues/494)) ([d8d2de0](https://github.com/istanbuljs/nyc/commit/d8d2de0))
+
+
+
 <a name="10.0.2"></a>
 ## [10.0.2](https://github.com/istanbuljs/nyc/compare/v10.0.1...v10.0.2) (2017-01-02)
 
