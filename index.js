@@ -48,6 +48,7 @@ function NYC (config) {
   this._reportDir = config.reportDir || 'coverage'
   this._sourceMap = typeof config.sourceMap === 'boolean' ? config.sourceMap : true
   this._showProcessTree = config.showProcessTree || false
+  this._eagerInstantiation = config.eager || false
   this.cwd = config.cwd || process.cwd()
 
   this.reporter = arrify(config.reporter || 'text')
@@ -91,7 +92,7 @@ function NYC (config) {
 NYC.prototype._createTransform = function (ext) {
   var _this = this
 
-  return cachingTransform({
+  var opts = {
     salt: JSON.stringify({
       istanbul: require('istanbul-lib-coverage/package.json').version,
       nyc: require('./package.json').version
@@ -101,11 +102,16 @@ NYC.prototype._createTransform = function (ext) {
       _this.hashCache[metadata.filename] = hash
       return hash
     },
-    factory: this._transformFactory.bind(this),
     cacheDir: this.cacheDirectory,
     disableCache: !this.enableCache,
     ext: ext
-  })
+  }
+  if (this._eagerInstantiation) {
+    opts.transform = this._transformFactory(this.cacheDirectory)
+  } else {
+    opts.factory = this._transformFactory.bind(this)
+  }
+  return cachingTransform(opts)
 }
 
 NYC.prototype._loadAdditionalModules = function () {
