@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.1.2"></a>
+## [10.1.2](https://github.com/istanbuljs/nyc/compare/v10.1.1...v10.1.2) (2017-01-18)
+
+
+### Bug Fixes
+
+* revert defaulting to empty file-coverage report, this caused too many issues ([25aec77](https://github.com/istanbuljs/nyc/commit/25aec77))
+
+
+
 <a name="10.1.1"></a>
 ## [10.1.1](https://github.com/istanbuljs/nyc/compare/v10.1.0...v10.1.1) (2017-01-18)
 
