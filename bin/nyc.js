@@ -1,8 +1,5 @@
 #!/usr/bin/env node
 
-// the babel cache does not play nicely with nyc.
-process.env.BABEL_DISABLE_CACHE = '1'
-
 var configUtil = require('../lib/config-util')
 var foreground = require('foreground-child')
 var NYC
@@ -24,6 +21,11 @@ var yargs = configUtil.decorateYargs(configUtil.buildYargs())
 var instrumenterArgs = processArgs.hideInstrumenteeArgs()
 var argv = yargs.parse(instrumenterArgs)
 var config = configUtil.loadConfig(instrumenterArgs)
+
+if (config['babel-cache'] === false) {
+  // the babel cache in few cases does not play nicely with nyc.
+  process.env.BABEL_DISABLE_CACHE = 1
+}
 
 if (argv._[0] === 'report') {
   // run a report.
@@ -50,8 +52,8 @@ if (argv._[0] === 'report') {
     NYC_CONFIG: JSON.stringify(config),
     NYC_CWD: process.cwd(),
     NYC_ROOT_ID: nyc.rootId,
-    BABEL_DISABLE_CACHE: 1,
-    NYC_INSTRUMENTER: config.instrumenter
+    NYC_INSTRUMENTER: config.instrumenter,
+    BABEL_DISABLE_CACHE: process.env.BABEL_DISABLE_CACHE
   }
   sw([wrapper], env)
 
