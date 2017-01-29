@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-tap -t120 --no-cov -b \
+tap -t120 --no-cov -b -j2 \
   ./test/build/*.js \
   ./test/src/nyc-bin.js \
   ./test/src/process-args.js
