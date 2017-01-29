@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+rimraf ./.nyc_output \
+  ./node_modules/.cache \
+  ./.self_coverage \
+  ./test/fixtures/.nyc_output \
+  ./test/fixtures/node_modules/.cache \
+  *covered.js \
+  ./lib/*covered.js \
+  coverage

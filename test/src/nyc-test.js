@@ -66,12 +66,12 @@ describe('nyc', function () {
   describe('config', function () {
     it("loads 'exclude' patterns from package.json#nyc", function () {
       var nyc = new NYC(configUtil.loadConfig([], path.resolve(__dirname, '../fixtures')))
-      nyc.exclude.exclude.length.should.eql(8)
+      nyc.exclude.exclude.should.have.lengthOf(8)
     })
 
     it("loads 'extension' patterns from package.json#nyc", function () {
       var nyc = new NYC(configUtil.loadConfig([], path.resolve(__dirname, '../fixtures/conf-multiple-extensions')))
-      nyc.extensions.length.should.eql(3)
+      nyc.extensions.should.have.lengthOf(3)
     })
 
     it("ignores 'include' option if it's falsy or []", function () {
@@ -91,14 +91,14 @@ describe('nyc', function () {
 
     it("ignores 'exclude' option if it's falsy", function () {
       var nyc1 = new NYC(configUtil.loadConfig([], path.resolve(__dirname, '../fixtures/conf-empty')))
-      nyc1.exclude.exclude.length.should.eql(10)
+      nyc1.exclude.exclude.should.have.lengthOf(10)
     })
 
     it("allows for empty 'exclude'", function () {
       var nyc2 = new NYC({exclude: []})
 
       // an empty exclude still has **/node_modules/**, node_modules/** and added.
-      nyc2.exclude.exclude.length.should.eql(2)
+      nyc2.exclude.exclude.should.have.lengthOf(2)
     })
   })
 
@@ -270,10 +270,11 @@ describe('nyc', function () {
       })
 
       proc.on('close', function () {
-        var reports = _.filter(nyc.loadReports(), function (report) {
+        var reports = nyc.loadReports().filter(function (report) {
           return report[path.join(fixtures, signal + '.js')]
         })
-        reports.length.should.equal(1)
+
+        reports.should.have.lengthOf(1)
         return done()
       })
     }
@@ -296,7 +297,7 @@ describe('nyc', function () {
       var reports = _.filter(nyc.loadReports(), function (report) {
         return report['./test/fixtures/not-loaded.js']
       })
-      reports.length.should.equal(0)
+      reports.should.have.lengthOf(0)
       return done()
     })
   })
@@ -315,9 +316,11 @@ describe('nyc', function () {
       })
 
       proc.on('close', function () {
+        var reportPath = path.join(__dirname, '..', '..', './alternative-report')
+
         nyc.report()
-        existsSync('./alternative-report/lcov.info').should.equal(true)
-        rimraf.sync('./alternative-report')
+        existsSync(path.join(reportPath, 'lcov.info')).should.equal(true)
+        rimraf.sync(reportPath)
         return done()
       })
     })
@@ -335,7 +338,7 @@ describe('nyc', function () {
       })
       var report = reports[0][notLoadedPath]
 
-      reports.length.should.equal(1)
+      reports.should.have.lengthOf(1)
       report.s['0'].should.equal(0)
       report.s['1'].should.equal(0)
       return done()
@@ -354,7 +357,7 @@ describe('nyc', function () {
         return apr[notLoadedPath1] || apr[notLoadedPath2]
       })
 
-      reports.length.should.equal(1)
+      reports.should.have.lengthOf(1)
 
       var report1 = reports[0][notLoadedPath1]
       report1.s['0'].should.equal(0)
@@ -382,7 +385,7 @@ describe('nyc', function () {
       })
       var report = reports[0][notLoadedPath]
 
-      reports.length.should.equal(1)
+      reports.should.have.lengthOf(1)
       report.s['0'].should.equal(1)
       report.s['1'].should.equal(1)
 
@@ -406,7 +409,7 @@ describe('nyc', function () {
       })
       var report = reports[0][needsTranspilePath]
 
-      reports.length.should.equal(1)
+      reports.should.have.lengthOf(1)
       report.s['0'].should.equal(0)
 
       fs.unlinkSync(needsTranspilePath)
@@ -435,7 +438,7 @@ describe('nyc', function () {
     })
     var report = reports[0][needsTranspilePath]
 
-    reports.length.should.equal(1)
+    reports.should.have.lengthOf(1)
     report.s['0'].should.equal(0)
 
     fs.unlinkSync(needsTranspilePath)

@@ -10,7 +10,7 @@ var sanitizeFilename = require('sanitize-filename')
 
 // Delete previous files.
 process.chdir(__dirname)
-rimraf.sync('test/build')
+rimraf.sync('test/build/*.js')
 mkdirp.sync(path.join(__dirname, 'test/build'))
 
 var testDir = path.join(__dirname, 'test/src')
