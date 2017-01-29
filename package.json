@@ -5,16 +5,16 @@
   "main": "index.js",
   "scripts": {
     "bundle": "bundle-dependencies update",
-    "pretest": "standard",
-    "test": "npm run cover",
-    "clean": "rimraf ./.nyc_output ./node_modules/.cache ./.self_coverage ./test/fixtures/.nyc_output ./test/fixtures/node_modules/.cache *covered.js ./lib/*covered.js",
-    "build": "node ./build-tests",
-    "instrument": "node ./build-self-coverage.js",
-    "run-tests": "tap -t120 --no-cov -b ./test/build/*.js ./test/src/nyc-bin.js ./test/src/process-args.js",
-    "report": "node ./bin/nyc  --temp-directory ./.self_coverage/ -r text -r lcov report",
-    "cover": "npm run clean && npm run build && npm run instrument && npm run run-tests && npm run report",
-    "dev": "npm run clean && npm run build && npm run run-tests",
-    "release": "standard-version"
+    "clean": "scripty",
+    "dev": "npm run clean && npm run test:build && npm run test:run",
+    "test:build": "scripty",
+    "test:instrument": "scripty",
+    "test:run": "scripty",
+    "release": "standard-version",
+    "report": "scripty",
+    "pretest": "standard && npm run clean",
+    "test": "npm run test:build && npm run test:instrument && npm run test:run",
+    "posttest": "npm run report"
   },
   "bin": {
     "nyc": "./bin/nyc.js"
@@ -112,6 +112,7 @@
     "newline-regex": "^0.2.1",
     "requirejs": "^2.3.0",
     "sanitize-filename": "^1.5.3",
+    "scripty": "^1.7.1",
     "sinon": "^1.15.3",
     "source-map-support": "^0.4.6",
     "split-lines": "^1.0.0",

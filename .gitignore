@@ -1,7 +1,8 @@
 .nyc_output
 coverage
 node_modules
-test/build/
+test/build/*.js
 .self_coverage
 *.covered.js
 needs-transpile.js
+alternative-report
