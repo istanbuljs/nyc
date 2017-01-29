@@ -271,7 +271,6 @@ describe('nyc', function () {
 
       proc.on('close', function () {
         var reports = nyc.loadReports().filter(function (report) {
-          console.log(report[path.join(fixtures, signal + '.js')], 'fsidknfs');
           return report[path.join(fixtures, signal + '.js')]
         })
 
