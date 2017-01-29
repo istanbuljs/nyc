@@ -91,7 +91,7 @@ describe('nyc', function () {
 
     it("ignores 'exclude' option if it's falsy", function () {
       var nyc1 = new NYC(configUtil.loadConfig([], path.resolve(__dirname, '../fixtures/conf-empty')))
-      nyc1.exclude.exclude.length.should.eql(10)
+      nyc1.exclude.exclude.length.should.eql(11)
     })
 
     it("allows for empty 'exclude'", function () {
