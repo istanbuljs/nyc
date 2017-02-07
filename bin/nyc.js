@@ -22,11 +22,6 @@ var instrumenterArgs = processArgs.hideInstrumenteeArgs()
 var argv = yargs.parse(instrumenterArgs)
 var config = configUtil.loadConfig(instrumenterArgs)
 
-if (config['babel-cache'] === false) {
-  // the babel cache in few cases does not play nicely with nyc.
-  process.env.BABEL_DISABLE_CACHE = 1
-}
-
 if (argv._[0] === 'report') {
   // run a report.
   process.env.NYC_CWD = process.cwd()
@@ -52,9 +47,15 @@ if (argv._[0] === 'report') {
     NYC_CONFIG: JSON.stringify(config),
     NYC_CWD: process.cwd(),
     NYC_ROOT_ID: nyc.rootId,
-    NYC_INSTRUMENTER: config.instrumenter,
-    BABEL_DISABLE_CACHE: process.env.BABEL_DISABLE_CACHE
+    NYC_INSTRUMENTER: config.instrumenter
   }
+
+  if (config['babel-cache'] === false) {
+    // babel's cache interferes with some configurations, so is
+    // disabled by default. opt in by setting babel-cache=true.
+    env.BABEL_DISABLE_CACHE = process.env.BABEL_DISABLE_CACHE = '1'
+  }
+
   sw([wrapper], env)
 
   // Both running the test script invocation and the check-coverage run may
