@@ -88,7 +88,7 @@
     "istanbul-lib-report": "^1.0.0-alpha.3",
     "istanbul-lib-source-maps": "^1.1.0",
     "istanbul-reports": "^1.0.0",
-    "md5-hex": "^1.2.0",
+    "md5-hex": "^2.0.0",
     "merge-source-map": "^1.0.2",
     "micromatch": "^2.3.11",
     "mkdirp": "^0.5.0",
