@@ -426,11 +426,13 @@ function coverageFinder () {
 }
 
 NYC.prototype._getCoverageMapFromAllCoverageFiles = function () {
+  var _this = this;
   var map = libCoverage.createCoverageMap({})
 
   this.loadReports().forEach(function (report) {
     map.merge(report)
   })
+  map.filter(function(filename) { return _this.exclude.shouldReport(filename) })
 
   return map
 }
