@@ -718,9 +718,9 @@ describe('the nyc cli', function () {
     proc.on('close', function (code) {
       code.should.equal(0)
       // 50% line coverage is below our low watermark (so it's red).
-      stdout.should.match(/\[91m\W+50\W+/)
+      stdout.should.match(/\[31;1m\W+50\W+/)
       // 50% statement coverage is above our high-watermark (so it's green).
-      stdout.should.match(/\[92m\W+50\W+/)
+      stdout.should.match(/\[32;1m\W+50\W+/)
       done()
     })
   })
