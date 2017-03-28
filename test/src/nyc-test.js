@@ -175,7 +175,7 @@ describe('nyc', function () {
       nyc.wrap()
 
       var check = require('../fixtures/check-instrumented')
-      check().should.be.true
+      check().should.equal(true)
     })
 
     describe('custom require hooks are installed', function () {
@@ -195,7 +195,7 @@ describe('nyc', function () {
         require.extensions['.js'] = hook
 
         var check = require('../fixtures/check-instrumented')
-        check().should.be.true
+        check().should.equal(true)
 
         // and the hook should have been called
         hook.callCount.should.equal(1)
@@ -232,11 +232,11 @@ describe('nyc', function () {
         nyc.reset()
         nyc.wrap()
 
-        require.extensions['.es6'].should.be.a.function
-        require.extensions['.foo.bar'].should.be.a.function
+        require.extensions['.es6'].should.be.a.function // eslint-disable-line
+        require.extensions['.foo.bar'].should.be.a.function // eslint-disable-line
 
         // default should still exist
-        require.extensions['.js'].should.be.a.function
+        require.extensions['.js'].should.be.a.function // eslint-disable-line
       })
 
       it('calls the `_handleJs` function for custom file extensions', function () {
@@ -254,8 +254,8 @@ describe('nyc', function () {
 
         var check1 = require('../fixtures/conf-multiple-extensions/check-instrumented.es6')
         var check2 = require('../fixtures/conf-multiple-extensions/check-instrumented.foo.bar')
-        check1().should.be.true
-        check2().should.be.true
+        check1().should.equal(true)
+        check2().should.equal(true)
         nyc._handleJs.callCount.should.equal(2)
       })
     })
