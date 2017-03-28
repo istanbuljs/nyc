@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.2.0"></a>
+# [10.2.0](https://github.com/istanbuljs/nyc/compare/v10.1.0...v10.2.0) (2017-03-28)
+
+
+### Bug Fixes
+
+* fix bug related to merging coverage reports see [#482](https://github.com/istanbuljs/nyc/issues/482) ([81229a0](https://github.com/istanbuljs/nyc/commit/81229a0))
+* revert defaulting to empty file-coverage report, this caused too many issues ([25aec77](https://github.com/istanbuljs/nyc/commit/25aec77))
+
+
+### Features
+
+* allow babel cache to be enabled ([#517](https://github.com/istanbuljs/nyc/issues/517)) ([98ebdff](https://github.com/istanbuljs/nyc/commit/98ebdff))
+* exclude the coverage/ folder by default 🚀 ([#502](https://github.com/istanbuljs/nyc/issues/502)) ([50adde4](https://github.com/istanbuljs/nyc/commit/50adde4))
+* upgrade to version of yargs with extend support ([#541](https://github.com/istanbuljs/nyc/issues/541)) ([95cc09a](https://github.com/istanbuljs/nyc/commit/95cc09a))
+
+
+
 <a name="10.1.2"></a>
 ## [10.1.2](https://github.com/istanbuljs/nyc/compare/v10.1.1...v10.1.2) (2017-01-18)
 
