@@ -164,7 +164,7 @@ To view your coverage report:
 
 <img width="500" src="screen.png">
 
-you can use any reporters that are supported by istanbul:
+you can use [any reporters that are supported by `istanbul`](https://github.com/istanbuljs/istanbuljs/tree/master/packages/istanbul-reports/lib):
 
 ```bash
 nyc report --reporter=lcov
