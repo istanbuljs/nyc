@@ -283,6 +283,9 @@ Any configuration options that can be set via the command line can also be speci
 }
 ```
 
+You can also specify a different path for the `.nycrc` file with `--config-file=tests/.nycrc`.
+
+
 ## Instrumenting source files
 
 nyc's `instrument` command can be used to instrument
