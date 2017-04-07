@@ -94,19 +94,19 @@ the `sourceMaps` option to `inline`.
   We recommend using the [`cross-env`](https://npmjs.com/package/cross-env) package to set these environment variables
   in your `package.json` scripts in a way that works cross-platform.
 
-2. disable nyc's instrumentation and source-maps:
+2. disable nyc's instrumentation and source-maps, e.g. in `package.json`:
 
   ```json
   {
     "nyc": {
-      "include": [
-        "src/*.js"
-      ],
       "require": [
         "babel-register"
       ],
       "sourceMap": false,
       "instrument": false
+    },
+    "scripts": {
+      "test": "cross-env NODE_ENV=test nyc mocha"
     }
   }
   ```
@@ -201,7 +201,7 @@ and `test-*.js` files. Specifying your own exclude property overrides these defa
 ## Including files
 
 As an alternative to providing a list of files to `exclude`, you can provide
-an `include` key to specify specific files that should be covered:
+an `include` key with a list of globs to specify specific files that should be covered:
 
 ```json
 {
@@ -213,10 +213,7 @@ an `include` key to specify specific files that should be covered:
 
 > Note: include defaults to `['**']`
 
-## Include reports for files that are not required
-
-By default nyc does not collect coverage for files that have not
-been required, run nyc with the flag `--all` to enable this.
+> ### Use the `--all` flag to include files that have not been required in your tests.
 
 ## Require additional modules
 
@@ -368,3 +365,7 @@ Here's how to get `nyc` integrated with codecov and travis-ci.org:
   ```
 
 That's all there is to it!
+
+## More tutorials
+
+You can find more tutorials at http://istanbul.js.org/docs/tutorials
