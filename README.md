@@ -70,9 +70,9 @@ of the pre-transpiled code. You'll have to configure your custom require hook
 to inline the source map in the transpiled code. For Babel that means setting
 the `sourceMaps` option to `inline`.
 
-## Use with `babel-plugin-istanbul` for ES6/ES7/ES2015 Support
+## Use with `babel-plugin-istanbul` for ES2015+ Support
 
-[`babel-plugin-istanbul`](https://github.com/istanbuljs/babel-plugin-istanbul) can be used to enable better first-class ES6 support.
+[`babel-plugin-istanbul`](https://github.com/istanbuljs/babel-plugin-istanbul) can be used to enable first-class ES2015+ support.
 
 1. enable the `babel-plugin-istanbul` plugin:
 
@@ -111,7 +111,7 @@ the `sourceMaps` option to `inline`.
   }
   ```
 
-That's all there is to it, better ES6 syntax highlighting awaits:
+That's all there is to it, better ES2015+ syntax highlighting awaits:
 
 <img width="500" src="screen2.png">
 
