@@ -241,6 +241,7 @@ Any configuration options that can be set via the command line can also be speci
 {
   "description": "These are just examples for demonstration, nothing prescriptive",
   "nyc": {
+    "check-coverage": true,
     "lines": 99,
     "statements": 99,
     "functions": 99,
@@ -263,53 +264,9 @@ Any configuration options that can be set via the command line can also be speci
     ],
     "cache": true,
     "all": true,
-    "check-coverage": true,
     "report-dir": "./alternative"
   }
 }
-```
-
-**.nycrc:**
-
-```json
-{
-  "reporter": [
-    "lcov",
-    "text-summary"
-  ],
-  "require": [
-    "./test/helpers/some-helper.js"
-  ]
-}
-```
-
-## Instrumenting source files
-
-nyc's `instrument` command can be used to instrument
-source files outside of the context of your unit-tests:
-
-__instrument the entire ./lib folder:__
-
-`nyc instrument ./lib ./output`
-
-## Process tree information
-
-nyc is able to show you all Node processes that are spawned when running a
-test script under it:
-
-```
-$ nyc --show-process-tree npm test
-   3 passed
-----------|----------|----------|----------|----------|----------------|
-File      |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
-----------|----------|----------|----------|----------|----------------|
-All files |      100 |      100 |      100 |      100 |                |
- index.js |      100 |      100 |      100 |      100 |                |
-----------|----------|----------|----------|----------|----------------|
-nyc
-└─┬ /usr/local/bin/node /usr/local/bin/npm test
-  └─┬ /usr/local/bin/node /path/to/your/project/node_modules/.bin/ava
-    └── /usr/local/bin/node /path/to/your/project/node_modules/ava/lib/test-worker.js …
 ```
 
 ## High and low watermarks
@@ -337,6 +294,10 @@ You can specify custom high and low watermarks in nyc's configuration:
 }
 ```
 
+## Other advanced features
+
+Take a look at http://istanbul.js.org/docs/advanced/ and please feel free to contribute documentation.
+
 ## Integrating with coveralls
 
 [coveralls.io](https://coveralls.io) is a great tool for adding
@@ -354,7 +315,7 @@ integrated with coveralls and travis-ci.org:
   ```json
   {
      "script": {
-       "test": "nyc tap ./test/*.js",
+       "test": "nyc mocha",
        "coverage": "nyc report --reporter=text-lcov | coveralls"
      }
   }
