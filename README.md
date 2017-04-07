@@ -24,7 +24,7 @@ npm i nyc --save-dev
 ```json
 {
   "script": {
-    "test": "nyc tap ./test/*.js"
+    "test": "nyc mocha"
   }
 }
 ```
@@ -51,14 +51,14 @@ and a `text-lcov` coverage report.
 nyc --reporter=lcov --reporter=text-lcov npm test
 ```
 
-## Accurate stack traces using source maps
+### Accurate stack traces using source maps
 
 When `produce-source-map` is set to true, then the instrumented source files will
 include inline source maps for the instrumenter transform. When combined with
 [source-map-support](https://github.com/evanw/node-source-map-support),
 stack traces for instrumented code will reflect their original lines.
 
-## Support for custom require hooks (babel, webpack, etc.)
+### Support for custom require hooks (babel, webpack, etc.)
 
 nyc supports custom require hooks like
 [`babel-register`](http://babeljs.io/docs/usage/require/). nyc can
@@ -70,7 +70,7 @@ of the pre-transpiled code. You'll have to configure your custom require hook
 to inline the source map in the transpiled code. For Babel that means setting
 the `sourceMaps` option to `inline`.
 
-## Use with babel-plugin-istanbul for ES6/ES7/ES2015 Support
+## Use with `babel-plugin-istanbul` for ES6/ES7/ES2015 Support
 
 [`babel-plugin-istanbul`](https://github.com/istanbuljs/babel-plugin-istanbul) can be used to enable better first-class ES6 support.
 
@@ -296,7 +296,7 @@ You can specify custom high and low watermarks in nyc's configuration:
 
 ## Other advanced features
 
-Take a look at http://istanbul.js.org/docs/advanced/ and please feel free to contribute documentation.
+Take a look at http://istanbul.js.org/docs/advanced/ and please feel free to [contribute documentation](https://github.com/istanbuljs/istanbuljs.github.io/tree/development/content).
 
 ## Integrating with coveralls
 
