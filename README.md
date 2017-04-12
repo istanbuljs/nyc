@@ -24,7 +24,7 @@ npm i nyc --save-dev
 ```json
 {
   "script": {
-    "test": "nyc tap ./test/*.js"
+    "test": "nyc mocha"
   }
 }
 ```
@@ -51,14 +51,14 @@ and a `text-lcov` coverage report.
 nyc --reporter=lcov --reporter=text-lcov npm test
 ```
 
-## Accurate stack traces using source maps
+### Accurate stack traces using source maps
 
 When `produce-source-map` is set to true, then the instrumented source files will
 include inline source maps for the instrumenter transform. When combined with
 [source-map-support](https://github.com/evanw/node-source-map-support),
 stack traces for instrumented code will reflect their original lines.
 
-## Support for custom require hooks (babel, webpack, etc.)
+### Support for custom require hooks (babel, webpack, etc.)
 
 nyc supports custom require hooks like
 [`babel-register`](http://babeljs.io/docs/usage/require/). nyc can
@@ -70,9 +70,9 @@ of the pre-transpiled code. You'll have to configure your custom require hook
 to inline the source map in the transpiled code. For Babel that means setting
 the `sourceMaps` option to `inline`.
 
-## Use with babel-plugin-istanbul for ES6/ES7/ES2015 Support
+## Use with `babel-plugin-istanbul` for ES2015+ Support
 
-[`babel-plugin-istanbul`](https://github.com/istanbuljs/babel-plugin-istanbul) can be used to enable better first-class ES6 support.
+[`babel-plugin-istanbul`](https://github.com/istanbuljs/babel-plugin-istanbul) can be used to enable first-class ES2015+ support.
 
 1. enable the `babel-plugin-istanbul` plugin:
 
@@ -94,24 +94,24 @@ the `sourceMaps` option to `inline`.
   We recommend using the [`cross-env`](https://npmjs.com/package/cross-env) package to set these environment variables
   in your `package.json` scripts in a way that works cross-platform.
 
-2. disable nyc's instrumentation and source-maps:
+2. disable nyc's instrumentation and source-maps, e.g. in `package.json`:
 
   ```json
   {
     "nyc": {
-      "include": [
-        "src/*.js"
-      ],
       "require": [
         "babel-register"
       ],
       "sourceMap": false,
       "instrument": false
+    },
+    "scripts": {
+      "test": "cross-env NODE_ENV=test nyc mocha"
     }
   }
   ```
 
-That's all there is to it, better ES6 syntax highlighting awaits:
+That's all there is to it, better ES2015+ syntax highlighting awaits:
 
 <img width="500" src="screen2.png">
 
@@ -201,7 +201,7 @@ and `test-*.js` files. Specifying your own exclude property overrides these defa
 ## Including files
 
 As an alternative to providing a list of files to `exclude`, you can provide
-an `include` key to specify specific files that should be covered:
+an `include` key with a list of globs to specify specific files that should be covered:
 
 ```json
 {
@@ -213,10 +213,7 @@ an `include` key to specify specific files that should be covered:
 
 > Note: include defaults to `['**']`
 
-## Include reports for files that are not required
-
-By default nyc does not collect coverage for files that have not
-been required, run nyc with the flag `--all` to enable this.
+> ### Use the `--all` flag to include files that have not been required in your tests.
 
 ## Require additional modules
 
@@ -241,6 +238,7 @@ Any configuration options that can be set via the command line can also be speci
 {
   "description": "These are just examples for demonstration, nothing prescriptive",
   "nyc": {
+    "check-coverage": true,
     "lines": 99,
     "statements": 99,
     "functions": 99,
@@ -263,53 +261,9 @@ Any configuration options that can be set via the command line can also be speci
     ],
     "cache": true,
     "all": true,
-    "check-coverage": true,
     "report-dir": "./alternative"
   }
 }
-```
-
-**.nycrc:**
-
-```json
-{
-  "reporter": [
-    "lcov",
-    "text-summary"
-  ],
-  "require": [
-    "./test/helpers/some-helper.js"
-  ]
-}
-```
-
-## Instrumenting source files
-
-nyc's `instrument` command can be used to instrument
-source files outside of the context of your unit-tests:
-
-__instrument the entire ./lib folder:__
-
-`nyc instrument ./lib ./output`
-
-## Process tree information
-
-nyc is able to show you all Node processes that are spawned when running a
-test script under it:
-
-```
-$ nyc --show-process-tree npm test
-   3 passed
-----------|----------|----------|----------|----------|----------------|
-File      |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
-----------|----------|----------|----------|----------|----------------|
-All files |      100 |      100 |      100 |      100 |                |
- index.js |      100 |      100 |      100 |      100 |                |
-----------|----------|----------|----------|----------|----------------|
-nyc
-└─┬ /usr/local/bin/node /usr/local/bin/npm test
-  └─┬ /usr/local/bin/node /path/to/your/project/node_modules/.bin/ava
-    └── /usr/local/bin/node /path/to/your/project/node_modules/ava/lib/test-worker.js …
 ```
 
 ## High and low watermarks
@@ -337,6 +291,10 @@ You can specify custom high and low watermarks in nyc's configuration:
 }
 ```
 
+## Other advanced features
+
+Take a look at http://istanbul.js.org/docs/advanced/ and please feel free to [contribute documentation](https://github.com/istanbuljs/istanbuljs.github.io/tree/development/content).
+
 ## Integrating with coveralls
 
 [coveralls.io](https://coveralls.io) is a great tool for adding
@@ -354,7 +312,7 @@ integrated with coveralls and travis-ci.org:
   ```json
   {
      "script": {
-       "test": "nyc tap ./test/*.js",
+       "test": "nyc mocha",
        "coverage": "nyc report --reporter=text-lcov | coveralls"
      }
   }
@@ -407,3 +365,7 @@ Here's how to get `nyc` integrated with codecov and travis-ci.org:
   ```
 
 That's all there is to it!
+
+## More tutorials
+
+You can find more tutorials at http://istanbul.js.org/docs/tutorials
