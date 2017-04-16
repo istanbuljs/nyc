@@ -124,6 +124,7 @@ nyc --extension .jsx --extension .es6 npm test
 ```
 
 ```json
+
 {
   "nyc": {
     "extension": [
