@@ -64,6 +64,14 @@ describe('nyc', function () {
   })
 
   describe('config', function () {
+    it("loads 'lines' number from package.json#nyc", function () {
+      var nyc = new NYC({
+        cwd: path.resolve(__dirname, '../fixtures')
+      })
+
+      nyc.lines.should.eql(80)
+    })
+
     it("loads 'exclude' patterns from package.json#nyc", function () {
       var nyc = new NYC(configUtil.loadConfig([], path.resolve(__dirname, '../fixtures')))
       nyc.exclude.exclude.length.should.eql(8)
