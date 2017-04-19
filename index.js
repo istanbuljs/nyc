@@ -1,25 +1,25 @@
 /* global __coverage__ */
-var arrify = require('arrify')
-var debugLog = require('debug-log')('nyc')
-var fs = require('fs')
-var glob = require('glob')
-var libCoverage = require('istanbul-lib-coverage')
-var libHook = require('istanbul-lib-hook')
-var libReport = require('istanbul-lib-report')
-var libSourceMaps = require('istanbul-lib-source-maps')
-var reports = require('istanbul-reports')
-var mkdirp = require('mkdirp')
-var Module = require('module')
-var cachingTransform = require('caching-transform')
-var path = require('path')
-var rimraf = require('rimraf')
-var onExit = require('signal-exit')
-var resolveFrom = require('resolve-from')
-var convertSourceMap = require('convert-source-map')
-var md5hex = require('md5-hex')
-var findCacheDir = require('find-cache-dir')
-var js = require('default-require-extensions/js')
-var testExclude = require('test-exclude')
+
+const arrify = require('arrify')
+const cachingTransform = require('caching-transform')
+const debugLog = require('debug-log')('nyc')
+const findCacheDir = require('find-cache-dir')
+const fs = require('fs')
+const glob = require('glob')
+const js = require('default-require-extensions/js')
+const libCoverage = require('istanbul-lib-coverage')
+const libHook = require('istanbul-lib-hook')
+const libReport = require('istanbul-lib-report')
+const md5hex = require('md5-hex')
+const mkdirp = require('mkdirp')
+const Module = require('module')
+const onExit = require('signal-exit')
+const path = require('path')
+const reports = require('istanbul-reports')
+const resolveFrom = require('resolve-from')
+const rimraf = require('rimraf')
+const SourceMaps = require('./lib/source-maps')
+const testExclude = require('test-exclude')
 
 var ProcessInfo
 try {
@@ -50,17 +50,19 @@ function NYC (config) {
   this._showProcessTree = config.showProcessTree || false
   this._eagerInstantiation = config.eager || false
   this.cwd = config.cwd || process.cwd()
-
   this.reporter = arrify(config.reporter || 'text')
 
   this.cacheDirectory = config.cacheDir || findCacheDir({name: 'nyc', cwd: this.cwd})
-
-  this.enableCache = Boolean(this.cacheDirectory && (config.enableCache === true || process.env.NYC_CACHE === 'enable'))
+  this.enableCache = Boolean(this.cacheDirectory && config.cache)
 
   this.exclude = testExclude({
     cwd: this.cwd,
     include: config.include,
     exclude: config.exclude
+  })
+
+  this.sourceMaps = new SourceMaps({
+    cacheDirectory: this.cacheDirecotry
   })
 
   // require extensions can be provided as config in package.json.
@@ -78,11 +80,8 @@ function NYC (config) {
     return transforms
   }.bind(this), {})
 
-  this.sourceMapCache = libSourceMaps.createSourceMapStore()
-
   this.hookRunInContext = config.hookRunInContext
   this.hashCache = {}
-  this.loadedMaps = null
   this.fakeRequire = null
 
   this.processInfo = new ProcessInfo(config && config._processInfo)
@@ -271,7 +270,7 @@ NYC.prototype._transformFactory = function (cacheDir) {
     var filename = metadata.filename
     var sourceMap = null
 
-    if (_this._sourceMap) sourceMap = _this._handleSourceMap(cacheDir, code, hash, filename)
+    if (_this._sourceMap) sourceMap = _this.sourceMaps.extractAndRegister(code, hash, filename)
 
     try {
       instrumented = instrumenter.instrumentSync(code, filename, sourceMap)
@@ -287,19 +286,6 @@ NYC.prototype._transformFactory = function (cacheDir) {
       return instrumented
     }
   }
-}
-
-NYC.prototype._handleSourceMap = function (cacheDir, code, hash, filename) {
-  var sourceMap = convertSourceMap.fromSource(code) || convertSourceMap.fromMapFileSource(code, path.dirname(filename))
-  if (sourceMap) {
-    if (hash) {
-      var mapPath = path.join(cacheDir, hash + '.map')
-      fs.writeFileSync(mapPath, sourceMap.toJSON())
-    } else {
-      this.sourceMapCache.registerMap(filename, sourceMap.sourcemap)
-    }
-  }
-  return sourceMap
 }
 
 NYC.prototype._handleJs = function (code, filename) {
@@ -386,7 +372,7 @@ NYC.prototype.writeCoverageFile = function () {
       }
     }, this)
   } else {
-    coverage = this.sourceMapTransform(coverage)
+    coverage = this.sourceMaps.remapCoverage(coverage)
   }
 
   var id = this.generateUniqueID()
@@ -409,13 +395,6 @@ NYC.prototype.writeCoverageFile = function () {
     JSON.stringify(this.processInfo),
     'utf-8'
   )
-}
-
-NYC.prototype.sourceMapTransform = function (obj) {
-  var transformed = this.sourceMapCache.transformCoverage(
-    libCoverage.createCoverageMap(obj)
-  )
-  return transformed.map.data
 }
 
 function coverageFinder () {
@@ -497,10 +476,6 @@ NYC.prototype.loadReports = function (filenames) {
   var _this = this
   var files = filenames || fs.readdirSync(this.tempDirectory())
 
-  var cacheDir = _this.cacheDirectory
-
-  var loadedMaps = this.loadedMaps || (this.loadedMaps = {})
-
   return files.map(function (f) {
     var report
     try {
@@ -512,25 +487,8 @@ NYC.prototype.loadReports = function (filenames) {
       return {}
     }
 
-    Object.keys(report).forEach(function (absFile) {
-      var fileReport = report[absFile]
-      if (fileReport && fileReport.contentHash) {
-        var hash = fileReport.contentHash
-        if (!(hash in loadedMaps)) {
-          try {
-            var mapPath = path.join(cacheDir, hash + '.map')
-            loadedMaps[hash] = JSON.parse(fs.readFileSync(mapPath, 'utf8'))
-          } catch (e) {
-            // set to false to avoid repeatedly trying to load the map
-            loadedMaps[hash] = false
-          }
-        }
-        if (loadedMaps[hash]) {
-          _this.sourceMapCache.registerMap(absFile, loadedMaps[hash])
-        }
-      }
-    })
-    report = _this.sourceMapTransform(report)
+    _this.sourceMaps.reloadCachedSourceMaps(report)
+    report = _this.sourceMaps.remapCoverage(report)
     return report
   })
 }
