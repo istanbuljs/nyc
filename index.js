@@ -53,7 +53,7 @@ function NYC (config) {
   this.reporter = arrify(config.reporter || 'text')
 
   this.cacheDirectory = config.cacheDir || findCacheDir({name: 'nyc', cwd: this.cwd})
-  this.enableCache = Boolean(this.cacheDirectory && config.cache)
+  this.cache = Boolean(this.cacheDirectory && config.cache)
 
   this.exclude = testExclude({
     cwd: this.cwd,
@@ -62,7 +62,7 @@ function NYC (config) {
   })
 
   this.sourceMaps = new SourceMaps({
-    cacheDirectory: this.cacheDirecotry
+    cacheDirectory: this.cacheDirectory
   })
 
   // require extensions can be provided as config in package.json.
@@ -102,7 +102,9 @@ NYC.prototype._createTransform = function (ext) {
       return hash
     },
     cacheDir: this.cacheDirectory,
-    disableCache: !this.enableCache,
+    // when running --all (in the parent process) we should
+    // not load source from cache.
+    disableCache: !(this.cache && this.config.isChildProcess),
     ext: ext
   }
   if (this._eagerInstantiation) {
@@ -319,7 +321,7 @@ NYC.prototype.cleanup = function () {
 }
 
 NYC.prototype.clearCache = function () {
-  if (this.enableCache) {
+  if (this.cache) {
     rimraf.sync(this.cacheDirectory)
   }
 }
@@ -365,7 +367,7 @@ NYC.prototype.writeCoverageFile = function () {
   var coverage = coverageFinder()
   if (!coverage) return
 
-  if (this.enableCache) {
+  if (this.cache) {
     Object.keys(coverage).forEach(function (absFile) {
       if (this.hashCache[absFile] && coverage[absFile]) {
         coverage[absFile].contentHash = this.hashCache[absFile]
