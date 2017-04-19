@@ -412,7 +412,7 @@ NYC.prototype._getCoverageMapFromAllCoverageFiles = function () {
   this.loadReports().forEach(function (report) {
     map.merge(report)
   })
-  map.data = _this.sourceMaps.remapCoverage(map.data)
+  map.data = this.sourceMaps.remapCoverage(map.data)
   return map
 }
 
