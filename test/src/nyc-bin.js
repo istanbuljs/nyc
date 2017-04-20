@@ -13,7 +13,6 @@ var rimraf = require('rimraf')
 var spawn = require('child_process').spawn
 
 require('chai').should()
-require('tap').mochaGlobals()
 
 // beforeEach
 rimraf.sync(path.resolve(fakebin, 'node'))

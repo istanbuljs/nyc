@@ -11,7 +11,8 @@ process.env.NYC_PARENT_PID = process.pid
 
 var config = {}
 if (process.env.NYC_CONFIG) config = JSON.parse(process.env.NYC_CONFIG)
-config.enableCache = process.env.NYC_CACHE === 'enable'
+config.isChildProcess = true
+
 config._processInfo = {
   ppid: parentPid,
   root: process.env.NYC_ROOT_ID

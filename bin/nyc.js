@@ -43,7 +43,6 @@ if (argv._[0] === 'report') {
   if (config.all) nyc.addAllFiles()
 
   var env = {
-    NYC_CACHE: argv.cache ? 'enable' : 'disable',
     NYC_CONFIG: JSON.stringify(config),
     NYC_CWD: process.cwd(),
     NYC_ROOT_ID: nyc.rootId,

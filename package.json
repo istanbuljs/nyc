@@ -6,14 +6,13 @@
   "scripts": {
     "bundle": "bundle-dependencies update",
     "pretest": "standard",
-    "test": "npm run cover",
+    "test": "npm run clean && npm run build && npm run instrument && npm run test-integration && npm run test-mocha && npm run report",
     "clean": "rimraf ./.nyc_output ./node_modules/.cache ./.self_coverage ./test/fixtures/.nyc_output ./test/fixtures/node_modules/.cache *covered.js ./lib/*covered.js",
     "build": "node ./build-tests",
     "instrument": "node ./build-self-coverage.js",
-    "run-tests": "tap -t120 --no-cov -b ./test/build/*.js ./test/src/nyc-bin.js ./test/src/process-args.js",
+    "test-integration": "tap -t120 --no-cov -b ./test/build/*.js && mocha --timeout=15000 ./test/src/nyc-bin.js",
+    "test-mocha": "node ./bin/nyc --silent --temp-directory=./.self_coverage mocha ./test/nyc.js ./test/process-args.js",
     "report": "node ./bin/nyc  --temp-directory ./.self_coverage/ -r text -r lcov report",
-    "cover": "npm run clean && npm run build && npm run instrument && npm run run-tests && npm run report",
-    "dev": "npm run clean && npm run build && npm run run-tests",
     "release": "standard-version"
   },
   "bin": {
@@ -34,7 +33,9 @@
       "coverage",
       "test/fixtures/coverage.js",
       "test/build/*",
-      "test/nyc-test.js",
+      "test/src/*",
+      "test/nyc.js",
+      "test/process-args.js",
       "index.covered.js",
       "test/fixtures/_generateCoverage.js"
     ]
@@ -109,6 +110,7 @@
     "forking-tap": "^0.1.1",
     "is-windows": "^1.0.0",
     "lodash": "^4.12.0",
+    "mocha": "^3.2.0",
     "newline-regex": "^0.2.1",
     "requirejs": "^2.3.0",
     "sanitize-filename": "^1.5.3",
