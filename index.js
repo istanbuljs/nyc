@@ -86,8 +86,6 @@ function NYC (config) {
 }
 
 NYC.prototype._createTransform = function (ext) {
-  var _this = this
-
   var opts = {
     salt: Hash.salt,
     hash: function (code, metadata, salt) {
@@ -95,9 +93,9 @@ NYC.prototype._createTransform = function (ext) {
       return hash
     },
     cacheDir: this.cacheDirectory,
-    // when running --all (in the parent process) we should
-    // not load source from cache.
-    disableCache: !(this.cache && this.config.isChildProcess),
+    // when running --all we should not load source-file from
+    // cache, we want to instead return the fake source.
+    disableCache: this._disableCachingTransform(),
     ext: ext
   }
   if (this._eagerInstantiation) {
@@ -106,6 +104,10 @@ NYC.prototype._createTransform = function (ext) {
     opts.factory = this._transformFactory.bind(this)
   }
   return cachingTransform(opts)
+}
+
+NYC.prototype._disableCachingTransform = function () {
+  return !(this.cache && this.config.isChildProcess)
 }
 
 NYC.prototype._loadAdditionalModules = function () {
@@ -321,6 +323,7 @@ NYC.prototype.clearCache = function () {
 
 NYC.prototype.createTempDirectory = function () {
   mkdirp.sync(this.tempDirectory())
+  mkdirp.sync(this.cacheDirectory)
 
   if (this._showProcessTree) {
     mkdirp.sync(this.processInfoDirectory())

@@ -1,9 +1,8 @@
 /* global describe, it */
 
 require('chai').should()
-require('tap').mochaGlobals()
 
-const processArgs = require('../../lib/process-args')
+const processArgs = require('../lib/process-args')
 
 describe('process-args', function () {
   describe('hideInstrumenterArgs', function () {
@@ -13,14 +12,14 @@ describe('process-args', function () {
         '--reporter',
         'lcov',
         'node',
-        'test/nyc-test.js'
+        'test/nyc-tap.js'
       ]
 
       var yargv = require('yargs/yargs')(process.argv.slice(2)).argv
 
       var munged = processArgs.hideInstrumenterArgs(yargv)
 
-      munged.should.eql(['node', 'test/nyc-test.js'])
+      munged.should.eql(['node', 'test/nyc-tap.js'])
     })
 
     it('parses extra args directly after -- as Node execArgv', function () {
@@ -46,7 +45,7 @@ describe('process-args', function () {
         '--reporter',
         'lcov',
         'node',
-        'test/nyc-test.js',
+        'test/nyc-tap.js',
         '--arg',
         '--'
       ]

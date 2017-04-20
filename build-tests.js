@@ -15,7 +15,7 @@ mkdirp.sync(path.join(__dirname, 'test/build'))
 
 var testDir = path.join(__dirname, 'test/src')
 var buildDir = path.join(__dirname, 'test/build')
-var originalTestsFilename = path.join(testDir, 'nyc-test.js')
+var originalTestsFilename = path.join(testDir, 'nyc-tap.js')
 var originalTestSource = fs.readFileSync(originalTestsFilename, 'utf8')
 var individualTests = forkingTap(originalTestSource, {
   filename: originalTestsFilename,
