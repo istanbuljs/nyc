@@ -6,6 +6,7 @@ const debugLog = require('debug-log')('nyc')
 const findCacheDir = require('find-cache-dir')
 const fs = require('fs')
 const glob = require('glob')
+const Hash = require('./lib/hash')
 const js = require('default-require-extensions/js')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
@@ -28,10 +29,6 @@ try {
   /* istanbul ignore next */
   ProcessInfo = require('./lib/process.js')
 }
-
-// bust cache whenever nyc is upgraded, this prevents
-// crashers caused by instrumentation updates.
-var CACHE_VERSION = require('./package.json').version
 
 /* istanbul ignore next */
 if (/index\.covered\.js$/.test(__filename)) {
@@ -62,6 +59,7 @@ function NYC (config) {
   })
 
   this.sourceMaps = new SourceMaps({
+    cache: this.cache,
     cacheDirectory: this.cacheDirectory
   })
 
@@ -81,7 +79,6 @@ function NYC (config) {
   }.bind(this), {})
 
   this.hookRunInContext = config.hookRunInContext
-  this.hashCache = {}
   this.fakeRequire = null
 
   this.processInfo = new ProcessInfo(config && config._processInfo)
@@ -92,13 +89,9 @@ NYC.prototype._createTransform = function (ext) {
   var _this = this
 
   var opts = {
-    salt: JSON.stringify({
-      istanbul: require('istanbul-lib-coverage/package.json').version,
-      nyc: require('./package.json').version
-    }),
+    salt: Hash.salt,
     hash: function (code, metadata, salt) {
-      var hash = md5hex([code, metadata.filename, salt]) + '_' + CACHE_VERSION
-      _this.hashCache[metadata.filename] = hash
+      var hash = Hash(code, metadata.filename)
       return hash
     },
     cacheDir: this.cacheDirectory,
@@ -272,7 +265,7 @@ NYC.prototype._transformFactory = function (cacheDir) {
     var filename = metadata.filename
     var sourceMap = null
 
-    if (_this._sourceMap) sourceMap = _this.sourceMaps.extractAndRegister(code, hash, filename)
+    if (_this._sourceMap) sourceMap = _this.sourceMaps.extractAndRegister(code, filename)
 
     try {
       instrumented = instrumenter.instrumentSync(code, filename, sourceMap)
@@ -369,8 +362,8 @@ NYC.prototype.writeCoverageFile = function () {
 
   if (this.cache) {
     Object.keys(coverage).forEach(function (absFile) {
-      if (this.hashCache[absFile] && coverage[absFile]) {
-        coverage[absFile].contentHash = this.hashCache[absFile]
+      if (this.sourceMaps.hashCache[absFile] && coverage[absFile]) {
+        coverage[absFile].contentHash = this.sourceMaps.hashCache[absFile]
       }
     }, this)
   } else {
