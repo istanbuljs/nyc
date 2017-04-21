@@ -11,7 +11,7 @@
     "build": "node ./build-tests",
     "instrument": "node ./build-self-coverage.js",
     "test-integration": "tap -t120 --no-cov -b ./test/build/*.js && mocha --timeout=15000 ./test/src/nyc-bin.js",
-    "test-mocha": "node ./bin/nyc --silent --temp-directory=./.self_coverage mocha ./test/nyc.js ./test/process-args.js",
+    "test-mocha": "node ./bin/nyc --no-clean --silent --temp-directory=./.self_coverage mocha ./test/nyc.js ./test/process-args.js",
     "report": "node ./bin/nyc  --temp-directory ./.self_coverage/ -r text -r lcov report",
     "release": "standard-version"
   },
