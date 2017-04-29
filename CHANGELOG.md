@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.3.0"></a>
+# [10.3.0](https://github.com/istanbuljs/nyc/compare/v10.2.0...v10.3.0) (2017-04-29)
+
+
+### Bug Fixes
+
+* source-maps were not being cached in the parent process when --all was being used ([#556](https://github.com/istanbuljs/nyc/issues/556)) ([ff73b18](https://github.com/istanbuljs/nyc/commit/ff73b18))
+
+
+### Features
+
+* add support for --no-clean, to disable deleting raw coverage output ([#558](https://github.com/istanbuljs/nyc/issues/558)) ([1887d1c](https://github.com/istanbuljs/nyc/commit/1887d1c))
+
+
+
 <a name="10.2.0"></a>
 # [10.2.0](https://github.com/istanbuljs/nyc/compare/v10.1.0...v10.2.0) (2017-03-28)
 
