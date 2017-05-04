@@ -83,13 +83,17 @@ function NYC (config) {
 
   this.processInfo = new ProcessInfo(config && config._processInfo)
   this.rootId = this.processInfo.root || this.generateUniqueID()
+
+  this.hashCache = {}
 }
 
 NYC.prototype._createTransform = function (ext) {
+  var _this = this
   var opts = {
     salt: Hash.salt,
     hash: function (code, metadata, salt) {
       var hash = Hash(code, metadata.filename)
+      _this.hashCache[metadata.filename] = hash
       return hash
     },
     cacheDir: this.cacheDirectory,
@@ -267,7 +271,7 @@ NYC.prototype._transformFactory = function (cacheDir) {
     var filename = metadata.filename
     var sourceMap = null
 
-    if (_this._sourceMap) sourceMap = _this.sourceMaps.extractAndRegister(code, filename)
+    if (_this._sourceMap) sourceMap = _this.sourceMaps.extractAndRegister(code, filename, hash)
 
     try {
       instrumented = instrumenter.instrumentSync(code, filename, sourceMap)
@@ -365,8 +369,8 @@ NYC.prototype.writeCoverageFile = function () {
 
   if (this.cache) {
     Object.keys(coverage).forEach(function (absFile) {
-      if (this.sourceMaps.hashCache[absFile] && coverage[absFile]) {
-        coverage[absFile].contentHash = this.sourceMaps.hashCache[absFile]
+      if (this.hashCache[absFile] && coverage[absFile]) {
+        coverage[absFile].contentHash = this.hashCache[absFile]
       }
     }, this)
   } else {
