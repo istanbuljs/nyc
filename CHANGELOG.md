@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.3.2"></a>
+## [10.3.2](https://github.com/istanbuljs/nyc/compare/v10.3.1...v10.3.2) (2017-05-05)
+
+
+### Bug Fixes
+
+* we should not create a cache folder if cache is false ([#567](https://github.com/istanbuljs/nyc/issues/567)) ([213206f](https://github.com/istanbuljs/nyc/commit/213206f))
+
+
+
 <a name="10.3.1"></a>
 ## [10.3.1](https://github.com/istanbuljs/nyc/compare/v10.3.0...v10.3.1) (2017-05-04)
 
