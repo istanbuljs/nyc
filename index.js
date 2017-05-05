@@ -327,7 +327,7 @@ NYC.prototype.clearCache = function () {
 
 NYC.prototype.createTempDirectory = function () {
   mkdirp.sync(this.tempDirectory())
-  mkdirp.sync(this.cacheDirectory)
+  if (this.cache) mkdirp.sync(this.cacheDirectory)
 
   if (this._showProcessTree) {
     mkdirp.sync(this.processInfoDirectory())

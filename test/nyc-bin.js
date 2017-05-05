@@ -2,10 +2,10 @@
 
 var _ = require('lodash')
 var path = require('path')
-var bin = path.resolve(__dirname, '../../bin/nyc')
-var fixturesCLI = path.resolve(__dirname, '../fixtures/cli')
+var bin = path.resolve(__dirname, '../bin/nyc')
+var fixturesCLI = path.resolve(__dirname, './fixtures/cli')
 var fakebin = path.resolve(fixturesCLI, 'fakebin')
-var fixturesHooks = path.resolve(__dirname, '../fixtures/hooks')
+var fixturesHooks = path.resolve(__dirname, './fixtures/hooks')
 var fs = require('fs')
 var glob = require('glob')
 var isWindows = require('is-windows')()
@@ -685,6 +685,24 @@ describe('the nyc cli', function () {
         fixturesCLI, './foo-cache'
       )).length.should.equal(1)
       rimraf.sync(path.resolve(fixturesCLI, 'foo-cache'))
+      done()
+    })
+  })
+
+  // see: https://github.com/istanbuljs/nyc/issues/563
+  it('does not create .cache folder if cache is "false"', function (done) {
+    var args = [bin, '--cache=false', process.execPath, './index.js']
+
+    var proc = spawn(process.execPath, args, {
+      cwd: process.cwd(),
+      env: env
+    })
+
+    rimraf.sync('./node_modules/.cache')
+
+    proc.on('close', function (code) {
+      code.should.equal(0)
+      fs.existsSync('./node_modules/.cache').should.equal(false)
       done()
     })
   })

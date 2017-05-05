@@ -1,6 +1,7 @@
 /* global describe, it */
 
 const NYC = require('../')
+
 require('chai').should()
 
 describe('NYC', function () {
