@@ -80,7 +80,7 @@
     "debug-log": "^1.0.1",
     "default-require-extensions": "^1.0.0",
     "find-cache-dir": "^0.1.1",
-    "find-up": "^2.1.0",
+    "find-up": "^1.1.2",
     "foreground-child": "^1.5.3",
     "glob": "^7.0.6",
     "istanbul-lib-coverage": "^1.1.0",
