@@ -267,7 +267,7 @@ Any configuration options that can be set via the command line can also be speci
 }
 ```
 
-### Publish, and reuse your nyc configuration
+### Publish, and reuse, your nyc configuration
 
 nyc allows you to inherit other configurations using the key `extends`. As an example,
 an alternative way to configure nyc for `babel-plugin-istanbul` would be to use the
