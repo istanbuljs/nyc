@@ -98,7 +98,7 @@
     "signal-exit": "^3.0.1",
     "spawn-wrap": "1.2.4",
     "test-exclude": "^4.1.1",
-    "yargs": "^7.1.0",
+    "yargs": "^8.0.1",
     "yargs-parser": "^5.0.0"
   },
   "devDependencies": {
