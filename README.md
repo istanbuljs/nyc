@@ -70,9 +70,10 @@ of the pre-transpiled code. You'll have to configure your custom require hook
 to inline the source map in the transpiled code. For Babel that means setting
 the `sourceMaps` option to `inline`.
 
-## Use with `babel-plugin-istanbul` for ES2015+ Support
+## Use with `babel-plugin-istanbul` for Babel Support
 
-[`babel-plugin-istanbul`](https://github.com/istanbuljs/babel-plugin-istanbul) can be used to enable first-class ES2015+ support.
+We recommend using [`babel-plugin-istanbul`](https://github.com/istanbuljs/babel-plugin-istanbul) if your
+project uses the babel tool chain:
 
 1. enable the `babel-plugin-istanbul` plugin:
 
@@ -265,6 +266,23 @@ Any configuration options that can be set via the command line can also be speci
   }
 }
 ```
+
+### Publish, and reuse your nyc configuration
+
+nyc allows you to inherit other configurations using the key `extends`. As an example,
+an alternative way to configure nyc for `babel-plugin-istanbul` would be to use the
+[@istanbuljs/nyc-config-babel preset](https://www.npmjs.com/package/@istanbuljs/nyc-config-babel):
+
+```json
+{
+  "nyc": {
+    "extends": "@istanbuljs/nyc-config-babel"
+  }
+}
+```
+
+To publish and resuse your own `nyc` configuration, simply create an npm module that
+exports an `index.json` with your `nyc` config.
 
 ## High and low watermarks
 
