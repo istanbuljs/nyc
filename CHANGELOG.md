@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.0.0"></a>
+# [11.0.0](https://github.com/istanbuljs/nyc/compare/v10.3.2...v11.0.0) (2017-05-31)
+
+
+### Bug Fixes
+
+* add support for ES6 modules ([f18f780](https://github.com/istanbuljs/nyc/commit/f18f780))
+
+
+### Features
+
+* allow .nycrc.json ([#580](https://github.com/istanbuljs/nyc/issues/580)) ([a1a457f](https://github.com/istanbuljs/nyc/commit/a1a457f))
+* upgrade to version of yargs with support for presets ([33829b8](https://github.com/istanbuljs/nyc/commit/33829b8))
+
+
+### BREAKING CHANGES
+
+* new version of find-up requires dropping 0.10/0.12 support (which we had already been planning).
+
+
+
 <a name="10.3.2"></a>
 ## [10.3.2](https://github.com/istanbuljs/nyc/compare/v10.3.1...v10.3.2) (2017-05-05)
 
