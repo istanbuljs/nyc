@@ -5,3 +5,4 @@ test/build/
 .self_coverage
 *.covered.js
 needs-transpile.js
+package-lock.json
