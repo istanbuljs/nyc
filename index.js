@@ -441,21 +441,36 @@ NYC.prototype.showProcessTree = function () {
   console.log(processTree.render(this))
 }
 
-NYC.prototype.checkCoverage = function (thresholds) {
+NYC.prototype.checkCoverage = function (thresholds, perFile) {
   var map = this._getCoverageMapFromAllCoverageFiles()
-  var summary = map.getCoverageSummary()
+  var nyc = this
 
-  // ERROR: Coverage for lines (90.12%) does not meet global threshold (120%)
+  if (perFile) {
+    map.files().forEach(function (file) {
+      // ERROR: Coverage for lines (90.12%) does not meet threshold (120%) for index.js
+      nyc._checkCoverage(map.fileCoverageFor(file).toSummary(), thresholds, file)
+    })
+  } else {
+    // ERROR: Coverage for lines (90.12%) does not meet global threshold (120%)
+    nyc._checkCoverage(map.getCoverageSummary(), thresholds)
+  }
+
+  // process.exitCode was not implemented until v0.11.8.
+  if (/^v0\.(1[0-1]\.|[0-9]\.)/.test(process.version) && process.exitCode !== 0) process.exit(process.exitCode)
+}
+
+NYC.prototype._checkCoverage = function (summary, thresholds, file) {
   Object.keys(thresholds).forEach(function (key) {
     var coverage = summary[key].pct
     if (coverage < thresholds[key]) {
       process.exitCode = 1
-      console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet global threshold (' + thresholds[key] + '%)')
+      if (file) {
+        console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet threshold (' + thresholds[key] + '%) for ' + file)
+      } else {
+        console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet global threshold (' + thresholds[key] + '%)')
+      }
     }
   })
-
-  // process.exitCode was not implemented until v0.11.8.
-  if (/^v0\.(1[0-1]\.|[0-9]\.)/.test(process.version) && process.exitCode !== 0) process.exit(process.exitCode)
 }
 
 NYC.prototype._loadProcessInfos = function () {

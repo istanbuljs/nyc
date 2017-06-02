@@ -97,5 +97,5 @@ function checkCoverage (argv, cb) {
     functions: argv.functions,
     branches: argv.branches,
     statements: argv.statements
-  })
+  }, argv['per-file'])
 }
