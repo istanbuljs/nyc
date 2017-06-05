@@ -18,6 +18,6 @@ config._processInfo = {
   root: process.env.NYC_ROOT_ID
 }
 
-;(new NYC(config)).wrap()
+if (!process.env.NYC_NO_INSTRUMENT) ;(new NYC(config)).wrap()
 
 sw.runMain()
