@@ -384,6 +384,9 @@ Here's how to get `nyc` integrated with codecov and travis-ci.org:
 
 That's all there is to it!
 
+## Integrating with TAP formatters
+Many testing frameworks (Mocha, Tape, Tap, etc.) can produce [TAP](https://en.wikipedia.org/wiki/Test_Anything_Protocol) output. [tap-nyc](https://github.com/MegaArman/tap-nyc) is a TAP formatter designed to look nice with nyc.
+
 ## More tutorials
 
 You can find more tutorials at http://istanbul.js.org/docs/tutorials
