@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.0.3"></a>
+## [11.0.3](https://github.com/istanbuljs/nyc/compare/v11.0.2...v11.0.3) (2017-06-25)
+
+
+### Bug Fixes
+
+* update help link to list of reporters ([#601](https://github.com/istanbuljs/nyc/issues/601)) ([b1eb4d6](https://github.com/istanbuljs/nyc/commit/b1eb4d6))
+* upgrade to spawn-wrap version that works with babel-register ([#617](https://github.com/istanbuljs/nyc/issues/617)) ([923b062](https://github.com/istanbuljs/nyc/commit/923b062))
+
+
+
 <a name="11.0.2"></a>
 ## [11.0.2](https://github.com/istanbuljs/nyc/compare/v11.0.1...v11.0.2) (2017-06-02)
 
