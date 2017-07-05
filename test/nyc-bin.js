@@ -144,7 +144,7 @@ describe('the nyc cli', function () {
 
     it('fails when the expected file coverage is below a threshold', function (done) {
       var args = [bin, '--check-coverage', '--lines', '51', '--per-file', process.execPath, './half-covered.js']
-      var matcher = RegExp('ERROR: Coverage for lines \\(50%\\) does not meet threshold \\(51%\\) for .+/half-covered.js')
+      var matcher = RegExp('ERROR: Coverage for lines \\(50%\\) does not meet threshold \\(51%\\) for .+half-covered.js')
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
