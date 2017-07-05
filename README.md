@@ -153,6 +153,12 @@ nyc --check-coverage --lines 100 npm test
 
 The above check fails if coverage falls below 100%.
 
+To check thresholds on a per-file basis run:
+
+```shell
+nyc check-coverage --lines 95 --per-file
+```
+
 ## Running reports
 
 Once you've run your tests with nyc, simply run:
@@ -240,6 +246,7 @@ Any configuration options that can be set via the command line can also be speci
   "description": "These are just examples for demonstration, nothing prescriptive",
   "nyc": {
     "check-coverage": true,
+    "per-file": true,
     "lines": 99,
     "statements": 99,
     "functions": 99,
