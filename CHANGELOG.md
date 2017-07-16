@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.1.0"></a>
+# [11.1.0](https://github.com/istanbuljs/nyc/compare/v11.0.3...v11.1.0) (2017-07-16)
+
+
+### Features
+
+* add support for per file coverage checking ([#591](https://github.com/istanbuljs/nyc/issues/591)) ([bbadc1f](https://github.com/istanbuljs/nyc/commit/bbadc1f))
+* upgrade to version of spawn-wrap that supports .EXE ([#626](https://github.com/istanbuljs/nyc/issues/626)) ([8768afe](https://github.com/istanbuljs/nyc/commit/8768afe))
+
+
+
 <a name="11.0.3"></a>
 ## [11.0.3](https://github.com/istanbuljs/nyc/compare/v11.0.2...v11.0.3) (2017-06-25)
 
