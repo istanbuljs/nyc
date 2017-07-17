@@ -1,6 +1,6 @@
 {
   "name": "nyc",
-  "version": "1.1.1",
+  "version": "https://registry.npmjs.org/nyc/-/nyc-1.1.1.tgz",
   "description": "forking code-coverage using istanbul.",
   "main": "index.js"
 }
