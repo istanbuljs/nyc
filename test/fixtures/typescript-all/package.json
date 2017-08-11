@@ -1,0 +1,61 @@
+{
+  "name": "typescript-all",
+  "version": "0.0.0-unofficial",
+  "description": "Test fixture for nyc with typescript with all=true",
+  "license": "MIT",
+  "devDependencies": {
+    "cross-env": "5.0.5",
+    "nyc": "11.1.0",
+    "ts-node": "3.3.0",
+    "typescript": "2.4.2"
+  },
+  "scripts": {
+    "coverage": "cross-env TS_NODE_FAST=true nyc --check-coverage -- node test/test-framework",
+    "coverage-without-all": "cross-env TS_NODE_FAST=true nyc --check-coverage --no-all -- node test/test-framework"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "**/*.d.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "reporter": [
+      "lcov",
+      "html",
+      "text-summary"
+    ],
+    "require": "ts-node/register",
+    "cache": true,
+    "temp-directory": "./build/nyc/cache",
+    "all": true,
+    "check-coverage": false,
+    "report-dir": "./build/coverage",
+    "es-module": false,
+    "lines": 100,
+    "statements": 100,
+    "functions": 100,
+    "branches": 100,
+    "watermarks": {
+      "lines": [
+        75,
+        100
+      ],
+      "functions": [
+        75,
+        100
+      ],
+      "branches": [
+        75,
+        100
+      ],
+      "statements": [
+        75,
+        100
+      ]
+    }
+  }
+}

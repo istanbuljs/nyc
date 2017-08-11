@@ -6,3 +6,4 @@ test/build/
 *.covered.js
 needs-transpile.js
 package-lock.json
+.idea
