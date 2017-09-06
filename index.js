@@ -420,10 +420,10 @@ NYC.prototype._getCoverageMapFromAllCoverageFiles = function () {
   this.loadReports().forEach(function (report) {
     map.merge(report)
   })
-  map.data = this.sourceMaps.remapCoverage(map.data)
   map.filter(function (filename) {
     return _this.exclude.shouldInstrument(filename)
   })
+  map.data = this.sourceMaps.remapCoverage(map.data)
   return map
 }
 
