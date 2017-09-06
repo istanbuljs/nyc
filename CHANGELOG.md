@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.2.1"></a>
+## [11.2.1](https://github.com/istanbuljs/nyc/compare/v11.2.0...v11.2.1) (2017-09-06)
+
+
+### Bug Fixes
+
+* apply exclude logic before remapping coverage ([#667](https://github.com/istanbuljs/nyc/issues/667)) ([a10d478](https://github.com/istanbuljs/nyc/commit/a10d478))
+* create temp directory when --no-clean flag is set [#663](https://github.com/istanbuljs/nyc/issues/663) ([#664](https://github.com/istanbuljs/nyc/issues/664)) ([3bd1527](https://github.com/istanbuljs/nyc/commit/3bd1527))
+
+
+
 <a name="11.2.0"></a>
 # [11.2.0](https://github.com/istanbuljs/nyc/compare/v11.1.0...v11.2.0) (2017-09-05)
 
