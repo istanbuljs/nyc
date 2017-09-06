@@ -38,7 +38,11 @@ if (argv._[0] === 'report') {
   else config.instrumenter = './lib/instrumenters/istanbul'
 
   var nyc = (new NYC(config))
-  if (config.clean) nyc.reset()
+  if (config.clean) {
+    nyc.reset()
+  } else {
+    nyc.createTempDirectory()
+  }
   if (config.all) nyc.addAllFiles()
 
   var env = {
