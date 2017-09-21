@@ -314,9 +314,6 @@ NYC.prototype._addOtherHooks = function () {
   if (this.hookRunInContext) {
     this._addHook('RunInContext')
   }
-}
-
-NYC.prototype._addOtherHooks = function () {
   if (this.hookRunInThisContext) {
     this._addHook('RunInThisContext')
   }
