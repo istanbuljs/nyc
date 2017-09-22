@@ -79,6 +79,7 @@ function NYC (config) {
   }.bind(this), {})
 
   this.hookRunInContext = config.hookRunInContext
+  this.hookRunInThisContext = config.hookRunInThisContext
   this.fakeRequire = null
 
   this.processInfo = new ProcessInfo(config && config._processInfo)
@@ -311,6 +312,9 @@ NYC.prototype._wrapRequire = function () {
 
 NYC.prototype._addOtherHooks = function () {
   if (this.hookRunInContext) {
+    this._addHook('RunInContext')
+  }
+  if (this.hookRunInThisContext) {
     this._addHook('RunInThisContext')
   }
 }
