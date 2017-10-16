@@ -61,6 +61,11 @@ describe('nyc', function () {
       var nyc = new NYC(configUtil.loadConfig([], __dirname))
       nyc.cwd.should.eql(path.join(__dirname, '../..'))
     })
+
+    it('uses --cwd for cwd if it is set (highest priority and no look upwards for package.json) ', function () {
+      var nyc = new NYC(configUtil.loadConfig(['--cwd', __dirname], __dirname))
+      nyc.cwd.should.eql(__dirname)
+    })
   })
 
   describe('config', function () {

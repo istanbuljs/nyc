@@ -367,6 +367,13 @@ NYC.prototype.writeCoverageFile = function () {
   var coverage = coverageFinder()
   if (!coverage) return
 
+  // Remove any files that should be excluded but snuck into the coverage
+  Object.keys(coverage).forEach(function (absFile) {
+    if (!this.exclude.shouldInstrument(absFile)) {
+      delete coverage[absFile]
+    }
+  }, this)
+
   if (this.cache) {
     Object.keys(coverage).forEach(function (absFile) {
       if (this.hashCache[absFile] && coverage[absFile]) {
@@ -413,10 +420,10 @@ NYC.prototype._getCoverageMapFromAllCoverageFiles = function () {
   this.loadReports().forEach(function (report) {
     map.merge(report)
   })
-  map.data = this.sourceMaps.remapCoverage(map.data)
   map.filter(function (filename) {
     return _this.exclude.shouldInstrument(filename)
   })
+  map.data = this.sourceMaps.remapCoverage(map.data)
   return map
 }
 
