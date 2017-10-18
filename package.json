@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "bundle": "bundle-dependencies update",
-    "pretest": "standard",
+    "posttest": "standard",
     "test": "npm run clean && npm run build && npm run instrument && npm run test-integration && npm run test-mocha && npm run report",
     "clean": "rimraf ./.nyc_output ./node_modules/.cache ./.self_coverage ./test/fixtures/.nyc_output ./test/fixtures/node_modules/.cache *covered.js ./lib/*covered.js",
     "build": "node ./build-tests",
@@ -98,8 +98,8 @@
     "signal-exit": "^3.0.1",
     "spawn-wrap": "^1.3.8",
     "test-exclude": "^4.1.1",
-    "yargs": "^8.0.1",
-    "yargs-parser": "^5.0.0"
+    "yargs": "^10.0.0",
+    "yargs-parser": "^8.0.0"
   },
   "devDependencies": {
     "any-path": "^1.3.0",
