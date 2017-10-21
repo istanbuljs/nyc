@@ -143,7 +143,7 @@ nyc can fail tests if coverage falls below a threshold.
 After running your tests with nyc, simply run:
 
 ```shell
-nyc check-coverage --lines 95 --functions 95 --branches 95
+nyc --check-coverage --lines 95 --functions 95 --branches 95
 ```
 
 nyc also accepts a `--check-coverage` shorthand, which can be used to
@@ -158,7 +158,7 @@ The above check fails if coverage falls below 100%.
 To check thresholds on a per-file basis run:
 
 ```shell
-nyc check-coverage --lines 95 --per-file
+nyc --check-coverage --lines 95 --per-file
 ```
 
 ## Running reports
