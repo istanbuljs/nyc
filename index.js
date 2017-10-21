@@ -230,7 +230,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
   } catch (err) {
     return cb(err)
   }
-  cb();
+  cb()
 }
 
 NYC.prototype.walkAllFiles = function (dir, visitor) {
