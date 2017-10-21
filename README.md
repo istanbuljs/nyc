@@ -179,7 +179,7 @@ You can use [any reporters that are supported by `istanbul`](https://github.com/
 nyc report --reporter=lcov
 ```
 
-You can find examples of the output for various reporters [here](https://istanbul.js.org/docs/advanced/instrument/alternative-reporters).
+You can find examples of the output for various reporters [here](https://istanbul.js.org/docs/advanced/alternative-reporters).
 
 ## Excluding files
 
