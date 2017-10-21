@@ -173,11 +173,13 @@ To view your coverage report:
 
 <img width="500" src="screen.png">
 
-you can use [any reporters that are supported by `istanbul`](https://github.com/istanbuljs/istanbuljs/tree/master/packages/istanbul-reports/lib):
+You can use [any reporters that are supported by `istanbul`](https://github.com/istanbuljs/istanbuljs/tree/master/packages/istanbul-reports/lib): `clover`, `cobertura`, `html`, `json-summary`, `json`, `lcov`, `lcovonly`, `none`, `teamcity`, `text-lcov`, `text-summary`, `text`.
 
 ```bash
 nyc report --reporter=lcov
 ```
+
+You can find examples of the output for various reporters [here](https://istanbul.js.org/docs/advanced/instrument/alternative-reporters).
 
 ## Excluding files
 
