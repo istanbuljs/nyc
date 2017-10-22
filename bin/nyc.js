@@ -22,12 +22,9 @@ var instrumenterArgs = processArgs.hideInstrumenteeArgs()
 var argv = yargs.parse(instrumenterArgs)
 
 if (argv._[0] === 'report') {
-  // run a report.
-  process.env.NYC_CWD = process.cwd()
-
-  report(argv)
+  // look in lib/commands/report.js for logic.
 } else if (argv._[0] === 'check-coverage') {
-  checkCoverage(argv)
+  // look in lib/commands/check-coverage.js for logic.
 } else if (argv._[0] === 'instrument') {
   // look in lib/commands/instrument.js for logic.
 } else if (argv._.length) {
