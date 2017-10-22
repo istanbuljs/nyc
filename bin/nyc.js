@@ -17,42 +17,38 @@ var wrapper = require.resolve('./wrap.js')
 // we keep these values in a few different forms,
 // used in the various execution contexts of nyc:
 // reporting, instrumenting subprocesses, etc.
-var yargs = configUtil.decorateYargs(configUtil.buildYargs())
+var yargs = configUtil.addCommandsAndHelp(configUtil.buildYargs())
 var instrumenterArgs = processArgs.hideInstrumenteeArgs()
 var argv = yargs.parse(instrumenterArgs)
-var config = configUtil.loadConfig(instrumenterArgs)
 
 if (argv._[0] === 'report') {
-  // run a report.
-  process.env.NYC_CWD = process.cwd()
-
-  report(config)
+  // look in lib/commands/report.js for logic.
 } else if (argv._[0] === 'check-coverage') {
-  checkCoverage(config)
+  // look in lib/commands/check-coverage.js for logic.
 } else if (argv._[0] === 'instrument') {
   // look in lib/commands/instrument.js for logic.
 } else if (argv._.length) {
   // if instrument is set to false,
   // enable a noop instrumenter.
-  if (!config.instrument) config.instrumenter = './lib/instrumenters/noop'
-  else config.instrumenter = './lib/instrumenters/istanbul'
+  if (!argv.instrument) argv.instrumenter = './lib/instrumenters/noop'
+  else argv.instrumenter = './lib/instrumenters/istanbul'
 
-  var nyc = (new NYC(config))
-  if (config.clean) {
+  var nyc = (new NYC(argv))
+  if (argv.clean) {
     nyc.reset()
   } else {
     nyc.createTempDirectory()
   }
-  if (config.all) nyc.addAllFiles()
+  if (argv.all) nyc.addAllFiles()
 
   var env = {
-    NYC_CONFIG: JSON.stringify(config),
+    NYC_CONFIG: JSON.stringify(argv),
     NYC_CWD: process.cwd(),
     NYC_ROOT_ID: nyc.rootId,
-    NYC_INSTRUMENTER: config.instrumenter
+    NYC_INSTRUMENTER: argv.instrumenter
   }
 
-  if (config['babel-cache'] === false) {
+  if (argv['babel-cache'] === false) {
     // babel's cache interferes with some configurations, so is
     // disabled by default. opt in by setting babel-cache=true.
     env.BABEL_DISABLE_CACHE = process.env.BABEL_DISABLE_CACHE = '1'
@@ -71,13 +67,13 @@ if (argv._[0] === 'report') {
   ), function (done) {
     var mainChildExitCode = process.exitCode
 
-    if (config.checkCoverage) {
-      checkCoverage(config)
+    if (argv.checkCoverage) {
+      checkCoverage(argv)
       process.exitCode = process.exitCode || mainChildExitCode
-      if (!config.silent) report(config)
+      if (!argv.silent) report(argv)
       return done()
     } else {
-      if (!config.silent) report(config)
+      if (!argv.silent) report(argv)
       return done()
     }
   })
