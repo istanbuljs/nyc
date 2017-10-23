@@ -119,6 +119,7 @@
     "split-lines": "^1.0.0",
     "standard": "^9.0.2",
     "standard-version": "^4.0.0",
+    "strip-indent": "^2.0.0",
     "tap": "^10.0.0",
     "which": "^1.2.11",
     "zero-fill": "^2.2.3"

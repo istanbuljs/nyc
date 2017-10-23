@@ -53,14 +53,14 @@ and a `text-lcov` coverage report.
 nyc --reporter=lcov --reporter=text-lcov npm test
 ```
 
-### Accurate stack traces using source maps
+### Accurate stack traces using source-maps
 
 When `produce-source-map` is set to true, then the instrumented source files will
 include inline source maps for the instrumenter transform. When combined with
 [source-map-support](https://github.com/evanw/node-source-map-support),
 stack traces for instrumented code will reflect their original lines.
 
-### Support for custom require hooks (babel, webpack, etc.)
+### Support for custom require hooks (babel, typescript, etc.)
 
 nyc supports custom require hooks like
 [`babel-register`](http://babeljs.io/docs/usage/require/). nyc can
@@ -69,8 +69,19 @@ flag](#require-additional-modules).
 
 Source maps are used to map coverage information back to the appropriate lines
 of the pre-transpiled code. You'll have to configure your custom require hook
-to inline the source map in the transpiled code. For Babel that means setting
+to inline the source-map in the transpiled code. For Babel that means setting
 the `sourceMaps` option to `inline`.
+
+### Source-Map support for pre-instrumented codebases
+
+If you opt to pre-instrument your source-code (rather than using a just-in-time
+transpiler like [`babel-register`](http://babeljs.io/docs/usage/require/))
+nyc supports both inline source-maps and `.map` files.
+
+_Important: If you are using nyc with a project that pre-instruments its code,
+run nyc with the configuration option `--exclude-after-remap` set to `false`.
+Otherwise nyc's reports will exclude any files that source-maps remap to folders
+covered under exclude rules._
 
 ## Use with `babel-plugin-istanbul` for Babel Support
 
@@ -118,12 +129,12 @@ That's all there is to it, better ES2015+ syntax highlighting awaits:
 
 <img width="500" src="screen2.png">
 
-## Support for alternate file extensions (.jsx, .es6)
+## Support for alternate file extensions (.jsx, .mjs)
 
 Supporting file extensions can be configured through either the configuration arguments or with the `nyc` config section in `package.json`.
 
 ```shell
-nyc --extension .jsx --extension .es6 npm test
+nyc --extension .jsx --extension .mjs npm test
 ```
 
 ```json
@@ -131,7 +142,7 @@ nyc --extension .jsx --extension .es6 npm test
   "nyc": {
     "extension": [
       ".jsx",
-      ".es6"
+      ".mjs"
     ]
   }
 }
@@ -320,9 +331,18 @@ You can specify custom high and low watermarks in nyc's configuration:
 }
 ```
 
-## Other advanced features
+## Parsing Hints (Ignoring Lines)
 
-Take a look at http://istanbul.js.org/docs/advanced/ and please feel free to [contribute documentation](https://github.com/istanbuljs/istanbuljs.github.io/tree/development/content).
+There may be some sections of your codebase that you wish to purposefully
+exclude from coverage tracking, to do so you can use the following parsing
+hints:
+
+* `/* istanbul ignore if */`: ignore the next if statement.
+* `/* istanbul ignore else */`: ignore the else portion of an if statement.
+* `/* istanbul ignore next */`: ignore the next _thing_ in the source-code (
+ functions, if statements, classes, you name it).
+* `/* istanbul ignore file */`: ignore an entire source-file (this should be
+  placed at the top of the file).
 
 ## Integrating with coveralls
 
@@ -396,8 +416,13 @@ Here's how to get `nyc` integrated with codecov and travis-ci.org:
 That's all there is to it!
 
 ## Integrating with TAP formatters
+
 Many testing frameworks (Mocha, Tape, Tap, etc.) can produce [TAP](https://en.wikipedia.org/wiki/Test_Anything_Protocol) output. [tap-nyc](https://github.com/MegaArman/tap-nyc) is a TAP formatter designed to look nice with nyc.
 
 ## More tutorials
 
 You can find more tutorials at http://istanbul.js.org/docs/tutorials
+
+## Other advanced features
+
+Take a look at http://istanbul.js.org/docs/advanced/ and please feel free to [contribute documentation](https://github.com/istanbuljs/istanbuljs.github.io/tree/development/content).
