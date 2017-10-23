@@ -420,9 +420,15 @@ NYC.prototype._getCoverageMapFromAllCoverageFiles = function () {
   this.loadReports().forEach(function (report) {
     map.merge(report)
   })
-  map.filter(function (filename) {
-    return _this.exclude.shouldInstrument(filename)
-  })
+  // depending on whether source-code is pre-instrumented
+  // or instrumented using a JIT plugin like babel-require
+  // you may opt to exclude files after applying
+  // source-map remapping logic.
+  if (this.config.excludeAfterRemap) {
+    map.filter(function (filename) {
+      return _this.exclude.shouldInstrument(filename)
+    })
+  }
   map.data = this.sourceMaps.remapCoverage(map.data)
   return map
 }

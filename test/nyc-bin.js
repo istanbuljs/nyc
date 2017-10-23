@@ -1,16 +1,18 @@
 /* global describe, it */
 
-var _ = require('lodash')
-var path = require('path')
-var bin = path.resolve(__dirname, '../bin/nyc')
-var fixturesCLI = path.resolve(__dirname, './fixtures/cli')
-var fakebin = path.resolve(fixturesCLI, 'fakebin')
-var fixturesHooks = path.resolve(__dirname, './fixtures/hooks')
-var fs = require('fs')
-var glob = require('glob')
-var isWindows = require('is-windows')()
-var rimraf = require('rimraf')
-var spawn = require('child_process').spawn
+const _ = require('lodash')
+const path = require('path')
+const bin = path.resolve(__dirname, '../bin/nyc')
+const fixturesCLI = path.resolve(__dirname, './fixtures/cli')
+const fixturesHooks = path.resolve(__dirname, './fixtures/hooks')
+const fixturesSourceMaps = path.resolve(__dirname, './fixtures/source-maps')
+const fakebin = path.resolve(fixturesCLI, 'fakebin')
+const fs = require('fs')
+const glob = require('glob')
+const isWindows = require('is-windows')()
+const rimraf = require('rimraf')
+const spawn = require('child_process').spawn
+const si = require('strip-indent')
 
 require('chai').should()
 
@@ -762,4 +764,120 @@ describe('the nyc cli', function () {
       done()
     })
   })
+
+  // the following tests exercise nyc's behavior around source-maps
+  // that have been included with pre-instrumented files. Perhaps, as an
+  // example, unit tests are being run against minified JavaScript.
+  // --exclude-after-remap will likely need to be set to false when
+  // using nyc with this type of configuration.
+  describe('source-maps', () => {
+    describe('--all', () => {
+      it('includes files with both .map files and inline source-maps', (done) => {
+        const args = [
+          bin,
+          '--all',
+          '--cache', 'false',
+          '--exclude-after-remap', 'false',
+          '--exclude', 'original',
+          process.execPath, './instrumented/s1.min.js'
+        ]
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesSourceMaps,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdoutShouldEqual(stdout, `
+            ----------|----------|----------|----------|----------|----------------|
+            File      |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
+            ----------|----------|----------|----------|----------|----------------|
+            All files |    44.44 |      100 |    33.33 |    44.44 |                |
+             s1.js    |       80 |      100 |       50 |       80 |              7 |
+             s2.js    |        0 |      100 |        0 |        0 |        1,2,4,6 |
+            ----------|----------|----------|----------|----------|----------------|`
+          )
+          done()
+        })
+      })
+    })
+
+    describe('.map file', () => {
+      it('appropriately instruments file with corresponding .map file', (done) => {
+        const args = [
+          bin,
+          '--cache', 'false',
+          '--exclude-after-remap', 'false',
+          '--exclude', 'original',
+          process.execPath, './instrumented/s1.min.js'
+        ]
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesSourceMaps,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdoutShouldEqual(stdout, `
+          ----------|----------|----------|----------|----------|----------------|
+          File      |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
+          ----------|----------|----------|----------|----------|----------------|
+          All files |       80 |      100 |       50 |       80 |                |
+           s1.js    |       80 |      100 |       50 |       80 |              7 |
+          ----------|----------|----------|----------|----------|----------------|`)
+          done()
+        })
+      })
+    })
+
+    describe('inline', () => {
+      it('appropriately instruments a file with an inline source-map', (done) => {
+        const args = [
+          bin,
+          '--cache', 'false',
+          '--exclude-after-remap', 'false',
+          '--exclude', 'original',
+          process.execPath, './instrumented/s2.min.js'
+        ]
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesSourceMaps,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdoutShouldEqual(stdout, `
+            ----------|----------|----------|----------|----------|----------------|
+            File      |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
+            ----------|----------|----------|----------|----------|----------------|
+            All files |      100 |      100 |      100 |      100 |                |
+             s2.js    |      100 |      100 |      100 |      100 |                |
+            ----------|----------|----------|----------|----------|----------------|`)
+          done()
+        })
+      })
+    })
+  })
 })
+
+function stdoutShouldEqual (stdout, expected) {
+  `\n${stdout}`.should.equal(`${si(expected)}\n`)
+}
