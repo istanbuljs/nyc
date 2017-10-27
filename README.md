@@ -216,7 +216,7 @@ and anything in the `build` directory:
 > Note: Since version 9.0 files under `node_modules/` are excluded by default.
   add the exclude rule `!**/node_modules/` to stop this.
 
-> Note: exclude defaults to `['test', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**', '**/node_modules/**']`,
+> Note: exclude defaults to `['coverage/**', 'test/**', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**', '**/node_modules/**']`,
 which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`,
 and `test-*.js` files. Specifying your own exclude property overrides these defaults.
 
