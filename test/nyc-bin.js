@@ -477,6 +477,23 @@ describe('the nyc cli', function () {
           done()
         })
       })
+
+      it('allows a sub-directory of files to be instrumented', function (done) {
+        var args = [bin, 'instrument', './subdir/input-dir', './output']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          files.should.include('index.js')
+          rimraf.sync(path.resolve(fixturesCLI, 'output'))
+          done()
+        })
+      })
     })
   })
 
