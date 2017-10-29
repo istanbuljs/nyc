@@ -231,6 +231,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
   } catch (err) {
     return cb(err)
   }
+  cb()
 }
 
 NYC.prototype.walkAllFiles = function (dir, visitor) {
@@ -272,7 +273,7 @@ NYC.prototype._transformFactory = function (cacheDir) {
     var filename = metadata.filename
     var sourceMap = null
 
-    if (_this._sourceMap) sourceMap = _this.sourceMaps.extractAndRegister(code, filename, hash)
+    if (_this._sourceMap) sourceMap = _this.sourceMaps.extractAndRegister(code, metadata, hash)
 
     try {
       instrumented = instrumenter.instrumentSync(code, filename, sourceMap)
