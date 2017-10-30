@@ -231,6 +231,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
   } catch (err) {
     return cb(err)
   }
+  cb()
 }
 
 NYC.prototype.walkAllFiles = function (dir, visitor) {
