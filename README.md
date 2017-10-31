@@ -93,7 +93,7 @@ project uses the babel tool chain:
   ```json
     {
       "babel": {
-        "presets": ["es2015"],
+        "presets": ["env"],
         "env": {
           "test": {
             "plugins": ["istanbul"]
