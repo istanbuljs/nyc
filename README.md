@@ -161,7 +161,7 @@ nyc also accepts a `--check-coverage` shorthand, which can be used to
 both run tests and check that coverage falls within the threshold provided:
 
 ```shell
-nyc check-coverage --lines 100 npm test
+nyc --check-coverage --lines 100 npm test
 ```
 
 The above check fails if coverage falls below 100%.
