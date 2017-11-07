@@ -1,9 +1,8 @@
 environment:
   matrix:
-    - nodejs_version: '9' # stable
     - nodejs_version: '8' # LTS
     - nodejs_version: '6' # LTS
-    - nodejs_version: '4'
+    - nodejs_version: '4' # Maintenance LTS
 install:
   - ps: Install-Product node $env:nodejs_version
   - npm cache clear
