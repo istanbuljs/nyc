@@ -25,7 +25,7 @@ npm i nyc --save-dev
 
 ```json
 {
-  "script": {
+  "scripts": {
     "test": "nyc mocha"
   }
 }
@@ -360,7 +360,7 @@ integrated with coveralls and travis-ci.org:
 
   ```json
   {
-     "script": {
+     "scripts": {
        "test": "nyc mocha",
        "coverage": "nyc report --reporter=text-lcov | coveralls"
      }
@@ -398,7 +398,7 @@ Here's how to get `nyc` integrated with codecov and travis-ci.org:
 
   ```json
   {
-     "script": {
+     "scripts": {
        "test": "nyc tap ./test/*.js",
        "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
      }
