@@ -333,6 +333,28 @@ describe('the nyc cli', function () {
         })
       })
 
+      it('loads configuration from different file rather than .nycrc', function (done) {
+        var args = [bin, '--nycrc-path', './.nycrc-config.json', process.execPath, './index.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: cwd,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          // should be 1 due to coverage check
+          code.should.equal(1)
+          stdout.should.match(/SF:.*index\.js/)
+          stdout.should.match(/SF:.*ignore\.js/)
+          done()
+        })
+      })
+
       it('allows .nycrc configuration to be overridden with command line args', function (done) {
         var args = [bin, '--exclude=foo.js', process.execPath, './index.js']
 
