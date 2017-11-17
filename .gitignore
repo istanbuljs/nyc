@@ -4,5 +4,6 @@ node_modules
 test/build/
 .self_coverage
 *.covered.js
+*.swp
 needs-transpile.js
 package-lock.json
