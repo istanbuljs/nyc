@@ -19,7 +19,8 @@ var wrapper = require.resolve('./wrap.js')
 // reporting, instrumenting subprocesses, etc.
 var yargs = configUtil.addCommandsAndHelp(configUtil.buildYargs())
 var instrumenterArgs = processArgs.hideInstrumenteeArgs()
-var argv = yargs.parse(instrumenterArgs)
+var config = configUtil.loadConfig(processArgs.parseArgs())
+var argv = yargs.config(config).parse(instrumenterArgs)
 
 if (argv._[0] === 'report') {
   // look in lib/commands/report.js for logic.
