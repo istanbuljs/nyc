@@ -1,26 +1,27 @@
 #!/usr/bin/env node
 
-var configUtil = require('../lib/config-util')
-var foreground = require('foreground-child')
+const configUtil = require('../lib/config-util')
+const foreground = require('foreground-child')
 var NYC
 try {
   NYC = require('../index.covered.js')
 } catch (e) {
   NYC = require('../index.js')
 }
-var processArgs = require('../lib/process-args')
+const processArgs = require('../lib/process-args')
 
-var sw = require('spawn-wrap')
-var wrapper = require.resolve('./wrap.js')
+const sw = require('spawn-wrap')
+const wrapper = require.resolve('./wrap.js')
 
 // parse configuration and command-line arguments;
 // we keep these values in a few different forms,
 // used in the various execution contexts of nyc:
 // reporting, instrumenting subprocesses, etc.
-var yargs = configUtil.addCommandsAndHelp(configUtil.buildYargs())
-var instrumenterArgs = processArgs.hideInstrumenteeArgs()
-var config = configUtil.loadConfig(processArgs.parseArgs())
-var argv = yargs.config(config).parse(instrumenterArgs)
+const yargs = configUtil.buildYargs()
+const instrumenterArgs = processArgs.hideInstrumenteeArgs()
+const config = configUtil.loadConfig(yargs.parse(instrumenterArgs))
+configUtil.addCommandsAndHelp(yargs)
+const argv = yargs.config(config).parse(instrumenterArgs)
 
 if (argv._[0] === 'report') {
   // look in lib/commands/report.js for logic.

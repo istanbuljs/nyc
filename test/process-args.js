@@ -76,25 +76,4 @@ describe('process-args', function () {
       munged.should.eql(['--version'])
     })
   })
-
-  describe('parseArgs', function () {
-    it('parses arguments such as --nycrc-path --reporter --arg', function () {
-      process.argv = ['/Users/benjamincoe/bin/iojs',
-        '/Users/benjamincoe/bin/nyc.js',
-        '--nycrc-path',
-        './.nycrc-config.json',
-        '--reporter',
-        'lcov',
-        'node',
-        'test/nyc-tap.js',
-        '--arg',
-        '--'
-      ]
-
-      var munged = processArgs.parseArgs()
-      munged.nycrcPath.should.eql('./.nycrc-config.json')
-      munged.reporter.should.eql('lcov')
-      munged.arg.should.eql(true)
-    })
-  })
 })
