@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.4.0"></a>
+# [11.4.0](https://github.com/istanbuljs/nyc/compare/v11.3.0...v11.4.0) (2017-11-28)
+
+
+### Bug Fixes
+
+* always invoke instrumenter callback, set appropriate exit-code ([#703](https://github.com/istanbuljs/nyc/issues/703)) ([7ea96ba](https://github.com/istanbuljs/nyc/commit/7ea96ba))
+
+
+### Features
+
+* allow alternate path for .nycrc to be specified ([#724](https://github.com/istanbuljs/nyc/issues/724)) ([785fccb](https://github.com/istanbuljs/nyc/commit/785fccb))
+
+
+
 <a name="11.3.0"></a>
 # [11.3.0](https://github.com/istanbuljs/nyc/compare/v11.2.1...v11.3.0) (2017-10-23)
 
