@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.4.1"></a>
+## [11.4.1](https://github.com/istanbuljs/nyc/compare/v11.4.0...v11.4.1) (2017-12-14)
+
+
+### Bug Fixes
+
+* explicitly update spawn-wrap ([#748](https://github.com/istanbuljs/nyc/issues/748)) ([4e4f428](https://github.com/istanbuljs/nyc/commit/4e4f428))
+
+
+
 <a name="11.4.0"></a>
 # [11.4.0](https://github.com/istanbuljs/nyc/compare/v11.3.0...v11.4.0) (2017-11-28)
 
