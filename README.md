@@ -1,5 +1,7 @@
 # nyc
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/istanbuljs/nyc.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://travis-ci.org/istanbuljs/nyc.svg?branch=master)](https://travis-ci.org/istanbuljs/nyc)
 [![Coverage Status](https://coveralls.io/repos/bcoe/nyc/badge.svg?branch=)](https://coveralls.io/r/bcoe/nyc?branch=master)
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
