@@ -136,7 +136,9 @@ NYC.prototype.instrumenter = function () {
 
 NYC.prototype._createInstrumenter = function () {
   return this._instrumenterLib(this.cwd, {
-    produceSourceMap: this.config.produceSourceMap
+    produceSourceMap: this.config.produceSourceMap,
+    compact: this.config.compact,
+    preserveComments: this.config.preserveComments
   })
 }
 
