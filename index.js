@@ -444,7 +444,7 @@ NYC.prototype.report = function () {
   var tree
   var map = this._getCoverageMapFromAllCoverageFiles()
   var context = libReport.createContext({
-    dir: this._reportDir,
+    dir: this.reportDirectory(),
     watermarks: this.config.watermarks
   })
 
@@ -535,6 +535,10 @@ NYC.prototype.loadReports = function (filenames) {
 
 NYC.prototype.tempDirectory = function () {
   return path.resolve(this.cwd, this._tempDirectory)
+}
+
+NYC.prototype.reportDirectory = function () {
+  return path.resolve(this.cwd, this._reportDir)
 }
 
 NYC.prototype.processInfoDirectory = function () {
