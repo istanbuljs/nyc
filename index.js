@@ -49,7 +49,7 @@ function NYC (config) {
   this.cwd = config.cwd || process.cwd()
   this.reporter = arrify(config.reporter || 'text')
 
-  this.cacheDirectory = config.cacheDir || findCacheDir({name: 'nyc', cwd: this.cwd})
+  this.cacheDirectory = (config.cacheDir && path.resolve(config.cacheDir)) || findCacheDir({name: 'nyc', cwd: this.cwd})
   this.cache = Boolean(this.cacheDirectory && config.cache)
 
   this.exclude = testExclude({
