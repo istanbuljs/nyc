@@ -233,6 +233,8 @@ an `include` key with a list of globs to specify specific files that should be c
 }
 ```
 
+> `nyc` uses micromatch for glob expansions, you can read its documentation [here](https://www.npmjs.com/package/micromatch).
+
 > Note: include defaults to `['**']`
 
 > ### Use the `--all` flag to include files that have not been required in your tests.
