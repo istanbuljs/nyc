@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.5.0"></a>
+# [11.5.0](https://github.com/istanbuljs/nyc/compare/v11.4.1...v11.5.0) (2018-02-13)
+
+
+### Bug Fixes
+
+* coverage reportDir should respect `--cwd` ([#764](https://github.com/istanbuljs/nyc/issues/764)) ([b0d6dae](https://github.com/istanbuljs/nyc/commit/b0d6dae))
+* typo in option definition ([#758](https://github.com/istanbuljs/nyc/issues/758)) ([6a734b6](https://github.com/istanbuljs/nyc/commit/6a734b6))
+
+
+### Features
+
+* add command line options to control compacting and comment removal ([#754](https://github.com/istanbuljs/nyc/issues/754)) ([2030e0c](https://github.com/istanbuljs/nyc/commit/2030e0c))
+* resolve custom cache directory to absolute path ([#766](https://github.com/istanbuljs/nyc/issues/766)) ([dd48707](https://github.com/istanbuljs/nyc/commit/dd48707))
+
+
+
 <a name="11.4.1"></a>
 ## [11.4.1](https://github.com/istanbuljs/nyc/compare/v11.4.0...v11.4.1) (2017-12-14)
 
