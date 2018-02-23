@@ -1,6 +1,6 @@
 {
   "name": "nyc",
-  "version": "11.4.1",
+  "version": "11.5.0",
   "description": "the Istanbul command line interface",
   "main": "index.js",
   "scripts": {
@@ -76,19 +76,19 @@
     "archy": "^1.0.0",
     "arrify": "^1.0.1",
     "caching-transform": "^1.0.0",
-    "convert-source-map": "^1.3.0",
+    "convert-source-map": "^1.5.1",
     "debug-log": "^1.0.1",
     "default-require-extensions": "^1.0.0",
     "find-cache-dir": "^0.1.1",
     "find-up": "^2.1.0",
     "foreground-child": "^1.5.3",
     "glob": "^7.0.6",
-    "istanbul-lib-coverage": "^1.1.1",
+    "istanbul-lib-coverage": "^1.1.2",
     "istanbul-lib-hook": "^1.1.0",
-    "istanbul-lib-instrument": "^1.9.1",
-    "istanbul-lib-report": "^1.1.2",
-    "istanbul-lib-source-maps": "^1.2.2",
-    "istanbul-reports": "^1.1.3",
+    "istanbul-lib-instrument": "^1.9.2",
+    "istanbul-lib-report": "^1.1.3",
+    "istanbul-lib-source-maps": "^1.2.3",
+    "istanbul-reports": "^1.1.4",
     "md5-hex": "^1.2.0",
     "merge-source-map": "^1.0.2",
     "micromatch": "^2.3.11",
@@ -97,7 +97,7 @@
     "rimraf": "^2.5.4",
     "signal-exit": "^3.0.1",
     "spawn-wrap": "^1.4.2",
-    "test-exclude": "^4.1.1",
+    "test-exclude": "^4.2.0",
     "yargs": "^10.0.3",
     "yargs-parser": "^8.0.0"
   },
@@ -156,10 +156,5 @@
     "test-exclude",
     "yargs",
     "yargs-parser"
-  ],
-  "greenkeeper": {
-    "ignore": [
-      "find-up"
-    ]
-  }
+  ]
 }

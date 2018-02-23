@@ -49,7 +49,7 @@ function NYC (config) {
   this.cwd = config.cwd || process.cwd()
   this.reporter = arrify(config.reporter || 'text')
 
-  this.cacheDirectory = config.cacheDir || findCacheDir({name: 'nyc', cwd: this.cwd})
+  this.cacheDirectory = (config.cacheDir && path.resolve(config.cacheDir)) || findCacheDir({name: 'nyc', cwd: this.cwd})
   this.cache = Boolean(this.cacheDirectory && config.cache)
 
   this.exclude = testExclude({
@@ -137,7 +137,9 @@ NYC.prototype.instrumenter = function () {
 NYC.prototype._createInstrumenter = function () {
   return this._instrumenterLib(this.cwd, {
     ignoreClassMethods: [].concat(this.config.ignoreClassMethod).filter(a=>a),
-    produceSourceMap: this.config.produceSourceMap
+    produceSourceMap: this.config.produceSourceMap,
+    compact: this.config.compact,
+    preserveComments: this.config.preserveComments
   })
 }
 
@@ -443,7 +445,7 @@ NYC.prototype.report = function () {
   var tree
   var map = this._getCoverageMapFromAllCoverageFiles()
   var context = libReport.createContext({
-    dir: this._reportDir,
+    dir: this.reportDirectory(),
     watermarks: this.config.watermarks
   })
 
@@ -534,6 +536,10 @@ NYC.prototype.loadReports = function (filenames) {
 
 NYC.prototype.tempDirectory = function () {
   return path.resolve(this.cwd, this._tempDirectory)
+}
+
+NYC.prototype.reportDirectory = function () {
+  return path.resolve(this.cwd, this._reportDir)
 }
 
 NYC.prototype.processInfoDirectory = function () {
