@@ -272,7 +272,7 @@ Any configuration options that can be set via the command line can also be speci
     "exclude": [
       "src/**/*.spec.js"
     ],
-    "ignore-class-method: "methodToIgnore",
+    "ignore-class-method": "methodToIgnore",
     "reporter": [
       "lcov",
       "text-summary"
