@@ -71,6 +71,31 @@ describe('the nyc cli', function () {
     })
   })
 
+  describe('--ignore-class-method', function () {
+    if (parseInt(process.versions.node.split('.')[0]) < 4) return
+    it('skips methods that match ignored name but still catches those that are not', function (done) {
+      var args = [bin, '--all', '--ignore-class-method', 'skip', process.execPath, './classes.js'];
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env,
+      });
+
+      var stdout = '';
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk;
+      });
+
+      proc.on('close', function (code) {
+        code.should.equal(0);
+        var classesOutput = (stdout.match(/^(.*classes\.js).*$/m)||['no result found'])[0];
+        classesOutput.should.match(/6 \|/);
+        done();
+      })
+
+    });
+  });
+
   describe('--check-coverage', function () {
     it('fails when the expected coverage is below a threshold', function (done) {
       var args = [bin, '--check-coverage', '--lines', '51', process.execPath, './half-covered.js']
