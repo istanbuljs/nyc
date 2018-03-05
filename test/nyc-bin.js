@@ -72,7 +72,6 @@ describe('the nyc cli', function () {
   })
 
   describe('--ignore-class-method', function () {
-    if (parseInt(process.versions.node.split('.')[0]) < 4) return
     it('skips methods that match ignored name but still catches those that are not', function (done) {
       var args = [bin, '--all', '--ignore-class-method', 'skip', process.execPath, './classes.js']
 
@@ -403,7 +402,6 @@ describe('the nyc cli', function () {
   })
 
   describe('coverage', function () {
-    if (parseInt(process.versions.node.split('.')[0]) < 4) return
     it('reports appropriate coverage information for es6 source files', function (done) {
       var args = [bin, '--reporter=lcov', '--reporter=text', process.execPath, './es6.js']
 
