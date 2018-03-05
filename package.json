@@ -116,7 +116,6 @@
     "sanitize-filename": "^1.5.3",
     "sinon": "^2.1.0",
     "source-map-support": "^0.4.6",
-    "split-lines": "^1.0.0",
     "standard": "^9.0.2",
     "standard-version": "^4.0.0",
     "strip-indent": "^2.0.0",
