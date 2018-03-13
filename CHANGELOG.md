@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.6.0"></a>
+# [11.6.0](https://github.com/istanbuljs/nyc/compare/v11.5.0...v11.6.0) (2018-03-13)
+
+
+### Bug Fixes
+
+* removes unused split-lines dependency. ([#787](https://github.com/istanbuljs/nyc/issues/787)) ([b4032ce](https://github.com/istanbuljs/nyc/commit/b4032ce))
+* update to yargs version that allows extending configs with no extension ([#790](https://github.com/istanbuljs/nyc/issues/790)) ([2d51562](https://github.com/istanbuljs/nyc/commit/2d51562))
+
+
+### Features
+
+* allow usage of ignoreClassMethods from istanbul ([#785](https://github.com/istanbuljs/nyc/issues/785)) ([c6b30ba](https://github.com/istanbuljs/nyc/commit/c6b30ba))
+
+
+
 <a name="11.5.0"></a>
 # [11.5.0](https://github.com/istanbuljs/nyc/compare/v11.4.1...v11.5.0) (2018-02-13)
 
