@@ -136,6 +136,7 @@ NYC.prototype.instrumenter = function () {
 
 NYC.prototype._createInstrumenter = function () {
   return this._instrumenterLib(this.cwd, {
+    ignoreClassMethods: [].concat(this.config.ignoreClassMethod).filter(a => a),
     produceSourceMap: this.config.produceSourceMap,
     compact: this.config.compact,
     preserveComments: this.config.preserveComments

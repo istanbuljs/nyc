@@ -272,6 +272,7 @@ Any configuration options that can be set via the command line can also be speci
     "exclude": [
       "src/**/*.spec.js"
     ],
+    "ignore-class-method": "methodToIgnore",
     "reporter": [
       "lcov",
       "text-summary"
@@ -343,6 +344,19 @@ hints:
  functions, if statements, classes, you name it).
 * `/* istanbul ignore file */`: ignore an entire source-file (this should be
   placed at the top of the file).
+
+## Ignoring Methods
+
+There may be some methods that you want to universally ignore out of your classes
+rather than having to ignore every instance of that method:
+
+```json
+{
+  "nyc": {
+    "ignore-class-method": "render"
+  }
+}
+```
 
 ## Integrating with coveralls
 
