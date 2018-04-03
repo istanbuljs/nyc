@@ -425,7 +425,7 @@ NYC.prototype._getCoverageMapFromAllCoverageFiles = function () {
   var _this = this
   var map = libCoverage.createCoverageMap({})
 
-  this.loadReports().forEach(function (report) {
+  this.eachReport(function (report) {
     map.merge(report)
   })
   // depending on whether source-code is pre-instrumented
@@ -514,24 +514,40 @@ NYC.prototype._loadProcessInfos = function () {
   })
 }
 
-NYC.prototype.loadReports = function (filenames) {
+NYC.prototype.eachReport = function (filenames, iterator) {
+  if (typeof filenames === 'function') {
+    iterator = filenames
+    filenames = undefined
+  }
+
   var _this = this
   var files = filenames || fs.readdirSync(this.tempDirectory())
 
-  return files.map(function (f) {
+  files.forEach(function (f) {
     var report
     try {
       report = JSON.parse(fs.readFileSync(
         path.resolve(_this.tempDirectory(), f),
         'utf-8'
       ))
+
+      _this.sourceMaps.reloadCachedSourceMaps(report)
     } catch (e) { // handle corrupt JSON output.
-      return {}
+      report = {}
     }
 
-    _this.sourceMaps.reloadCachedSourceMaps(report)
-    return report
+    iterator(report)
   })
+}
+
+NYC.prototype.loadReports = function (filenames) {
+  var reports = []
+
+  this.eachReport(filenames, function (report) {
+    reports.push(report)
+  })
+
+  return reports
 }
 
 NYC.prototype.tempDirectory = function () {
