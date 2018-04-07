@@ -192,6 +192,13 @@ nyc report --reporter=lcov
 
 You can find examples of the output for various reporters [here](https://istanbul.js.org/docs/advanced/alternative-reporters).
 
+You also have the choice of using a [custom reporter](https://github.com/pedrocarrico/istanbul-reporter-aws-cloudwatch-metrics).
+Install custom reporters as a development dependency and you can use the `--reporter` flag to load and view them:
+
+```bash
+nyc report --reporter=<custom-reporter-name>
+```
+
 ## Excluding files
 
 You can tell nyc to exclude specific files and directories by adding
