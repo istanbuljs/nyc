@@ -448,12 +448,13 @@ NYC.prototype.report = function () {
     dir: this.reportDirectory(),
     watermarks: this.config.watermarks
   })
-  var config = this.config
 
   tree = libReport.summarizers.pkg(map)
 
-  this.reporter.forEach(function (_reporter) {
-    tree.visit(reports.create(_reporter, config), context)
+  this.reporter.forEach((_reporter) => {
+    tree.visit(reports.create(_reporter, {
+      skipEmpty: this.config.skipEmpty
+    }), context)
   })
 
   if (this._showProcessTree) {

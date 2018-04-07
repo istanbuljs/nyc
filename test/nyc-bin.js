@@ -937,6 +937,41 @@ describe('the nyc cli', function () {
       })
     })
   })
+  
+  describe('skip-empty', () => {
+    it('does not display 0-line files in coverage output', (done) => {
+      const args = [
+        bin,
+        '--cache', 'false',
+        '--skip-empty', 'true',
+        process.execPath, './empty.js'
+      ]
+
+      const proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.stdout.on('error', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdoutShouldEqual(stdout, `
+        ----------|----------|----------|----------|----------|-------------------|
+        File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+        ----------|----------|----------|----------|----------|-------------------|
+        ----------|----------|----------|----------|----------|-------------------|`)
+        done()
+      })
+    })
+  })
 })
 
 function stdoutShouldEqual (stdout, expected) {
