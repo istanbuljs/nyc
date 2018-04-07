@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "lib": [
+      "es5",
+      "dom",
+      "scripthost",
+      "es2015.promise",
+      "es2015.collection",
+      "es2015.symbol",
+      "es2015.iterable"
+    ],
+    "module": "commonjs",
+    "target": "es5",
+    "outDir": "build/js",
+    "sourceMap": true,
+    "noEmitOnError": true,
+    "preserveConstEnums": true,
+    "strictNullChecks": false,
+    "noImplicitAny": true,
+    "noImplicitReturns": false,
+    "noImplicitThis": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "importHelpers": true,
+    "alwaysStrict": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ],
+  "exclude": [
+    ".*/**/*",
+    "build",
+    "dist",
+    "node_modules"
+  ],
+  "compileOnSave": false
+}

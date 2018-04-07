@@ -7,3 +7,4 @@ test/build/
 *.swp
 needs-transpile.js
 package-lock.json
+.idea
