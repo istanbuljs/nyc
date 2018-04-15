@@ -937,7 +937,7 @@ describe('the nyc cli', function () {
       })
     })
   })
-  
+
   describe('skip-empty', () => {
     it('does not display 0-line files in coverage output', (done) => {
       const args = [
