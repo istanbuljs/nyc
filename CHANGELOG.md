@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.7.0"></a>
+# [11.7.0](https://github.com/istanbuljs/nyc/compare/v11.6.0...v11.7.0) (2018-04-16)
+
+
+### Features
+
+* allow 0-line files to be ignored in coverage output ([#808](https://github.com/istanbuljs/nyc/issues/808)) ([24e5979](https://github.com/istanbuljs/nyc/commit/24e5979))
+* load coverage files individually instead of all at once, addressing memory issues ([#806](https://github.com/istanbuljs/nyc/issues/806)) ([05fea60](https://github.com/istanbuljs/nyc/commit/05fea60))
+
+
+
 <a name="11.6.0"></a>
 # [11.6.0](https://github.com/istanbuljs/nyc/compare/v11.5.0...v11.6.0) (2018-03-13)
 
