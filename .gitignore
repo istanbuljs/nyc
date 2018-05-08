@@ -6,4 +6,3 @@ test/build/
 *.covered.js
 *.swp
 needs-transpile.js
-package-lock.json
