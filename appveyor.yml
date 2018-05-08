@@ -6,7 +6,6 @@ environment:
     - nodejs_version: '4'
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm cache clear
   - npm i npm@5 -g
   - set PATH=%APPDATA%\npm;%PATH%
   - set CI=true
