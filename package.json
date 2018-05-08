@@ -115,7 +115,7 @@
     "requirejs": "^2.3.5",
     "sanitize-filename": "^1.5.3",
     "sinon": "^2.4.1",
-    "source-map-support": "^0.4.18",
+    "source-map-support": "^0.5.5",
     "standard": "^9.0.2",
     "standard-version": "^4.3.0",
     "strip-indent": "^2.0.0",
