@@ -115,11 +115,11 @@
     "requirejs": "^2.3.0",
     "sanitize-filename": "^1.5.3",
     "sinon": "^2.1.0",
-    "source-map-support": "^0.4.6",
+    "source-map-support": "^0.5.5",
     "standard": "^9.0.2",
     "standard-version": "^4.0.0",
     "strip-indent": "^2.0.0",
-    "tap": "^10.0.0",
+    "tap": "^11.1.4",
     "which": "^1.2.11",
     "zero-fill": "^2.2.3"
   },
