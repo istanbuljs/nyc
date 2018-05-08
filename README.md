@@ -294,6 +294,7 @@ Any configuration options that can be set via the command line can also be speci
     ],
     "cache": true,
     "all": true,
+    "temp-directory": "./alternative-tmp",
     "report-dir": "./alternative"
   }
 }
