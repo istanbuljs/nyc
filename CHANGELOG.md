@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.7.3"></a>
+## [11.7.3](https://github.com/istanbuljs/nyc/compare/v11.7.2...v11.7.3) (2018-05-10)
+
+
+
 <a name="11.7.2"></a>
 ## [11.7.2](https://github.com/istanbuljs/nyc/compare/v11.7.1...v11.7.2) (2018-05-08)
 
