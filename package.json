@@ -119,7 +119,7 @@
     "standard": "^9.0.2",
     "standard-version": "^4.3.0",
     "strip-indent": "^2.0.0",
-    "tap": "^11.1.4",
+    "tap": "^11.1.5",
     "which": "^1.3.0",
     "zero-fill": "^2.2.3"
   },
