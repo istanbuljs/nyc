@@ -421,13 +421,13 @@ function coverageFinder () {
   return coverage
 }
 
-NYC.prototype._getCoverageMapFromAllCoverageFiles = function () {
+NYC.prototype.getCoverageMapFromAllCoverageFiles = function (baseDirectory) {
   var _this = this
   var map = libCoverage.createCoverageMap({})
 
-  this.eachReport(function (report) {
+  this.eachReport(undefined, (report) => {
     map.merge(report)
-  })
+  }, baseDirectory)
   // depending on whether source-code is pre-instrumented
   // or instrumented using a JIT plugin like babel-require
   // you may opt to exclude files after applying
@@ -443,7 +443,7 @@ NYC.prototype._getCoverageMapFromAllCoverageFiles = function () {
 
 NYC.prototype.report = function () {
   var tree
-  var map = this._getCoverageMapFromAllCoverageFiles()
+  var map = this.getCoverageMapFromAllCoverageFiles()
   var context = libReport.createContext({
     dir: this.reportDirectory(),
     watermarks: this.config.watermarks
@@ -469,7 +469,7 @@ NYC.prototype.showProcessTree = function () {
 }
 
 NYC.prototype.checkCoverage = function (thresholds, perFile) {
-  var map = this._getCoverageMapFromAllCoverageFiles()
+  var map = this.getCoverageMapFromAllCoverageFiles()
   var nyc = this
 
   if (perFile) {
@@ -516,20 +516,22 @@ NYC.prototype._loadProcessInfos = function () {
   })
 }
 
-NYC.prototype.eachReport = function (filenames, iterator) {
+NYC.prototype.eachReport = function (filenames, iterator, baseDirectory) {
+  baseDirectory = baseDirectory || this.tempDirectory()
+
   if (typeof filenames === 'function') {
     iterator = filenames
     filenames = undefined
   }
 
   var _this = this
-  var files = filenames || fs.readdirSync(this.tempDirectory())
+  var files = filenames || fs.readdirSync(baseDirectory)
 
   files.forEach(function (f) {
     var report
     try {
       report = JSON.parse(fs.readFileSync(
-        path.resolve(_this.tempDirectory(), f),
+        path.resolve(baseDirectory, f),
         'utf-8'
       ))
 
@@ -545,7 +547,7 @@ NYC.prototype.eachReport = function (filenames, iterator) {
 NYC.prototype.loadReports = function (filenames) {
   var reports = []
 
-  this.eachReport(filenames, function (report) {
+  this.eachReport(filenames, (report) => {
     reports.push(report)
   })
 
