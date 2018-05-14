@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.8.0"></a>
+# [11.8.0](https://github.com/istanbuljs/nyc/compare/v11.7.3...v11.8.0) (2018-05-14)
+
+
+### Features
+
+* merge together multiple istanbul format reports ([#840](https://github.com/istanbuljs/nyc/issues/840)) ([9def3eb](https://github.com/istanbuljs/nyc/commit/9def3eb))
+
+
+
 <a name="11.7.3"></a>
 ## [11.7.3](https://github.com/istanbuljs/nyc/compare/v11.7.2...v11.7.3) (2018-05-10)
 
