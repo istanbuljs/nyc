@@ -972,6 +972,81 @@ describe('the nyc cli', function () {
       })
     })
   })
+
+  describe('merge', () => {
+    it('combines multiple coverage reports', (done) => {
+      const args = [
+        bin,
+        'merge',
+        './merge-input'
+      ]
+
+      const proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      proc.on('close', function (code) {
+        const mergedCoverage = require('./fixtures/cli/coverage')
+        // the combined reports should have 100% function
+        // branch and statement coverage.
+        mergedCoverage['/private/tmp/contrived/library.js']
+          .s.should.eql({'0': 2, '1': 1, '2': 1, '3': 2, '4': 1, '5': 1})
+        mergedCoverage['/private/tmp/contrived/library.js']
+          .f.should.eql({'0': 1, '1': 1, '2': 2})
+        mergedCoverage['/private/tmp/contrived/library.js']
+          .b.should.eql({'0': [1, 1]})
+        rimraf.sync(path.resolve(fixturesCLI, 'coverage.json'))
+        return done()
+      })
+    })
+
+    it('reports error if input directory is missing', (done) => {
+      const args = [
+        bin,
+        'merge',
+        './DIRECTORY_THAT_IS_MISSING'
+      ]
+
+      const proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stderr = ''
+      proc.stderr.on('data', function (chunk) {
+        stderr += chunk
+      })
+
+      proc.on('close', function (code) {
+        stderr.should.match(/failed access input directory/)
+        return done()
+      })
+    })
+
+    it('reports error if input is not a directory', (done) => {
+      const args = [
+        bin,
+        'merge',
+        './package.json'
+      ]
+
+      const proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stderr = ''
+      proc.stderr.on('data', function (chunk) {
+        stderr += chunk
+      })
+
+      proc.on('close', function (code) {
+        stderr.should.match(/was not a directory/)
+        return done()
+      })
+    })
+  })
 })
 
 function stdoutShouldEqual (stdout, expected) {

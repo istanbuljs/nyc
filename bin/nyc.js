@@ -23,12 +23,10 @@ const config = configUtil.loadConfig(yargs.parse(instrumenterArgs))
 configUtil.addCommandsAndHelp(yargs)
 const argv = yargs.config(config).parse(instrumenterArgs)
 
-if (argv._[0] === 'report') {
-  // look in lib/commands/report.js for logic.
-} else if (argv._[0] === 'check-coverage') {
-  // look in lib/commands/check-coverage.js for logic.
-} else if (argv._[0] === 'instrument') {
-  // look in lib/commands/instrument.js for logic.
+if ([
+  'check-coverage', 'report', 'instrument', 'merge'
+].indexOf(argv._[0]) !== -1) {
+  // look in lib/commands for logic.
 } else if (argv._.length) {
   // if instrument is set to false,
   // enable a noop instrumenter.
