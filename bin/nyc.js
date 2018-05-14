@@ -26,7 +26,6 @@ const argv = yargs.config(config).parse(instrumenterArgs)
 if ([
   'check-coverage', 'report', 'instrument', 'merge'
 ].indexOf(argv._[0]) !== -1) {
-  console.info('gots here')
   // look in lib/commands for logic.
 } else if (argv._.length) {
   // if instrument is set to false,
