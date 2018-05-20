@@ -13,7 +13,7 @@ const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
 const libReport = require('istanbul-lib-report')
 const md5hex = require('md5-hex')
-const mkdirp = require('mkdirp')
+const mkdirp = require('make-dir')
 const Module = require('module')
 const onExit = require('signal-exit')
 const path = require('path')
@@ -122,7 +122,7 @@ NYC.prototype._loadAdditionalModules = function () {
   this.require.forEach(function (r) {
     // first attempt to require the module relative to
     // the directory being instrumented.
-    var p = resolveFrom(_this.cwd, r)
+    var p = resolveFrom.silent(_this.cwd, r)
     if (p) {
       require(p)
       return
@@ -298,7 +298,8 @@ NYC.prototype._transformFactory = function (cacheDir) {
   }
 }
 
-NYC.prototype._handleJs = function (code, filename) {
+NYC.prototype._handleJs = function (code, options) {
+  var filename = options.filename
   var relFile = path.relative(this.cwd, filename)
   // ensure the path has correct casing (see istanbuljs/nyc#269 and nodejs/node#6624)
   filename = path.resolve(this.cwd, relFile)

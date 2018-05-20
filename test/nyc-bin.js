@@ -274,7 +274,7 @@ describe('the nyc cli', function () {
       var args = [
         bin,
         '--silent',
-        '--require=mkdirp',
+        '--require=make-dir',
         '--include=env.js',
         '--exclude=batman.js',
         '--extension=.js',
