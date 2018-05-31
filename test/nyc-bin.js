@@ -1,4 +1,4 @@
-/* global describe, it */
+/* global describe, it, beforeEach */
 
 const _ = require('lodash')
 const path = require('path')
@@ -425,6 +425,10 @@ describe('the nyc cli', function () {
   })
 
   describe('instrument', function () {
+    beforeEach(() => {
+      rimraf.sync(path.resolve(fixturesCLI, 'subdir', 'output-dir'))
+    })
+
     describe('no output folder', function () {
       it('allows a single file to be instrumented', function (done) {
         var args = [bin, 'instrument', './half-covered.js']
@@ -482,6 +486,27 @@ describe('the nyc cli', function () {
           var target = path.resolve(subdir, 'output-dir', 'index.js')
           fs.readFileSync(target, 'utf8')
               .should.match(/console.log\('Hello, World!'\)/)
+          done()
+        })
+      })
+
+      it('can be configured to exit on error', function (done) {
+        var args = [
+          bin,
+          'instrument',
+          '--exit-on-error',
+          './input-dir',
+          './output-dir'
+        ]
+
+        var subdir = path.resolve(fixturesCLI, 'subdir')
+        var proc = spawn(process.execPath, args, {
+          cwd: subdir,
+          env: env
+        })
+
+        proc.on('exit', function (code) {
+          code.should.equal(1)
           done()
         })
       })
