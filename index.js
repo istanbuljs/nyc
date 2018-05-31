@@ -1,3 +1,5 @@
+'use strict'
+
 /* global __coverage__ */
 
 const arrify = require('arrify')
