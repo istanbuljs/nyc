@@ -85,7 +85,7 @@
     "glob": "^7.0.6",
     "istanbul-lib-coverage": "^1.2.0",
     "istanbul-lib-hook": "^1.1.0",
-    "istanbul-lib-instrument": "^2.0.2",
+    "istanbul-lib-instrument": "^2.1.0",
     "istanbul-lib-report": "^1.1.3",
     "istanbul-lib-source-maps": "^1.2.5",
     "istanbul-reports": "^1.4.1",
