@@ -1,13 +1,14 @@
 /* global describe, it */
 
 require('source-map-support').install({hookRequire: true})
-var _ = require('lodash')
-var ap = require('any-path')
-var configUtil = require('../../lib/config-util')
-var fs = require('fs')
-var enableCache = false
-var _NYC
 
+const _ = require('lodash')
+const ap = require('any-path')
+const configUtil = require('../../lib/config-util')
+const fs = require('fs')
+const enableCache = false
+
+let _NYC
 try {
   _NYC = require('../../index.covered.js')
 } catch (e) {
@@ -41,6 +42,9 @@ delete process.env.NYC_CWD
 
 require('chai').should()
 require('tap').mochaGlobals()
+
+// modules lazy-loaded when first file is instrumented.
+const LAZY_LOAD_COUNT = 267
 
 describe('nyc', function () {
   describe('cwd', function () {
@@ -186,9 +190,6 @@ describe('nyc', function () {
           module._compile(fs.readFileSync(filename, 'utf8'), filename)
         })
 
-        // the `require` call to istanbul is deferred, loaded here so it doesn't mess with the hooks callCount
-        require('istanbul-lib-instrument')
-
         var nyc = new NYC(configUtil.buildYargs().parse())
         nyc.reset()
         nyc.wrap()
@@ -196,11 +197,11 @@ describe('nyc', function () {
         // install the custom require hook
         require.extensions['.js'] = hook
 
-        var check = require('../fixtures/check-instrumented')
+        const check = require('../fixtures/check-instrumented')
         check().should.equal(true)
 
         // and the hook should have been called
-        hook.callCount.should.equal(1)
+        hook.callCount.should.equal(1 + LAZY_LOAD_COUNT)
       })
     })
 
@@ -240,9 +241,6 @@ describe('nyc', function () {
       })
 
       it('calls the `_handleJs` function for custom file extensions', function () {
-        // the `require` call to istanbul is deferred, loaded here so it doesn't mess with the hooks callCount
-        require('istanbul-lib-instrument')
-
         var nyc = new NYC(configUtil.buildYargs(
           path.resolve(__dirname, '../fixtures/conf-multiple-extensions')
         ).parse())
@@ -252,11 +250,12 @@ describe('nyc', function () {
         nyc.reset()
         nyc.wrap()
 
-        var check1 = require('../fixtures/conf-multiple-extensions/check-instrumented.es6')
-        var check2 = require('../fixtures/conf-multiple-extensions/check-instrumented.foo.bar')
+        const check1 = require('../fixtures/conf-multiple-extensions/check-instrumented.es6')
+        const check2 = require('../fixtures/conf-multiple-extensions/check-instrumented.foo.bar')
         check1().should.equal(true)
         check2().should.equal(true)
-        nyc._handleJs.callCount.should.equal(2)
+
+        nyc._handleJs.callCount.should.equal(2 + LAZY_LOAD_COUNT)
       })
     })
 
