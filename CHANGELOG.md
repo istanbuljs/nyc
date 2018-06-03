@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.0.2"></a>
+## [12.0.2](https://github.com/istanbuljs/nyc/compare/v12.0.1...v12.0.2) (2018-06-03)
+
+
+### Bug Fixes
+
+* don't bundle istanbul-lib-instrument due to Node 6 issues ([b4c325b](https://github.com/istanbuljs/nyc/commit/b4c325b))
+* stop bundling istanbul-lib-instrument due to npm issue on Node 6 ([#854](https://github.com/istanbuljs/nyc/issues/854)) ([ddc9331](https://github.com/istanbuljs/nyc/commit/ddc9331))
+
+
+
 <a name="12.0.1"></a>
 ## [12.0.1](https://github.com/istanbuljs/nyc/compare/v12.0.0...v12.0.1) (2018-05-31)
 
