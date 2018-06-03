@@ -9,7 +9,6 @@ const findCacheDir = require('find-cache-dir')
 const fs = require('fs')
 const glob = require('glob')
 const Hash = require('./lib/hash')
-const js = require('default-require-extensions/js')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
 const libReport = require('istanbul-lib-report')
@@ -80,6 +79,7 @@ function NYC (config) {
     return transforms
   }.bind(this), {})
 
+  this.hookRequire = config.hookRequire
   this.hookRunInContext = config.hookRunInContext
   this.hookRunInThisContext = config.hookRunInThisContext
   this.fakeRequire = null
@@ -312,13 +312,12 @@ NYC.prototype._addHook = function (type) {
 }
 
 NYC.prototype._wrapRequire = function () {
-  this.extensions.forEach(function (ext) {
-    require.extensions[ext] = js
-  })
-  this._addHook('Require')
 }
 
-NYC.prototype._addOtherHooks = function () {
+NYC.prototype._addRequireHooks = function () {
+  if (this.hookRequire) {
+    this._addHook('Require')
+  }
   if (this.hookRunInContext) {
     this._addHook('RunInContext')
   }
@@ -362,8 +361,7 @@ NYC.prototype._wrapExit = function () {
 }
 
 NYC.prototype.wrap = function (bin) {
-  this._wrapRequire()
-  this._addOtherHooks()
+  this._addRequireHooks()
   this._wrapExit()
   this._loadAdditionalModules()
   return this
