@@ -138,6 +138,7 @@
     "glob",
     "istanbul-lib-coverage",
     "istanbul-lib-hook",
+    "istanbul-lib-instrument",
     "istanbul-lib-report",
     "istanbul-lib-source-maps",
     "istanbul-reports",
