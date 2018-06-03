@@ -311,9 +311,6 @@ NYC.prototype._addHook = function (type) {
   libHook['hook' + type](dummyMatcher, handleJs, { extensions: this.extensions })
 }
 
-NYC.prototype._wrapRequire = function () {
-}
-
 NYC.prototype._addRequireHooks = function () {
   if (this.hookRequire) {
     this._addHook('Require')
