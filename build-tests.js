@@ -24,8 +24,8 @@ var individualTests = forkingTap(originalTestSource, {
 
 function writeTest (test, i, enableCache) {
   var filename = ['built', zeroFill(3, i)]
-      .concat(test.nestedName)
-      .join('-')
+    .concat(test.nestedName)
+    .join('-')
 
   if (enableCache) {
     filename += '-cache'
