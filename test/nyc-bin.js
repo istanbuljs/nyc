@@ -570,7 +570,7 @@ describe('the nyc cli', function () {
 
   describe('hooks', function () {
     it('provides coverage for requireJS and AMD modules', function (done) {
-      var args = [bin, process.execPath, './index.js']
+      var args = [bin, '--hook-run-in-this-context', '--hook-require=false', process.execPath, './index.js']
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesHooks,
