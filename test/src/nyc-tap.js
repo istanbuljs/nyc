@@ -24,7 +24,6 @@ function NYC (opts) {
 }
 
 var path = require('path')
-var existsSync = require('exists-sync')
 var glob = require('glob')
 var rimraf = require('rimraf')
 var sinon = require('sinon')
@@ -44,7 +43,7 @@ require('chai').should()
 require('tap').mochaGlobals()
 
 // modules lazy-loaded when first file is instrumented.
-const LAZY_LOAD_COUNT = 267
+const LAZY_LOAD_COUNT = 268
 
 describe('nyc', function () {
   describe('cwd', function () {
@@ -195,7 +194,7 @@ describe('nyc', function () {
         nyc.wrap()
 
         // install the custom require hook
-        require.extensions['.js'] = hook
+        require.extensions['.js'] = hook // eslint-disable-line
 
         const check = require('../fixtures/check-instrumented')
         check().should.equal(true)
@@ -233,11 +232,11 @@ describe('nyc', function () {
         nyc.reset()
         nyc.wrap()
 
-        require.extensions['.es6'].should.be.a.function // eslint-disable-line
-        require.extensions['.foo.bar'].should.be.a.function // eslint-disable-line
+        require.extensions['.es6'].should.be.a('function') // eslint-disable-line
+        require.extensions['.foo.bar'].should.be.a('function') // eslint-disable-line
 
         // default should still exist
-        require.extensions['.js'].should.be.a.function // eslint-disable-line
+        require.extensions['.js'].should.be.a('function') // eslint-disable-line
       })
 
       it('calls the `_handleJs` function for custom file extensions', function () {
@@ -315,7 +314,7 @@ describe('nyc', function () {
 
       proc.on('close', function () {
         nyc.report()
-        existsSync('./alternative-report/lcov.info').should.equal(true)
+        fs.existsSync('./alternative-report/lcov.info').should.equal(true)
         rimraf.sync('./alternative-report')
         return done()
       })

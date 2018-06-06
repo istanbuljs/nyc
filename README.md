@@ -205,7 +205,7 @@ You can tell nyc to exclude specific files and directories by adding
 an `nyc.exclude` array to your `package.json`. Each element of
 the array is a glob pattern indicating which paths should be omitted.
 
-Globs are matched using [micromatch](https://www.npmjs.com/package/micromatch).
+Globs are matched using [minimatch](https://www.npmjs.com/package/minimatch).
 
 For example, the following config will exclude any files with the extension `.spec.js`,
 and anything in the `build` directory:
@@ -240,7 +240,7 @@ an `include` key with a list of globs to specify specific files that should be c
 }
 ```
 
-> `nyc` uses micromatch for glob expansions, you can read its documentation [here](https://www.npmjs.com/package/micromatch).
+> `nyc` uses minimatch for glob expansions, you can read its documentation [here](https://www.npmjs.com/package/minimatch).
 
 > Note: include defaults to `['**']`
 

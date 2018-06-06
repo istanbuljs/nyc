@@ -274,7 +274,7 @@ describe('the nyc cli', function () {
       var args = [
         bin,
         '--silent',
-        '--require=mkdirp',
+        '--require=make-dir',
         '--include=env.js',
         '--exclude=batman.js',
         '--extension=.js',
@@ -485,7 +485,7 @@ describe('the nyc cli', function () {
           code.should.equal(0)
           var target = path.resolve(subdir, 'output-dir', 'index.js')
           fs.readFileSync(target, 'utf8')
-              .should.match(/console.log\('Hello, World!'\)/)
+            .should.match(/console.log\('Hello, World!'\)/)
           done()
         })
       })
@@ -767,7 +767,7 @@ describe('the nyc cli', function () {
 
             // we should not have executed file, so all counts sould be 0.
             var sum = 0
-            ;Object.keys(coverage['./external-instrumenter.js'].s).forEach(function (k) {
+            Object.keys(coverage['./external-instrumenter.js'].s).forEach(function (k) {
               sum += coverage['./external-instrumenter.js'].s[k]
             })
             sum.should.equal(0)

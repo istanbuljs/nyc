@@ -3,7 +3,7 @@
 var fs = require('fs')
 var path = require('path')
 var rimraf = require('rimraf')
-var mkdirp = require('mkdirp')
+var mkdirp = require('make-dir')
 var forkingTap = require('forking-tap')
 var zeroFill = require('zero-fill')
 var sanitizeFilename = require('sanitize-filename')
@@ -24,8 +24,8 @@ var individualTests = forkingTap(originalTestSource, {
 
 function writeTest (test, i, enableCache) {
   var filename = ['built', zeroFill(3, i)]
-      .concat(test.nestedName)
-      .join('-')
+    .concat(test.nestedName)
+    .join('-')
 
   if (enableCache) {
     filename += '-cache'
