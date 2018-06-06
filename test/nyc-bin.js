@@ -998,6 +998,36 @@ describe('the nyc cli', function () {
     })
   })
 
+  describe('skip-full', () => {
+    it('does not display files with 100% statement, branch, and function coverage', (done) => {
+      const args = [
+        bin,
+        '--skip-full',
+        process.execPath, './instrumented/s2.min.js'
+      ]
+
+      const proc = spawn(process.execPath, args, {
+        cwd: fixturesSourceMaps,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdoutShouldEqual(stdout, `
+        ----------|----------|----------|----------|----------|-------------------|
+        File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+        ----------|----------|----------|----------|----------|-------------------|
+        ----------|----------|----------|----------|----------|-------------------|`)
+        done()
+      })
+    })
+  })
+
   describe('merge', () => {
     it('combines multiple coverage reports', (done) => {
       const args = [

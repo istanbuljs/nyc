@@ -453,7 +453,8 @@ NYC.prototype.report = function () {
 
   this.reporter.forEach((_reporter) => {
     tree.visit(reports.create(_reporter, {
-      skipEmpty: this.config.skipEmpty
+      skipEmpty: this.config.skipEmpty,
+      skipFull: this.config.skipFull
     }), context)
   })
 
