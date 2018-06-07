@@ -103,7 +103,7 @@ project uses the babel tool chain:
     }
   ```
 
-  Note: With this configuration, the Istanbul instrumentation will only be active when `NODE_ENV` or `BABEL_ENV` is `test`.
+  Note: With this configuration, the Istanbul instrumentation will only be active when `NODE_ENV` or `BABEL_ENV` is `test` unless the environment is a valid entry in `"env"` within the `.babelrc` file.
 
   We recommend using the [`cross-env`](https://npmjs.com/package/cross-env) package to set these environment variables
   in your `package.json` scripts in a way that works cross-platform.
