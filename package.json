@@ -75,7 +75,7 @@
   "dependencies": {
     "archy": "^1.0.0",
     "arrify": "^1.0.1",
-    "caching-transform": "^1.0.1",
+    "caching-transform": "^2.0.0",
     "convert-source-map": "^1.5.1",
     "debug-log": "^1.0.1",
     "find-cache-dir": "^1.0.0",
