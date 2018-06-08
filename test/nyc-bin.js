@@ -1003,11 +1003,11 @@ describe('the nyc cli', function () {
       const args = [
         bin,
         '--skip-full',
-        process.execPath, './instrumented/s2.min.js'
+        process.execPath, './skip-full.js'
       ]
 
       const proc = spawn(process.execPath, args, {
-        cwd: fixturesSourceMaps,
+        cwd: fixturesCLI,
         env: env
       })
 
@@ -1019,10 +1019,12 @@ describe('the nyc cli', function () {
       proc.on('close', function (code) {
         code.should.equal(0)
         stdoutShouldEqual(stdout, `
-        ----------|----------|----------|----------|----------|-------------------|
-        File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
-        ----------|----------|----------|----------|----------|-------------------|
-        ----------|----------|----------|----------|----------|-------------------|`)
+        -----------------|----------|----------|----------|----------|-------------------|
+        File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+        -----------------|----------|----------|----------|----------|-------------------|
+        All files        |     62.5 |       50 |      100 |     62.5 |                   |
+         half-covered.js |       50 |       50 |      100 |       50 |             6,7,8 |
+        -----------------|----------|----------|----------|----------|-------------------|`)
         done()
       })
     })
