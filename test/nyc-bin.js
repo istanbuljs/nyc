@@ -998,6 +998,38 @@ describe('the nyc cli', function () {
     })
   })
 
+  describe('skip-full', () => {
+    it('does not display files with 100% statement, branch, and function coverage', (done) => {
+      const args = [
+        bin,
+        '--skip-full',
+        process.execPath, './skip-full.js'
+      ]
+
+      const proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdoutShouldEqual(stdout, `
+        -----------------|----------|----------|----------|----------|-------------------|
+        File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+        -----------------|----------|----------|----------|----------|-------------------|
+        All files        |     62.5 |       50 |      100 |     62.5 |                   |
+         half-covered.js |       50 |       50 |      100 |       50 |             6,7,8 |
+        -----------------|----------|----------|----------|----------|-------------------|`)
+        done()
+      })
+    })
+  })
+
   describe('merge', () => {
     it('combines multiple coverage reports', (done) => {
       const args = [
