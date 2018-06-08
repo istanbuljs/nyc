@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="13.0.0"></a>
+# [13.0.0](https://github.com/istanbuljs/nyc/compare/v12.0.2...v13.0.0) (2018-06-08)
+
+
+### Bug Fixes
+
+* source was being instrumented twice, due to upstream fix in ista… ([#853](https://github.com/istanbuljs/nyc/issues/853)) ([d0f654c](https://github.com/istanbuljs/nyc/commit/d0f654c))
+
+
+### Features
+
+* allow rows with 100% statement, branch, and function coverage to be skipped in text report ([#859](https://github.com/istanbuljs/nyc/issues/859)) ([893345a](https://github.com/istanbuljs/nyc/commit/893345a))
+
+
+### BREAKING CHANGES
+
+* --hook-run-in-context, and --hook-run-in-this-context are no longer true by default (they should be enabled if you're using a library like requirejs).
+
+
+
 <a name="12.0.2"></a>
 ## [12.0.2](https://github.com/istanbuljs/nyc/compare/v12.0.1...v12.0.2) (2018-06-03)
 
