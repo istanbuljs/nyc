@@ -1030,6 +1030,76 @@ describe('the nyc cli', function () {
     })
   })
 
+  describe('es-modules', () => {
+    it('allows reserved word when es-modules is disabled', (done) => {
+      const args = [
+        bin,
+        '--cache', 'false',
+        process.execPath, './not-strict.js'
+      ]
+
+      const proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdoutShouldEqual(stdout, `
+        ---------------|----------|----------|----------|----------|-------------------|
+        File           |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+        ---------------|----------|----------|----------|----------|-------------------|
+        All files      |      100 |      100 |      100 |      100 |                   |
+         not-strict.js |      100 |      100 |      100 |      100 |                   |
+        ---------------|----------|----------|----------|----------|-------------------|`)
+        done()
+      })
+    })
+
+    it('forbids reserved word when es-modules is not disabled', (done) => {
+      const args = [
+        bin,
+        '--cache', 'false',
+        '--es-modules', 'true',
+        '--exit-on-error', 'true',
+        process.execPath, './not-strict.js'
+      ]
+
+      const proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      var stderr = ''
+      proc.stderr.on('data', function (chunk) {
+        stderr += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(1)
+        stdoutShouldEqual(stderr, `
+        Failed to instrument ${path.join(fixturesCLI, 'not-strict.js')}`)
+        stdoutShouldEqual(stdout, `
+        ----------|----------|----------|----------|----------|-------------------|
+        File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+        ----------|----------|----------|----------|----------|-------------------|
+        All files |        0 |        0 |        0 |        0 |                   |
+        ----------|----------|----------|----------|----------|-------------------|`)
+        done()
+      })
+    })
+  })
+
   describe('merge', () => {
     it('combines multiple coverage reports', (done) => {
       const args = [

@@ -141,7 +141,8 @@ NYC.prototype._createInstrumenter = function () {
     ignoreClassMethods: [].concat(this.config.ignoreClassMethod).filter(a => a),
     produceSourceMap: this.config.produceSourceMap,
     compact: this.config.compact,
-    preserveComments: this.config.preserveComments
+    preserveComments: this.config.preserveComments,
+    esModules: this.config.esModules
   })
 }
 
@@ -282,8 +283,9 @@ NYC.prototype._transformFactory = function (cacheDir) {
     try {
       instrumented = instrumenter.instrumentSync(code, filename, sourceMap)
     } catch (e) {
-      debugLog('failed to instrument ' + filename + 'with error: ' + e.stack)
+      debugLog('failed to instrument ' + filename + ' with error: ' + e.stack)
       if (this.config.exitOnError) {
+        console.error('Failed to instrument ' + filename)
         process.exit(1)
       } else {
         instrumented = code
