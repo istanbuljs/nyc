@@ -12,7 +12,7 @@ const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
 const libReport = require('istanbul-lib-report')
-const md5hex = require('md5-hex')
+const crypto = require('crypto')
 const mkdirp = require('make-dir')
 const Module = require('module')
 const onExit = require('signal-exit')
@@ -366,9 +366,13 @@ NYC.prototype.wrap = function (bin) {
 }
 
 NYC.prototype.generateUniqueID = function () {
-  return md5hex(
-    process.hrtime().concat(process.pid).map(String)
-  )
+  const hash = crypto.createHash('sha256')
+
+  process.hrtime().concat(process.pid).map(String).forEach(function (item) {
+    hash.update(item)
+  })
+
+  return hash.digest('hex')
 }
 
 NYC.prototype.writeCoverageFile = function () {
