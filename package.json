@@ -95,7 +95,7 @@
     "rimraf": "^2.6.2",
     "signal-exit": "^3.0.2",
     "spawn-wrap": "^1.4.2",
-    "test-exclude": "^4.2.2",
+    "test-exclude": "^5.0.0",
     "yargs": "11.1.0",
     "yargs-parser": "^9.0.2"
   },
