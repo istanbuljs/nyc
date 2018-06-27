@@ -457,5 +457,22 @@ describe('nyc', function () {
         done()
       })
     })
+
+    it('handles identical files', function (done) {
+      var nyc = new NYC(configUtil.buildYargs(fixtures).parse())
+      nyc.clearCache()
+
+      var args = [bin, process.execPath, './identical-file-runner.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixtures,
+        env: {}
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        done()
+      })
+    })
   })
 })

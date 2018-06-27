@@ -91,13 +91,11 @@ function NYC (config) {
 }
 
 NYC.prototype._createTransform = function (ext) {
-  var _this = this
   var opts = {
     salt: Hash.salt,
-    hash: function (code, metadata, salt) {
-      var hash = Hash(code, metadata.filename)
-      _this.hashCache[metadata.filename] = hash
-      return hash
+    hashData: (input, metadata) => [metadata.filename],
+    onHash: (input, metadata, hash) => {
+      this.hashCache[metadata.filename] = hash
     },
     cacheDir: this.cacheDirectory,
     // when running --all we should not load source-file from
