@@ -12,7 +12,7 @@ _Having problems? want to contribute? join our [community slack](http://devtools
 Istanbul's state of the art command line interface, with support for:
 
 * applications that spawn subprocesses.
-* ES2015 transforms, via [babel-plugin-istanbul](https://github.com/istanbuljs/babel-plugin-istanbul), or source-maps.
+* ES2015 transforms, via [`babel-plugin-istanbul`], or source-maps.
 
 ## Instrumenting your code
 
@@ -62,10 +62,8 @@ stack traces for instrumented code will reflect their original lines.
 
 ### Support for custom require hooks (babel, typescript, etc.)
 
-nyc supports custom require hooks like
-[`babel-register`](http://babeljs.io/docs/usage/require/). nyc can
-load the hooks for you, [using the `--require`
-flag](#require-additional-modules).
+nyc supports custom require hooks like [`@babel/register`]. nyc can load
+the hooks for you, [using the `--require` flag](#require-additional-modules).
 
 Source maps are used to map coverage information back to the appropriate lines
 of the pre-transpiled code. You'll have to configure your custom require hook
@@ -75,8 +73,8 @@ the `sourceMaps` option to `inline`.
 ### Source-Map support for pre-instrumented codebases
 
 If you opt to pre-instrument your source-code (rather than using a just-in-time
-transpiler like [`babel-register`](http://babeljs.io/docs/usage/require/))
-nyc supports both inline source-maps and `.map` files.
+transpiler like [`@babel/register`]) nyc supports both inline source-maps and
+`.map` files.
 
 _Important: If you are using nyc with a project that pre-instruments its code,
 run nyc with the configuration option `--exclude-after-remap` set to `false`.
@@ -85,15 +83,14 @@ covered under exclude rules._
 
 ## Use with `babel-plugin-istanbul` for Babel Support
 
-We recommend using [`babel-plugin-istanbul`](https://github.com/istanbuljs/babel-plugin-istanbul) if your
-project uses the babel tool chain:
+We recommend using [`babel-plugin-istanbul`] if your project uses the babel tool chain:
 
 1. enable the `babel-plugin-istanbul` plugin:
 
   ```json
     {
       "babel": {
-        "presets": ["env"],
+        "presets": ["@babel/env"],
         "env": {
           "test": {
             "plugins": ["istanbul"]
@@ -114,7 +111,7 @@ project uses the babel tool chain:
   {
     "nyc": {
       "require": [
-        "babel-register"
+        "@babel/register"
       ],
       "sourceMap": false,
       "instrument": false
@@ -251,7 +248,7 @@ an `include` key with a list of globs to specify specific files that should be c
 The `--require` flag can be provided to `nyc` to indicate that additional
 modules should be required in the subprocess collecting coverage:
 
-`nyc --require babel-register --require babel-polyfill mocha`
+`nyc --require @babel/register --require @babel/polyfill mocha`
 
 ## Caching
 
@@ -450,3 +447,6 @@ You can find more tutorials at http://istanbul.js.org/docs/tutorials
 ## Other advanced features
 
 Take a look at http://istanbul.js.org/docs/advanced/ and please feel free to [contribute documentation](https://github.com/istanbuljs/istanbuljs.github.io/tree/development/content).
+
+[`@babel/register`]: https://www.npmjs.com/package/@babel/register
+[`babel-plugin-istanbul`]: https://github.com/istanbuljs/babel-plugin-istanbul
