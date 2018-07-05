@@ -423,7 +423,7 @@ NYC.prototype.getCoverageMapFromAllCoverageFiles = function (baseDirectory) {
     map.merge(report)
   }, baseDirectory)
   // depending on whether source-code is pre-instrumented
-  // or instrumented using a JIT plugin like babel-require
+  // or instrumented using a JIT plugin like @babel/require
   // you may opt to exclude files after applying
   // source-map remapping logic.
   if (this.config.excludeAfterRemap) {
