@@ -12,7 +12,6 @@ const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
 const libReport = require('istanbul-lib-report')
-const md5hex = require('md5-hex')
 const mkdirp = require('make-dir')
 const Module = require('module')
 const onExit = require('signal-exit')
@@ -22,6 +21,7 @@ const resolveFrom = require('resolve-from')
 const rimraf = require('rimraf')
 const SourceMaps = require('./lib/source-maps')
 const testExclude = require('test-exclude')
+const uuid = require('uuid/v4')
 
 var ProcessInfo
 try {
@@ -363,11 +363,7 @@ NYC.prototype.wrap = function (bin) {
   return this
 }
 
-NYC.prototype.generateUniqueID = function () {
-  return md5hex(
-    process.hrtime().concat(process.pid).map(String)
-  )
-}
+NYC.prototype.generateUniqueID = uuid
 
 NYC.prototype.writeCoverageFile = function () {
   var coverage = coverageFinder()
