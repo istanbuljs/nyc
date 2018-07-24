@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="13.0.1"></a>
+## [13.0.1](https://github.com/istanbuljs/nyc/compare/v13.0.0...v13.0.1) (2018-07-24)
+
+
+### Bug Fixes
+
+* add flag to allow control of intrumenter esModules option, default to looser parsing ([#863](https://github.com/istanbuljs/nyc/issues/863)) ([6b6cd5e](https://github.com/istanbuljs/nyc/commit/6b6cd5e))
+* Enable es-modules by default. ([#889](https://github.com/istanbuljs/nyc/issues/889)) ([d0b76e2](https://github.com/istanbuljs/nyc/commit/d0b76e2)), closes [#796](https://github.com/istanbuljs/nyc/issues/796)
+* Update caching-transform options. ([#873](https://github.com/istanbuljs/nyc/issues/873)) ([52b69ef](https://github.com/istanbuljs/nyc/commit/52b69ef))
+* use uuid/v4 to generate unique identifiers. ([#883](https://github.com/istanbuljs/nyc/issues/883)) ([7483ed9](https://github.com/istanbuljs/nyc/commit/7483ed9))
+
+
+
 <a name="13.0.0"></a>
 # [13.0.0](https://github.com/istanbuljs/nyc/compare/v12.0.2...v13.0.0) (2018-06-08)
 
