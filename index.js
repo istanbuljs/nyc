@@ -56,7 +56,9 @@ function NYC (config) {
   this.exclude = testExclude({
     cwd: this.cwd,
     include: config.include,
-    exclude: config.exclude
+    exclude: config.exclude,
+    // Make sure this is true unless explicitly set to `false`. `undefined` is still `true`.
+    excludeNodeModules: config.excludeNodeModules !== false
   })
 
   this.sourceMaps = new SourceMaps({
