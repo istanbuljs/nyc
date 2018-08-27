@@ -41,7 +41,7 @@ function NYC (config) {
   this.config = config
 
   this.subprocessBin = config.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
-  this._tempDirectory = config.tempDirectory || './.nyc_output'
+  this._tempDirectory = config.tempDir || config.tempDirectory || './.nyc_output'
   this._instrumenterLib = require(config.instrumenter || './lib/instrumenters/istanbul')
   this._reportDir = config.reportDir || 'coverage'
   this._sourceMap = typeof config.sourceMap === 'boolean' ? config.sourceMap : true
