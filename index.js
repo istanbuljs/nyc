@@ -178,14 +178,14 @@ NYC.prototype.addAllFiles = function () {
   this.fakeRequire = true
   this.walkAllFiles(this.cwd, function (filename) {
     filename = path.resolve(_this.cwd, filename)
-    _this.addFile(filename)
-    var coverage = coverageFinder()
-    var lastCoverage = _this.instrumenter().lastFileCoverage()
-    if (lastCoverage) {
-      filename = lastCoverage.path
-    }
-    if (lastCoverage && _this.exclude.shouldInstrument(filename)) {
-      coverage[filename] = lastCoverage
+    if (_this.exclude.shouldInstrument(filename)) {
+      _this.addFile(filename)
+      var coverage = coverageFinder()
+      var lastCoverage = _this.instrumenter().lastFileCoverage()
+      if (lastCoverage) {
+        filename = lastCoverage.path
+        coverage[filename] = lastCoverage
+      }
     }
   })
   this.fakeRequire = false
