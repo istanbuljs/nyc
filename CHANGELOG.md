@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="13.1.0"></a>
+# [13.1.0](https://github.com/istanbuljs/nyc/compare/v13.0.1...v13.1.0) (2018-09-06)
+
+
+### Features
+
+* Bump dependencies. ([#915](https://github.com/istanbuljs/nyc/issues/915)) ([0b3d2cf](https://github.com/istanbuljs/nyc/commit/0b3d2cf))
+* Rename --temp-directory option to --temp-dir ([#897](https://github.com/istanbuljs/nyc/issues/897)) ([ccf42df](https://github.com/istanbuljs/nyc/commit/ccf42df))
+
+
+
 <a name="13.0.1"></a>
 ## [13.0.1](https://github.com/istanbuljs/nyc/compare/v13.0.0...v13.0.1) (2018-07-24)
 
