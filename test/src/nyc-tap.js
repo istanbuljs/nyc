@@ -43,7 +43,7 @@ require('chai').should()
 require('tap').mochaGlobals()
 
 // modules lazy-loaded when first file is instrumented.
-const LAZY_LOAD_COUNT = 268
+const LAZY_LOAD_COUNT = 267
 
 describe('nyc', function () {
   describe('cwd', function () {
