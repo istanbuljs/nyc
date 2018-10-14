@@ -90,7 +90,7 @@ We recommend using [`babel-plugin-istanbul`] if your project uses the babel tool
   ```json
     {
       "babel": {
-        "presets": ["@babel/env"],
+        "presets": ["@babel/preset-env"],
         "env": {
           "test": {
             "plugins": ["istanbul"]
