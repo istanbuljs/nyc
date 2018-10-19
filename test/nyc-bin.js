@@ -1035,6 +1035,7 @@ describe('the nyc cli', function () {
       const args = [
         bin,
         '--cache', 'false',
+        '--es-modules', 'false',
         process.execPath, './not-strict.js'
       ]
 
@@ -1065,7 +1066,6 @@ describe('the nyc cli', function () {
       const args = [
         bin,
         '--cache', 'false',
-        '--es-modules', 'true',
         '--exit-on-error', 'true',
         process.execPath, './not-strict.js'
       ]

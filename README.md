@@ -90,7 +90,7 @@ We recommend using [`babel-plugin-istanbul`] if your project uses the babel tool
   ```json
     {
       "babel": {
-        "presets": ["@babel/env"],
+        "presets": ["@babel/preset-env"],
         "env": {
           "test": {
             "plugins": ["istanbul"]
@@ -291,7 +291,7 @@ Any configuration options that can be set via the command line can also be speci
     ],
     "cache": true,
     "all": true,
-    "temp-directory": "./alternative-tmp",
+    "temp-dir": "./alternative-tmp",
     "report-dir": "./alternative"
   }
 }
