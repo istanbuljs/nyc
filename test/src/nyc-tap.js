@@ -105,21 +105,6 @@ describe('nyc', function () {
       // an empty exclude still has **/node_modules/**, node_modules/** and added.
       nyc2.exclude.exclude.length.should.eql(2)
     })
-
-    it("Prefers 'tempDir' option over 'tempDirectory'", function () {
-      var nyc2 = new NYC({tempDir: './.temp_dir_test', tempDirectory: './.temp_directory_test'})
-      nyc2.tempDirectory().should.include('.temp_dir_test')
-    })
-
-    it("Falls back to use 'tempDirectory' option if 'tempDir' is not set", function () {
-      var nyc2 = new NYC({tempDirectory: './.temp_directory_test'})
-      nyc2.tempDirectory().should.include('.temp_directory_test')
-    })
-
-    it("Falls back to the default temp directory if neither 'tempDir' or 'tempDirectory is set", function () {
-      var nyc2 = new NYC({})
-      nyc2.tempDirectory().should.include('.nyc_output')
-    })
   })
 
   describe('shouldInstrumentFile', function () {
