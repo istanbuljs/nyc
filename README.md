@@ -258,7 +258,7 @@ improve runtime performance.
 
 ## Configuring `nyc`
 
-Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a `.nycrc` file:
+Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a `.nycrc` (or `.nycrc.json`) file:
 
 **package.json:**
 
