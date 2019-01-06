@@ -247,7 +247,7 @@ describe('nyc', function () {
         ).parse())
 
         nyc['_handleJs'] = (code, options) => {
-          if (options.filename.indexOf('/check-instrumented.es6') !== -1) {
+          if (options.filename.indexOf('check-instrumented.es6') !== -1) {
             required.es6 = true
           }
           if (options.filename.indexOf('check-instrumented.foo.bar') !== -1) {
