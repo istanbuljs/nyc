@@ -410,6 +410,26 @@ describe('nyc', function () {
       fs.unlinkSync(needsTranspilePath)
       return done()
     })
+
+    it('does not attempt to transpile files when they are excluded', function (done) {
+      var notNeedTranspilePath = path.join(fixtures, './do-not-need-transpile.do-not-transpile')
+      fs.writeFileSync(
+        notNeedTranspilePath,
+        '--> pork chop sandwiches <--\nvar a = 99',
+        'utf-8'
+      )
+
+      var nyc = (new NYC(configUtil.buildYargs(fixtures).parse([
+        '--require=./test/fixtures/transpile-hook',
+        '--extension=.do-not-transpile',
+        '--include=needs-transpile.do-not-transpile'
+      ])))
+
+      nyc.reset()
+      nyc.addAllFiles()
+      fs.unlinkSync(notNeedTranspilePath)
+      return done()
+    })
   })
 
   it('transpiles non-.js files added via addAllFiles', function (done) {
@@ -437,26 +457,6 @@ describe('nyc', function () {
     report.s['0'].should.equal(0)
 
     fs.unlinkSync(needsTranspilePath)
-    return done()
-  })
-
-  it('Do not transpiles  files when not included', function (done) {
-    var notNeedTranspilePath = path.join(fixtures, './do-not-need-transpile.do-not-transpile')
-    fs.writeFileSync(
-      notNeedTranspilePath,
-      '--> pork chop sandwiches <--\nvar a = 99',
-      'utf-8'
-    )
-
-    var nyc = (new NYC(configUtil.buildYargs(fixtures).parse([
-      '--require=./test/fixtures/transpile-hook',
-      '--extension=.do-not-transpile',
-      '--include=needs-transpile.do-not-transpile'
-    ])))
-
-    nyc.reset()
-    nyc.addAllFiles()
-    fs.unlinkSync(notNeedTranspilePath)
     return done()
   })
 
