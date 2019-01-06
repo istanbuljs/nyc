@@ -43,7 +43,7 @@ require('chai').should()
 require('tap').mochaGlobals()
 
 // modules lazy-loaded when first file is instrumented.
-const LAZY_LOAD_COUNT = 267
+const LAZY_LOAD_COUNT = 266
 
 describe('nyc', function () {
   describe('cwd', function () {
@@ -408,6 +408,26 @@ describe('nyc', function () {
       report.s['0'].should.equal(0)
 
       fs.unlinkSync(needsTranspilePath)
+      return done()
+    })
+
+    it('does not attempt to transpile files when they are excluded', function (done) {
+      var notNeedTranspilePath = path.join(fixtures, './do-not-need-transpile.do-not-transpile')
+      fs.writeFileSync(
+        notNeedTranspilePath,
+        '--> pork chop sandwiches <--\nvar a = 99',
+        'utf-8'
+      )
+
+      var nyc = (new NYC(configUtil.buildYargs(fixtures).parse([
+        '--require=./test/fixtures/transpile-hook',
+        '--extension=.do-not-transpile',
+        '--include=needs-transpile.do-not-transpile'
+      ])))
+
+      nyc.reset()
+      nyc.addAllFiles()
+      fs.unlinkSync(notNeedTranspilePath)
       return done()
     })
   })

@@ -41,7 +41,7 @@ function NYC (config) {
   this.config = config
 
   this.subprocessBin = config.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
-  this._tempDirectory = config.tempDir || config.tempDirectory || './.nyc_output'
+  this._tempDirectory = config.tempDirectory || config.tempDir || './.nyc_output'
   this._instrumenterLib = require(config.instrumenter || './lib/instrumenters/istanbul')
   this._reportDir = config.reportDir || 'coverage'
   this._sourceMap = typeof config.sourceMap === 'boolean' ? config.sourceMap : true
@@ -178,14 +178,14 @@ NYC.prototype.addAllFiles = function () {
   this.fakeRequire = true
   this.walkAllFiles(this.cwd, function (filename) {
     filename = path.resolve(_this.cwd, filename)
-    _this.addFile(filename)
-    var coverage = coverageFinder()
-    var lastCoverage = _this.instrumenter().lastFileCoverage()
-    if (lastCoverage) {
-      filename = lastCoverage.path
-    }
-    if (lastCoverage && _this.exclude.shouldInstrument(filename)) {
-      coverage[filename] = lastCoverage
+    if (_this.exclude.shouldInstrument(filename)) {
+      _this.addFile(filename)
+      var coverage = coverageFinder()
+      var lastCoverage = _this.instrumenter().lastFileCoverage()
+      if (lastCoverage) {
+        filename = lastCoverage.path
+        coverage[filename] = lastCoverage
+      }
     }
   })
   this.fakeRequire = false
