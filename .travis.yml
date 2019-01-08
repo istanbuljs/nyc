@@ -1,19 +1,20 @@
 language: node_js
+os:
+  - windows
+  - linux
+  - osx
+node_js:
+  - "node"
+  - 10
+  - 8
+  - 6
 matrix:
   include:
     - os: windows
-      node_js:
-        - 10
-        - 8
-        - 6
-    - os:
-        - linux
-        - osx
-      node_js:
-        - node
-        - 10
-        - 8
-        - 6
+      node_js: "latest"
+  exclude:
+    - os: windows
+      node_js: "node"
 git:
   depth:
     1
