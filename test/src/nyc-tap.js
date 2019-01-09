@@ -26,7 +26,6 @@ function NYC (opts) {
 var path = require('path')
 var glob = require('glob')
 var rimraf = require('rimraf')
-var sinon = require('sinon')
 var isWindows = require('is-windows')()
 var spawn = require('child_process').spawn
 var fixtures = path.resolve(__dirname, '../fixtures')
@@ -41,9 +40,6 @@ delete process.env.NYC_CWD
 
 require('chai').should()
 require('tap').mochaGlobals()
-
-// modules lazy-loaded when first file is instrumented.
-const LAZY_LOAD_COUNT = 266
 
 describe('nyc', function () {
   describe('cwd', function () {
@@ -185,9 +181,11 @@ describe('nyc', function () {
 
     describe('custom require hooks are installed', function () {
       it('wraps modules with coverage counters when the custom require hook compiles them', function () {
-        var hook = sinon.spy(function (module, filename) {
+        let required = false
+        const hook = function (module, filename) {
+          if (filename.indexOf('check-instrumented.js') !== -1) required = true
           module._compile(fs.readFileSync(filename, 'utf8'), filename)
-        })
+        }
 
         var nyc = new NYC(configUtil.buildYargs().parse())
         nyc.reset()
@@ -200,7 +198,7 @@ describe('nyc', function () {
         check().should.equal(true)
 
         // and the hook should have been called
-        hook.callCount.should.equal(1 + LAZY_LOAD_COUNT)
+        required.should.equal(true)
       })
     })
 
@@ -240,21 +238,31 @@ describe('nyc', function () {
       })
 
       it('calls the `_handleJs` function for custom file extensions', function () {
+        const required = {
+          es6: false,
+          custom: false
+        }
         var nyc = new NYC(configUtil.buildYargs(
           path.resolve(__dirname, '../fixtures/conf-multiple-extensions')
         ).parse())
 
-        sinon.spy(nyc, '_handleJs')
+        nyc['_handleJs'] = (code, options) => {
+          if (options.filename.indexOf('check-instrumented.es6') !== -1) {
+            required.es6 = true
+          }
+          if (options.filename.indexOf('check-instrumented.foo.bar') !== -1) {
+            required.custom = true
+          }
+          return code
+        }
 
         nyc.reset()
         nyc.wrap()
 
-        const check1 = require('../fixtures/conf-multiple-extensions/check-instrumented.es6')
-        const check2 = require('../fixtures/conf-multiple-extensions/check-instrumented.foo.bar')
-        check1().should.equal(true)
-        check2().should.equal(true)
-
-        nyc._handleJs.callCount.should.equal(2 + LAZY_LOAD_COUNT)
+        require('../fixtures/conf-multiple-extensions/check-instrumented.es6')
+        require('../fixtures/conf-multiple-extensions/check-instrumented.foo.bar')
+        required.custom.should.equal(true)
+        required.es6.should.equal(true)
       })
     })
 
