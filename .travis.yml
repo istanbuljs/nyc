@@ -9,9 +9,11 @@ node_js:
   - 8
   - 6
 matrix:
-  include:
-    - os: windows
-      node_js: "latest"
+## An ENOMEM error occurs with 11.6.0 under Travis-CI for Windows.
+## Disable until we can determine the cause.
+#  include:
+#    - os: windows
+#      node_js: "latest"
   exclude:
     - os: windows
       node_js: "node"
