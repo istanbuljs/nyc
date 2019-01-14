@@ -251,9 +251,7 @@ modules should be required in the subprocess collecting coverage:
 
 ## Caching
 
-You can run `nyc` with the optional `--cache` flag, to prevent it from
-instrumenting the same files multiple times. This can significantly
-improve runtime performance.
+`nyc`'s default behavior is to cache instrumented files to disk to prevent instrumenting source files multiple times, and speed `nyc` execution times. You can disable this behavior by running `nyc` with the `--cache false` flag. You can also change the default cache directory from `./node_modules/.cache/nyc` by setting the `--cacheDir` flag.
 
 ## Configuring `nyc`
 
