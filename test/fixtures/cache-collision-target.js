@@ -1,3 +1,4 @@
+
 module.exports = function (foo) {
   if (foo === 'foo') {
     return 'this is a foo'
