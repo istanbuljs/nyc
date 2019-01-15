@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/istanbuljs/nyc.svg?branch=master)](https://travis-ci.org/istanbuljs/nyc)
 [![Coverage Status](https://coveralls.io/repos/bcoe/nyc/badge.svg?branch=)](https://coveralls.io/r/bcoe/nyc?branch=master)
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
-[![Windows Tests](https://img.shields.io/appveyor/ci/bcoe/nyc-ilw23/master.svg?label=Windows%20Tests)](https://ci.appveyor.com/project/bcoe/nyc-ilw23)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![community slack](http://devtoolscommunity.herokuapp.com/badge.svg)](http://devtoolscommunity.herokuapp.com)
 
@@ -90,7 +89,7 @@ We recommend using [`babel-plugin-istanbul`] if your project uses the babel tool
   ```json
     {
       "babel": {
-        "presets": ["@babel/env"],
+        "presets": ["@babel/preset-env"],
         "env": {
           "test": {
             "plugins": ["istanbul"]
@@ -258,7 +257,7 @@ improve runtime performance.
 
 ## Configuring `nyc`
 
-Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a `.nycrc` file:
+Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a `.nycrc` (or `.nycrc.json`) file:
 
 **package.json:**
 
@@ -291,7 +290,7 @@ Any configuration options that can be set via the command line can also be speci
     ],
     "cache": true,
     "all": true,
-    "temp-directory": "./alternative-tmp",
+    "temp-dir": "./alternative-tmp",
     "report-dir": "./alternative"
   }
 }

@@ -695,6 +695,75 @@ describe('the nyc cli', function () {
     })
   })
 
+  describe('--temp-dir', function () {
+    beforeEach(() => {
+      rimraf.sync(path.resolve(fixturesCLI, '.nyc_output'))
+      rimraf.sync(path.resolve(fixturesCLI, '.temp_directory'))
+      rimraf.sync(path.resolve(fixturesCLI, '.temp_dir'))
+    })
+
+    it('creates the default \'tempDir\' when none is specified', function (done) {
+      var args = [bin, process.execPath, './half-covered.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        var tempFiles = fs.readdirSync(path.resolve(fixturesCLI, '.nyc_output'))
+        tempFiles.length.should.equal(1)
+        var cliFiles = fs.readdirSync(path.resolve(fixturesCLI))
+        cliFiles.should.include('.nyc_output')
+        cliFiles.should.not.include('.temp_dir')
+        cliFiles.should.not.include('.temp_directory')
+        done()
+      })
+    })
+
+    it('prefers \'tempDirectory\' to \'tempDir\'', function (done) {
+      var args = [bin, '--tempDirectory', '.temp_directory', '--tempDir', '.temp_dir', process.execPath, './half-covered.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      proc.on('exit', function (code) {
+        code.should.equal(0)
+        var tempFiles = fs.readdirSync(path.resolve(fixturesCLI, '.temp_directory'))
+        tempFiles.length.should.equal(1)
+        var cliFiles = fs.readdirSync(path.resolve(fixturesCLI))
+        cliFiles.should.not.include('.nyc_output')
+        cliFiles.should.not.include('.temp_dir')
+        cliFiles.should.include('.temp_directory')
+        done()
+      })
+    })
+
+    it('uses the \'tempDir\' option if \'tempDirectory\' is not set', function (done) {
+      var args = [bin, '--tempDir', '.temp_dir', process.execPath, './half-covered.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      proc.on('exit', function (code) {
+        code.should.equal(0)
+        var tempFiles = fs.readdirSync(path.resolve(fixturesCLI, '.temp_dir'))
+        tempFiles.length.should.equal(1)
+        var cliFiles = fs.readdirSync(path.resolve(fixturesCLI))
+        cliFiles.should.not.include('.nyc_output')
+        cliFiles.should.include('.temp_dir')
+        cliFiles.should.not.include('.temp_directory')
+        rimraf.sync(path.resolve(fixturesCLI, '.temp_dir'))
+        done()
+      })
+    })
+  })
+
   describe('noop instrumenter', function () {
     it('setting instrument to "false" configures noop instrumenter', function (done) {
       var args = [
@@ -1035,6 +1104,7 @@ describe('the nyc cli', function () {
       const args = [
         bin,
         '--cache', 'false',
+        '--es-modules', 'false',
         process.execPath, './not-strict.js'
       ]
 
@@ -1065,7 +1135,6 @@ describe('the nyc cli', function () {
       const args = [
         bin,
         '--cache', 'false',
-        '--es-modules', 'true',
         '--exit-on-error', 'true',
         process.execPath, './not-strict.js'
       ]
