@@ -200,6 +200,11 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     var ext
     var transform
     var inFile = path.resolve(inputDir, filename)
+
+    if (!_this.exclude.shouldInstrument(filename)) {
+      return
+    }
+
     var code = fs.readFileSync(inFile, 'utf-8')
 
     for (ext in _this.transforms) {
