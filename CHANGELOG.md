@@ -19,7 +19,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* add flag to allow control of intrumenter esModules option, default to looser parsing ([#863](https://github.com/istanbuljs/nyc/issues/863)) ([6b6cd5e](https://github.com/istanbuljs/nyc/commit/6b6cd5e))
+* add flag to allow control of instrumenter esModules option, default to looser parsing ([#863](https://github.com/istanbuljs/nyc/issues/863)) ([6b6cd5e](https://github.com/istanbuljs/nyc/commit/6b6cd5e))
 * Enable es-modules by default. ([#889](https://github.com/istanbuljs/nyc/issues/889)) ([d0b76e2](https://github.com/istanbuljs/nyc/commit/d0b76e2)), closes [#796](https://github.com/istanbuljs/nyc/issues/796)
 * Update caching-transform options. ([#873](https://github.com/istanbuljs/nyc/issues/873)) ([52b69ef](https://github.com/istanbuljs/nyc/commit/52b69ef))
 * use uuid/v4 to generate unique identifiers. ([#883](https://github.com/istanbuljs/nyc/issues/883)) ([7483ed9](https://github.com/istanbuljs/nyc/commit/7483ed9))

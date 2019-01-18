@@ -644,6 +644,49 @@ describe('the nyc cli', function () {
           done()
         })
       })
+
+      describe('es-modules', () => {
+        it('instruments files that should only instrument when es-modules is disabled', (done) => {
+          const args = [bin, 'instrument', '--es-modules', 'false', './not-strict.js', './output']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(0)
+            var subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output'))
+            subdirExists.should.equal(true)
+            var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+            files.should.include('not-strict.js')
+            done()
+          })
+        })
+
+        it('fails to instrument files that can\'t be instrumented when es-modules is enabled', (done) => {
+          const args = [bin, 'instrument', '--exit-on-error', 'true', './not-strict.js', './output']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          var stderr = ''
+          proc.stderr.on('data', function (chunk) {
+            stderr += chunk
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(1)
+            stdoutShouldEqual(stderr, `
+        Failed to instrument ./not-strict.js`)
+            var subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output'))
+            subdirExists.should.equal(false)
+            done()
+          })
+        })
+      })
     })
   })
 
