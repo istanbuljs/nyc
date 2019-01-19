@@ -278,7 +278,8 @@ describe('the nyc cli', function () {
         '--include=env.js',
         '--exclude=batman.js',
         '--extension=.js',
-        '--cache=true',
+        '--cache=false',
+        '--cache-dir=/tmp',
         '--source-map=true',
         process.execPath,
         './env.js'
@@ -286,7 +287,8 @@ describe('the nyc cli', function () {
       var expected = {
         instrumenter: './lib/instrumenters/istanbul',
         silent: true,
-        cache: true,
+        cacheDir: '/tmp',
+        cache: false,
         sourceMap: true
       }
 
