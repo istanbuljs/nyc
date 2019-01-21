@@ -11,6 +11,7 @@ const fs = require('fs')
 const glob = require('glob')
 const isWindows = require('is-windows')()
 const rimraf = require('rimraf')
+const makeDir = require('make-dir')
 const spawn = require('child_process').spawn
 const si = require('strip-indent')
 
@@ -645,6 +646,49 @@ describe('the nyc cli', function () {
         })
       })
 
+      describe('clean', () => {
+        beforeEach(function () {
+          makeDir.sync(path.resolve(fixturesCLI, 'output'))
+          fs.copyFileSync(path.resolve(fixturesCLI, 'args.js'), path.resolve(fixturesCLI, 'output', 'args.js'))
+        })
+
+        it('defaults to removing a pre-existing output directory if clean isn\'t specified', (done) => {
+          var args = [bin, 'instrument', '--include', '**/subdir/input-dir/**', './', './output']
+
+          var proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(0)
+            var subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+            subdirExists.should.equal(true)
+            var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+            files.should.not.include('args.js')
+            done()
+          })
+        })
+
+        it('skips cleaning if the clean option is set to false', (done) => {
+          var args = [bin, 'instrument', '--clean', 'false', '--include', '**/subdir/input-dir/**', './', './output']
+
+          var proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(0)
+            var subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+            subdirExists.should.equal(true)
+            var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+            files.should.include('args.js')
+            done()
+          })
+        })
+      })
+
       describe('es-modules', () => {
         it('instruments files that should only instrument when es-modules is disabled', (done) => {
           const args = [bin, 'instrument', '--es-modules', 'false', './not-strict.js', './output']
@@ -680,7 +724,7 @@ describe('the nyc cli', function () {
           proc.on('close', function (code) {
             code.should.equal(1)
             stdoutShouldEqual(stderr, `
-        Failed to instrument ./not-strict.js`)
+              Failed to instrument ./not-strict.js`)
             var subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output'))
             subdirExists.should.equal(false)
             done()
