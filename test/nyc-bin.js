@@ -648,8 +648,7 @@ describe('the nyc cli', function () {
 
       describe('clean', () => {
         beforeEach(function () {
-          makeDir.sync(path.resolve(fixturesCLI, 'output'))
-          fs.copyFileSync(path.resolve(fixturesCLI, 'args.js'), path.resolve(fixturesCLI, 'output', 'args.js'))
+          makeDir.sync(path.resolve(fixturesCLI, 'output', 'removed-by-clean'))
         })
 
         it('defaults to removing a pre-existing output directory if clean isn\'t specified', (done) => {
@@ -665,7 +664,7 @@ describe('the nyc cli', function () {
             var subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
             subdirExists.should.equal(true)
             var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
-            files.should.not.include('args.js')
+            files.should.not.include('removed-by-clean')
             done()
           })
         })
@@ -683,7 +682,7 @@ describe('the nyc cli', function () {
             var subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
             subdirExists.should.equal(true)
             var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
-            files.should.include('args.js')
+            files.should.include('removed-by-clean')
             done()
           })
         })
