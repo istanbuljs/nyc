@@ -250,11 +250,9 @@ NYC.prototype.walkAllFiles = function (dir, visitor) {
   var filesToWalk = glob.sync(pattern, {cwd: dir, nodir: true, ignore: this.exclude.exclude})
 
   var excludeNegatedPatterns = this.exclude.excludeNegated
-  if (excludeNegatedPatterns.length > 0) {
-    excludeNegatedPatterns.forEach(function (pattern) {
-      filesToWalk = filesToWalk.concat(glob.sync(pattern, {cwd: dir, nodir: true}))
-    })
-  }
+  excludeNegatedPatterns.forEach(function (pattern) {
+    filesToWalk = filesToWalk.concat(glob.sync(pattern, {cwd: dir, nodir: true}))
+  })
   filesToWalk = arrayUniq(filesToWalk)
 
   filesToWalk.forEach(function (filename) {
