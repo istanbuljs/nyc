@@ -69,6 +69,48 @@ describe('the nyc cli', function () {
         done()
       })
     })
+
+    it('should allow negated exclude patterns', function (done) {
+      var args = [bin, '--all', '--exclude', '**/include-exclude/**', '--exclude', '!**/exclude-negated.js', process.execPath, './half-covered.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdout.should.not.match(/excluded\.js/)
+        stdout.should.match(/exclude-negated\.js/)
+        done()
+      })
+    })
+
+    it('should include \'node_modules\' using exclude patterns', function (done) {
+      var args = [bin, '--all', '--exclude', '!**/node_modules/**', process.execPath, './half-covered.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdout.should.match(/include-exclude\/node_modules/)
+        stdout.should.match(/cover-me\.js/)
+        done()
+      })
+    })
   })
 
   describe('--ignore-class-method', function () {
