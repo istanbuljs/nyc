@@ -42,6 +42,9 @@ if ([
   if (argv.all) nyc.addAllFiles()
 
   var env = {
+    // Support running nyc as a user without HOME (e.g. linux 'nobody'),
+    // https://github.com/istanbuljs/nyc/issues/951
+    SPAWN_WRAP_SHIM_ROOT: process.env.SPAWN_WRAP_SHIM_ROOT || process.env.XDG_CACHE_HOME || require('os').homedir(),
     NYC_CONFIG: JSON.stringify(argv),
     NYC_CWD: process.cwd(),
     NYC_ROOT_ID: nyc.rootId,
