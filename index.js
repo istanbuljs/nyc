@@ -2,6 +2,7 @@
 
 /* global __coverage__ */
 
+const arrayUniq = require('array-uniq')
 const arrify = require('arrify')
 const cachingTransform = require('caching-transform')
 const debugLog = require('debug-log')('nyc')
@@ -246,7 +247,17 @@ NYC.prototype.walkAllFiles = function (dir, visitor) {
     pattern = '**/*{' + this.extensions.join() + '}'
   }
 
-  glob.sync(pattern, {cwd: dir, nodir: true, ignore: this.exclude.exclude}).forEach(function (filename) {
+  var filesToWalk = glob.sync(pattern, {cwd: dir, nodir: true, ignore: this.exclude.exclude})
+
+  var excludeNegatedPatterns = this.exclude.excludeNegated
+  if (excludeNegatedPatterns.length > 0) {
+    excludeNegatedPatterns.forEach(function (pattern) {
+      filesToWalk = filesToWalk.concat(glob.sync(pattern, {cwd: dir, nodir: true}))
+    })
+  }
+  filesToWalk = arrayUniq(filesToWalk)
+
+  filesToWalk.forEach(function (filename) {
     visitor(filename)
   })
 }
