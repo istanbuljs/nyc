@@ -4,7 +4,7 @@
 
 const arrify = require('arrify')
 const cachingTransform = require('caching-transform')
-const debugLog = require('debug-log')('nyc')
+const util = require('util')
 const findCacheDir = require('find-cache-dir')
 const fs = require('fs')
 const glob = require('glob')
@@ -22,6 +22,8 @@ const rimraf = require('rimraf')
 const SourceMaps = require('./lib/source-maps')
 const testExclude = require('test-exclude')
 const uuid = require('uuid/v4')
+
+const debugLog = util.debuglog('nyc')
 
 var ProcessInfo
 try {
