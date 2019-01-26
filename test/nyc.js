@@ -8,7 +8,7 @@ require('chai').should()
 describe('NYC', function () {
   describe('_disableCachingTransform', function () {
     it('is disabled if cache is "false"', function () {
-      const nyc = new NYC({cache: false})
+      const nyc = new NYC({ cache: false })
       nyc._disableCachingTransform().should.equal(true)
     })
 

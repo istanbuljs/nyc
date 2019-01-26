@@ -1189,11 +1189,11 @@ describe('the nyc cli', function () {
         // the combined reports should have 100% function
         // branch and statement coverage.
         mergedCoverage['/private/tmp/contrived/library.js']
-          .s.should.eql({'0': 2, '1': 1, '2': 1, '3': 2, '4': 1, '5': 1})
+          .s.should.eql({ '0': 2, '1': 1, '2': 1, '3': 2, '4': 1, '5': 1 })
         mergedCoverage['/private/tmp/contrived/library.js']
-          .f.should.eql({'0': 1, '1': 1, '2': 2})
+          .f.should.eql({ '0': 1, '1': 1, '2': 2 })
         mergedCoverage['/private/tmp/contrived/library.js']
-          .b.should.eql({'0': [1, 1]})
+          .b.should.eql({ '0': [1, 1] })
         rimraf.sync(path.resolve(fixturesCLI, 'coverage.json'))
         return done()
       })
