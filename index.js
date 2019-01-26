@@ -140,7 +140,8 @@ NYC.prototype._createInstrumenter = function () {
     produceSourceMap: this.config.produceSourceMap,
     compact: this.config.compact,
     preserveComments: this.config.preserveComments,
-    esModules: this.config.esModules
+    esModules: this.config.esModules,
+    plugins: this.config.plugins
   })
 }
 
