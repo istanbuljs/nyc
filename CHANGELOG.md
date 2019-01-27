@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="13.2.0"></a>
+# [13.2.0](https://github.com/istanbuljs/nyc/compare/v13.1.0...v13.2.0) (2019-01-27)
+
+
+### Bug Fixes
+
+* Create directory for merge destination. ([#979](https://github.com/istanbuljs/nyc/issues/979)) ([921d386](https://github.com/istanbuljs/nyc/commit/921d386)), closes [#976](https://github.com/istanbuljs/nyc/issues/976)
+* missing command temp-directory ([#928](https://github.com/istanbuljs/nyc/issues/928)) ([28b6d09](https://github.com/istanbuljs/nyc/commit/28b6d09)), closes [#927](https://github.com/istanbuljs/nyc/issues/927)
+* nyc processing files not covered by include when `all` is enabled. ([#914](https://github.com/istanbuljs/nyc/issues/914)) ([40afc5f](https://github.com/istanbuljs/nyc/commit/40afc5f)), closes [#913](https://github.com/istanbuljs/nyc/issues/913) [#782](https://github.com/istanbuljs/nyc/issues/782)
+
+
+### Features
+
+* avoid hardcoded HOME for spawn-wrap working dir ([#957](https://github.com/istanbuljs/nyc/issues/957)) ([ff834aa](https://github.com/istanbuljs/nyc/commit/ff834aa)), closes [#951](https://github.com/istanbuljs/nyc/issues/951)
+* document the fact that cacheDir is configurable ([#968](https://github.com/istanbuljs/nyc/issues/968)) ([35cd49a](https://github.com/istanbuljs/nyc/commit/35cd49a))
+* Option Plugins ([#948](https://github.com/istanbuljs/nyc/issues/948)) ([df2730d](https://github.com/istanbuljs/nyc/commit/df2730d))
+
+
+
 <a name="13.1.0"></a>
 # [13.1.0](https://github.com/istanbuljs/nyc/compare/v13.0.1...v13.1.0) (2018-09-06)
 
