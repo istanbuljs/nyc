@@ -48,6 +48,38 @@ describe('the nyc cli', function () {
     })
   })
 
+  describe('report and check', function () {
+    it('should show coverage check along with report', function (done) {
+      // generate some coverage info
+      var args = [bin, '--silent', process.execPath, './half-covered.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        var args = [bin, 'report', '--check-coverage', '--lines=100']
+        var proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        var stderr = ''
+        proc.stderr.on('data', function (chunk) {
+          stderr += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.not.equal(0)
+          stderr.should.equal('ERROR: Coverage for lines (50%) does not meet global threshold (100%)\n')
+          done()
+        })
+      })
+    })
+  })
+
   describe('--exclude', function () {
     it('should allow default exclude rules to be overridden', function (done) {
       var args = [bin, '--all', '--exclude', '**/half-covered.js', process.execPath, './half-covered.js']
