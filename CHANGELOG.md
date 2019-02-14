@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="13.3.0"></a>
+# [13.3.0](https://github.com/istanbuljs/nyc/compare/v13.2.0...v13.3.0) (2019-02-14)
+
+
+### Bug Fixes
+
+* update dependendencies due to vulnerabilities ([#992](https://github.com/istanbuljs/nyc/issues/992)) ([e8cc59b](https://github.com/istanbuljs/nyc/commit/e8cc59b)), closes [#991](https://github.com/istanbuljs/nyc/issues/991)
+
+
+### Features
+
+* Support nyc report --check-coverage ([#984](https://github.com/istanbuljs/nyc/issues/984)) ([dd48410](https://github.com/istanbuljs/nyc/commit/dd48410))
+
+
+
 <a name="13.2.0"></a>
 # [13.2.0](https://github.com/istanbuljs/nyc/compare/v13.1.0...v13.2.0) (2019-01-27)
 
