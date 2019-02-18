@@ -5,7 +5,7 @@
 const arrayUniq = require('array-uniq')
 const arrify = require('arrify')
 const cachingTransform = require('caching-transform')
-const debugLog = require('debug-log')('nyc')
+const util = require('util')
 const findCacheDir = require('find-cache-dir')
 const fs = require('fs')
 const glob = require('glob')
@@ -23,6 +23,8 @@ const rimraf = require('rimraf')
 const SourceMaps = require('./lib/source-maps')
 const testExclude = require('test-exclude')
 const uuid = require('uuid/v4')
+
+const debugLog = util.debuglog('nyc')
 
 var ProcessInfo
 try {
@@ -51,7 +53,7 @@ function NYC (config) {
   this.cwd = config.cwd || process.cwd()
   this.reporter = arrify(config.reporter || 'text')
 
-  this.cacheDirectory = (config.cacheDir && path.resolve(config.cacheDir)) || findCacheDir({name: 'nyc', cwd: this.cwd})
+  this.cacheDirectory = (config.cacheDir && path.resolve(config.cacheDir)) || findCacheDir({ name: 'nyc', cwd: this.cwd })
   this.cache = Boolean(this.cacheDirectory && config.cache)
 
   this.exclude = testExclude({
@@ -141,7 +143,8 @@ NYC.prototype._createInstrumenter = function () {
     produceSourceMap: this.config.produceSourceMap,
     compact: this.config.compact,
     preserveComments: this.config.preserveComments,
-    esModules: this.config.esModules
+    esModules: this.config.esModules,
+    plugins: this.config.plugins
   })
 }
 
@@ -211,7 +214,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     }
 
     if (transform) {
-      code = transform(code, {filename: filename, relFile: inFile})
+      code = transform(code, { filename: filename, relFile: inFile })
     }
 
     if (!output) {
@@ -274,7 +277,7 @@ NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
     }
   }
 
-  return transform ? transform(code, {filename: filename, relFile: relFile}) : null
+  return transform ? transform(code, { filename: filename, relFile: relFile }) : null
 }
 
 NYC.prototype._transformFactory = function (cacheDir) {
@@ -364,7 +367,7 @@ NYC.prototype._wrapExit = function () {
   // regardless of how the process exits.
   onExit(function () {
     _this.writeCoverageFile()
-  }, {alwaysLast: true})
+  }, { alwaysLast: true })
 }
 
 NYC.prototype.wrap = function (bin) {
