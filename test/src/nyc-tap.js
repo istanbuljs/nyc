@@ -1,6 +1,6 @@
 /* global describe, it */
 
-require('source-map-support').install({hookRequire: true})
+require('source-map-support').install({ hookRequire: true })
 
 const _ = require('lodash')
 const ap = require('any-path')
@@ -92,11 +92,11 @@ describe('nyc', function () {
 
     it("ignores 'exclude' option if it's falsy", function () {
       var nyc1 = new NYC(configUtil.buildYargs(path.resolve(__dirname, '../fixtures/conf-empty')).parse())
-      nyc1.exclude.exclude.length.should.eql(12)
+      nyc1.exclude.exclude.length.should.eql(15)
     })
 
     it("allows for empty 'exclude'", function () {
-      var nyc2 = new NYC({exclude: []})
+      var nyc2 = new NYC({ exclude: [] })
 
       // an empty exclude still has **/node_modules/**, node_modules/** and added.
       nyc2.exclude.exclude.length.should.eql(2)
