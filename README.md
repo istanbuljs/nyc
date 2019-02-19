@@ -195,6 +195,76 @@ Install custom reporters as a development dependency and you can use the `--repo
 nyc report --reporter=<custom-reporter-name>
 ```
 
+## Selecting files for coverage
+
+By default Nyc only collects coverage for source files that are 
+`require()`'d from test sources.  If a source file isn't visited during 
+tests then it will not appear in the coverage report, or contribute to
+coverage statistics.
+
+Nyc can include all source files under the `cwd`  by setting the `--all`
+flag.  Nyc will then report on all source files found under `cwd`, and 
+all of these files will contribute to the coverage statistics.
+
+You can then reduce the set of results after setting the coverage 
+collection scope to either all files or visited files.  Adding `nyc.include` 
+and `nyc.exclude` filter arrays to your config allows you to further shape 
+the set of covered files.  The filter arrays must contain glob patterns that
+can be used to filter files from the set.  The `exclude` array can also include
+negated glob patterns, specified with a `!` prefix, that can restore sub-paths
+of excluded paths.
+
+Globs are matched using [minimatch](https://www.npmjs.com/package/minimatch).
+
+To determine the final set of covered files, we use the following process,  
+ * First, limit the set of covered files to those in paths listed in the `include` 
+   array.  
+ * Then remove any files that are found in the `exclude` array.
+ * Finally, restore exclude negated files if they have been excluded in the 
+   second step
+
+
+##### Using include and exclude arrays
+
+If there are paths specified in the `include` array, then the set of 
+covered files will be limited to eligible files found in those paths.
+If the `include` array is left empty then all eligible files will be
+included, equivalent to setting `include` to `['**']`.  Include options
+can be specified on the command line with the `-n` switch.
+
+If there are paths specified in the `exclude` array, then the set of 
+covered files will not feature eligible files found in those paths.
+You can also specify negated paths in the `exclude` array, by prefixing
+them with a `!`.  Negated paths can restore paths that have been 
+already been excluded in the `exclude` array.  Exclude options can be
+specified on the command line with the `-x` switch.
+
+For example, the following config will collect coverage for all files
+in the `src` directory, and exclude any files with the extension
+`.spec.js`.
+
+```json
+{
+  "nyc": {
+    "all": true,
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "**/*.spec.js"
+    ]
+  }
+}
+```
+
+> Note: Since version 9.0 files under `node_modules/` are excluded by default.
+  add the exclude rule `!**/node_modules/` to stop this.
+
+> Note: exclude defaults to `['coverage/**', 'test/**', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**', '**/node_modules/**']`,
+which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`,
+and `test-*.js` files. Specifying your own exclude property overrides these defaults.
+
+
 ## Excluding files
 
 You can tell nyc to exclude specific files and directories by adding
