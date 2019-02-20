@@ -219,7 +219,7 @@ Globs are matched using [minimatch](https://www.npmjs.com/package/minimatch).
 To determine the final set of covered files, we use the following process,  
  * First, limit the set of covered files to those in paths listed in the `include` 
    array.  
- * Then remove any files that are found in the `exclude` array.
+ * Then, remove any files that are found in the `exclude` array.
  * Finally, restore exclude negated files if they have been excluded in the 
    second step
 
