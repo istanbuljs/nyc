@@ -264,54 +264,6 @@ in the `src` directory, and exclude any files with the extension
 which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`,
 and `test-*.js` files. Specifying your own exclude property overrides these defaults.
 
-
-## Excluding files
-
-You can tell nyc to exclude specific files and directories by adding
-an `nyc.exclude` array to your `package.json`. Each element of
-the array is a glob pattern indicating which paths should be omitted.
-
-Globs are matched using [minimatch](https://www.npmjs.com/package/minimatch).
-
-For example, the following config will exclude any files with the extension `.spec.js`,
-and anything in the `build` directory:
-
-```json
-{
-  "nyc": {
-    "exclude": [
-      "**/*.spec.js",
-      "build"
-    ]
-  }
-}
-```
-> Note: Since version 9.0 files under `node_modules/` are excluded by default.
-  add the exclude rule `!**/node_modules/` to stop this.
-
-> Note: exclude defaults to `['coverage/**', 'test/**', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**', '**/node_modules/**']`,
-which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`,
-and `test-*.js` files. Specifying your own exclude property overrides these defaults.
-
-## Including files
-
-As an alternative to providing a list of files to `exclude`, you can provide
-an `include` key with a list of globs to specify specific files that should be covered:
-
-```json
-{
-  "nyc": {
-    "include": ["**/build/umd/moment.js"]
-  }
-}
-```
-
-> `nyc` uses minimatch for glob expansions, you can read its documentation [here](https://www.npmjs.com/package/minimatch).
-
-> Note: include defaults to `['**']`
-
-> ### Use the `--all` flag to include files that have not been required in your tests.
-
 ## Require additional modules
 
 The `--require` flag can be provided to `nyc` to indicate that additional
