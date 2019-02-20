@@ -1,4 +1,5 @@
 var sw = require('spawn-wrap')
+var singleton = require('../singleton-lib');
 var NYC
 try {
   NYC = require('../index.covered.js')
@@ -20,4 +21,12 @@ config._processInfo = {
 
 ;(new NYC(config)).wrap()
 
+singleton.write('bin/wrap.js');
+if (process.env.CLEAR_IT) {
+  Object.keys(require.cache).forEach(file => {
+    delete require.cache[file];
+  });
+}
+console.log(`bin/wrap.js before sw.runMain(): ${singleton.read()}`);
 sw.runMain()
+console.log(`bin/wrap.js after sw.runMain(): ${singleton.read()}`);
