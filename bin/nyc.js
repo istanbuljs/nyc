@@ -2,12 +2,7 @@
 
 const configUtil = require('../lib/config-util')
 const foreground = require('foreground-child')
-var NYC
-try {
-  NYC = require('../index.covered.js')
-} catch (e) {
-  NYC = require('../index.js')
-}
+const NYC = require('../index.js')
 const processArgs = require('../lib/process-args')
 
 const sw = require('spawn-wrap')

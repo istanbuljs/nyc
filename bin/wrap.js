@@ -1,10 +1,5 @@
 var sw = require('spawn-wrap')
-var NYC
-try {
-  NYC = require('../index.covered.js')
-} catch (e) {
-  NYC = require('../index.js')
-}
+var NYC = require('../index.js')
 
 var parentPid = process.env.NYC_PARENT_PID || '0'
 process.env.NYC_PARENT_PID = process.pid

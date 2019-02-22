@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "bundle": "bundle-dependencies update",
+    "pretest": "npm run clean && npm run instrument",
+    "test": "tap -t360 --no-cov -b ./test/*.js && npm run report",
     "posttest": "standard",
-    "test": "npm run clean && npm run instrument && tap -t360 --no-cov -b ./test/*.js && npm run report",
-    "clean": "rimraf ./.nyc_output ./node_modules/.cache ./.self_coverage ./test/fixtures/.nyc_output ./test/fixtures/node_modules/.cache *covered.js ./lib/*covered.js",
+    "clean": "rimraf ./.nyc_output ./node_modules/.cache ./.self_coverage ./test/fixtures/.nyc_output ./test/fixtures/node_modules/.cache ./self-coverage",
     "instrument": "node ./build-self-coverage.js",
-    "report": "node ./bin/nyc  --temp-dir ./.self_coverage/ -r text -r lcov report",
+    "report": "node ./self-coverage/bin/nyc report --temp-dir ./.self_coverage/ -r text -r lcov",
     "release": "standard-version"
   },
   "bin": {
@@ -18,22 +19,19 @@
   "files": [
     "index.js",
     "bin/*.js",
-    "lib/*.js",
-    "lib/commands/*.js",
-    "lib/instrumenters/*.js",
-    "!**/*covered.js"
+    "lib/**/*.js"
   ],
   "nyc": {
     "exclude": [
       "node_modules",
       "bin",
       "coverage",
+      "self-coverage",
       "test/fixtures/coverage.js",
       "test/build/*",
       "test/src/*",
       "test/nyc.js",
       "test/process-args.js",
-      "index.covered.js",
       "test/fixtures/_generateCoverage.js"
     ]
   },
@@ -104,6 +102,7 @@
     "is-windows": "^1.0.2",
     "lodash": "^4.17.11",
     "newline-regex": "^0.2.1",
+    "pify": "^4.0.1",
     "requirejs": "^2.3.6",
     "sanitize-filename": "^1.6.1",
     "source-map-support": "^0.5.10",

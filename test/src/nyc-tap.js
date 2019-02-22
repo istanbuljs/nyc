@@ -8,12 +8,7 @@ const configUtil = require('../../lib/config-util')
 const fs = require('fs')
 const enableCache = false
 
-let _NYC
-try {
-  _NYC = require('../../index.covered.js')
-} catch (e) {
-  _NYC = require('../../')
-}
+const _NYC = require('../../self-coverage')
 
 function NYC (opts) {
   opts = opts || {}
@@ -29,7 +24,7 @@ var rimraf = require('rimraf')
 var isWindows = require('is-windows')()
 var spawn = require('child_process').spawn
 var fixtures = path.resolve(__dirname, '../fixtures')
-var bin = path.resolve(__dirname, '../../bin/nyc')
+var bin = path.resolve(__dirname, '../../self-coverage/bin/nyc')
 
 // beforeEach
 glob.sync('**/*/{.nyc_output,.cache}').forEach(function (path) {
@@ -40,6 +35,8 @@ delete process.env.NYC_CWD
 
 require('chai').should()
 require('tap').mochaGlobals()
+
+const transpileHook = path.resolve(process.cwd(), './test/fixtures/transpile-hook')
 
 describe('nyc', function () {
   describe('cwd', function () {
@@ -402,7 +399,7 @@ describe('nyc', function () {
         'utf-8'
       )
 
-      var nyc = (new NYC(configUtil.buildYargs(fixtures).parse(['--require', './test/fixtures/transpile-hook'])))
+      var nyc = (new NYC(configUtil.buildYargs(fixtures).parse(['--require', transpileHook])))
       nyc.reset()
       nyc.addAllFiles()
 
@@ -428,7 +425,7 @@ describe('nyc', function () {
       )
 
       var nyc = (new NYC(configUtil.buildYargs(fixtures).parse([
-        '--require=./test/fixtures/transpile-hook',
+        '--require=' + transpileHook,
         '--extension=.do-not-transpile',
         '--include=needs-transpile.do-not-transpile'
       ])))
@@ -448,7 +445,7 @@ describe('nyc', function () {
     )
 
     var nyc = (new NYC(configUtil.buildYargs(fixtures).parse([
-      '--require=./test/fixtures/transpile-hook',
+      '--require=' + transpileHook,
       '--extension=.whatever'
     ])))
 
