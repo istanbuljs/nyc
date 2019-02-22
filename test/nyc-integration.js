@@ -17,6 +17,7 @@ const si = require('strip-indent')
 require('chai').should()
 require('tap').mochaGlobals()
 
+// beforeEach
 rimraf.sync(path.resolve(fakebin, 'node'))
 rimraf.sync(path.resolve(fakebin, 'npm'))
 rimraf.sync(path.resolve(fixturesCLI, 'subdir', 'output-dir'))
@@ -48,6 +49,38 @@ describe('the nyc cli', function () {
     })
   })
 
+  describe('report and check', function () {
+    it('should show coverage check along with report', function (done) {
+      // generate some coverage info
+      var args = [bin, '--silent', process.execPath, './half-covered.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        var args = [bin, 'report', '--check-coverage', '--lines=100']
+        var proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        var stderr = ''
+        proc.stderr.on('data', function (chunk) {
+          stderr += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.not.equal(0)
+          stderr.should.equal('ERROR: Coverage for lines (50%) does not meet global threshold (100%)\n')
+          done()
+        })
+      })
+    })
+  })
+
   describe('--exclude', function () {
     it('should allow default exclude rules to be overridden', function (done) {
       var args = [bin, '--all', '--exclude', '**/half-covered.js', process.execPath, './half-covered.js']
@@ -69,6 +102,48 @@ describe('the nyc cli', function () {
         done()
       })
     })
+
+    it('should allow negated exclude patterns', function (done) {
+      const args = [bin, '--all', '--exclude', '**/include-exclude/**', '--exclude', '!**/exclude-negated.js', process.execPath, './half-covered.js']
+
+      const proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      let stdout = ''
+      proc.stdout.on('data', chunk => {
+        stdout += chunk
+      })
+
+      proc.on('close', code => {
+        code.should.equal(0)
+        stdout.should.not.match(/excluded\.js/)
+        stdout.should.match(/exclude-negated\.js/)
+        done()
+      })
+    })
+
+    /*it('should include \'node_modules\' using exclude patterns', function (done) {
+      const args = [bin, '--all', '--exclude', '!** /node_modules/**', process.execPath, './half-covered.js']
+
+      const proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      let stdout = ''
+      proc.stdout.on('data', chunk => {
+        stdout += chunk
+      })
+
+      proc.on('close', code => {
+        code.should.equal(0)
+        stdout.should.match(/include-exclude\/node_modules/)
+        stdout.should.match(/cover-me\.js/)
+        done()
+      })
+    })*/
   })
 
   describe('--ignore-class-method', function () {
@@ -278,7 +353,8 @@ describe('the nyc cli', function () {
         '--include=env.js',
         '--exclude=batman.js',
         '--extension=.js',
-        '--cache=true',
+        '--cache=false',
+        '--cache-dir=/tmp',
         '--source-map=true',
         process.execPath,
         './env.js'
@@ -286,7 +362,8 @@ describe('the nyc cli', function () {
       var expected = {
         instrumenter: './lib/instrumenters/istanbul',
         silent: true,
-        cache: true,
+        cacheDir: '/tmp',
+        cache: false,
         sourceMap: true
       }
 
@@ -1187,11 +1264,11 @@ describe('the nyc cli', function () {
         // the combined reports should have 100% function
         // branch and statement coverage.
         mergedCoverage['/private/tmp/contrived/library.js']
-          .s.should.eql({'0': 2, '1': 1, '2': 1, '3': 2, '4': 1, '5': 1})
+          .s.should.eql({ '0': 2, '1': 1, '2': 1, '3': 2, '4': 1, '5': 1 })
         mergedCoverage['/private/tmp/contrived/library.js']
-          .f.should.eql({'0': 1, '1': 1, '2': 2})
+          .f.should.eql({ '0': 1, '1': 1, '2': 2 })
         mergedCoverage['/private/tmp/contrived/library.js']
-          .b.should.eql({'0': [1, 1]})
+          .b.should.eql({ '0': [1, 1] })
         rimraf.sync(path.resolve(fixturesCLI, 'coverage.json'))
         return done()
       })
