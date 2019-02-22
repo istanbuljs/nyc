@@ -124,7 +124,7 @@ describe('the nyc cli', function () {
       })
     })
 
-    /*it('should include \'node_modules\' using exclude patterns', function (done) {
+    /* it('should include \'node_modules\' using exclude patterns', function (done) {
       const args = [bin, '--all', '--exclude', '!** /node_modules/**', process.execPath, './half-covered.js']
 
       const proc = spawn(process.execPath, args, {
@@ -143,7 +143,7 @@ describe('the nyc cli', function () {
         stdout.should.match(/cover-me\.js/)
         done()
       })
-    })*/
+    }) */
   })
 
   describe('--ignore-class-method', function () {

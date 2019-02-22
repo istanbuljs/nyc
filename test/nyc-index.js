@@ -1,13 +1,13 @@
-/* global describe, it */
+/* global describe, it, beforeEach */
 
-require('source-map-support').install({hookRequire: true})
+require('source-map-support').install({ hookRequire: true })
 
 const _ = require('lodash')
 const ap = require('any-path')
 const configUtil = require('../lib/config-util')
 const fs = require('fs')
 
-let NYC 
+let NYC
 try {
   NYC = require('../index.covered.js')
 } catch (e) {
@@ -27,9 +27,9 @@ const resetState = require('./lib/reset-state')
 require('chai').should()
 require('tap').mochaGlobals()
 
-describe('nyc', function () {  
+describe('nyc', function () {
   beforeEach(resetState)
-  
+
   describe('cwd', function () {
     it('sets cwd to process.cwd() if no environment variable is set', function () {
       var nyc = new NYC(configUtil.buildYargs().parse())
@@ -84,7 +84,7 @@ describe('nyc', function () {
     })
 
     it("allows for empty 'exclude'", function () {
-      var nyc2 = new NYC({exclude: []})
+      var nyc2 = new NYC({ exclude: [] })
 
       // an empty exclude still has **/node_modules/**, node_modules/** and added.
       nyc2.exclude.exclude.length.should.eql(2)
@@ -493,10 +493,10 @@ describe('nyc', function () {
       })
     })
   })
-  
+
   describe('_disableCachingTransform', function () {
     it('is disabled if cache is "false"', function () {
-      const nyc = new NYC({cache: false})
+      const nyc = new NYC({ cache: false })
       nyc._disableCachingTransform().should.equal(true)
     })
 
