@@ -477,9 +477,6 @@ NYC.prototype.checkCoverage = function (thresholds, perFile) {
     // ERROR: Coverage for lines (90.12%) does not meet global threshold (120%)
     nyc._checkCoverage(map.getCoverageSummary(), thresholds)
   }
-
-  // process.exitCode was not implemented until v0.11.8.
-  if (/^v0\.(1[0-1]\.|[0-9]\.)/.test(process.version) && process.exitCode !== 0) process.exit(process.exitCode)
 }
 
 NYC.prototype._checkCoverage = function (summary, thresholds, file) {
