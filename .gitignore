@@ -6,5 +6,3 @@ test/build/
 *.covered.js
 *.swp
 needs-transpile.js
-
-!*test/fixtures/cli/include-exclude/node_modules/

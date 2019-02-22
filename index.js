@@ -2,7 +2,6 @@
 
 /* global __coverage__ */
 
-const arrayUniq = require('array-uniq')
 const arrify = require('arrify')
 const cachingTransform = require('caching-transform')
 const util = require('util')
@@ -248,20 +247,16 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
 }
 
 NYC.prototype.walkAllFiles = function (dir, visitor) {
-  const pattern = (this.extensions.length === 1)
-    ? `**/*${this.extensions[0]}`
-    : `**/*{${this.extensions.join()}}`
+  var pattern = null
+  if (this.extensions.length === 1) {
+    pattern = '**/*' + this.extensions[0]
+  } else {
+    pattern = '**/*{' + this.extensions.join() + '}'
+  }
 
-  let filesToWalk = glob.sync(pattern, { cwd: dir, nodir: true, ignore: this.exclude.exclude })
-
-  // package node-glob no longer observes negated excludes, so we need to restore these files ourselves
-  const excludeNegatedPaths = this.exclude.excludeNegated
-  excludeNegatedPaths.forEach(pattern => {
-    filesToWalk = filesToWalk.concat(glob.sync(pattern, { cwd: dir, nodir: true }))
+  glob.sync(pattern, { cwd: dir, nodir: true, ignore: this.exclude.exclude }).forEach(function (filename) {
+    visitor(filename)
   })
-  filesToWalk = arrayUniq(filesToWalk)
-
-  filesToWalk.forEach(visitor)
 }
 
 NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
