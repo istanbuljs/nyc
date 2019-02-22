@@ -102,7 +102,6 @@
     "is-windows": "^1.0.2",
     "lodash": "^4.17.11",
     "newline-regex": "^0.2.1",
-    "pify": "^4.0.1",
     "requirejs": "^2.3.6",
     "sanitize-filename": "^1.6.1",
     "source-map-support": "^0.5.10",
