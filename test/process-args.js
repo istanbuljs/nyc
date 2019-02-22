@@ -1,6 +1,7 @@
 /* global describe, it */
 
 require('chai').should()
+require('tap').mochaGlobals()
 
 const processArgs = require('../lib/process-args')
 
