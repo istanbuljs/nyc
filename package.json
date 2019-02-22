@@ -74,6 +74,7 @@
   "license": "ISC",
   "dependencies": {
     "archy": "^1.0.0",
+    "array-uniq": "^2.0.0",
     "arrify": "^1.0.1",
     "caching-transform": "^3.0.1",
     "convert-source-map": "^1.6.0",
