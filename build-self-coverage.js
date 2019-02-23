@@ -32,6 +32,7 @@ function instrumentGlob (pattern) {
 }
 
 function instrumentAll () {
+  /* package.json is just being copied so the instrumented copy of lib/hash.js can find it. */
   const globPatterns = ['package.json', 'index.js', 'bin/*.js', 'lib/**/*.js']
 
   globPatterns.forEach(pattern => {
