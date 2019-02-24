@@ -15,6 +15,7 @@ const spawn = require('child_process').spawn
 const si = require('strip-indent')
 
 require('chai').should()
+require('tap').mochaGlobals()
 
 // beforeEach
 rimraf.sync(path.resolve(fakebin, 'node'))
