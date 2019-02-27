@@ -581,7 +581,9 @@ describe('the nyc cli', function () {
           done()
         })
       })
+    })
 
+    describe('output folder specified', function () {
       it('works in directories without a package.json', function (done) {
         var args = [bin, 'instrument', './input-dir', './output-dir']
 
@@ -619,12 +621,6 @@ describe('the nyc cli', function () {
           code.should.equal(1)
           done()
         })
-      })
-    })
-
-    describe('output folder specified', function () {
-      afterEach(function () {
-        rimraf.sync(path.resolve(fixturesCLI, 'output'))
       })
 
       it('allows a single file to be instrumented', function (done) {
