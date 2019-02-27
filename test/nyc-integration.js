@@ -1,4 +1,4 @@
-/* global describe, it, beforeEach */
+/* global describe, it, beforeEach, afterEach */
 
 const _ = require('lodash')
 const path = require('path')
@@ -11,6 +11,7 @@ const fs = require('fs')
 const glob = require('glob')
 const isWindows = require('is-windows')()
 const rimraf = require('rimraf')
+const makeDir = require('make-dir')
 const spawn = require('child_process').spawn
 const si = require('strip-indent')
 
@@ -548,6 +549,10 @@ describe('the nyc cli', function () {
     })
 
     describe('output folder specified', function () {
+      afterEach(function () {
+        rimraf.sync(path.resolve(fixturesCLI, 'output'))
+      })
+
       it('allows a single file to be instrumented', function (done) {
         var args = [bin, 'instrument', './half-covered.js', './output']
 
@@ -561,7 +566,6 @@ describe('the nyc cli', function () {
           var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.length.should.equal(1)
           files.should.include('half-covered.js')
-          rimraf.sync(path.resolve(fixturesCLI, 'output'))
           done()
         })
       })
@@ -579,7 +583,6 @@ describe('the nyc cli', function () {
           var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.should.include('env.js')
           files.should.include('es6.js')
-          rimraf.sync(path.resolve(fixturesCLI, 'output'))
           done()
         })
       })
@@ -596,8 +599,49 @@ describe('the nyc cli', function () {
           code.should.equal(0)
           var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.should.include('index.js')
-          rimraf.sync(path.resolve(fixturesCLI, 'output'))
           done()
+        })
+      })
+
+      describe('clean', function () {
+        beforeEach(function () {
+          makeDir.sync(path.resolve(fixturesCLI, 'output', 'removed-by-clean'))
+        })
+
+        it('cleans the output directory if `--clean` is specified', function (done) {
+          const args = [bin, 'instrument', '--clean', 'true', './', './output']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(0)
+            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+            subdirExists.should.equal(true)
+            const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+            files.should.not.include('removed-by-clean')
+            done()
+          })
+        })
+
+        it('does not clean the output directory by default', function (done) {
+          const args = [bin, 'instrument', './', './output']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(0)
+            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+            subdirExists.should.equal(true)
+            const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+            files.should.include('removed-by-clean')
+            done()
+          })
         })
       })
     })
