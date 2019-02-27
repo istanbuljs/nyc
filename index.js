@@ -99,7 +99,7 @@ function NYC (config) {
 
 NYC.prototype._createTransform = function (ext) {
   var opts = {
-    salt: Hash.salt,
+    salt: Hash.salt(this.config),
     hashData: (input, metadata) => [metadata.filename],
     onHash: (input, metadata, hash) => {
       this.hashCache[metadata.filename] = hash
