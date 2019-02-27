@@ -425,7 +425,7 @@ describe('nyc', function () {
       )
 
       var nyc = (new NYC(configUtil.buildYargs(fixtures).parse([
-        '--require=' + transpileHook,
+        `--require=${transpileHook}`,
         '--extension=.do-not-transpile',
         '--include=needs-transpile.do-not-transpile'
       ])))
@@ -445,7 +445,7 @@ describe('nyc', function () {
     )
 
     var nyc = (new NYC(configUtil.buildYargs(fixtures).parse([
-      '--require=' + transpileHook,
+      `--require=${transpileHook}`,
       '--extension=.whatever'
     ])))
 
