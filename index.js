@@ -202,48 +202,40 @@ NYC.prototype.addAllFiles = function () {
 }
 
 NYC.prototype.instrumentAllFiles = function (input, output, cb) {
-  var _this = this
-  var inputDir = '.' + path.sep
-  var visitor = function (filename) {
-    var ext
-    var transform
-    var inFile = path.resolve(inputDir, filename)
-    var code = fs.readFileSync(inFile, 'utf-8')
+  const visitor = (filename, singleFile = false) => {
+    const inputPath = path.resolve(this.cwd, input, filename)
+    const inCode = fs.readFileSync(inputPath, 'utf-8')
 
-    for (ext in _this.transforms) {
-      if (filename.toLowerCase().substr(-ext.length) === ext) {
-        transform = _this.transforms[ext]
-        break
-      }
-    }
+    const extname = path.extname(filename).toLowerCase()
+    const transform = this.transforms[extname] || false
+    const outCode = (transform)
+      ? transform(inCode, { filename: `./${path.relative(this.cwd, inputPath)}` })
+      : inCode
 
-    if (transform) {
-      code = transform(code, { filename: filename, relFile: inFile })
-    }
-
-    if (!output) {
-      console.log(code)
+    if (output) {
+      const subpath = singleFile || path.relative(input, path.resolve(input, filename))
+      const outputPath = path.resolve(this.cwd, output, subpath)
+      mkdirp.sync(path.dirname(outputPath))
+      fs.writeFileSync(outputPath, outCode, 'utf-8')
     } else {
-      var outFile = path.resolve(output, filename)
-      mkdirp.sync(path.dirname(outFile))
-      fs.writeFileSync(outFile, code, 'utf-8')
+      console.log(outCode)
     }
   }
 
   this._loadAdditionalModules()
 
   try {
-    var stats = fs.lstatSync(input)
+    const inputPath = path.resolve(this.cwd, input)
+    const stats = fs.lstatSync(inputPath)
     if (stats.isDirectory()) {
-      inputDir = input
-      this.walkAllFiles(input, visitor)
+      this.walkAllFiles(inputPath, visitor)
     } else {
-      visitor(input)
+      visitor(inputPath, path.basename(inputPath))
     }
   } catch (err) {
     return cb(err)
   }
-  cb()
+  return cb()
 }
 
 NYC.prototype.walkAllFiles = function (dir, visitor) {

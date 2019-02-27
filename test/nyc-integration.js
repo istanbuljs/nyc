@@ -506,7 +506,9 @@ describe('the nyc cli', function () {
           done()
         })
       })
+    })
 
+    describe('output folder specified', function () {
       it('works in directories without a package.json', function (done) {
         var args = [bin, 'instrument', './input-dir', './output-dir']
 
@@ -519,6 +521,42 @@ describe('the nyc cli', function () {
         proc.on('exit', function (code) {
           code.should.equal(0)
           var target = path.resolve(subdir, 'output-dir', 'index.js')
+          fs.readFileSync(target, 'utf8')
+            .should.match(/console.log\('Hello, World!'\)/)
+          done()
+        })
+      })
+
+      it('works with a different working directory', function (done) {
+        const subdir = path.resolve(fixturesCLI, 'subdir')
+        const args = [bin, 'instrument', '--cwd', subdir, './input-dir', './output-dir']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('exit', function (code) {
+          code.should.equal(0)
+          const target = path.resolve(subdir, 'output-dir', 'index.js')
+          fs.readFileSync(target, 'utf8')
+            .should.match(/console.log\('Hello, World!'\)/)
+          done()
+        })
+      })
+
+      it('works with a deep folder structure working directory', function (done) {
+        const subdir = path.resolve(fixturesCLI, 'subdir')
+        const args = [bin, 'instrument', '--cwd', subdir, '.', './output-dir']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('exit', function (code) {
+          code.should.equal(0)
+          const target = path.resolve(subdir, 'output-dir', 'input-dir', 'index.js')
           fs.readFileSync(target, 'utf8')
             .should.match(/console.log\('Hello, World!'\)/)
           done()
@@ -545,9 +583,7 @@ describe('the nyc cli', function () {
           done()
         })
       })
-    })
 
-    describe('output folder specified', function () {
       it('allows a single file to be instrumented', function (done) {
         var args = [bin, 'instrument', './half-covered.js', './output']
 
