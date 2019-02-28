@@ -1,4 +1,4 @@
-/* global describe, it, beforeEach */
+/* global describe, it, beforeEach, afterEach */
 
 const _ = require('lodash')
 const path = require('path')
@@ -598,6 +598,53 @@ describe('the nyc cli', function () {
           files.should.include('index.js')
           rimraf.sync(path.resolve(fixturesCLI, 'output'))
           done()
+        })
+      })
+
+      describe('es-modules', function () {
+        afterEach(function () {
+          rimraf.sync(path.resolve(fixturesCLI, './output'))
+        })
+
+        it('instruments file with `package` keyword when es-modules is disabled', function (done) {
+          const args = [bin, 'instrument', '--no-es-modules', './not-strict.js', './output']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(0)
+            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output'))
+            subdirExists.should.equal(true)
+            const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+            files.should.include('not-strict.js')
+            done()
+          })
+        })
+
+        it('fails on file with `package` keyword when es-modules is enabled', function (done) {
+          const args = [bin, 'instrument', '--exit-on-error', './not-strict.js', './output']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          let stderr = ''
+          proc.stderr.on('data', function (chunk) {
+            stderr += chunk
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(1)
+            stdoutShouldEqual(stderr, `
+              Failed to instrument ./not-strict.js`)
+            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output'))
+            subdirExists.should.equal(false)
+            done()
+          })
         })
       })
     })
