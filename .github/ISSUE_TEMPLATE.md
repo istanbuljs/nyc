@@ -13,13 +13,11 @@ create a basic `nyc-bug-demo` repository and link to that please.
 
 ## Observed Behavior
 
-## Forensic Information
+## Environment Information
 
-**Operating System:** the operating system you observed the issue on.
-**Environment Information:** information about your project's environment, see instructions below:
+1. run the following script: `npx envinfo --preset nyc`
 
-1. run the following script:
+```
+# paste the output here
 
-sh -c 'node --version; npm --version; npm ls' > output.txt
-
-2. share a gist with the contents of output.txt.
+```
