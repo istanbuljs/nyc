@@ -14,9 +14,13 @@ create a basic `nyc-bug-demo` repository and link to that please.
 ## Observed Behavior
 
 ## Environment Information
+<!--
+run the following script: npx envinfo --preset nyc
 
-1. run the following script: `npx envinfo --preset nyc`
-
+OR:
+npm i -g envinfo || yarn global add envinfo
+envinfo --preset nyc
+-->
 ```
 # paste the output here
 
