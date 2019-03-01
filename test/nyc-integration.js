@@ -1,4 +1,4 @@
-/* global describe, it, beforeEach */
+/* global describe, it, beforeEach, afterEach */
 
 const _ = require('lodash')
 const path = require('path')
@@ -548,6 +548,10 @@ describe('the nyc cli', function () {
     })
 
     describe('output folder specified', function () {
+      afterEach(function () {
+        rimraf.sync(path.resolve(fixturesCLI, 'output'))
+      })
+
       it('allows a single file to be instrumented', function (done) {
         var args = [bin, 'instrument', './half-covered.js', './output']
 
@@ -561,7 +565,6 @@ describe('the nyc cli', function () {
           var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.length.should.equal(1)
           files.should.include('half-covered.js')
-          rimraf.sync(path.resolve(fixturesCLI, 'output'))
           done()
         })
       })
@@ -579,7 +582,6 @@ describe('the nyc cli', function () {
           var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.should.include('env.js')
           files.should.include('es6.js')
-          rimraf.sync(path.resolve(fixturesCLI, 'output'))
           done()
         })
       })
@@ -596,7 +598,84 @@ describe('the nyc cli', function () {
           code.should.equal(0)
           var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.should.include('index.js')
-          rimraf.sync(path.resolve(fixturesCLI, 'output'))
+          done()
+        })
+      })
+
+      it('allows a subdirectory to be excluded', function (done) {
+        const args = [bin, 'instrument', '--exclude', '**/subdir/**', './', './output']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+          subdirExists.should.equal(false)
+          const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          files.length.should.not.equal(0)
+          files.should.not.include('subdir')
+          done()
+        })
+      })
+
+      it('allows a file to be excluded', function (done) {
+        const args = [bin, 'instrument', '--exclude', 'subdir/input-dir/bad.js', './', './output']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+          subdirExists.should.equal(true)
+          const files = fs.readdirSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+          files.should.include('index.js')
+          files.should.not.include('bad.js')
+          done()
+        })
+      })
+
+      it('allows specifying a single sub-directory to be included', function (done) {
+        const args = [bin, 'instrument', '--include', '**/subdir/input-dir/bad.js', './', './output']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          let files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          files.length.should.equal(1)
+          const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+          subdirExists.should.equal(true)
+          files = fs.readdirSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+          files.should.include('bad.js')
+          files.should.not.include('index.js')
+          done()
+        })
+      })
+
+      it('allows a file to be excluded from an included directory', function (done) {
+        const args = [bin, 'instrument', '--exclude', '**/bad.js', '--include', '**/subdir/input-dir/**', './', './output']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+          subdirExists.should.equal(true)
+          const files = fs.readdirSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+          files.should.include('index.js')
+          files.should.not.include('bad.js')
           done()
         })
       })
