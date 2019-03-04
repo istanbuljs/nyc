@@ -197,14 +197,14 @@ nyc report --reporter=<custom-reporter-name>
 
 ## Selecting files for coverage
 
-By default Nyc only collects coverage for source files that are 
+By default nyc only collects coverage for source files that are 
 `require()`'d from test sources.  If a source file isn't visited during 
 tests then it will not appear in the coverage report, or contribute to
 coverage statistics.
 
 Nyc will include all source files under `cwd` when the `--all` flag is set.
 Then nyc will report on all source files found under `cwd`, and all of these 
-files will contribute to the coverage statistics.
+files will contribute to coverage statistics.
 
 You can then reduce the set of covered files by adding `nyc.include` 
 and `nyc.exclude` filter arrays to your config.  These allow you to shape 
@@ -237,6 +237,14 @@ them with a `!`.  Negated paths can restore paths that have been
 already been excluded in the `exclude` array.  Exclude options can be
 specified on the command line with the `-x` switch.
 
+> Note: Exclude defaults to `['coverage/**', 'test/**', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**', '**/node_modules/**']`,
+which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`,
+and `test-*.js` files. Specifying your own exclude property overrides these defaults.
+
+> Note: Since version 9.0, files under `node_modules/` are always excluded by nyc.
+  To reverse this you must add the negative exclude rule `!**/node_modules/`.
+
+
 For example, the following config will only collect coverage for files
 in the `src` directory, and exclude any files with the extension
 `.spec.js`.
@@ -255,15 +263,8 @@ in the `src` directory, and exclude any files with the extension
 }
 ```
 
-> Note: Since version 9.0, files under `node_modules/` are always excluded by nyc.
-  To reverse this you must add the negative exclude rule `!**/node_modules/`.
-
-> Note: Exclude defaults to `['coverage/**', 'test/**', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**', '**/node_modules/**']`,
-which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`,
-and `test-*.js` files. Specifying your own exclude property overrides these defaults.
-
-> Note: Be wary of OS expansion when specifying include/exclude globs with the CLI.  
-To prevent automatic OS glob expansion, wrap each glob in single quotes.
+> Note: Be wary of automatic OS glob expansion when specifying include/exclude globs with the CLI.  
+To prevent this, wrap each glob in single quotes.
 
 ## Require additional modules
 
