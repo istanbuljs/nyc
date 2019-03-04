@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 const path = require('path')
-const bin = path.resolve(__dirname, '../bin/nyc')
+const bin = path.resolve(__dirname, '../self-coverage/bin/nyc')
 const fixturesCLI = path.resolve(__dirname, './fixtures/cli')
 const fixturesHooks = path.resolve(__dirname, './fixtures/hooks')
 const fixturesSourceMaps = path.resolve(__dirname, './fixtures/source-maps')
