@@ -197,20 +197,22 @@ nyc report --reporter=<custom-reporter-name>
 
 ## Selecting files for coverage
 
-By default nyc only collects coverage for source files that are 
-`require()`'d from test sources.  If a source file isn't visited during 
-tests then it will not appear in the coverage report, or contribute to
-coverage statistics.
+By default, nyc only collects coverage for source files that are visited
+during a test.  It does this by watching for files that are `require()`'d 
+during the test.  Only source files that are visited during a test will appear 
+in the coverage report and contribute to coverage statistics.  
 
-Nyc will include all source files under `cwd` when the `--all` flag is set.
-Then nyc will report on all source files found under `cwd`, and all of these 
-files will contribute to coverage statistics.
+Nyc will cover all files if the `--all` flag is set.  In this case all files will
+appear in the coverage report and contribute to coverage statistics.
 
-You can then reduce the set of covered files by adding `nyc.include` 
-and `nyc.exclude` filter arrays to your config.  These allow you to shape 
-the set of covered files by specifying glob patterns that can filter files from 
-the set.  The `exclude` array may also exclude negated glob patterns, these are 
-specified with a `!` prefix, and can restore sub-paths of already excluded paths.
+Nyc will only cover files that are located under `cwd`, and then only `*.js` files
+or files with extensions listed in in the `nyc.extension` array.
+
+You can reduce the set of covered files by adding `include` and `exclude` 
+filter arrays to your config.  These allow you to shape the set of covered files 
+by specifying glob patterns that can filter files from  the covered set.  The `exclude` 
+array may also use exclude negated glob patterns, these are specified with 
+a `!` prefix, and can restore sub-paths of excluded paths.
 
 Globs are matched using [minimatch](https://www.npmjs.com/package/minimatch).
 
@@ -242,7 +244,7 @@ which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test
 and `test-*.js` files. Specifying your own exclude property overrides these defaults.
 
 > Note: Since version 9.0, files under `node_modules/` are always excluded by nyc.
-  To reverse this you must add the negative exclude rule `!**/node_modules/`.
+  To reverse this you must add the negated exclude rule `!**/node_modules/`.
 
 
 For example, the following config will only collect coverage for files
