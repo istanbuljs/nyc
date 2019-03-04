@@ -202,25 +202,23 @@ By default Nyc only collects coverage for source files that are
 tests then it will not appear in the coverage report, or contribute to
 coverage statistics.
 
-Nyc can include all source files under the `cwd`  by setting the `--all`
-flag.  Nyc will then report on all source files found under `cwd`, and 
-all of these files will contribute to the coverage statistics.
+Nyc will include all source files under `cwd` when the `--all` flag is set.
+Then nyc will report on all source files found under `cwd`, and all of these 
+files will contribute to the coverage statistics.
 
-You can then reduce the set of results after setting the coverage 
-collection scope to either all files or visited files.  Adding `nyc.include` 
-and `nyc.exclude` filter arrays to your config allows you to further shape 
-the set of covered files.  The filter arrays must contain glob patterns that
-can be used to filter files from the set.  The `exclude` array can also include
-negated glob patterns, specified with a `!` prefix, that can restore sub-paths
-of excluded paths.
+You can then reduce the set of covered files by adding `nyc.include` 
+and `nyc.exclude` filter arrays to your config.  These allow you to shape 
+the set of covered files by specifying glob patterns that can filter files from 
+the set.  The `exclude` array may also exclude negated glob patterns, these are 
+specified with a `!` prefix, and can restore sub-paths of already excluded paths.
 
 Globs are matched using [minimatch](https://www.npmjs.com/package/minimatch).
 
-To determine the final set of covered files, we use the following process,  
- * First, limit the set of covered files to those in paths listed in the `include` 
-   array.  
+We use the following process to remove files from consideration,  
+ * First, limit the set of covered files to those files in paths listed in the 
+   `include` array.  
  * Then, remove any files that are found in the `exclude` array.
- * Finally, restore exclude negated files if they have been excluded in the 
+ * Finally, restore any exclude negated files that have been excluded in the 
    second step
 
 
@@ -239,7 +237,7 @@ them with a `!`.  Negated paths can restore paths that have been
 already been excluded in the `exclude` array.  Exclude options can be
 specified on the command line with the `-x` switch.
 
-For example, the following config will collect coverage for all files
+For example, the following config will only collect coverage for files
 in the `src` directory, and exclude any files with the extension
 `.spec.js`.
 
@@ -257,12 +255,15 @@ in the `src` directory, and exclude any files with the extension
 }
 ```
 
-> Note: Since version 9.0 files under `node_modules/` are excluded by default.
-  add the exclude rule `!**/node_modules/` to stop this.
+> Note: Since version 9.0, files under `node_modules/` are always excluded by nyc.
+  To reverse this you must add the negative exclude rule `!**/node_modules/`.
 
-> Note: exclude defaults to `['coverage/**', 'test/**', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**', '**/node_modules/**']`,
+> Note: Exclude defaults to `['coverage/**', 'test/**', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**', '**/node_modules/**']`,
 which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`,
 and `test-*.js` files. Specifying your own exclude property overrides these defaults.
+
+> Note: Be wary of OS expansion when specifying include/exclude globs with the CLI.  
+To prevent automatic OS glob expansion, wrap each glob in single quotes.
 
 ## Require additional modules
 
