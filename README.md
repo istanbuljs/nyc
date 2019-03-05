@@ -233,17 +233,19 @@ The `exclude` option has the following defaults settings:
 ```js
 [
   'coverage/**',
+  'packages/*/test/**',
   'test/**',
   'test{,-*}.js',
-  '**/*.test.js',
+  '**/*{.,-}test.js',
   '**/__tests__/**',
-  '**/node_modules/**'
+  '**/node_modules/**',
+  '**/babel.config.js'
 ]
 ```
 These settings exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`, and `test-*.js` files.
 Specifying your own exclude property completely replaces these defaults.
 
-**Note:** Since version 9.0, files under `node_modules/` are always excluded by nyc.
+**Note:** The exclude list always implicitly contains `**/node_modules/**`, even if not explicitly specified in an overriding `exclude` array.
 To reverse this you must add the negated exclude rule `!**/node_modules/`.
 
 For example, the following config will collect coverage for every file in the `src` directory regardless of whether it is `require()`'d in a test.
