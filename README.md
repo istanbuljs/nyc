@@ -242,7 +242,7 @@ The `exclude` option has the following defaults settings:
   '**/babel.config.js'
 ]
 ```
-These settings exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`, and `test-*.js` files.
+These settings exclude `test` and `__tests__` directories as well as `test.js`, `*.test.js`, and `test-*.js` files.
 Specifying your own exclude property completely replaces these defaults.
 
 **Note:** The exclude list always implicitly contains `**/node_modules/**`, even if not explicitly specified in an overriding `exclude` array.
