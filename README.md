@@ -204,7 +204,7 @@ Only source files that are visited during a test will appear in the coverage rep
 nyc will instrument all files if the `--all` flag is set.
 In this case all files will appear in the coverage report and contribute to coverage statistics.
 
-nyc will only cover files that are located under `cwd`, and then only `*.js` files or files with extensions listed in in the `extension` array.
+nyc will only collect coverage for files that are located under `cwd`, and then only `*.js` files or files with extensions listed in in the `extension` array.
 
 You can reduce the set of covered files by adding `include` and `exclude` filter arrays to your config.
 These allow you to shape the set of covered files by specifying glob patterns that can filter files from the covered set.
@@ -246,7 +246,8 @@ Specifying your own exclude property completely replaces these defaults.
 **Note:** Since version 9.0, files under `node_modules/` are always excluded by nyc.
 To reverse this you must add the negated exclude rule `!**/node_modules/`.
 
-For example, the following config will only collect coverage for files in the `src` directory, and exclude any files with the extension `.spec.js`.
+For example, the following config will collect coverage for every file in the `src` directory regardless of whether it is `require()`'d in a test.
+It will also exclude any files with the extension `.spec.js`.
 
 ```json
 {
