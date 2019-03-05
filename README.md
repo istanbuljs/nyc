@@ -199,21 +199,21 @@ nyc report --reporter=<custom-reporter-name>
 
 By default, nyc only collects coverage for source files that are visited during a test.
 It does this by watching for files that are `require()`'d during the test.
-Only source files that are visited during a test will appear in the coverage report and contribute to coverage statistics.  
+Only source files that are visited during a test will appear in the coverage report and contribute to coverage statistics.
 
 Nyc will instrument all files if the `--all` flag is set.
 In this case all files will appear in the coverage report and contribute to coverage statistics.
 
 Nyc will only cover files that are located under `cwd`, and then only `*.js` files or files with extensions listed in in the `nyc.extension` array.
 
-You can reduce the set of covered files by adding `include` and `exclude` filter arrays to your config.  
-These allow you to shape the set of covered files by specifying glob patterns that can filter files from  the covered set.  
+You can reduce the set of covered files by adding `include` and `exclude` filter arrays to your config.
+These allow you to shape the set of covered files by specifying glob patterns that can filter files from the covered set.
 The `exclude` array may also use exclude negated glob patterns, these are specified with a `!` prefix, and can restore sub-paths of excluded paths.
 
 Globs are matched using [minimatch](https://www.npmjs.com/package/minimatch).
 
-We use the following process to remove files from consideration,  
- * First, limit the set of covered files to those files in paths listed in the `include` array.  
+We use the following process to remove files from consideration,
+ * First, limit the set of covered files to those files in paths listed in the `include` array.
  * Then, remove any files that are found in the `exclude` array.
  * Finally, restore any exclude negated files that have been excluded in the second step
 
@@ -232,20 +232,19 @@ Exclude options can be specified on the command line with the `-x` switch.
 `Exclude` has the following defaults settings:
 ```js
 [
-  'coverage/**', 
+  'coverage/**',
   'test/**',
-  'test{,-*}.js', 
-  '**/*.test.js', 
-  '**/__tests__/**', 
+  'test{,-*}.js',
+  '**/*.test.js',
+  '**/__tests__/**',
   '**/node_modules/**'
 ]
 ```
-These settings exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`, and `test-*.js` files. 
+These settings exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`, and `test-*.js` files.
 Specifying your own exclude property completely replaces these defaults.
 
 **Note:** Since version 9.0, files under `node_modules/` are always excluded by nyc.
 To reverse this you must add the negated exclude rule `!**/node_modules/`.
-
 
 For example, the following config will only collect coverage for files in the `src` directory, and exclude any files with the extension `.spec.js`.
 
@@ -263,7 +262,7 @@ For example, the following config will only collect coverage for files in the `s
 }
 ```
 
-**Note:** Be wary of automatic OS glob expansion when specifying include/exclude globs with the CLI.  
+**Note:** Be wary of automatic OS glob expansion when specifying include/exclude globs with the CLI.
 To prevent this, wrap each glob in single quotes.
 
 ## Require additional modules
