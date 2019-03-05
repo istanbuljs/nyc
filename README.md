@@ -201,10 +201,10 @@ By default, nyc only collects coverage for source files that are visited during 
 It does this by watching for files that are `require()`'d during the test.
 Only source files that are visited during a test will appear in the coverage report and contribute to coverage statistics.
 
-Nyc will instrument all files if the `--all` flag is set.
+nyc will instrument all files if the `--all` flag is set.
 In this case all files will appear in the coverage report and contribute to coverage statistics.
 
-Nyc will only cover files that are located under `cwd`, and then only `*.js` files or files with extensions listed in in the `nyc.extension` array.
+nyc will only cover files that are located under `cwd`, and then only `*.js` files or files with extensions listed in in the `extension` array.
 
 You can reduce the set of covered files by adding `include` and `exclude` filter arrays to your config.
 These allow you to shape the set of covered files by specifying glob patterns that can filter files from the covered set.
@@ -212,10 +212,10 @@ The `exclude` array may also use exclude negated glob patterns, these are specif
 
 Globs are matched using [minimatch](https://www.npmjs.com/package/minimatch).
 
-We use the following process to remove files from consideration,
- * First, limit the set of covered files to those files in paths listed in the `include` array.
- * Then, remove any files that are found in the `exclude` array.
- * Finally, restore any exclude negated files that have been excluded in the second step
+We use the following process to remove files from consideration:
+ 1. Limit the set of covered files to those files in paths listed in the `include` array.
+ 2. Remove any files that are found in the `exclude` array.
+ 3. Restore any exclude negated files that have been excluded in the second step.
 
 
 ### Using include and exclude arrays
@@ -229,7 +229,7 @@ You can also specify negated paths in the `exclude` array, by prefixing them wit
 Negated paths can restore paths that have been already been excluded in the `exclude` array.
 Exclude options can be specified on the command line with the `-x` switch.
 
-`Exclude` has the following defaults settings:
+The `exclude` option has the following defaults settings:
 ```js
 [
   'coverage/**',
