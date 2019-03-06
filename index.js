@@ -11,16 +11,17 @@ const glob = require('glob')
 const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
+const libReport = require('istanbul-lib-report')
 const mkdirp = require('make-dir')
 const Module = require('module')
 const onExit = require('signal-exit')
 const path = require('path')
+const reports = require('istanbul-reports')
 const resolveFrom = require('resolve-from')
 const rimraf = require('rimraf')
 const SourceMaps = require('./lib/source-maps')
 const testExclude = require('test-exclude')
 const uuid = require('uuid/v4')
-const api = require('istanbul-api')
 
 const debugLog = util.debuglog('nyc')
 
@@ -83,12 +84,6 @@ function NYC (config) {
   this.rootId = this.processInfo.root || this.generateUniqueID()
 
   this.hashCache = {}
-
-  this.config.reporting = config.reporting || {}
-  this.config.reporting['dir'] = this.reportDirectory()
-  this.config.reporting['report-config'] = this._reportConfig()
-  this.config.reporting['summarizer'] = this._reportSummarizer()
-  this.config.reporting['watermarks'] = this._reportWatermarks()
 }
 
 NYC.prototype._createTransform = function (ext) {
@@ -440,12 +435,21 @@ NYC.prototype.getCoverageMapFromAllCoverageFiles = function (baseDirectory) {
 }
 
 NYC.prototype.report = function () {
-  const config = api.config.loadObject(this.config)
-  const reporter = api.createReporter(config)
-  const map = this.getCoverageMapFromAllCoverageFiles()
+  var tree
+  var map = this.getCoverageMapFromAllCoverageFiles()
+  var context = libReport.createContext({
+    dir: this.reportDirectory(),
+    watermarks: this.config.watermarks
+  })
 
-  reporter.addAll(this.reporter)
-  reporter.write(map)
+  tree = libReport.summarizers.pkg(map)
+
+  this.reporter.forEach((_reporter) => {
+    tree.visit(reports.create(_reporter, {
+      skipEmpty: this.config.skipEmpty,
+      skipFull: this.config.skipFull
+    }), context)
+  })
 
   if (this._showProcessTree) {
     this.showProcessTree()
@@ -551,27 +555,6 @@ NYC.prototype.reportDirectory = function () {
 
 NYC.prototype.processInfoDirectory = function () {
   return path.resolve(this.tempDirectory(), 'processinfo')
-}
-
-NYC.prototype._reportConfig = function () {
-  const config = {}
-
-  this.reporter.forEach(_reporter => {
-    config[_reporter] = {
-      skipEmpty: this.config.skipEmpty,
-      skipFull: this.config.skipFull
-    }
-  })
-
-  return config
-}
-
-NYC.prototype._reportSummarizer = function () {
-  return 'pkg'
-}
-
-NYC.prototype._reportWatermarks = function () {
-  return this.config.watermarks
 }
 
 module.exports = NYC
