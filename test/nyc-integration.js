@@ -1043,6 +1043,39 @@ describe('the nyc cli', function () {
           done()
         })
       })
+
+      it('uses source-maps to exclude original sources from reports', (done) => {
+        const args = [
+          bin,
+          '--all',
+          '--cache', 'false',
+          '--exclude', 'original/s1.js',
+          process.execPath, './instrumented/s1.min.js'
+        ]
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesSourceMaps,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdoutShouldEqual(stdout, `
+            ----------|----------|----------|----------|----------|-------------------|
+            File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+            ----------|----------|----------|----------|----------|-------------------|
+            All files |        0 |      100 |        0 |        0 |                   |
+             s2.js    |        0 |      100 |        0 |        0 |           1,2,4,6 |
+            ----------|----------|----------|----------|----------|-------------------|`
+          )
+          done()
+        })
+      })
     })
 
     describe('.map file', () => {
