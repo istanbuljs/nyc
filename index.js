@@ -415,22 +415,22 @@ function coverageFinder () {
 }
 
 NYC.prototype.getCoverageMapFromAllCoverageFiles = function (baseDirectory) {
-  var _this = this
   var map = libCoverage.createCoverageMap({})
 
   this.eachReport(undefined, (report) => {
     map.merge(report)
   }, baseDirectory)
+
+  map.data = this.sourceMaps.remapCoverage(map.data)
+
   // depending on whether source-code is pre-instrumented
   // or instrumented using a JIT plugin like @babel/require
   // you may opt to exclude files after applying
   // source-map remapping logic.
   if (this.config.excludeAfterRemap) {
-    map.filter(function (filename) {
-      return _this.exclude.shouldInstrument(filename)
-    })
+    map.filter(filename => this.exclude.shouldInstrument(filename))
   }
-  map.data = this.sourceMaps.remapCoverage(map.data)
+
   return map
 }
 
