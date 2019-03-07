@@ -640,7 +640,7 @@ describe('the nyc cli', function () {
           proc.on('close', function (code) {
             code.should.equal(1)
             stdoutShouldEqual(stderr, `
-              Failed to instrument ./not-strict.js`)
+              Failed to instrument ${path.resolve(fixturesCLI, 'not-strict.js')}`)
             const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output'))
             subdirExists.should.equal(false)
             done()
