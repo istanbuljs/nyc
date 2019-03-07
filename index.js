@@ -24,17 +24,11 @@ const api = require('istanbul-api')
 
 const debugLog = util.debuglog('nyc')
 
-var ProcessInfo
-try {
-  ProcessInfo = require('./lib/process.covered.js')
-} catch (e) {
-  /* istanbul ignore next */
-  ProcessInfo = require('./lib/process.js')
-}
+const ProcessInfo = require('./lib/process.js')
 
 /* istanbul ignore next */
-if (/index\.covered\.js$/.test(__filename)) {
-  require('./lib/self-coverage-helper')
+if (/self-coverage/.test(__dirname)) {
+  require('../self-coverage-helper')
 }
 
 function NYC (config) {

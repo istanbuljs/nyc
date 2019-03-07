@@ -195,52 +195,78 @@ Install custom reporters as a development dependency and you can use the `--repo
 nyc report --reporter=<custom-reporter-name>
 ```
 
-## Excluding files
+## Selecting files for coverage
 
-You can tell nyc to exclude specific files and directories by adding
-an `nyc.exclude` array to your `package.json`. Each element of
-the array is a glob pattern indicating which paths should be omitted.
+By default, nyc only collects coverage for source files that are visited during a test.
+It does this by watching for files that are `require()`'d during the test.
+Only source files that are visited during a test will appear in the coverage report and contribute to coverage statistics.
+
+nyc will instrument all files if the `--all` flag is set.
+In this case all files will appear in the coverage report and contribute to coverage statistics.
+
+nyc will only collect coverage for files that are located under `cwd`, and then only `*.js` files or files with extensions listed in in the `extension` array.
+
+You can reduce the set of covered files by adding `include` and `exclude` filter arrays to your config.
+These allow you to shape the set of covered files by specifying glob patterns that can filter files from the covered set.
+The `exclude` array may also use exclude negated glob patterns, these are specified with a `!` prefix, and can restore sub-paths of excluded paths.
 
 Globs are matched using [minimatch](https://www.npmjs.com/package/minimatch).
 
-For example, the following config will exclude any files with the extension `.spec.js`,
-and anything in the `build` directory:
+We use the following process to remove files from consideration:
+ 1. Limit the set of covered files to those files in paths listed in the `include` array.
+ 2. Remove any files that are found in the `exclude` array.
+ 3. Restore any exclude negated files that have been excluded in the second step.
+
+
+### Using include and exclude arrays
+
+If there are paths specified in the `include` array, then the set of covered files will be limited to eligible files found in those paths.
+If the `include` array is left undefined all eligible files will be included, equivalent to setting `include: ['**']`.
+Include options can be specified on the command line with the `-n` switch.
+
+If there are paths specified in the `exclude` array, then the set of covered files will not feature eligible files found in those paths.
+You can also specify negated paths in the `exclude` array, by prefixing them with a `!`.
+Negated paths can restore paths that have been already been excluded in the `exclude` array.
+Exclude options can be specified on the command line with the `-x` switch.
+
+The `exclude` option has the following defaults settings:
+```js
+[
+  'coverage/**',
+  'packages/*/test/**',
+  'test/**',
+  'test{,-*}.js',
+  '**/*{.,-}test.js',
+  '**/__tests__/**',
+  '**/node_modules/**',
+  '**/babel.config.js'
+]
+```
+These settings exclude `test` and `__tests__` directories as well as `test.js`, `*.test.js`, and `test-*.js` files.
+Specifying your own exclude property completely replaces these defaults.
+
+**Note:** The exclude list always implicitly contains `**/node_modules/**`, even if not explicitly specified in an overriding `exclude` array.
+To reverse this you must add the negated exclude rule `!**/node_modules/`.
+
+For example, the following config will collect coverage for every file in the `src` directory regardless of whether it is `require()`'d in a test.
+It will also exclude any files with the extension `.spec.js`.
 
 ```json
 {
   "nyc": {
+    "all": true,
+    "include": [
+      "src/**/*.js"
+    ],
     "exclude": [
-      "**/*.spec.js",
-      "build"
+      "**/*.spec.js"
     ]
   }
 }
 ```
-> Note: Since version 9.0 files under `node_modules/` are excluded by default.
-  add the exclude rule `!**/node_modules/` to stop this.
 
-> Note: exclude defaults to `['coverage/**', 'test/**', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**', '**/node_modules/**']`,
-which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`,
-and `test-*.js` files. Specifying your own exclude property overrides these defaults.
-
-## Including files
-
-As an alternative to providing a list of files to `exclude`, you can provide
-an `include` key with a list of globs to specify specific files that should be covered:
-
-```json
-{
-  "nyc": {
-    "include": ["**/build/umd/moment.js"]
-  }
-}
-```
-
-> `nyc` uses minimatch for glob expansions, you can read its documentation [here](https://www.npmjs.com/package/minimatch).
-
-> Note: include defaults to `['**']`
-
-> ### Use the `--all` flag to include files that have not been required in your tests.
+**Note:** Be wary of automatic OS glob expansion when specifying include/exclude globs with the CLI.
+To prevent this, wrap each glob in single quotes.
 
 ## Require additional modules
 
