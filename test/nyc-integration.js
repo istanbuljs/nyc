@@ -480,7 +480,7 @@ describe('the nyc cli', function () {
 
         proc.on('close', function (code) {
           code.should.equal(0)
-          stdout.should.match(/path:"\.\/half-covered\.js"/)
+          stdout.should.contain(`path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered.js'))}`)
           done()
         })
       })
