@@ -212,7 +212,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     }
 
     if (transform) {
-      code = transform(code, {filename: path.resolve(inputDir, filename), relFile: inFile})
+      code = transform(code, { filename: path.resolve(inputDir, filename), relFile: inFile })
     }
 
     if (!output) {
