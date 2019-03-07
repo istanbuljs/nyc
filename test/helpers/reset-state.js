@@ -9,12 +9,13 @@ module.exports = function () {
     rimraf.sync(path)
   })
   // reset Node's require cache.
-  Object.keys(require.cache).forEach((key) => {
+  Object.keys(require.cache).forEach(key => {
     if (key.indexOf('node_modules') === -1) delete require.cache[key]
   })
   // reset any custom loaders for extensions, disabling the stack maintained
   // by append-transform.
-  Object.keys(require.extensions).forEach((key) => { // eslint-disable-line
+  // eslint-disable-next-line
+  Object.keys(require.extensions).forEach(key => {
     delete require.extensions[key] // eslint-disable-line
     if (extensions[key]) require.extensions[key] = extensions[key] // eslint-disable-line
   })

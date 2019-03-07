@@ -4,22 +4,18 @@ os:
   - linux
   - osx
 node_js:
-  - "node"
+  - 'node'
   - 10
   - 8
   - 6
 matrix:
-## An ENOMEM error occurs with 11.6.0 under Travis-CI for Windows.
-## Disable until we can determine the cause.
-#  include:
-#    - os: windows
-#      node_js: "latest"
+  ## An ENOMEM error occurs with 11.6.0 under Travis-CI for Windows.
+  ## Disable until we can determine the cause.
   exclude:
     - os: windows
-      node_js: "node"
+      node_js: 'node'
 git:
-  depth:
-    1
+  depth: 1
 
 after_script:
-  - "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
+  - 'cat ./coverage/lcov.info | ./node_modules/.bin/coveralls'

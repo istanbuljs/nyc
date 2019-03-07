@@ -27,7 +27,14 @@ describe('the nyc cli', function () {
 
   describe('--include', function () {
     it('can be used to limit bin to instrumenting specific files', function (done) {
-      var args = [bin, '--all', '--include', 'half-covered.js', process.execPath, './half-covered.js']
+      var args = [
+        bin,
+        '--all',
+        '--include',
+        'half-covered.js',
+        process.execPath,
+        './half-covered.js'
+      ]
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -74,7 +81,9 @@ describe('the nyc cli', function () {
 
         proc.on('close', function (code) {
           code.should.not.equal(0)
-          stderr.should.equal('ERROR: Coverage for lines (50%) does not meet global threshold (100%)\n')
+          stderr.should.equal(
+            'ERROR: Coverage for lines (50%) does not meet global threshold (100%)\n'
+          )
           done()
         })
       })
@@ -83,7 +92,14 @@ describe('the nyc cli', function () {
 
   describe('--exclude', function () {
     it('should allow default exclude rules to be overridden', function (done) {
-      var args = [bin, '--all', '--exclude', '**/half-covered.js', process.execPath, './half-covered.js']
+      var args = [
+        bin,
+        '--all',
+        '--exclude',
+        '**/half-covered.js',
+        process.execPath,
+        './half-covered.js'
+      ]
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -106,7 +122,14 @@ describe('the nyc cli', function () {
 
   describe('--ignore-class-method', function () {
     it('skips methods that match ignored name but still catches those that are not', function (done) {
-      var args = [bin, '--all', '--ignore-class-method', 'skip', process.execPath, './classes.js']
+      var args = [
+        bin,
+        '--all',
+        '--ignore-class-method',
+        'skip',
+        process.execPath,
+        './classes.js'
+      ]
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -120,7 +143,9 @@ describe('the nyc cli', function () {
 
       proc.on('close', function (code) {
         code.should.equal(0)
-        var classesOutput = (stdout.match(/^(.*classes\.js).*$/m) || ['no result found'])[0]
+        var classesOutput = (stdout.match(/^(.*classes\.js).*$/m) || [
+          'no result found'
+        ])[0]
         classesOutput.should.match(/6 \|/)
         done()
       })
@@ -129,8 +154,16 @@ describe('the nyc cli', function () {
 
   describe('--check-coverage', function () {
     it('fails when the expected coverage is below a threshold', function (done) {
-      var args = [bin, '--check-coverage', '--lines', '51', process.execPath, './half-covered.js']
-      var message = 'ERROR: Coverage for lines (50%) does not meet global threshold (51%)'
+      var args = [
+        bin,
+        '--check-coverage',
+        '--lines',
+        '51',
+        process.execPath,
+        './half-covered.js'
+      ]
+      var message =
+        'ERROR: Coverage for lines (50%) does not meet global threshold (51%)'
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -151,8 +184,16 @@ describe('the nyc cli', function () {
 
     // https://github.com/istanbuljs/nyc/issues/384
     it('fails when check-coverage command is used rather than flag', function (done) {
-      var args = [bin, 'check-coverage', '--lines', '51', process.execPath, './half-covered.js']
-      var message = 'ERROR: Coverage for lines (50%) does not meet global threshold (51%)'
+      var args = [
+        bin,
+        'check-coverage',
+        '--lines',
+        '51',
+        process.execPath,
+        './half-covered.js'
+      ]
+      var message =
+        'ERROR: Coverage for lines (50%) does not meet global threshold (51%)'
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -172,7 +213,14 @@ describe('the nyc cli', function () {
     })
 
     it('succeeds when the expected coverage is above a threshold', function (done) {
-      var args = [bin, '--check-coverage', '--lines', '49', process.execPath, './half-covered.js']
+      var args = [
+        bin,
+        '--check-coverage',
+        '--lines',
+        '49',
+        process.execPath,
+        './half-covered.js'
+      ]
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -187,7 +235,14 @@ describe('the nyc cli', function () {
 
     // https://github.com/bcoe/nyc/issues/209
     it('fails in any case when the underlying test failed', function (done) {
-      var args = [bin, '--check-coverage', '--lines', '49', process.execPath, './half-covered-failing.js']
+      var args = [
+        bin,
+        '--check-coverage',
+        '--lines',
+        '49',
+        process.execPath,
+        './half-covered-failing.js'
+      ]
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -201,8 +256,18 @@ describe('the nyc cli', function () {
     })
 
     it('fails when the expected file coverage is below a threshold', function (done) {
-      var args = [bin, '--check-coverage', '--lines', '51', '--per-file', process.execPath, './half-covered.js']
-      var matcher = RegExp('ERROR: Coverage for lines \\(50%\\) does not meet threshold \\(51%\\) for .+half-covered.js')
+      var args = [
+        bin,
+        '--check-coverage',
+        '--lines',
+        '51',
+        '--per-file',
+        process.execPath,
+        './half-covered.js'
+      ]
+      var matcher = RegExp(
+        'ERROR: Coverage for lines \\(50%\\) does not meet threshold \\(51%\\) for .+half-covered.js'
+      )
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -283,7 +348,9 @@ describe('the nyc cli', function () {
       if (isWindows) return done()
 
       // This string is taken verbatim from tools/install.py in Node core v5.x
-      writeFakeNPM('/bin/sh\n// 2>/dev/null; exec "`dirname "$0"`/node" "$0" "$@"')
+      writeFakeNPM(
+        '/bin/sh\n// 2>/dev/null; exec "`dirname "$0"`/node" "$0" "$@"'
+      )
       fs.symlinkSync(process.execPath, path.resolve(fakebin, 'node'))
 
       var args = [bin, 'npm', 'test']
@@ -348,7 +415,12 @@ describe('the nyc cli', function () {
     })
 
     it('allows package.json configuration to be overridden with command line args', function (done) {
-      var args = [bin, '--reporter=text-lcov', process.execPath, './half-covered.js']
+      var args = [
+        bin,
+        '--reporter=text-lcov',
+        process.execPath,
+        './half-covered.js'
+      ]
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -392,7 +464,13 @@ describe('the nyc cli', function () {
       })
 
       it('loads configuration from different file rather than .nycrc', function (done) {
-        var args = [bin, '--nycrc-path', './.nycrc-config.json', process.execPath, './index.js']
+        var args = [
+          bin,
+          '--nycrc-path',
+          './.nycrc-config.json',
+          process.execPath,
+          './index.js'
+        ]
 
         var proc = spawn(process.execPath, args, {
           cwd: cwd,
@@ -438,7 +516,13 @@ describe('the nyc cli', function () {
 
   describe('coverage', function () {
     it('reports appropriate coverage information for es6 source files', function (done) {
-      var args = [bin, '--reporter=lcov', '--reporter=text', process.execPath, './es6.js']
+      var args = [
+        bin,
+        '--reporter=lcov',
+        '--reporter=text',
+        process.execPath,
+        './es6.js'
+      ]
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -519,8 +603,9 @@ describe('the nyc cli', function () {
         proc.on('exit', function (code) {
           code.should.equal(0)
           var target = path.resolve(subdir, 'output-dir', 'index.js')
-          fs.readFileSync(target, 'utf8')
-            .should.match(/console.log\('Hello, World!'\)/)
+          fs.readFileSync(target, 'utf8').should.match(
+            /console.log\('Hello, World!'\)/
+          )
           done()
         })
       })
@@ -605,7 +690,13 @@ describe('the nyc cli', function () {
 
   describe('hooks', function () {
     it('provides coverage for requireJS and AMD modules', function (done) {
-      var args = [bin, '--hook-run-in-this-context', '--hook-require=false', process.execPath, './index.js']
+      var args = [
+        bin,
+        '--hook-run-in-this-context',
+        '--hook-require=false',
+        process.execPath,
+        './index.js'
+      ]
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesHooks,
@@ -626,7 +717,14 @@ describe('the nyc cli', function () {
 
   describe('args', function () {
     it('does not interpret args intended for instrumented bin', function (done) {
-      var args = [bin, '--silent', process.execPath, 'args.js', '--help', '--version']
+      var args = [
+        bin,
+        '--silent',
+        process.execPath,
+        'args.js',
+        '--help',
+        '--version'
+      ]
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -672,7 +770,13 @@ describe('the nyc cli', function () {
 
   describe('--show-process-tree', function () {
     it('displays a tree of spawned processes', function (done) {
-      var args = [bin, '--show-process-tree', process.execPath, 'selfspawn-fibonacci.js', '5']
+      var args = [
+        bin,
+        '--show-process-tree',
+        process.execPath,
+        'selfspawn-fibonacci.js',
+        '5'
+      ]
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -687,27 +791,29 @@ describe('the nyc cli', function () {
 
       proc.on('close', function (code) {
         code.should.equal(0)
-        stdout.should.match(new RegExp(
-          'nyc\n' +
-          '└─┬.*selfspawn-fibonacci.js 5\n' +
-          '  │.* % Lines\n' +
-          '  ├─┬.*selfspawn-fibonacci.js 4\n' +
-          '  │ │.* % Lines\n' +
-          '  │ ├─┬.*selfspawn-fibonacci.js 3\n' +
-          '  │ │ │.* % Lines\n' +
-          '  │ │ ├──.*selfspawn-fibonacci.js 2\n' +
-          '  │ │ │.* % Lines\n' +
-          '  │ │ └──.*selfspawn-fibonacci.js 1\n' +
-          '  │ │    .* % Lines\n' +
-          '  │ └──.*selfspawn-fibonacci.js 2\n' +
-          '  │    .* % Lines\n' +
-          '  └─┬.*selfspawn-fibonacci.js 3\n' +
-          '    │.* % Lines\n' +
-          '    ├──.*selfspawn-fibonacci.js 2\n' +
-          '    │.* % Lines\n' +
-          '    └──.*selfspawn-fibonacci.js 1\n' +
-          '       .* % Lines\n'
-        ))
+        stdout.should.match(
+          new RegExp(
+            'nyc\n' +
+              '└─┬.*selfspawn-fibonacci.js 5\n' +
+              '  │.* % Lines\n' +
+              '  ├─┬.*selfspawn-fibonacci.js 4\n' +
+              '  │ │.* % Lines\n' +
+              '  │ ├─┬.*selfspawn-fibonacci.js 3\n' +
+              '  │ │ │.* % Lines\n' +
+              '  │ │ ├──.*selfspawn-fibonacci.js 2\n' +
+              '  │ │ │.* % Lines\n' +
+              '  │ │ └──.*selfspawn-fibonacci.js 1\n' +
+              '  │ │    .* % Lines\n' +
+              '  │ └──.*selfspawn-fibonacci.js 2\n' +
+              '  │    .* % Lines\n' +
+              '  └─┬.*selfspawn-fibonacci.js 3\n' +
+              '    │.* % Lines\n' +
+              '    ├──.*selfspawn-fibonacci.js 2\n' +
+              '    │.* % Lines\n' +
+              '    └──.*selfspawn-fibonacci.js 1\n' +
+              '       .* % Lines\n'
+          )
+        )
         done()
       })
     })
@@ -722,10 +828,13 @@ describe('the nyc cli', function () {
 
       proc.on('exit', function (code) {
         code.should.equal(0)
-        fs.stat(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'), function (err, stat) {
-          err.code.should.equal('ENOENT')
-          done()
-        })
+        fs.stat(
+          path.resolve(fixturesCLI, '.nyc_output', 'processinfo'),
+          function (err, stat) {
+            err.code.should.equal('ENOENT')
+            done()
+          }
+        )
       })
     })
   })
@@ -737,7 +846,7 @@ describe('the nyc cli', function () {
       rimraf.sync(path.resolve(fixturesCLI, '.temp_dir'))
     })
 
-    it('creates the default \'tempDir\' when none is specified', function (done) {
+    it("creates the default 'tempDir' when none is specified", function (done) {
       var args = [bin, process.execPath, './half-covered.js']
 
       var proc = spawn(process.execPath, args, {
@@ -757,8 +866,16 @@ describe('the nyc cli', function () {
       })
     })
 
-    it('prefers \'tempDirectory\' to \'tempDir\'', function (done) {
-      var args = [bin, '--tempDirectory', '.temp_directory', '--tempDir', '.temp_dir', process.execPath, './half-covered.js']
+    it("prefers 'tempDirectory' to 'tempDir'", function (done) {
+      var args = [
+        bin,
+        '--tempDirectory',
+        '.temp_directory',
+        '--tempDir',
+        '.temp_dir',
+        process.execPath,
+        './half-covered.js'
+      ]
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -767,7 +884,9 @@ describe('the nyc cli', function () {
 
       proc.on('exit', function (code) {
         code.should.equal(0)
-        var tempFiles = fs.readdirSync(path.resolve(fixturesCLI, '.temp_directory'))
+        var tempFiles = fs.readdirSync(
+          path.resolve(fixturesCLI, '.temp_directory')
+        )
         tempFiles.length.should.equal(1)
         var cliFiles = fs.readdirSync(path.resolve(fixturesCLI))
         cliFiles.should.not.include('.nyc_output')
@@ -777,8 +896,14 @@ describe('the nyc cli', function () {
       })
     })
 
-    it('uses the \'tempDir\' option if \'tempDirectory\' is not set', function (done) {
-      var args = [bin, '--tempDir', '.temp_dir', process.execPath, './half-covered.js']
+    it("uses the 'tempDir' option if 'tempDirectory' is not set", function (done) {
+      var args = [
+        bin,
+        '--tempDir',
+        '.temp_dir',
+        process.execPath,
+        './half-covered.js'
+      ]
 
       var proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -863,17 +988,17 @@ describe('the nyc cli', function () {
             // we should have extracted the coverage header from external-instrumenter.js.
             var coverage = {}
             files.forEach(function (file) {
-              _.assign(coverage, JSON.parse(
-                fs.readFileSync(file, 'utf-8')
-              ))
+              _.assign(coverage, JSON.parse(fs.readFileSync(file, 'utf-8')))
             })
             Object.keys(coverage).should.include('./external-instrumenter.js')
 
             // we should not have executed file, so all counts sould be 0.
             var sum = 0
-            Object.keys(coverage['./external-instrumenter.js'].s).forEach(function (k) {
-              sum += coverage['./external-instrumenter.js'].s[k]
-            })
+            Object.keys(coverage['./external-instrumenter.js'].s).forEach(
+              function (k) {
+                sum += coverage['./external-instrumenter.js'].s[k]
+              }
+            )
             sum.should.equal(0)
 
             return done()
@@ -884,7 +1009,13 @@ describe('the nyc cli', function () {
   })
 
   it('allows an alternative cache folder to be specified', function (done) {
-    var args = [bin, '--cache-dir=./foo-cache', '--cache=true', process.execPath, './half-covered.js']
+    var args = [
+      bin,
+      '--cache-dir=./foo-cache',
+      '--cache=true',
+      process.execPath,
+      './half-covered.js'
+    ]
 
     var proc = spawn(process.execPath, args, {
       cwd: fixturesCLI,
@@ -894,9 +1025,9 @@ describe('the nyc cli', function () {
       code.should.equal(0)
       // we should have created ./foo-cache rather
       // than the default ./node_modules/.cache.
-      fs.readdirSync(path.resolve(
-        fixturesCLI, './foo-cache'
-      )).length.should.equal(1)
+      fs.readdirSync(
+        path.resolve(fixturesCLI, './foo-cache')
+      ).length.should.equal(1)
       rimraf.sync(path.resolve(fixturesCLI, 'foo-cache'))
       done()
     })
@@ -962,14 +1093,18 @@ describe('the nyc cli', function () {
   // using nyc with this type of configuration.
   describe('source-maps', () => {
     describe('--all', () => {
-      it('includes files with both .map files and inline source-maps', (done) => {
+      it('includes files with both .map files and inline source-maps', done => {
         const args = [
           bin,
           '--all',
-          '--cache', 'false',
-          '--exclude-after-remap', 'false',
-          '--exclude', 'original',
-          process.execPath, './instrumented/s1.min.js'
+          '--cache',
+          'false',
+          '--exclude-after-remap',
+          'false',
+          '--exclude',
+          'original',
+          process.execPath,
+          './instrumented/s1.min.js'
         ]
 
         const proc = spawn(process.execPath, args, {
@@ -984,7 +1119,9 @@ describe('the nyc cli', function () {
 
         proc.on('close', function (code) {
           code.should.equal(0)
-          stdoutShouldEqual(stdout, `
+          stdoutShouldEqual(
+            stdout,
+            `
             ----------|----------|----------|----------|----------|-------------------|
             File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
             ----------|----------|----------|----------|----------|-------------------|
@@ -999,13 +1136,17 @@ describe('the nyc cli', function () {
     })
 
     describe('.map file', () => {
-      it('appropriately instruments file with corresponding .map file', (done) => {
+      it('appropriately instruments file with corresponding .map file', done => {
         const args = [
           bin,
-          '--cache', 'false',
-          '--exclude-after-remap', 'false',
-          '--exclude', 'original',
-          process.execPath, './instrumented/s1.min.js'
+          '--cache',
+          'false',
+          '--exclude-after-remap',
+          'false',
+          '--exclude',
+          'original',
+          process.execPath,
+          './instrumented/s1.min.js'
         ]
 
         const proc = spawn(process.execPath, args, {
@@ -1020,26 +1161,33 @@ describe('the nyc cli', function () {
 
         proc.on('close', function (code) {
           code.should.equal(0)
-          stdoutShouldEqual(stdout, `
+          stdoutShouldEqual(
+            stdout,
+            `
           ----------|----------|----------|----------|----------|-------------------|
           File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
           ----------|----------|----------|----------|----------|-------------------|
           All files |       80 |      100 |       50 |       80 |                   |
            s1.js    |       80 |      100 |       50 |       80 |                 7 |
-          ----------|----------|----------|----------|----------|-------------------|`)
+          ----------|----------|----------|----------|----------|-------------------|`
+          )
           done()
         })
       })
     })
 
     describe('inline', () => {
-      it('appropriately instruments a file with an inline source-map', (done) => {
+      it('appropriately instruments a file with an inline source-map', done => {
         const args = [
           bin,
-          '--cache', 'false',
-          '--exclude-after-remap', 'false',
-          '--exclude', 'original',
-          process.execPath, './instrumented/s2.min.js'
+          '--cache',
+          'false',
+          '--exclude-after-remap',
+          'false',
+          '--exclude',
+          'original',
+          process.execPath,
+          './instrumented/s2.min.js'
         ]
 
         const proc = spawn(process.execPath, args, {
@@ -1054,13 +1202,16 @@ describe('the nyc cli', function () {
 
         proc.on('close', function (code) {
           code.should.equal(0)
-          stdoutShouldEqual(stdout, `
+          stdoutShouldEqual(
+            stdout,
+            `
             ----------|----------|----------|----------|----------|-------------------|
             File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
             ----------|----------|----------|----------|----------|-------------------|
             All files |      100 |      100 |      100 |      100 |                   |
              s2.js    |      100 |      100 |      100 |      100 |                   |
-            ----------|----------|----------|----------|----------|-------------------|`)
+            ----------|----------|----------|----------|----------|-------------------|`
+          )
           done()
         })
       })
@@ -1068,12 +1219,15 @@ describe('the nyc cli', function () {
   })
 
   describe('skip-empty', () => {
-    it('does not display 0-line files in coverage output', (done) => {
+    it('does not display 0-line files in coverage output', done => {
       const args = [
         bin,
-        '--cache', 'false',
-        '--skip-empty', 'true',
-        process.execPath, './empty.js'
+        '--cache',
+        'false',
+        '--skip-empty',
+        'true',
+        process.execPath,
+        './empty.js'
       ]
 
       const proc = spawn(process.execPath, args, {
@@ -1092,23 +1246,22 @@ describe('the nyc cli', function () {
 
       proc.on('close', function (code) {
         code.should.equal(0)
-        stdoutShouldEqual(stdout, `
+        stdoutShouldEqual(
+          stdout,
+          `
         ----------|----------|----------|----------|----------|-------------------|
         File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
         ----------|----------|----------|----------|----------|-------------------|
-        ----------|----------|----------|----------|----------|-------------------|`)
+        ----------|----------|----------|----------|----------|-------------------|`
+        )
         done()
       })
     })
   })
 
   describe('skip-full', () => {
-    it('does not display files with 100% statement, branch, and function coverage', (done) => {
-      const args = [
-        bin,
-        '--skip-full',
-        process.execPath, './skip-full.js'
-      ]
+    it('does not display files with 100% statement, branch, and function coverage', done => {
+      const args = [bin, '--skip-full', process.execPath, './skip-full.js']
 
       const proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -1122,25 +1275,31 @@ describe('the nyc cli', function () {
 
       proc.on('close', function (code) {
         code.should.equal(0)
-        stdoutShouldEqual(stdout, `
+        stdoutShouldEqual(
+          stdout,
+          `
         -----------------|----------|----------|----------|----------|-------------------|
         File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
         -----------------|----------|----------|----------|----------|-------------------|
         All files        |     62.5 |       50 |      100 |     62.5 |                   |
          half-covered.js |       50 |       50 |      100 |       50 |             6,7,8 |
-        -----------------|----------|----------|----------|----------|-------------------|`)
+        -----------------|----------|----------|----------|----------|-------------------|`
+        )
         done()
       })
     })
   })
 
   describe('es-modules', () => {
-    it('allows reserved word when es-modules is disabled', (done) => {
+    it('allows reserved word when es-modules is disabled', done => {
       const args = [
         bin,
-        '--cache', 'false',
-        '--es-modules', 'false',
-        process.execPath, './not-strict.js'
+        '--cache',
+        'false',
+        '--es-modules',
+        'false',
+        process.execPath,
+        './not-strict.js'
       ]
 
       const proc = spawn(process.execPath, args, {
@@ -1155,23 +1314,29 @@ describe('the nyc cli', function () {
 
       proc.on('close', function (code) {
         code.should.equal(0)
-        stdoutShouldEqual(stdout, `
+        stdoutShouldEqual(
+          stdout,
+          `
         ---------------|----------|----------|----------|----------|-------------------|
         File           |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
         ---------------|----------|----------|----------|----------|-------------------|
         All files      |      100 |      100 |      100 |      100 |                   |
          not-strict.js |      100 |      100 |      100 |      100 |                   |
-        ---------------|----------|----------|----------|----------|-------------------|`)
+        ---------------|----------|----------|----------|----------|-------------------|`
+        )
         done()
       })
     })
 
-    it('forbids reserved word when es-modules is not disabled', (done) => {
+    it('forbids reserved word when es-modules is not disabled', done => {
       const args = [
         bin,
-        '--cache', 'false',
-        '--exit-on-error', 'true',
-        process.execPath, './not-strict.js'
+        '--cache',
+        'false',
+        '--exit-on-error',
+        'true',
+        process.execPath,
+        './not-strict.js'
       ]
 
       const proc = spawn(process.execPath, args, {
@@ -1191,26 +1356,28 @@ describe('the nyc cli', function () {
 
       proc.on('close', function (code) {
         code.should.equal(1)
-        stdoutShouldEqual(stderr, `
-        Failed to instrument ${path.join(fixturesCLI, 'not-strict.js')}`)
-        stdoutShouldEqual(stdout, `
+        stdoutShouldEqual(
+          stderr,
+          `
+        Failed to instrument ${path.join(fixturesCLI, 'not-strict.js')}`
+        )
+        stdoutShouldEqual(
+          stdout,
+          `
         ----------|----------|----------|----------|----------|-------------------|
         File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
         ----------|----------|----------|----------|----------|-------------------|
         All files |        0 |        0 |        0 |        0 |                   |
-        ----------|----------|----------|----------|----------|-------------------|`)
+        ----------|----------|----------|----------|----------|-------------------|`
+        )
         done()
       })
     })
   })
 
   describe('merge', () => {
-    it('combines multiple coverage reports', (done) => {
-      const args = [
-        bin,
-        'merge',
-        './merge-input'
-      ]
+    it('combines multiple coverage reports', done => {
+      const args = [bin, 'merge', './merge-input']
 
       const proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -1221,23 +1388,29 @@ describe('the nyc cli', function () {
         const mergedCoverage = require('./fixtures/cli/coverage')
         // the combined reports should have 100% function
         // branch and statement coverage.
-        mergedCoverage['/private/tmp/contrived/library.js']
-          .s.should.eql({ '0': 2, '1': 1, '2': 1, '3': 2, '4': 1, '5': 1 })
-        mergedCoverage['/private/tmp/contrived/library.js']
-          .f.should.eql({ '0': 1, '1': 1, '2': 2 })
-        mergedCoverage['/private/tmp/contrived/library.js']
-          .b.should.eql({ '0': [1, 1] })
+        mergedCoverage['/private/tmp/contrived/library.js'].s.should.eql({
+          '0': 2,
+          '1': 1,
+          '2': 1,
+          '3': 2,
+          '4': 1,
+          '5': 1
+        })
+        mergedCoverage['/private/tmp/contrived/library.js'].f.should.eql({
+          '0': 1,
+          '1': 1,
+          '2': 2
+        })
+        mergedCoverage['/private/tmp/contrived/library.js'].b.should.eql({
+          '0': [1, 1]
+        })
         rimraf.sync(path.resolve(fixturesCLI, 'coverage.json'))
         return done()
       })
     })
 
-    it('reports error if input directory is missing', (done) => {
-      const args = [
-        bin,
-        'merge',
-        './DIRECTORY_THAT_IS_MISSING'
-      ]
+    it('reports error if input directory is missing', done => {
+      const args = [bin, 'merge', './DIRECTORY_THAT_IS_MISSING']
 
       const proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -1255,12 +1428,8 @@ describe('the nyc cli', function () {
       })
     })
 
-    it('reports error if input is not a directory', (done) => {
-      const args = [
-        bin,
-        'merge',
-        './package.json'
-      ]
+    it('reports error if input is not a directory', done => {
+      const args = [bin, 'merge', './package.json']
 
       const proc = spawn(process.execPath, args, {
         cwd: fixturesCLI,
@@ -1281,5 +1450,5 @@ describe('the nyc cli', function () {
 })
 
 function stdoutShouldEqual (stdout, expected) {
-  `\n${stdout}`.should.equal(`${si(expected)}\n`)
+  ;`\n${stdout}`.should.equal(`${si(expected)}\n`)
 }

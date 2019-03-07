@@ -22,7 +22,7 @@ const isWindows = require('is-windows')()
 const spawn = require('child_process').spawn
 const fixtures = path.resolve(__dirname, './fixtures')
 const bin = path.resolve(__dirname, '../bin/nyc')
-const resetState = require('./lib/reset-state')
+const resetState = require('./helpers/reset-state')
 
 require('chai').should()
 require('tap').mochaGlobals()
@@ -50,24 +50,38 @@ describe('nyc', function () {
     })
 
     it('uses --cwd for cwd if it is set (highest priority and does not look upwards for package.json) ', function () {
-      var nyc = new NYC(configUtil.buildYargs(__dirname).parse(['--cwd', __dirname]))
+      var nyc = new NYC(
+        configUtil.buildYargs(__dirname).parse(['--cwd', __dirname])
+      )
       nyc.cwd.should.eql(__dirname)
     })
   })
 
   describe('config', function () {
     it("loads 'exclude' patterns from package.json#nyc", function () {
-      var nyc = new NYC(configUtil.buildYargs(path.resolve(__dirname, './fixtures')).parse())
+      var nyc = new NYC(
+        configUtil.buildYargs(path.resolve(__dirname, './fixtures')).parse()
+      )
       nyc.exclude.exclude.length.should.eql(8)
     })
 
     it("loads 'extension' patterns from package.json#nyc", function () {
-      var nyc = new NYC(configUtil.buildYargs(path.resolve(__dirname, './fixtures/conf-multiple-extensions')).parse())
+      var nyc = new NYC(
+        configUtil
+          .buildYargs(
+            path.resolve(__dirname, './fixtures/conf-multiple-extensions')
+          )
+          .parse()
+      )
       nyc.extensions.length.should.eql(3)
     })
 
     it("ignores 'include' option if it's falsy or []", function () {
-      var nyc1 = new NYC(configUtil.buildYargs(path.resolve(__dirname, './fixtures/conf-empty')).parse())
+      var nyc1 = new NYC(
+        configUtil
+          .buildYargs(path.resolve(__dirname, './fixtures/conf-empty'))
+          .parse()
+      )
 
       nyc1.exclude.include.should.equal(false)
 
@@ -79,7 +93,11 @@ describe('nyc', function () {
     })
 
     it("ignores 'exclude' option if it's falsy", function () {
-      var nyc1 = new NYC(configUtil.buildYargs(path.resolve(__dirname, './fixtures/conf-empty')).parse())
+      var nyc1 = new NYC(
+        configUtil
+          .buildYargs(path.resolve(__dirname, './fixtures/conf-empty'))
+          .parse()
+      )
       nyc1.exclude.exclude.length.should.eql(15)
     })
 
@@ -93,25 +111,49 @@ describe('nyc', function () {
 
   describe('shouldInstrumentFile', function () {
     it('should exclude appropriately with defaults', function () {
-      var nyc = new NYC(configUtil.buildYargs('/cwd').parse([
-        '--exclude=test/**',
-        '--exclude=test{,-*}.js',
-        '--exclude=**/*.test.js',
-        '--exclude=**/__tests__/**'
-      ]))
+      var nyc = new NYC(
+        configUtil
+          .buildYargs('/cwd')
+          .parse([
+            '--exclude=test/**',
+            '--exclude=test{,-*}.js',
+            '--exclude=**/*.test.js',
+            '--exclude=**/__tests__/**'
+          ])
+      )
 
       // nyc always excludes "node_modules/**"
       nyc.exclude.shouldInstrument('/cwd/foo', 'foo').should.equal(true)
-      nyc.exclude.shouldInstrument('/cwd/node_modules/bar', 'node_modules/bar').should.equal(false)
-      nyc.exclude.shouldInstrument('/cwd/foo/node_modules/bar', 'foo/node_modules/bar').should.equal(false)
-      nyc.exclude.shouldInstrument('/cwd/test.js', 'test.js').should.equal(false)
-      nyc.exclude.shouldInstrument('/cwd/testfoo.js', 'testfoo.js').should.equal(true)
-      nyc.exclude.shouldInstrument('/cwd/test-foo.js', 'test-foo.js').should.equal(false)
-      nyc.exclude.shouldInstrument('/cwd/lib/test.js', 'lib/test.js').should.equal(true)
-      nyc.exclude.shouldInstrument('/cwd/foo/bar/test.js', './test.js').should.equal(false)
-      nyc.exclude.shouldInstrument('/cwd/foo/bar/test.js', '.\\test.js').should.equal(false)
-      nyc.exclude.shouldInstrument('/cwd/foo/bar/foo.test.js', './foo.test.js').should.equal(false)
-      nyc.exclude.shouldInstrument('/cwd/foo/bar/__tests__/foo.js', './__tests__/foo.js').should.equal(false)
+      nyc.exclude
+        .shouldInstrument('/cwd/node_modules/bar', 'node_modules/bar')
+        .should.equal(false)
+      nyc.exclude
+        .shouldInstrument('/cwd/foo/node_modules/bar', 'foo/node_modules/bar')
+        .should.equal(false)
+      nyc.exclude
+        .shouldInstrument('/cwd/test.js', 'test.js')
+        .should.equal(false)
+      nyc.exclude
+        .shouldInstrument('/cwd/testfoo.js', 'testfoo.js')
+        .should.equal(true)
+      nyc.exclude
+        .shouldInstrument('/cwd/test-foo.js', 'test-foo.js')
+        .should.equal(false)
+      nyc.exclude
+        .shouldInstrument('/cwd/lib/test.js', 'lib/test.js')
+        .should.equal(true)
+      nyc.exclude
+        .shouldInstrument('/cwd/foo/bar/test.js', './test.js')
+        .should.equal(false)
+      nyc.exclude
+        .shouldInstrument('/cwd/foo/bar/test.js', '.\\test.js')
+        .should.equal(false)
+      nyc.exclude
+        .shouldInstrument('/cwd/foo/bar/foo.test.js', './foo.test.js')
+        .should.equal(false)
+      nyc.exclude
+        .shouldInstrument('/cwd/foo/bar/__tests__/foo.js', './__tests__/foo.js')
+        .should.equal(false)
     })
 
     it('should exclude appropriately with config.exclude', function () {
@@ -119,7 +161,9 @@ describe('nyc', function () {
 
       // fixtures/package.json configures excludes: "blarg", "blerg"
       nyc.exclude.shouldInstrument('blarg', 'blarg').should.equal(false)
-      nyc.exclude.shouldInstrument('blarg/foo.js', 'blarg/foo.js').should.equal(false)
+      nyc.exclude
+        .shouldInstrument('blarg/foo.js', 'blarg/foo.js')
+        .should.equal(false)
       nyc.exclude.shouldInstrument('blerg', 'blerg').should.equal(false)
       nyc.exclude.shouldInstrument('./blerg', './blerg').should.equal(false)
       nyc.exclude.shouldInstrument('./blerg', '.\\blerg').should.equal(false)
@@ -132,28 +176,42 @@ describe('nyc', function () {
 
     it('should not exclude if the current working directory is inside node_modules', function () {
       var nyc = new NYC(configUtil.buildYargs('/cwd/node_modules/foo/').parse())
-      nyc.exclude.shouldInstrument('/cwd/node_modules/foo/bar', './bar').should.equal(true)
-      nyc.exclude.shouldInstrument('/cwd/node_modules/foo/bar', '.\\bar').should.equal(true)
+      nyc.exclude
+        .shouldInstrument('/cwd/node_modules/foo/bar', './bar')
+        .should.equal(true)
+      nyc.exclude
+        .shouldInstrument('/cwd/node_modules/foo/bar', '.\\bar')
+        .should.equal(true)
     })
 
     it('allows files to be explicitly included, rather than excluded', function () {
-      var nyc = new NYC(configUtil.buildYargs('/cwd/').parse(['--include=foo.js']))
+      var nyc = new NYC(
+        configUtil.buildYargs('/cwd/').parse(['--include=foo.js'])
+      )
 
       nyc.exclude.shouldInstrument('/cwd/foo.js', 'foo.js').should.equal(true)
-      nyc.exclude.shouldInstrument('/cwd/index.js', 'index.js').should.equal(false)
+      nyc.exclude
+        .shouldInstrument('/cwd/index.js', 'index.js')
+        .should.equal(false)
     })
 
     it('exclude overrides include', function () {
-      var nyc = new NYC(configUtil.buildYargs('/cwd/').parse([
-        '--include=foo.js',
-        '--include=test.js',
-        '--exclude=**/node_modules/**',
-        '--exclude=test/**',
-        '--exclude=test{,-*}.js'
-      ]))
+      var nyc = new NYC(
+        configUtil
+          .buildYargs('/cwd/')
+          .parse([
+            '--include=foo.js',
+            '--include=test.js',
+            '--exclude=**/node_modules/**',
+            '--exclude=test/**',
+            '--exclude=test{,-*}.js'
+          ])
+      )
 
       nyc.exclude.shouldInstrument('/cwd/foo.js', 'foo.js').should.equal(true)
-      nyc.exclude.shouldInstrument('/cwd/test.js', 'test.js').should.equal(false)
+      nyc.exclude
+        .shouldInstrument('/cwd/test.js', 'test.js')
+        .should.equal(false)
     })
   })
 
@@ -214,9 +272,13 @@ describe('nyc', function () {
 
     describe('compile handlers for custom extensions are assigned', function () {
       it('assigns a function to custom extensions', function () {
-        var nyc = new NYC(configUtil.buildYargs(
-          path.resolve(__dirname, './fixtures/conf-multiple-extensions')
-        ).parse())
+        var nyc = new NYC(
+          configUtil
+            .buildYargs(
+              path.resolve(__dirname, './fixtures/conf-multiple-extensions')
+            )
+            .parse()
+        )
         nyc.reset()
         nyc.wrap()
 
@@ -232,9 +294,13 @@ describe('nyc', function () {
           es6: false,
           custom: false
         }
-        var nyc = new NYC(configUtil.buildYargs(
-          path.resolve(__dirname, './fixtures/conf-multiple-extensions')
-        ).parse())
+        var nyc = new NYC(
+          configUtil
+            .buildYargs(
+              path.resolve(__dirname, './fixtures/conf-multiple-extensions')
+            )
+            .parse()
+        )
 
         nyc['_handleJs'] = (code, options) => {
           if (options.filename.indexOf('check-instrumented.es6') !== -1) {
@@ -257,7 +323,7 @@ describe('nyc', function () {
     })
 
     function testSignal (signal, done) {
-      var nyc = (new NYC(configUtil.buildYargs(fixtures).parse()))
+      var nyc = new NYC(configUtil.buildYargs(fixtures).parse())
 
       var proc = spawn(process.execPath, [bin, './' + signal + '.js'], {
         cwd: fixtures,
@@ -285,7 +351,7 @@ describe('nyc', function () {
     })
 
     it('does not output coverage for files that have not been included, by default', function (done) {
-      var nyc = (new NYC(configUtil.buildYargs(process.cwd()).parse()))
+      var nyc = new NYC(configUtil.buildYargs(process.cwd()).parse())
       nyc.wrap()
       nyc.reset()
 
@@ -299,9 +365,11 @@ describe('nyc', function () {
 
   describe('report', function () {
     it('allows coverage report to be output in an alternative directory', function (done) {
-      var nyc = new NYC(configUtil.buildYargs().parse(
-        ['--report-dir=./alternative-report', '--reporter=lcov']
-      ))
+      var nyc = new NYC(
+        configUtil
+          .buildYargs()
+          .parse(['--report-dir=./alternative-report', '--reporter=lcov'])
+      )
       nyc.reset()
 
       var proc = spawn(process.execPath, ['./test/fixtures/child-1.js'], {
@@ -364,7 +432,7 @@ describe('nyc', function () {
     })
 
     it('tracks coverage appropriately once the file is required', function (done) {
-      var nyc = (new NYC(configUtil.buildYargs(fixtures).parse()))
+      var nyc = new NYC(configUtil.buildYargs(fixtures).parse())
       nyc.reset()
       nyc.wrap()
 
@@ -392,7 +460,11 @@ describe('nyc', function () {
         'utf-8'
       )
 
-      var nyc = (new NYC(configUtil.buildYargs(fixtures).parse(['--require', './test/fixtures/transpile-hook'])))
+      var nyc = new NYC(
+        configUtil
+          .buildYargs(fixtures)
+          .parse(['--require', './test/fixtures/transpile-hook'])
+      )
       nyc.reset()
       nyc.addAllFiles()
 
@@ -410,18 +482,25 @@ describe('nyc', function () {
     })
 
     it('does not attempt to transpile files when they are excluded', function (done) {
-      var notNeedTranspilePath = path.join(fixtures, './do-not-need-transpile.do-not-transpile')
+      var notNeedTranspilePath = path.join(
+        fixtures,
+        './do-not-need-transpile.do-not-transpile'
+      )
       fs.writeFileSync(
         notNeedTranspilePath,
         '--> pork chop sandwiches <--\nvar a = 99',
         'utf-8'
       )
 
-      var nyc = (new NYC(configUtil.buildYargs(fixtures).parse([
-        '--require=./test/fixtures/transpile-hook',
-        '--extension=.do-not-transpile',
-        '--include=needs-transpile.do-not-transpile'
-      ])))
+      var nyc = new NYC(
+        configUtil
+          .buildYargs(fixtures)
+          .parse([
+            '--require=./test/fixtures/transpile-hook',
+            '--extension=.do-not-transpile',
+            '--include=needs-transpile.do-not-transpile'
+          ])
+      )
 
       nyc.reset()
       nyc.addAllFiles()
@@ -437,10 +516,14 @@ describe('nyc', function () {
       'utf-8'
     )
 
-    var nyc = (new NYC(configUtil.buildYargs(fixtures).parse([
-      '--require=./test/fixtures/transpile-hook',
-      '--extension=.whatever'
-    ])))
+    var nyc = new NYC(
+      configUtil
+        .buildYargs(fixtures)
+        .parse([
+          '--require=./test/fixtures/transpile-hook',
+          '--extension=.whatever'
+        ])
+    )
 
     nyc.reset()
     nyc.addAllFiles()

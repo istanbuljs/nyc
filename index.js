@@ -35,17 +35,23 @@ function NYC (config) {
   config = config || {}
   this.config = config
 
-  this.subprocessBin = config.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
-  this._tempDirectory = config.tempDirectory || config.tempDir || './.nyc_output'
-  this._instrumenterLib = require(config.instrumenter || './lib/instrumenters/istanbul')
+  this.subprocessBin =
+    config.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
+  this._tempDirectory =
+    config.tempDirectory || config.tempDir || './.nyc_output'
+  this._instrumenterLib = require(config.instrumenter ||
+    './lib/instrumenters/istanbul')
   this._reportDir = config.reportDir || 'coverage'
-  this._sourceMap = typeof config.sourceMap === 'boolean' ? config.sourceMap : true
+  this._sourceMap =
+    typeof config.sourceMap === 'boolean' ? config.sourceMap : true
   this._showProcessTree = config.showProcessTree || false
   this._eagerInstantiation = config.eager || false
   this.cwd = config.cwd || process.cwd()
   this.reporter = arrify(config.reporter || 'text')
 
-  this.cacheDirectory = (config.cacheDir && path.resolve(config.cacheDir)) || findCacheDir({ name: 'nyc', cwd: this.cwd })
+  this.cacheDirectory =
+    (config.cacheDir && path.resolve(config.cacheDir)) ||
+    findCacheDir({ name: 'nyc', cwd: this.cwd })
   this.cache = Boolean(this.cacheDirectory && config.cache)
 
   this.exclude = testExclude({
@@ -62,17 +68,23 @@ function NYC (config) {
   // require extensions can be provided as config in package.json.
   this.require = arrify(config.require)
 
-  this.extensions = arrify(config.extension).concat('.js').map(function (ext) {
-    return ext.toLowerCase()
-  }).filter(function (item, pos, arr) {
-    // avoid duplicate extensions
-    return arr.indexOf(item) === pos
-  })
+  this.extensions = arrify(config.extension)
+    .concat('.js')
+    .map(function (ext) {
+      return ext.toLowerCase()
+    })
+    .filter(function (item, pos, arr) {
+      // avoid duplicate extensions
+      return arr.indexOf(item) === pos
+    })
 
-  this.transforms = this.extensions.reduce(function (transforms, ext) {
-    transforms[ext] = this._createTransform(ext)
-    return transforms
-  }.bind(this), {})
+  this.transforms = this.extensions.reduce(
+    function (transforms, ext) {
+      transforms[ext] = this._createTransform(ext)
+      return transforms
+    }.bind(this),
+    {}
+  )
 
   this.hookRequire = config.hookRequire
   this.hookRunInContext = config.hookRunInContext
@@ -149,7 +161,11 @@ NYC.prototype._createInstrumenter = function () {
 NYC.prototype.addFile = function (filename) {
   var relFile = path.relative(this.cwd, filename)
   var source = this._readTranspiledSource(path.resolve(this.cwd, filename))
-  var instrumentedSource = this._maybeInstrumentSource(source, filename, relFile)
+  var instrumentedSource = this._maybeInstrumentSource(
+    source,
+    filename,
+    relFile
+  )
 
   return {
     instrument: !!instrumentedSource,
@@ -164,11 +180,14 @@ NYC.prototype._readTranspiledSource = function (filePath) {
   if (typeof Module._extensions[ext] === 'undefined') {
     ext = '.js'
   }
-  Module._extensions[ext]({
-    _compile: function (content, filename) {
-      source = content
-    }
-  }, filePath)
+  Module._extensions[ext](
+    {
+      _compile: function (content, filename) {
+        source = content
+      }
+    },
+    filePath
+  )
   return source
 }
 
@@ -248,9 +267,11 @@ NYC.prototype.walkAllFiles = function (dir, visitor) {
     pattern = '**/*{' + this.extensions.join() + '}'
   }
 
-  glob.sync(pattern, { cwd: dir, nodir: true, ignore: this.exclude.exclude }).forEach(function (filename) {
-    visitor(filename)
-  })
+  glob
+    .sync(pattern, { cwd: dir, nodir: true, ignore: this.exclude.exclude })
+    .forEach(function (filename) {
+      visitor(filename)
+    })
 }
 
 NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
@@ -267,7 +288,9 @@ NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
     }
   }
 
-  return transform ? transform(code, { filename: filename, relFile: relFile }) : null
+  return transform
+    ? transform(code, { filename: filename, relFile: relFile })
+    : null
 }
 
 NYC.prototype._transformFactory = function (cacheDir) {
@@ -278,7 +301,9 @@ NYC.prototype._transformFactory = function (cacheDir) {
     const filename = metadata.filename
     let sourceMap = null
 
-    if (this._sourceMap) sourceMap = this.sourceMaps.extractAndRegister(code, filename, hash)
+    if (this._sourceMap) {
+      sourceMap = this.sourceMaps.extractAndRegister(code, filename, hash)
+    }
 
     try {
       instrumented = instrumenter.instrumentSync(code, filename, sourceMap)
@@ -310,8 +335,12 @@ NYC.prototype._handleJs = function (code, options) {
 
 NYC.prototype._addHook = function (type) {
   var handleJs = this._handleJs.bind(this)
-  var dummyMatcher = function () { return true } // we do all processing in transformer
-  libHook['hook' + type](dummyMatcher, handleJs, { extensions: this.extensions })
+  var dummyMatcher = function () {
+    return true
+  } // we do all processing in transformer
+  libHook['hook' + type](dummyMatcher, handleJs, {
+    extensions: this.extensions
+  })
 }
 
 NYC.prototype._addRequireHooks = function () {
@@ -355,9 +384,12 @@ NYC.prototype._wrapExit = function () {
 
   // we always want to write coverage
   // regardless of how the process exits.
-  onExit(function () {
-    _this.writeCoverageFile()
-  }, { alwaysLast: true })
+  onExit(
+    function () {
+      _this.writeCoverageFile()
+    },
+    { alwaysLast: true }
+  )
 }
 
 NYC.prototype.wrap = function (bin) {
@@ -393,11 +425,7 @@ NYC.prototype.writeCoverageFile = function () {
   var id = this.generateUniqueID()
   var coverageFilename = path.resolve(this.tempDirectory(), id + '.json')
 
-  fs.writeFileSync(
-    coverageFilename,
-    JSON.stringify(coverage),
-    'utf-8'
-  )
+  fs.writeFileSync(coverageFilename, JSON.stringify(coverage), 'utf-8')
 
   if (!this._showProcessTree) {
     return
@@ -423,9 +451,13 @@ NYC.prototype.getCoverageMapFromAllCoverageFiles = function (baseDirectory) {
   var _this = this
   var map = libCoverage.createCoverageMap({})
 
-  this.eachReport(undefined, (report) => {
-    map.merge(report)
-  }, baseDirectory)
+  this.eachReport(
+    undefined,
+    report => {
+      map.merge(report)
+    },
+    baseDirectory
+  )
   // depending on whether source-code is pre-instrumented
   // or instrumented using a JIT plugin like @babel/require
   // you may opt to exclude files after applying
@@ -465,7 +497,11 @@ NYC.prototype.checkCoverage = function (thresholds, perFile) {
   if (perFile) {
     map.files().forEach(function (file) {
       // ERROR: Coverage for lines (90.12%) does not meet threshold (120%) for index.js
-      nyc._checkCoverage(map.fileCoverageFor(file).toSummary(), thresholds, file)
+      nyc._checkCoverage(
+        map.fileCoverageFor(file).toSummary(),
+        thresholds,
+        file
+      )
     })
   } else {
     // ERROR: Coverage for lines (90.12%) does not meet global threshold (120%)
@@ -479,9 +515,26 @@ NYC.prototype._checkCoverage = function (summary, thresholds, file) {
     if (coverage < thresholds[key]) {
       process.exitCode = 1
       if (file) {
-        console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet threshold (' + thresholds[key] + '%) for ' + file)
+        console.error(
+          'ERROR: Coverage for ' +
+            key +
+            ' (' +
+            coverage +
+            '%) does not meet threshold (' +
+            thresholds[key] +
+            '%) for ' +
+            file
+        )
       } else {
-        console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet global threshold (' + thresholds[key] + '%)')
+        console.error(
+          'ERROR: Coverage for ' +
+            key +
+            ' (' +
+            coverage +
+            '%) does not meet global threshold (' +
+            thresholds[key] +
+            '%)'
+        )
       }
     }
   })
@@ -493,11 +546,16 @@ NYC.prototype._loadProcessInfos = function () {
 
   return files.map(function (f) {
     try {
-      return new ProcessInfo(JSON.parse(fs.readFileSync(
-        path.resolve(_this.processInfoDirectory(), f),
-        'utf-8'
-      )))
-    } catch (e) { // handle corrupt JSON output.
+      return new ProcessInfo(
+        JSON.parse(
+          fs.readFileSync(
+            path.resolve(_this.processInfoDirectory(), f),
+            'utf-8'
+          )
+        )
+      )
+    } catch (e) {
+      // handle corrupt JSON output.
       return {}
     }
   })
@@ -517,13 +575,13 @@ NYC.prototype.eachReport = function (filenames, iterator, baseDirectory) {
   files.forEach(function (f) {
     var report
     try {
-      report = JSON.parse(fs.readFileSync(
-        path.resolve(baseDirectory, f),
-        'utf-8'
-      ))
+      report = JSON.parse(
+        fs.readFileSync(path.resolve(baseDirectory, f), 'utf-8')
+      )
 
       _this.sourceMaps.reloadCachedSourceMaps(report)
-    } catch (e) { // handle corrupt JSON output.
+    } catch (e) {
+      // handle corrupt JSON output.
       report = {}
     }
 
@@ -534,7 +592,7 @@ NYC.prototype.eachReport = function (filenames, iterator, baseDirectory) {
 NYC.prototype.loadReports = function (filenames) {
   var reports = []
 
-  this.eachReport(filenames, (report) => {
+  this.eachReport(filenames, report => {
     reports.push(report)
   })
 

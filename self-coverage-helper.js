@@ -7,7 +7,9 @@ const onExit = require('signal-exit')
 
 onExit(function () {
   var coverage = global.___NYC_SELF_COVERAGE___
-  if (typeof ___NYC_SELF_COVERAGE___ === 'object') coverage = ___NYC_SELF_COVERAGE___
+  if (typeof ___NYC_SELF_COVERAGE___ === 'object') {
+    coverage = ___NYC_SELF_COVERAGE___
+  }
   if (!coverage) return
 
   var selfCoverageDir = path.join(__dirname, '.self_coverage')

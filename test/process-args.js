@@ -8,7 +8,8 @@ const processArgs = require('../lib/process-args')
 describe('process-args', function () {
   describe('hideInstrumenterArgs', function () {
     it('removes dashed options that proceed bin', function () {
-      process.argv = ['/Users/benjamincoe/bin/iojs',
+      process.argv = [
+        '/Users/benjamincoe/bin/iojs',
         '/Users/benjamincoe/bin/nyc.js',
         '--reporter',
         'lcov',
@@ -24,7 +25,8 @@ describe('process-args', function () {
     })
 
     it('parses extra args directly after -- as Node execArgv', function () {
-      process.argv = ['/Users/benjamincoe/bin/iojs',
+      process.argv = [
+        '/Users/benjamincoe/bin/iojs',
         '/Users/benjamincoe/bin/nyc.js',
         '--',
         '--expose-gc',
@@ -41,7 +43,8 @@ describe('process-args', function () {
 
   describe('hideInstrumenteeArgs', function () {
     it('ignores arguments after the instrumented bin', function () {
-      process.argv = ['/Users/benjamincoe/bin/iojs',
+      process.argv = [
+        '/Users/benjamincoe/bin/iojs',
         '/Users/benjamincoe/bin/nyc.js',
         '--reporter',
         'lcov',
@@ -56,7 +59,8 @@ describe('process-args', function () {
     })
 
     it('does not ignore arguments if command is recognized', function () {
-      process.argv = ['/Users/benjamincoe/bin/iojs',
+      process.argv = [
+        '/Users/benjamincoe/bin/iojs',
         '/Users/benjamincoe/bin/nyc.js',
         'report',
         '--reporter',
@@ -68,7 +72,8 @@ describe('process-args', function () {
     })
 
     it('does not ignore arguments if no command is provided', function () {
-      process.argv = ['/Users/benjamincoe/bin/iojs',
+      process.argv = [
+        '/Users/benjamincoe/bin/iojs',
         '/Users/benjamincoe/bin/nyc.js',
         '--version'
       ]

@@ -1,0 +1,7 @@
+package*.json
+CHANGELOG.md
+coverage
+.nyc_output
+.self_coverage
+self-coverage
+**/fixtures/**
