@@ -603,13 +603,13 @@ describe('the nyc cli', function () {
         })
       })
 
-      describe('clean', function () {
+      describe('delete', function () {
         beforeEach(function () {
           makeDir.sync(path.resolve(fixturesCLI, 'output', 'removed-by-clean'))
         })
 
-        it('cleans the output directory if `--clean` is specified', function (done) {
-          const args = [bin, 'instrument', '--clean', 'true', './', './output']
+        it('cleans the output directory if `--delete` is specified', function (done) {
+          const args = [bin, 'instrument', '--delete', 'true', './', './output']
 
           const proc = spawn(process.execPath, args, {
             cwd: fixturesCLI,
@@ -640,6 +640,26 @@ describe('the nyc cli', function () {
             subdirExists.should.equal(true)
             const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
             files.should.include('removed-by-clean')
+            done()
+          })
+        })
+
+        it('aborts if trying to clean process.cwd()', function (done) {
+          const args = [bin, 'instrument', '--delete', './', './']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          let stderr = ''
+          proc.stderr.on('data', function (chunk) {
+            stderr += chunk
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(1)
+            stderr.should.include('nyc instrument failed: attempt to delete')
             done()
           })
         })
