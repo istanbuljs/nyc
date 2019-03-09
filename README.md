@@ -320,6 +320,21 @@ Any configuration options that can be set via the command line can also be speci
 }
 ```
 
+Configuration can also be provided by `nyc.config.js` if programmed logic is required:
+```js
+'use strict';
+const {defaultExclude} = require('test-exclude');
+const isWindows = require('is-windows');
+
+let platformExclude = [
+  isWindows() ? 'lib/posix.js' : 'lib/win32.js'
+];
+
+module.exports = {
+  exclude: platformExclude.concat(defaultExclude)
+};
+```
+
 ### Publish, and reuse, your nyc configuration
 
 nyc allows you to inherit other configurations using the key `extends`. As an example,
