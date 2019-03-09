@@ -4,7 +4,6 @@
   "description": "the Istanbul command line interface",
   "main": "index.js",
   "scripts": {
-    "bundle": "bundle-dependencies update",
     "pretest": "npm run clean && npm run instrument",
     "test": "tap -t360 --no-cov -b ./test/*.js && npm run report",
     "posttest": "standard",
@@ -95,7 +94,6 @@
   },
   "devDependencies": {
     "any-path": "^1.3.0",
-    "bundle-dependencies": "^1.0.2",
     "chai": "^4.2.0",
     "coveralls": "^3.0.2",
     "is-windows": "^1.0.2",
@@ -117,30 +115,5 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:istanbuljs/nyc.git"
-  },
-  "bundledDependencies": [
-    "archy",
-    "arrify",
-    "caching-transform",
-    "convert-source-map",
-    "find-cache-dir",
-    "find-up",
-    "foreground-child",
-    "glob",
-    "istanbul-lib-coverage",
-    "istanbul-lib-hook",
-    "istanbul-lib-report",
-    "istanbul-lib-source-maps",
-    "istanbul-reports",
-    "make-dir",
-    "merge-source-map",
-    "resolve-from",
-    "rimraf",
-    "signal-exit",
-    "spawn-wrap",
-    "test-exclude",
-    "uuid",
-    "yargs",
-    "yargs-parser"
-  ]
+  }
 }
