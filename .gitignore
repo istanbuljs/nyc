@@ -3,6 +3,6 @@ coverage
 node_modules
 test/build/
 .self_coverage
-*.covered.js
+self-coverage/
 *.swp
 needs-transpile.js
