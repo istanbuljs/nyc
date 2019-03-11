@@ -784,6 +784,26 @@ describe('the nyc cli', function () {
             done()
           })
         })
+
+        it('aborts if trying to clean outside working directory', function (done) {
+          const args = [bin, 'instrument', '--delete', './', '../']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          let stderr = ''
+          proc.stderr.on('data', function (chunk) {
+            stderr += chunk
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(1)
+            stderr.should.include('nyc instrument failed: attempt to delete')
+            done()
+          })
+        })
       })
     })
   })
