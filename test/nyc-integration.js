@@ -367,6 +367,80 @@ describe('the nyc cli', function () {
       })
     })
 
+    describe('nyc.config.js', function () {
+      var cwd = path.resolve(fixturesCLI, './nyc-config-js')
+
+      it('loads configuration from package.json and nyc.config.js', function (done) {
+        var args = [bin, process.execPath, './index.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: cwd,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdout.should.match(/SF:.*index\.js/)
+          stdout.should.not.match(/SF:.*ignore\.js/)
+          stdout.should.not.match(/SF:.*nyc\.config\.js/)
+          stdout.should.not.match(/SF:.*nycrc-config\.js/)
+          done()
+        })
+      })
+
+      it('loads configuration from different module rather than nyc.config.js', function (done) {
+        var args = [bin, '--all', '--nycrc-path', './nycrc-config.js', process.execPath, './index.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: cwd,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          // should be 1 due to coverage check
+          code.should.equal(1)
+          stdout.should.match(/SF:.*index\.js/)
+          stdout.should.match(/SF:.*ignore\.js/)
+          stdout.should.match(/SF:.*nyc\.config\.js/)
+          stdout.should.match(/SF:.*nycrc-config\.js/)
+          done()
+        })
+      })
+
+      it('allows nyc.config.js configuration to be overridden with command line args', function (done) {
+        var args = [bin, '--all', '--exclude=foo.js', process.execPath, './index.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: cwd,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdout.should.match(/SF:.*index\.js/)
+          stdout.should.match(/SF:.*ignore\.js/)
+          stdout.should.match(/SF:.*nyc\.config\.js/)
+          stdout.should.match(/SF:.*nycrc-config\.js/)
+          done()
+        })
+      })
+    })
+
     describe('.nycrc', function () {
       var cwd = path.resolve(fixturesCLI, './nycrc')
 
@@ -480,7 +554,7 @@ describe('the nyc cli', function () {
 
         proc.on('close', function (code) {
           code.should.equal(0)
-          stdout.should.match(/path:"\.\/half-covered\.js"/)
+          stdout.should.contain(`path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered.js'))}`)
           done()
         })
       })
@@ -677,6 +751,53 @@ describe('the nyc cli', function () {
           files.should.include('index.js')
           files.should.not.include('bad.js')
           done()
+        })
+      })
+
+      describe('es-modules', function () {
+        afterEach(function () {
+          rimraf.sync(path.resolve(fixturesCLI, './output'))
+        })
+
+        it('instruments file with `package` keyword when es-modules is disabled', function (done) {
+          const args = [bin, 'instrument', '--no-es-modules', './not-strict.js', './output']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(0)
+            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output'))
+            subdirExists.should.equal(true)
+            const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+            files.should.include('not-strict.js')
+            done()
+          })
+        })
+
+        it('fails on file with `package` keyword when es-modules is enabled', function (done) {
+          const args = [bin, 'instrument', '--exit-on-error', './not-strict.js', './output']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          let stderr = ''
+          proc.stderr.on('data', function (chunk) {
+            stderr += chunk
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(1)
+            stdoutShouldEqual(stderr, `
+              Failed to instrument ${path.resolve(fixturesCLI, 'not-strict.js')}`)
+            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output'))
+            subdirExists.should.equal(false)
+            done()
+          })
         })
       })
     })
@@ -1069,6 +1190,39 @@ describe('the nyc cli', function () {
             ----------|----------|----------|----------|----------|-------------------|
             All files |    44.44 |      100 |    33.33 |    44.44 |                   |
              s1.js    |       80 |      100 |       50 |       80 |                 7 |
+             s2.js    |        0 |      100 |        0 |        0 |           1,2,4,6 |
+            ----------|----------|----------|----------|----------|-------------------|`
+          )
+          done()
+        })
+      })
+
+      it('uses source-maps to exclude original sources from reports', (done) => {
+        const args = [
+          bin,
+          '--all',
+          '--cache', 'false',
+          '--exclude', 'original/s1.js',
+          process.execPath, './instrumented/s1.min.js'
+        ]
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesSourceMaps,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdoutShouldEqual(stdout, `
+            ----------|----------|----------|----------|----------|-------------------|
+            File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+            ----------|----------|----------|----------|----------|-------------------|
+            All files |        0 |      100 |        0 |        0 |                   |
              s2.js    |        0 |      100 |        0 |        0 |           1,2,4,6 |
             ----------|----------|----------|----------|----------|-------------------|`
           )
