@@ -367,6 +367,80 @@ describe('the nyc cli', function () {
       })
     })
 
+    describe('nyc.config.js', function () {
+      var cwd = path.resolve(fixturesCLI, './nyc-config-js')
+
+      it('loads configuration from package.json and nyc.config.js', function (done) {
+        var args = [bin, process.execPath, './index.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: cwd,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdout.should.match(/SF:.*index\.js/)
+          stdout.should.not.match(/SF:.*ignore\.js/)
+          stdout.should.not.match(/SF:.*nyc\.config\.js/)
+          stdout.should.not.match(/SF:.*nycrc-config\.js/)
+          done()
+        })
+      })
+
+      it('loads configuration from different module rather than nyc.config.js', function (done) {
+        var args = [bin, '--all', '--nycrc-path', './nycrc-config.js', process.execPath, './index.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: cwd,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          // should be 1 due to coverage check
+          code.should.equal(1)
+          stdout.should.match(/SF:.*index\.js/)
+          stdout.should.match(/SF:.*ignore\.js/)
+          stdout.should.match(/SF:.*nyc\.config\.js/)
+          stdout.should.match(/SF:.*nycrc-config\.js/)
+          done()
+        })
+      })
+
+      it('allows nyc.config.js configuration to be overridden with command line args', function (done) {
+        var args = [bin, '--all', '--exclude=foo.js', process.execPath, './index.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: cwd,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdout.should.match(/SF:.*index\.js/)
+          stdout.should.match(/SF:.*ignore\.js/)
+          stdout.should.match(/SF:.*nyc\.config\.js/)
+          stdout.should.match(/SF:.*nycrc-config\.js/)
+          done()
+        })
+      })
+    })
+
     describe('.nycrc', function () {
       var cwd = path.resolve(fixturesCLI, './nycrc')
 
