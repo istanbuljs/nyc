@@ -216,7 +216,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     if (stats.isDirectory()) {
       this.walkAllFiles(input, visitor)
     } else {
-      visitor(path.resolve(input), path.basename(input))
+      visitor(path.resolve(input), input)
     }
   } catch (err) {
     return cb(err)
