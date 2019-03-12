@@ -192,20 +192,18 @@ NYC.prototype.addAllFiles = function () {
 
 NYC.prototype.instrumentAllFiles = function (input, output, cb) {
   const visitor = (filename, singleFile = false) => {
-    const inputPath = path.resolve(this.cwd, input, filename)
-    const inCode = fs.readFileSync(inputPath, 'utf-8')
+    const inFile = path.resolve(input, filename)
+    const inCode = fs.readFileSync(inFile, 'utf-8')
 
     const extname = path.extname(filename).toLowerCase()
-    const transform = this.transforms[extname] || false
-    const outCode = (transform)
-      ? transform(inCode, { filename: `./${path.relative(this.cwd, inputPath)}` })
-      : inCode
+    const transform = this.transforms[extname] || (code => code)
+    const outCode = transform(inCode, { filename: inFile })
 
     if (output) {
-      const subpath = singleFile || path.relative(input, path.resolve(input, filename))
-      const outputPath = path.resolve(this.cwd, output, subpath)
-      mkdirp.sync(path.dirname(outputPath))
-      fs.writeFileSync(outputPath, outCode, 'utf-8')
+      const subPath = singleFile || path.relative(input, path.resolve(input, filename))
+      const outFile = path.resolve(output, subPath)
+      mkdirp.sync(path.dirname(outFile))
+      fs.writeFileSync(outFile, outCode, 'utf-8')
     } else {
       console.log(outCode)
     }
@@ -214,12 +212,12 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
   this._loadAdditionalModules()
 
   try {
-    const inputPath = path.resolve(this.cwd, input)
-    const stats = fs.lstatSync(inputPath)
+    const stats = fs.lstatSync(input)
     if (stats.isDirectory()) {
-      this.walkAllFiles(inputPath, visitor)
+      this.walkAllFiles(input, visitor)
     } else {
-      visitor(inputPath, path.basename(inputPath))
+      const inputPath = path.resolve('.', input)
+      visitor(inputPath, path.basename(input))
     }
   } catch (err) {
     return cb(err)
