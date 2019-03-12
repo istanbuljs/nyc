@@ -191,8 +191,9 @@ NYC.prototype.addAllFiles = function () {
 }
 
 NYC.prototype.instrumentAllFiles = function (input, output, cb) {
-  const visitor = (filename, singleFile = false) => {
-    const inFile = path.resolve(input, filename)
+  let inputDir = '.' + path.sep
+  const visitor = filename => {
+    const inFile = path.resolve(inputDir, filename)
     const inCode = fs.readFileSync(inFile, 'utf-8')
 
     const extname = path.extname(filename).toLowerCase()
@@ -200,8 +201,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     const outCode = transform(inCode, { filename: inFile })
 
     if (output) {
-      const subPath = singleFile || path.relative(input, path.resolve(input, filename))
-      const outFile = path.resolve(output, subPath)
+      const outFile = path.resolve(output, filename)
       mkdirp.sync(path.dirname(outFile))
       fs.writeFileSync(outFile, outCode, 'utf-8')
     } else {
@@ -214,9 +214,10 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
   try {
     const stats = fs.lstatSync(input)
     if (stats.isDirectory()) {
+      inputDir = input
       this.walkAllFiles(input, visitor)
     } else {
-      visitor(path.resolve(input), input)
+      visitor(input)
     }
   } catch (err) {
     return cb(err)
