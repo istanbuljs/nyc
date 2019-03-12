@@ -584,6 +584,10 @@ describe('the nyc cli', function () {
     })
 
     describe('output folder specified', function () {
+      afterEach(function () {
+        rimraf.sync(path.resolve(fixturesCLI, 'output'))
+      })
+
       it('works in directories without a package.json', function (done) {
         var args = [bin, 'instrument', './input-dir', './output-dir']
 
