@@ -192,7 +192,7 @@ NYC.prototype.addAllFiles = function () {
 
 NYC.prototype.instrumentAllFiles = function (input, output, cb) {
   const visitor = (filename, singleFile = false) => {
-    const inFile = path.resolve(input, filename)
+    const inFile = path.resolve(this.cwd, input, filename)
     const inCode = fs.readFileSync(inFile, 'utf-8')
 
     const extname = path.extname(filename).toLowerCase()
@@ -201,7 +201,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
 
     if (output) {
       const subPath = singleFile || path.relative(input, path.resolve(input, filename))
-      const outFile = path.resolve(output, subPath)
+      const outFile = path.resolve(this.cwd, output, subPath)
       mkdirp.sync(path.dirname(outFile))
       fs.writeFileSync(outFile, outCode, 'utf-8')
     } else {
@@ -212,12 +212,12 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
   this._loadAdditionalModules()
 
   try {
-    const stats = fs.lstatSync(input)
+    const inputPath = path.resolve(this.cwd, input)
+    const stats = fs.lstatSync(inputPath)
     if (stats.isDirectory()) {
-      this.walkAllFiles(input, visitor)
+      this.walkAllFiles(inputPath, visitor)
     } else {
-      const inputPath = path.resolve('.', input)
-      visitor(inputPath, path.basename(input))
+      visitor(inputPath, path.basename(inputPath))
     }
   } catch (err) {
     return cb(err)
