@@ -589,7 +589,7 @@ describe('the nyc cli', function () {
       })
 
       it('works in directories without a package.json', function (done) {
-        var args = [bin, 'instrument', './input-dir', './output-dir']
+        var args = [bin, 'instrument', './input-dir', '../output']
 
         var subdir = path.resolve(fixturesCLI, 'subdir')
         var proc = spawn(process.execPath, args, {
@@ -599,7 +599,7 @@ describe('the nyc cli', function () {
 
         proc.on('exit', function (code) {
           code.should.equal(0)
-          var target = path.resolve(subdir, 'output-dir', 'index.js')
+          var target = path.resolve(subdir, '../output', 'index.js')
           fs.readFileSync(target, 'utf8')
             .should.match(/console.log\('Hello, World!'\)/)
           done()
@@ -612,7 +612,7 @@ describe('the nyc cli', function () {
           'instrument',
           '--exit-on-error',
           './input-dir',
-          './output-dir'
+          '../output'
         ]
 
         var subdir = path.resolve(fixturesCLI, 'subdir')

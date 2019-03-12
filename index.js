@@ -216,13 +216,12 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     if (stats.isDirectory()) {
       this.walkAllFiles(input, visitor)
     } else {
-      const inputPath = path.resolve('.', input)
-      visitor(inputPath, path.basename(input))
+      visitor(path.resolve(input), path.basename(input))
     }
   } catch (err) {
     return cb(err)
   }
-  return cb()
+  cb()
 }
 
 NYC.prototype.walkAllFiles = function (dir, visitor) {
