@@ -3,7 +3,7 @@
 require('chai').should()
 require('tap').mochaGlobals()
 
-const processArgs = require('../lib/process-args')
+const processArgs = require('../self-coverage/lib/process-args')
 
 describe('process-args', function () {
   describe('hideInstrumenterArgs', function () {
