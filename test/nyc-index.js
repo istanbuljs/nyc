@@ -101,9 +101,9 @@ describe('nyc', function () {
       ]))
 
       // nyc always excludes "node_modules/**"
-      nyc.exclude.shouldInstrument('/cwd/foo', 'foo').should.equal(true)
-      nyc.exclude.shouldInstrument('/cwd/node_modules/bar', 'node_modules/bar').should.equal(false)
-      nyc.exclude.shouldInstrument('/cwd/foo/node_modules/bar', 'foo/node_modules/bar').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/foo.js', 'foo.js').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/node_modules/bar.js', 'node_modules/bar.js').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/foo/node_modules/bar.js', 'foo/node_modules/bar.js').should.equal(false)
       nyc.exclude.shouldInstrument('/cwd/test.js', 'test.js').should.equal(false)
       nyc.exclude.shouldInstrument('/cwd/testfoo.js', 'testfoo.js').should.equal(true)
       nyc.exclude.shouldInstrument('/cwd/test-foo.js', 'test-foo.js').should.equal(false)
@@ -118,22 +118,22 @@ describe('nyc', function () {
       var nyc = new NYC(configUtil.buildYargs(fixtures).parse())
 
       // fixtures/package.json configures excludes: "blarg", "blerg"
-      nyc.exclude.shouldInstrument('blarg', 'blarg').should.equal(false)
+      nyc.exclude.shouldInstrument('blarg.js', 'blarg.js').should.equal(false)
       nyc.exclude.shouldInstrument('blarg/foo.js', 'blarg/foo.js').should.equal(false)
-      nyc.exclude.shouldInstrument('blerg', 'blerg').should.equal(false)
-      nyc.exclude.shouldInstrument('./blerg', './blerg').should.equal(false)
-      nyc.exclude.shouldInstrument('./blerg', '.\\blerg').should.equal(false)
+      nyc.exclude.shouldInstrument('blerg.js', 'blerg.js').should.equal(false)
+      nyc.exclude.shouldInstrument('./blerg.js', './blerg.js').should.equal(false)
+      nyc.exclude.shouldInstrument('./blerg.js', '.\\blerg.js').should.equal(false)
     })
 
     it('should exclude outside of the current working directory', function () {
       var nyc = new NYC(configUtil.buildYargs('/cwd/foo/').parse())
-      nyc.exclude.shouldInstrument('/cwd/bar', '../bar').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/bar.js', '../bar.js').should.equal(false)
     })
 
     it('should not exclude if the current working directory is inside node_modules', function () {
       var nyc = new NYC(configUtil.buildYargs('/cwd/node_modules/foo/').parse())
-      nyc.exclude.shouldInstrument('/cwd/node_modules/foo/bar', './bar').should.equal(true)
-      nyc.exclude.shouldInstrument('/cwd/node_modules/foo/bar', '.\\bar').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/node_modules/foo/bar.js', './bar.js').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/node_modules/foo/bar.js', '.\\bar.js').should.equal(true)
     })
 
     it('allows files to be explicitly included, rather than excluded', function () {
