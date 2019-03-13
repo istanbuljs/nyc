@@ -2,17 +2,12 @@
 
 require('source-map-support').install({ hookRequire: true })
 
+const fs = require('fs')
 const _ = require('lodash')
 const ap = require('any-path')
-const configUtil = require('../lib/config-util')
-const fs = require('fs')
 
-let NYC
-try {
-  NYC = require('../index.covered.js')
-} catch (e) {
-  NYC = require('../')
-}
+const configUtil = require('../self-coverage/lib/config-util')
+const NYC = require('../self-coverage')
 // we test exit handlers in nyc-integration.js.
 NYC.prototype._wrapExit = () => {}
 
@@ -21,11 +16,13 @@ const rimraf = require('rimraf')
 const isWindows = require('is-windows')()
 const spawn = require('child_process').spawn
 const fixtures = path.resolve(__dirname, './fixtures')
-const bin = path.resolve(__dirname, '../bin/nyc')
+const bin = path.resolve(__dirname, '../self-coverage/bin/nyc')
 const resetState = require('./lib/reset-state')
 
 require('chai').should()
 require('tap').mochaGlobals()
+
+const transpileHook = path.resolve(process.cwd(), './test/fixtures/transpile-hook')
 
 describe('nyc', function () {
   beforeEach(resetState)
@@ -392,7 +389,7 @@ describe('nyc', function () {
         'utf-8'
       )
 
-      var nyc = (new NYC(configUtil.buildYargs(fixtures).parse(['--require', './test/fixtures/transpile-hook'])))
+      var nyc = (new NYC(configUtil.buildYargs(fixtures).parse(['--require', transpileHook])))
       nyc.reset()
       nyc.addAllFiles()
 
@@ -418,7 +415,7 @@ describe('nyc', function () {
       )
 
       var nyc = (new NYC(configUtil.buildYargs(fixtures).parse([
-        '--require=./test/fixtures/transpile-hook',
+        `--require=${transpileHook}`,
         '--extension=.do-not-transpile',
         '--include=needs-transpile.do-not-transpile'
       ])))
@@ -438,7 +435,7 @@ describe('nyc', function () {
     )
 
     var nyc = (new NYC(configUtil.buildYargs(fixtures).parse([
-      '--require=./test/fixtures/transpile-hook',
+      `--require=${transpileHook}`,
       '--extension=.whatever'
     ])))
 

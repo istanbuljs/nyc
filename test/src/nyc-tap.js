@@ -2,12 +2,12 @@
 
 require('source-map-support').install({ hookRequire: true })
 
+const fs = require('fs')
 const _ = require('lodash')
 const ap = require('any-path')
-const configUtil = require('../../lib/config-util')
-const fs = require('fs')
 const enableCache = false
 
+const configUtil = require('../../self-coverage/lib/config-util')
 const _NYC = require('../../self-coverage')
 
 function NYC (opts) {
