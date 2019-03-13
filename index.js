@@ -212,10 +212,11 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
   this._loadAdditionalModules()
 
   try {
-    const stats = fs.lstatSync(input)
+    const inputPath = path.resolve(this.cwd, input)
+    const stats = fs.lstatSync(inputPath)
     if (stats.isDirectory()) {
-      inputDir = input
-      this.walkAllFiles(input, visitor)
+      inputDir = inputPath
+      this.walkAllFiles(inputPath, visitor)
     } else {
       visitor(input)
     }
