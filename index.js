@@ -42,6 +42,7 @@ function NYC (config) {
   this._reportDir = config.reportDir || 'coverage'
   this._sourceMap = typeof config.sourceMap === 'boolean' ? config.sourceMap : true
   this._showProcessTree = config.showProcessTree || false
+  this._buildProcessTree = this._showProcessTree || config.buildProcessTree
   this._eagerInstantiation = config.eager || false
   this.cwd = config.cwd || process.cwd()
   this.reporter = arrify(config.reporter || 'text')
@@ -325,7 +326,7 @@ NYC.prototype.createTempDirectory = function () {
   mkdirp.sync(this.tempDirectory())
   if (this.cache) mkdirp.sync(this.cacheDirectory)
 
-  if (this._showProcessTree) {
+  if (this._buildProcessTree) {
     mkdirp.sync(this.processInfoDirectory())
   }
 }
@@ -384,7 +385,7 @@ NYC.prototype.writeCoverageFile = function () {
     'utf-8'
   )
 
-  if (!this._showProcessTree) {
+  if (!this._buildProcessTree) {
     return
   }
 
