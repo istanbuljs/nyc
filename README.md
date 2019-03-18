@@ -203,9 +203,6 @@ The *default* project root directory is the first directory found that contains 
 If nyc fails to find a directory containing a `package.json` file, it will use current working directory.
 You can change the project root directory with the `--cwd` option.
 
-**Note:** nyc stanza configuration is taken from the `package.json` file in the *default* project root directory.
-Default configuration files must also be in the *default* project root directory, e.g. `.nycrc`, `.nycrc.json`, `nyc.config.js`.
-
 nyc uses the project root directory when:
  * looking for source files to cover
  * creating globs for include and exclude rules during file selection
