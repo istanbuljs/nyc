@@ -7,7 +7,6 @@ const cachingTransform = require('caching-transform')
 const util = require('util')
 const findCacheDir = require('find-cache-dir')
 const fs = require('fs')
-const glob = require('glob')
 const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
@@ -50,10 +49,16 @@ function NYC (config) {
   this.cacheDirectory = (config.cacheDir && path.resolve(config.cacheDir)) || findCacheDir({ name: 'nyc', cwd: this.cwd })
   this.cache = Boolean(this.cacheDirectory && config.cache)
 
+  this.extensions = arrify(config.extension)
+    .concat('.js')
+    .map(ext => ext.toLowerCase())
+    .filter((item, pos, arr) => arr.indexOf(item) === pos)
+
   this.exclude = testExclude({
     cwd: this.cwd,
     include: config.include,
-    exclude: config.exclude
+    exclude: config.exclude,
+    extension: this.extensions
   })
 
   this.sourceMaps = new SourceMaps({
@@ -64,17 +69,10 @@ function NYC (config) {
   // require extensions can be provided as config in package.json.
   this.require = arrify(config.require)
 
-  this.extensions = arrify(config.extension).concat('.js').map(function (ext) {
-    return ext.toLowerCase()
-  }).filter(function (item, pos, arr) {
-    // avoid duplicate extensions
-    return arr.indexOf(item) === pos
-  })
-
-  this.transforms = this.extensions.reduce(function (transforms, ext) {
+  this.transforms = this.extensions.reduce((transforms, ext) => {
     transforms[ext] = this._createTransform(ext)
     return transforms
-  }.bind(this), {})
+  }, {})
 
   this.hookRequire = config.hookRequire
   this.hookRunInContext = config.hookRunInContext
@@ -227,14 +225,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
 }
 
 NYC.prototype.walkAllFiles = function (dir, visitor) {
-  var pattern = null
-  if (this.extensions.length === 1) {
-    pattern = '**/*' + this.extensions[0]
-  } else {
-    pattern = '**/*{' + this.extensions.join() + '}'
-  }
-
-  glob.sync(pattern, { cwd: dir, nodir: true, ignore: this.exclude.exclude }).forEach(function (filename) {
+  this.exclude.globSync(dir).forEach(filename => {
     visitor(filename)
   })
 }

@@ -9,8 +9,8 @@
   },
   "nyc": {
     "exclude": [
-      "**/blarg",
-      "**/blerg"
+      "**/blarg.js",
+      "**/blerg.js"
     ]
   }
 }
