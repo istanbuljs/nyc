@@ -136,7 +136,7 @@ NYC.prototype._createInstrumenter = function () {
     compact: this.config.compact,
     preserveComments: this.config.preserveComments,
     esModules: this.config.esModules,
-    plugins: this.config.plugins
+    plugins: this.config.parserPlugins
   })
 }
 
