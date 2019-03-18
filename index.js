@@ -111,17 +111,10 @@ NYC.prototype._disableCachingTransform = function () {
 }
 
 NYC.prototype._loadAdditionalModules = function () {
-  var _this = this
-  this.require.forEach(function (r) {
-    // first attempt to require the module relative to
-    // the directory being instrumented.
-    var p = resolveFrom.silent(_this.cwd, r)
-    if (p) {
-      require(p)
-      return
-    }
-    // now try other locations, .e.g, the nyc node_modules folder.
-    require(r)
+  this.require.forEach(requireModule => {
+    // Attempt to require the module relative to the directory being instrumented.
+    // Then try other locations, e.g. the nyc node_modules folder.
+    require(resolveFrom.silent(this.cwd, requireModule) || requireModule)
   })
 }
 
@@ -130,7 +123,7 @@ NYC.prototype.instrumenter = function () {
 }
 
 NYC.prototype._createInstrumenter = function () {
-  return this._instrumenterLib(this.cwd, {
+  return this._instrumenterLib({
     ignoreClassMethods: [].concat(this.config.ignoreClassMethod).filter(a => a),
     produceSourceMap: this.config.produceSourceMap,
     compact: this.config.compact,
@@ -141,15 +134,9 @@ NYC.prototype._createInstrumenter = function () {
 }
 
 NYC.prototype.addFile = function (filename) {
-  var relFile = path.relative(this.cwd, filename)
-  var source = this._readTranspiledSource(path.resolve(this.cwd, filename))
-  var instrumentedSource = this._maybeInstrumentSource(source, filename, relFile)
-
-  return {
-    instrument: !!instrumentedSource,
-    relFile: relFile,
-    content: instrumentedSource || source
-  }
+  const relFile = path.relative(this.cwd, filename)
+  const source = this._readTranspiledSource(path.resolve(this.cwd, filename))
+  this._maybeInstrumentSource(source, filename, relFile)
 }
 
 NYC.prototype._readTranspiledSource = function (filePath) {
@@ -286,8 +273,8 @@ NYC.prototype._handleJs = function (code, options) {
 }
 
 NYC.prototype._addHook = function (type) {
-  var handleJs = this._handleJs.bind(this)
-  var dummyMatcher = function () { return true } // we do all processing in transformer
+  const handleJs = this._handleJs.bind(this)
+  const dummyMatcher = () => true // we do all processing in transformer
   libHook['hook' + type](dummyMatcher, handleJs, { extensions: this.extensions })
 }
 
@@ -328,13 +315,9 @@ NYC.prototype.reset = function () {
 }
 
 NYC.prototype._wrapExit = function () {
-  var _this = this
-
   // we always want to write coverage
   // regardless of how the process exits.
-  onExit(function () {
-    _this.writeCoverageFile()
-  }, { alwaysLast: true })
+  onExit(() => { this.writeCoverageFile() }, { alwaysLast: true })
 }
 
 NYC.prototype.wrap = function (bin) {
