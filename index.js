@@ -317,7 +317,9 @@ NYC.prototype.reset = function () {
 NYC.prototype._wrapExit = function () {
   // we always want to write coverage
   // regardless of how the process exits.
-  onExit(() => { this.writeCoverageFile() }, { alwaysLast: true })
+  onExit(() => {
+    this.writeCoverageFile()
+  }, { alwaysLast: true })
 }
 
 NYC.prototype.wrap = function (bin) {
