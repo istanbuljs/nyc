@@ -134,9 +134,8 @@ NYC.prototype._createInstrumenter = function () {
 }
 
 NYC.prototype.addFile = function (filename) {
-  const relFile = path.relative(this.cwd, filename)
-  const source = this._readTranspiledSource(path.resolve(this.cwd, filename))
-  this._maybeInstrumentSource(source, filename, relFile)
+  const source = this._readTranspiledSource(filename)
+  this._maybeInstrumentSource(source, filename)
 }
 
 NYC.prototype._readTranspiledSource = function (filePath) {
@@ -154,23 +153,20 @@ NYC.prototype._readTranspiledSource = function (filePath) {
 }
 
 NYC.prototype.addAllFiles = function () {
-  var _this = this
+  const visitor = relFile => {
+    const filename = path.resolve(this.cwd, relFile)
+    this.addFile(filename)
+    const coverage = coverageFinder()
+    const lastCoverage = this.instrumenter().lastFileCoverage()
+    if (lastCoverage) {
+      coverage[lastCoverage.path] = lastCoverage
+    }
+  }
 
   this._loadAdditionalModules()
 
   this.fakeRequire = true
-  this.walkAllFiles(this.cwd, function (filename) {
-    filename = path.resolve(_this.cwd, filename)
-    if (_this.exclude.shouldInstrument(filename)) {
-      _this.addFile(filename)
-      var coverage = coverageFinder()
-      var lastCoverage = _this.instrumenter().lastFileCoverage()
-      if (lastCoverage) {
-        filename = lastCoverage.path
-        coverage[filename] = lastCoverage
-      }
-    }
-  })
+  this.walkAllFiles(this.cwd, visitor)
   this.fakeRequire = false
 
   this.writeCoverageFile()
@@ -178,16 +174,13 @@ NYC.prototype.addAllFiles = function () {
 
 NYC.prototype.instrumentAllFiles = function (input, output, cb) {
   let inputDir = '.' + path.sep
-  const visitor = filename => {
-    const inFile = path.resolve(inputDir, filename)
+  const visitor = relFile => {
+    const inFile = path.resolve(inputDir, relFile)
     const inCode = fs.readFileSync(inFile, 'utf-8')
-
-    const extname = path.extname(filename).toLowerCase()
-    const transform = this.transforms[extname] || (code => code)
-    const outCode = transform(inCode, { filename: inFile })
+    const outCode = this._transform(inCode, inFile) || inCode
 
     if (output) {
-      const outFile = path.resolve(output, filename)
+      const outFile = path.resolve(output, relFile)
       mkdirp.sync(path.dirname(outFile))
       fs.writeFileSync(outFile, outCode, 'utf-8')
     } else {
@@ -212,26 +205,22 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
 }
 
 NYC.prototype.walkAllFiles = function (dir, visitor) {
-  this.exclude.globSync(dir).forEach(filename => {
-    visitor(filename)
+  this.exclude.globSync(dir).forEach(relFile => {
+    visitor(relFile)
   })
 }
 
-NYC.prototype._maybeInstrumentSource = function (code, filename, relFile) {
-  var instrument = this.exclude.shouldInstrument(filename, relFile)
-  if (!instrument) {
-    return null
-  }
+NYC.prototype._transform = function (code, filename) {
+  const extname = path.extname(filename).toLowerCase()
+  const transform = this.transforms[extname] || (() => null)
 
-  var ext, transform
-  for (ext in this.transforms) {
-    if (filename.toLowerCase().substr(-ext.length) === ext) {
-      transform = this.transforms[ext]
-      break
-    }
-  }
+  return transform(code, { filename: filename })
+}
 
-  return transform ? transform(code, { filename: filename, relFile: relFile }) : null
+NYC.prototype._maybeInstrumentSource = function (code, filename) {
+  const instrument = this.exclude.shouldInstrument(filename)
+
+  return (instrument) ? this._transform(code, filename) : null
 }
 
 NYC.prototype._transformFactory = function (cacheDir) {
@@ -265,11 +254,9 @@ NYC.prototype._transformFactory = function (cacheDir) {
 }
 
 NYC.prototype._handleJs = function (code, options) {
-  var filename = options.filename
-  var relFile = path.relative(this.cwd, filename)
   // ensure the path has correct casing (see istanbuljs/nyc#269 and nodejs/node#6624)
-  filename = path.resolve(this.cwd, relFile)
-  return this._maybeInstrumentSource(code, filename, relFile) || code
+  const filename = path.resolve(this.cwd, options.filename)
+  return this._maybeInstrumentSource(code, filename) || code
 }
 
 NYC.prototype._addHook = function (type) {
@@ -382,7 +369,7 @@ function coverageFinder () {
 }
 
 NYC.prototype.getCoverageMapFromAllCoverageFiles = function (baseDirectory) {
-  var map = libCoverage.createCoverageMap({})
+  const map = libCoverage.createCoverageMap({})
 
   this.eachReport(undefined, (report) => {
     map.merge(report)
