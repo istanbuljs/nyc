@@ -10,7 +10,7 @@ var _ = require('lodash')
 var rimraf = require('rimraf')
 var sourceMapFixtures = require('source-map-fixtures')
 
-var NYC = require('../../')
+var NYC = require('../../self-coverage')
 
 // Load source map fixtures.
 var fixtures = {

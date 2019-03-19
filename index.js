@@ -7,7 +7,6 @@ const cachingTransform = require('caching-transform')
 const util = require('util')
 const findCacheDir = require('find-cache-dir')
 const fs = require('fs')
-const glob = require('glob')
 const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
@@ -42,6 +41,7 @@ function NYC (config) {
   this._reportDir = config.reportDir || 'coverage'
   this._sourceMap = typeof config.sourceMap === 'boolean' ? config.sourceMap : true
   this._showProcessTree = config.showProcessTree || false
+  this._buildProcessTree = this._showProcessTree || config.buildProcessTree
   this._eagerInstantiation = config.eager || false
   this.cwd = config.cwd || process.cwd()
   this.reporter = arrify(config.reporter || 'text')
@@ -49,10 +49,16 @@ function NYC (config) {
   this.cacheDirectory = (config.cacheDir && path.resolve(config.cacheDir)) || findCacheDir({ name: 'nyc', cwd: this.cwd })
   this.cache = Boolean(this.cacheDirectory && config.cache)
 
+  this.extensions = arrify(config.extension)
+    .concat('.js')
+    .map(ext => ext.toLowerCase())
+    .filter((item, pos, arr) => arr.indexOf(item) === pos)
+
   this.exclude = testExclude({
     cwd: this.cwd,
     include: config.include,
-    exclude: config.exclude
+    exclude: config.exclude,
+    extension: this.extensions
   })
 
   this.sourceMaps = new SourceMaps({
@@ -63,17 +69,10 @@ function NYC (config) {
   // require extensions can be provided as config in package.json.
   this.require = arrify(config.require)
 
-  this.extensions = arrify(config.extension).concat('.js').map(function (ext) {
-    return ext.toLowerCase()
-  }).filter(function (item, pos, arr) {
-    // avoid duplicate extensions
-    return arr.indexOf(item) === pos
-  })
-
-  this.transforms = this.extensions.reduce(function (transforms, ext) {
+  this.transforms = this.extensions.reduce((transforms, ext) => {
     transforms[ext] = this._createTransform(ext)
     return transforms
-  }.bind(this), {})
+  }, {})
 
   this.hookRequire = config.hookRequire
   this.hookRunInContext = config.hookRunInContext
@@ -112,17 +111,10 @@ NYC.prototype._disableCachingTransform = function () {
 }
 
 NYC.prototype._loadAdditionalModules = function () {
-  var _this = this
-  this.require.forEach(function (r) {
-    // first attempt to require the module relative to
-    // the directory being instrumented.
-    var p = resolveFrom.silent(_this.cwd, r)
-    if (p) {
-      require(p)
-      return
-    }
-    // now try other locations, .e.g, the nyc node_modules folder.
-    require(r)
+  this.require.forEach(requireModule => {
+    // Attempt to require the module relative to the directory being instrumented.
+    // Then try other locations, e.g. the nyc node_modules folder.
+    require(resolveFrom.silent(this.cwd, requireModule) || requireModule)
   })
 }
 
@@ -131,26 +123,20 @@ NYC.prototype.instrumenter = function () {
 }
 
 NYC.prototype._createInstrumenter = function () {
-  return this._instrumenterLib(this.cwd, {
+  return this._instrumenterLib({
     ignoreClassMethods: [].concat(this.config.ignoreClassMethod).filter(a => a),
     produceSourceMap: this.config.produceSourceMap,
     compact: this.config.compact,
     preserveComments: this.config.preserveComments,
     esModules: this.config.esModules,
-    plugins: this.config.plugins
+    plugins: this.config.parserPlugins
   })
 }
 
 NYC.prototype.addFile = function (filename) {
-  var relFile = path.relative(this.cwd, filename)
-  var source = this._readTranspiledSource(path.resolve(this.cwd, filename))
-  var instrumentedSource = this._maybeInstrumentSource(source, filename, relFile)
-
-  return {
-    instrument: !!instrumentedSource,
-    relFile: relFile,
-    content: instrumentedSource || source
-  }
+  const relFile = path.relative(this.cwd, filename)
+  const source = this._readTranspiledSource(path.resolve(this.cwd, filename))
+  this._maybeInstrumentSource(source, filename, relFile)
 }
 
 NYC.prototype._readTranspiledSource = function (filePath) {
@@ -227,14 +213,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
 }
 
 NYC.prototype.walkAllFiles = function (dir, visitor) {
-  var pattern = null
-  if (this.extensions.length === 1) {
-    pattern = '**/*' + this.extensions[0]
-  } else {
-    pattern = '**/*{' + this.extensions.join() + '}'
-  }
-
-  glob.sync(pattern, { cwd: dir, nodir: true, ignore: this.exclude.exclude }).forEach(function (filename) {
+  this.exclude.globSync(dir).forEach(filename => {
     visitor(filename)
   })
 }
@@ -295,8 +274,8 @@ NYC.prototype._handleJs = function (code, options) {
 }
 
 NYC.prototype._addHook = function (type) {
-  var handleJs = this._handleJs.bind(this)
-  var dummyMatcher = function () { return true } // we do all processing in transformer
+  const handleJs = this._handleJs.bind(this)
+  const dummyMatcher = () => true // we do all processing in transformer
   libHook['hook' + type](dummyMatcher, handleJs, { extensions: this.extensions })
 }
 
@@ -326,7 +305,7 @@ NYC.prototype.createTempDirectory = function () {
   mkdirp.sync(this.tempDirectory())
   if (this.cache) mkdirp.sync(this.cacheDirectory)
 
-  if (this._showProcessTree) {
+  if (this._buildProcessTree) {
     mkdirp.sync(this.processInfoDirectory())
   }
 }
@@ -337,12 +316,10 @@ NYC.prototype.reset = function () {
 }
 
 NYC.prototype._wrapExit = function () {
-  var _this = this
-
   // we always want to write coverage
   // regardless of how the process exits.
-  onExit(function () {
-    _this.writeCoverageFile()
+  onExit(() => {
+    this.writeCoverageFile()
   }, { alwaysLast: true })
 }
 
@@ -385,7 +362,7 @@ NYC.prototype.writeCoverageFile = function () {
     'utf-8'
   )
 
-  if (!this._showProcessTree) {
+  if (!this._buildProcessTree) {
     return
   }
 

@@ -971,6 +971,47 @@ describe('the nyc cli', function () {
     })
   })
 
+  describe('--build-process-tree', function () {
+    it('builds, but does not display, a tree of spawned processes', function (done) {
+      var args = [bin, '--build-process-tree', process.execPath, 'selfspawn-fibonacci.js', '5']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.setEncoding('utf8')
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdout.should.not.match(new RegExp('└─'))
+        fs.statSync(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'))
+        done()
+      })
+    })
+
+    it('doesn’t create the temp directory for process info files when not present', function (done) {
+      var args = [bin, process.execPath, 'selfspawn-fibonacci.js', '5']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      proc.on('exit', function (code) {
+        code.should.equal(0)
+        fs.stat(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'), function (err, stat) {
+          err.code.should.equal('ENOENT')
+          done()
+        })
+      })
+    })
+  })
+
   describe('--temp-dir', function () {
     beforeEach(() => {
       rimraf.sync(path.resolve(fixturesCLI, '.nyc_output'))
