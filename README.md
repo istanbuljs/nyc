@@ -195,6 +195,24 @@ Install custom reporters as a development dependency and you can use the `--repo
 nyc report --reporter=<custom-reporter-name>
 ```
 
+## Setting the project root directory
+
+nyc runs a lot of file system operations relative to the project root directory.
+During startup nyc will look for the *default* project root directory.
+The *default* project root directory is the first directory found that contains a `package.json` file when searching from the current working directory up.
+If nyc fails to find a directory containing a `package.json` file, it will use current working directory.
+You can change the project root directory with the `--cwd` option.
+
+nyc uses the project root directory when:
+ * looking for source files to cover
+ * creating globs for include and exclude rules during file selection
+ * loading custom require hooks from the `require` array
+
+nyc may create artefact directories within the project root, such as:
+  * the report directory, `<project-root>/coverage`
+  * the cache directory, `<project-root>/node_modules/.cache/nyc`
+  * the temp directory, `<project-root>/.nyc_output`
+
 ## Selecting files for coverage
 
 By default, nyc only collects coverage for source files that are visited during a test.
@@ -216,7 +234,6 @@ We use the following process to remove files from consideration:
  1. Limit the set of covered files to those files in paths listed in the `include` array.
  2. Remove any files that are found in the `exclude` array.
  3. Restore any exclude negated files that have been excluded in the second step.
-
 
 ### Using include and exclude arrays
 

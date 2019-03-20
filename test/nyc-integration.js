@@ -11,6 +11,7 @@ const fs = require('fs')
 const glob = require('glob')
 const isWindows = require('is-windows')()
 const rimraf = require('rimraf')
+const makeDir = require('make-dir')
 const spawn = require('child_process').spawn
 const si = require('strip-indent')
 
@@ -580,6 +581,12 @@ describe('the nyc cli', function () {
           done()
         })
       })
+    })
+
+    describe('output folder specified', function () {
+      afterEach(function () {
+        rimraf.sync(path.resolve(fixturesCLI, 'output'))
+      })
 
       it('works in directories without a package.json', function (done) {
         var args = [bin, 'instrument', './input-dir', './output-dir']
@@ -618,12 +625,6 @@ describe('the nyc cli', function () {
           code.should.equal(1)
           done()
         })
-      })
-    })
-
-    describe('output folder specified', function () {
-      afterEach(function () {
-        rimraf.sync(path.resolve(fixturesCLI, 'output'))
       })
 
       it('allows a single file to be instrumented', function (done) {
@@ -800,6 +801,88 @@ describe('the nyc cli', function () {
           })
         })
       })
+
+      describe('delete', function () {
+        beforeEach(function () {
+          makeDir.sync(path.resolve(fixturesCLI, 'output', 'removed-by-clean'))
+        })
+
+        it('cleans the output directory if `--delete` is specified', function (done) {
+          const args = [bin, 'instrument', '--delete', 'true', './', './output']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(0)
+            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+            subdirExists.should.equal(true)
+            const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+            files.should.not.include('removed-by-clean')
+            done()
+          })
+        })
+
+        it('does not clean the output directory by default', function (done) {
+          const args = [bin, 'instrument', './', './output']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(0)
+            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+            subdirExists.should.equal(true)
+            const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+            files.should.include('removed-by-clean')
+            done()
+          })
+        })
+
+        it('aborts if trying to clean process.cwd()', function (done) {
+          const args = [bin, 'instrument', '--delete', './', './']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          let stderr = ''
+          proc.stderr.on('data', function (chunk) {
+            stderr += chunk
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(1)
+            stderr.should.include('nyc instrument failed: attempt to delete')
+            done()
+          })
+        })
+
+        it('aborts if trying to clean outside working directory', function (done) {
+          const args = [bin, 'instrument', '--delete', './', '../']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          let stderr = ''
+          proc.stderr.on('data', function (chunk) {
+            stderr += chunk
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(1)
+            stderr.should.include('nyc instrument failed: attempt to delete')
+            done()
+          })
+        })
+      })
     })
   })
 
@@ -908,6 +991,47 @@ describe('the nyc cli', function () {
           '    └──.*selfspawn-fibonacci.js 1\n' +
           '       .* % Lines\n'
         ))
+        done()
+      })
+    })
+
+    it('doesn’t create the temp directory for process info files when not present', function (done) {
+      var args = [bin, process.execPath, 'selfspawn-fibonacci.js', '5']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      proc.on('exit', function (code) {
+        code.should.equal(0)
+        fs.stat(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'), function (err, stat) {
+          err.code.should.equal('ENOENT')
+          done()
+        })
+      })
+    })
+  })
+
+  describe('--build-process-tree', function () {
+    it('builds, but does not display, a tree of spawned processes', function (done) {
+      var args = [bin, '--build-process-tree', process.execPath, 'selfspawn-fibonacci.js', '5']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.setEncoding('utf8')
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdout.should.not.match(new RegExp('└─'))
+        fs.statSync(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'))
         done()
       })
     })
