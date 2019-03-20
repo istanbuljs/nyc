@@ -74,6 +74,7 @@
     "find-cache-dir": "^2.0.0",
     "find-up": "^3.0.0",
     "foreground-child": "^1.5.6",
+    "fs-extra": "^7.0.1",
     "istanbul-lib-coverage": "^2.0.4",
     "istanbul-lib-hook": "^2.0.4",
     "istanbul-lib-instrument": "^3.1.1",

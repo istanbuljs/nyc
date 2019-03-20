@@ -6,7 +6,7 @@ const arrify = require('arrify')
 const cachingTransform = require('caching-transform')
 const util = require('util')
 const findCacheDir = require('find-cache-dir')
-const fs = require('fs')
+const fs = require('fs-extra')
 const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
@@ -200,6 +200,10 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
   try {
     const stats = fs.lstatSync(input)
     if (stats.isDirectory()) {
+      if (output) {
+        fs.copySync(input, output)
+      }
+
       inputDir = input
       this.walkAllFiles(input, visitor)
     } else {
