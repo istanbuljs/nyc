@@ -153,7 +153,10 @@ NYC.prototype._readTranspiledSource = function (filePath) {
 }
 
 NYC.prototype.addAllFiles = function () {
-  const visitor = relFile => {
+  this._loadAdditionalModules()
+
+  this.fakeRequire = true
+  this.walkAllFiles(this.cwd, relFile => {
     const filename = path.resolve(this.cwd, relFile)
     this.addFile(filename)
     const coverage = coverageFinder()
@@ -161,12 +164,7 @@ NYC.prototype.addAllFiles = function () {
     if (lastCoverage) {
       coverage[lastCoverage.path] = lastCoverage
     }
-  }
-
-  this._loadAdditionalModules()
-
-  this.fakeRequire = true
-  this.walkAllFiles(this.cwd, visitor)
+  })
   this.fakeRequire = false
 
   this.writeCoverageFile()
@@ -214,13 +212,15 @@ NYC.prototype._transform = function (code, filename) {
   const extname = path.extname(filename).toLowerCase()
   const transform = this.transforms[extname] || (() => null)
 
-  return transform(code, { filename: filename })
+  return transform(code, { filename })
 }
 
 NYC.prototype._maybeInstrumentSource = function (code, filename) {
-  const instrument = this.exclude.shouldInstrument(filename)
+  if (!this.exclude.shouldInstrument(filename)) {
+    return null
+  }
 
-  return (instrument) ? this._transform(code, filename) : null
+  return this._transform(code, filename)
 }
 
 NYC.prototype._transformFactory = function (cacheDir) {
