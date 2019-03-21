@@ -195,6 +195,18 @@ Install custom reporters as a development dependency and you can use the `--repo
 nyc report --reporter=<custom-reporter-name>
 ```
 
+## Producing instrumented source
+
+nyc can produce a set of instrumented source files, suitable for client side deployment, by running:
+
+```bash
+nyc instrument <input> [output]
+```
+
+Where `input` can be any file or directory within the project root directory.
+The `output` directory is optional and can be located anywhere, if it is not set the instrumented code with be sent to `stdout`.
+
+
 ## Setting the project root directory
 
 nyc runs a lot of file system operations relative to the project root directory.
