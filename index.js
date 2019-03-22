@@ -6,7 +6,9 @@ const arrify = require('arrify')
 const cachingTransform = require('caching-transform')
 const util = require('util')
 const findCacheDir = require('find-cache-dir')
-const fs = require('fs-extra')
+const { copySync } = require('fs-extra')
+const fs = require('fs')
+const glob = require('glob')
 const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
@@ -187,9 +189,11 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     const outCode = transform(inCode, { filename: inFile })
 
     if (output) {
+      const mode = fs.statSync(inFile).mode
       const outFile = path.resolve(output, filename)
       mkdirp.sync(path.dirname(outFile))
-      fs.writeFileSync(outFile, outCode, 'utf-8')
+      fs.writeFileSync(outFile, outCode)
+      fs.chmodSync(outFile, mode)
     } else {
       console.log(outCode)
     }
@@ -200,12 +204,27 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
   try {
     const stats = fs.lstatSync(input)
     if (stats.isDirectory()) {
-      if (output) {
-        fs.copySync(input, output)
+      const globOptions = { dot: true, mark: true, ignore: ['**/.git', '**/.git/**/*'] }
+      const outputPaths = (output) ? glob.sync(`${path.resolve(input)}/**/*`, globOptions) : []
+
+      const partition = (universal, subsetFilter) => {
+        return universal.reduce(([a, aDash], member) => {
+          return subsetFilter(member) ? [[...a, member], aDash] : [a, [...aDash, member]]
+        }, [[], []])
       }
+
+      const [dirs, files] = partition(outputPaths, file => file.endsWith('/'))
 
       inputDir = input
       this.walkAllFiles(input, visitor)
+
+      if (files.length || dirs.length) {
+        dirs.map(file => path.resolve(output, path.relative(input, file)))
+          .forEach(dir => mkdirp.sync(dir))
+
+        files.map(file => path.relative(input, file))
+          .forEach(file => { copySync(path.join(input, file), path.join(output, file), { overwrite: false }) })
+      }
     } else {
       visitor(input)
     }

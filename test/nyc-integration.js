@@ -673,26 +673,6 @@ describe('the nyc cli', function () {
         })
       })
 
-      it('prevents writing output to a sub-dir of the input dir', function (done) {
-        const args = [bin, 'instrument', './', './output']
-
-        const proc = spawn(process.execPath, args, {
-          cwd: fixturesCLI,
-          env: env
-        })
-
-        let stderr = ''
-        proc.stderr.on('data', function (chunk) {
-          stderr += chunk
-        })
-
-        proc.on('close', function (code) {
-          code.should.equal(1)
-          stderr.should.match(/Cannot copy .* to a subdirectory of itself/)
-          done()
-        })
-      })
-
       it('allows a subdirectory to be excluded', function (done) {
         const args = [bin, 'instrument', '--exclude', '**/exclude-me/**', './subdir/input-dir', './output']
 
