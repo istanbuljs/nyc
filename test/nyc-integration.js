@@ -14,6 +14,7 @@ const rimraf = require('rimraf')
 const makeDir = require('make-dir')
 const spawn = require('child_process').spawn
 const si = require('strip-indent')
+const os = require('os')
 
 require('chai').should()
 require('tap').mochaGlobals()
@@ -627,7 +628,9 @@ describe('the nyc cli', function () {
         const inputPath = path.resolve(fixturesCLI, './half-covered.js')
         const inputMode = fs.statSync(inputPath).mode & 0o7777
         const newMode = 0o775
-        fs.chmodSync(inputPath, newMode)
+        if (os.platform !== 'win32') {
+          fs.chmodSync(inputPath, newMode)
+        }
 
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
@@ -640,11 +643,13 @@ describe('the nyc cli', function () {
           files.length.should.equal(1)
           files.should.include('half-covered.js')
 
-          const outputPath = path.resolve(fixturesCLI, 'output', 'half-covered.js')
-          const outputMode = fs.statSync(outputPath).mode & 0o7777
-          outputMode.should.equal(newMode)
+          if (os.platform !== 'win32') {
+            const outputPath = path.resolve(fixturesCLI, 'output', 'half-covered.js')
+            const outputMode = fs.statSync(outputPath).mode & 0o7777
+            outputMode.should.equal(newMode)
 
-          fs.chmodSync(inputPath, inputMode)
+            fs.chmodSync(inputPath, inputMode)
+          }
 
           done()
         })
