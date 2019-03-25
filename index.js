@@ -213,7 +213,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
         }, [[], []])
       }
 
-      const [dirs, files] = partition(outputPaths, file => file.endsWith('/'))
+      const [dirs, files] = partition(outputPaths, filename => filename.endsWith('/'))
 
       inputDir = input
       this.walkAllFiles(input, visitor)
