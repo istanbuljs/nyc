@@ -581,6 +581,26 @@ describe('the nyc cli', function () {
           done()
         })
       })
+
+      it('returns unmodified source if there is no transform', function (done) {
+        const args = [bin, 'instrument', './no-transform/half-covered.xjs']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        let stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdout.should.contain(`var a = 0`)
+          done()
+        })
+      })
     })
 
     describe('output folder specified', function () {
