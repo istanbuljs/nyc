@@ -199,7 +199,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
       this.walkAllFiles(input, visitor)
 
       if (output) {
-        const globOptions = { dot: true, mark: true, ignore: ['**/.git', '**/.git/**/*', `${output}/**/*`] }
+        const globOptions = { dot: true, ignore: ['**/.git', `**/${path.basename(output)}`] }
         glob.sync(`${path.resolve(input)}/*`, globOptions)
           .forEach(src => copySync(src, path.join(output, path.relative(input, src)), { overwrite: false }))
       }

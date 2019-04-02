@@ -693,6 +693,23 @@ describe('the nyc cli', function () {
         })
       })
 
+      it('can instrument the root directory', function (done) {
+        const args = [bin, 'instrument', '.', './output']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          files.should.include('args.js')
+          files.should.include('subdir')
+          done()
+        })
+      })
+
       it('allows a sub-directory of files to be instrumented', function (done) {
         const args = [bin, 'instrument', './subdir/input-dir', './output']
 
