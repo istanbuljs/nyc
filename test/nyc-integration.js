@@ -709,7 +709,7 @@ describe('the nyc cli', function () {
         })
       })
 
-      it('allows a subdirectory to be excluded via nycrc file', function (done) {
+      it('allows a subdirectory to be excluded via .nycrc file', function (done) {
         const args = [bin, 'instrument', '--nycrc-path', './.instrument-nycrc', './subdir/input-dir', './output']
 
         const proc = spawn(process.execPath, args, {

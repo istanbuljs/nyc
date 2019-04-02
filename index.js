@@ -195,26 +195,13 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
   try {
     const stats = fs.lstatSync(input)
     if (stats.isDirectory()) {
-      const globOptions = { dot: true, mark: true, ignore: ['**/.git', '**/.git/**/*'] }
-      const outputPaths = (output) ? glob.sync(`${path.resolve(input)}/**/*`, globOptions) : []
-
-      const partition = (universal, subsetFilter) => {
-        return universal.reduce(([a, aDash], member) => {
-          return subsetFilter(member) ? [[...a, member], aDash] : [a, [...aDash, member]]
-        }, [[], []])
-      }
-
-      const [dirs, files] = partition(outputPaths, filename => filename.endsWith('/'))
-
       inputDir = input
       this.walkAllFiles(input, visitor)
 
-      if (files.length || dirs.length) {
-        dirs.map(file => path.resolve(output, path.relative(input, file)))
-          .forEach(dir => mkdirp.sync(dir))
-
-        files.map(file => path.relative(input, file))
-          .forEach(file => { copySync(path.join(input, file), path.join(output, file), { overwrite: false }) })
+      if (output) {
+        const globOptions = { dot: true, mark: true, ignore: ['**/.git', '**/.git/**/*', `${output}/**/*`] }
+        glob.sync(`${path.resolve(input)}/*`, globOptions)
+          .forEach(src => copySync(src, path.join(output, path.relative(input, src)), { overwrite: false }))
       }
     } else {
       visitor(input)
