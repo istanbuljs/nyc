@@ -197,14 +197,20 @@ nyc report --reporter=<custom-reporter-name>
 
 ## Producing instrumented source
 
-nyc can produce a set of instrumented source files, suitable for client side deployment, by running:
+The nyc `instrument` command can produce a set of instrumented source files, suitable for client side deployment in end to end testing.
+You can create an instrumented version of your source code by running:
 
 ```bash
 nyc instrument <input> [output]
 ```
 
-Where `input` can be any file or directory within the project root directory.
-The `output` directory is optional and can be located anywhere, if it is not set the instrumented code with be sent to `stdout`.
+`<input>` can be any file or directory within the project root directory.
+The `[output]` directory is optional and can be located anywhere, if it is not set the instrumented code will be sent to `stdout`.
+For example, `nyc instrument . ./output` will copy all files from `.` to `./output` and produce instrumented versions of any source files it finds along the way.
+
+Run `nyc instrument --help` to display a list of available command options.
+
+**Note:** `nyc instrument` will not copy the contents of a `.git` folder to the output directory.
 
 
 ## Setting the project root directory
@@ -232,7 +238,7 @@ It does this by watching for files that are `require()`'d during the test.
 When a file is `require()`'d, nyc creates and returns an instrumented version of the source, rather than the original. 
 Only source files that are visited during a test will appear in the coverage report and contribute to coverage statistics.
 
-nyc will instrument all files if the `--all` flag is set.
+nyc will instrument all files if the `--all` flag is set or if running `nyc instrument`.
 In this case all files will appear in the coverage report and contribute to coverage statistics.
 
 nyc will only collect coverage for files that are located under `cwd`, and then only `*.js` files or files with extensions listed in the `extension` array.
@@ -275,8 +281,8 @@ The `exclude` option has the following defaults settings:
 These settings exclude `test` and `__tests__` directories as well as `test.js`, `*.test.js`, and `test-*.js` files.
 Specifying your own exclude property completely replaces these defaults.
 
-**Note:** The exclude list always implicitly contains `**/node_modules/**`, even if not explicitly specified in an overriding `exclude` array.
-To reverse this you must add the negated exclude rule `!**/node_modules/`.
+**Note:** We always add `**/node_modules/**` to the exclude list, even if not specified in the config.
+You can override this by setting the `!**/node_modules/` negated exclude rule.
 
 For example, the following config will collect coverage for every file in the `src` directory regardless of whether it is `require()`'d in a test.
 It will also exclude any files with the extension `.spec.js`.
