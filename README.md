@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/istanbuljs/nyc.svg?branch=master)](https://travis-ci.org/istanbuljs/nyc)
 [![Coverage Status](https://coveralls.io/repos/bcoe/nyc/badge.svg?branch=)](https://coveralls.io/r/bcoe/nyc?branch=master)
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
-[![Windows Tests](https://img.shields.io/appveyor/ci/bcoe/nyc-ilw23/master.svg?label=Windows%20Tests)](https://ci.appveyor.com/project/bcoe/nyc-ilw23)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![community slack](http://devtoolscommunity.herokuapp.com/badge.svg)](http://devtoolscommunity.herokuapp.com)
 
@@ -90,7 +89,7 @@ We recommend using [`babel-plugin-istanbul`] if your project uses the babel tool
   ```json
     {
       "babel": {
-        "presets": ["@babel/env"],
+        "presets": ["@babel/preset-env"],
         "env": {
           "test": {
             "plugins": ["istanbul"]
@@ -196,52 +195,96 @@ Install custom reporters as a development dependency and you can use the `--repo
 nyc report --reporter=<custom-reporter-name>
 ```
 
-## Excluding files
+## Setting the project root directory
 
-You can tell nyc to exclude specific files and directories by adding
-an `nyc.exclude` array to your `package.json`. Each element of
-the array is a glob pattern indicating which paths should be omitted.
+nyc runs a lot of file system operations relative to the project root directory.
+During startup nyc will look for the *default* project root directory.
+The *default* project root directory is the first directory found that contains a `package.json` file when searching from the current working directory up.
+If nyc fails to find a directory containing a `package.json` file, it will use current working directory as the *default* project root directory.
+You can change the project root directory with the `--cwd` option.
+
+nyc uses the project root directory when:
+ * looking for source files to instrument
+ * creating globs for include and exclude rules during file selection
+ * loading custom require hooks from the `require` array
+
+nyc may create artefact directories within the project root, such as:
+  * the report directory, `<project-root>/coverage`
+  * the cache directory, `<project-root>/node_modules/.cache/nyc`
+  * the temp directory, `<project-root>/.nyc_output`
+
+## Selecting files for coverage
+
+By default, nyc only collects coverage for source files that are visited during a test.
+It does this by watching for files that are `require()`'d during the test.
+When a file is `require()`'d, nyc creates and returns an instrumented version of the source, rather than the original. 
+Only source files that are visited during a test will appear in the coverage report and contribute to coverage statistics.
+
+nyc will instrument all files if the `--all` flag is set.
+In this case all files will appear in the coverage report and contribute to coverage statistics.
+
+nyc will only collect coverage for files that are located under `cwd`, and then only `*.js` files or files with extensions listed in the `extension` array.
+
+You can reduce the set of instrumented files by adding `include` and `exclude` filter arrays to your config.
+These allow you to shape the set of instrumented files by specifying glob patterns that can filter files from the default instrumented set.
+The `exclude` array may also use exclude negated glob patterns, these are specified with a `!` prefix, and can restore sub-paths of excluded paths.
 
 Globs are matched using [minimatch](https://www.npmjs.com/package/minimatch).
 
-For example, the following config will exclude any files with the extension `.spec.js`,
-and anything in the `build` directory:
+We use the following process to remove files from consideration:
+ 1. Limit the set of instrumented files to those files in paths listed in the `include` array.
+ 2. Remove any files that are found in the `exclude` array.
+ 3. Restore any exclude negated files that have been excluded in step 2.
+
+### Using include and exclude arrays
+
+If there are paths specified in the `include` array, then the set of instrumented files will be limited to eligible files found in those paths.
+If the `include` array is left undefined all eligible files will be included, equivalent to setting `include: ['**']`.
+Multiple `include` globs can be specified on the command line, each must follow a `--include`, `-n` switch.
+
+If there are paths specified in the `exclude` array, then the set of instrumented files will not feature eligible files found in those paths.
+You can also specify negated paths in the `exclude` array, by prefixing them with a `!`.
+Negated paths can restore paths that have been already been excluded in the `exclude` array.
+Multiple `exclude` globs can be specified on the command line, each must follow a `--exclude`, `-x` switch.
+
+The `exclude` option has the following defaults settings:
+```js
+[
+  'coverage/**',
+  'packages/*/test/**',
+  'test/**',
+  'test{,-*}.js',
+  '**/*{.,-}test.js',
+  '**/__tests__/**',
+  '**/node_modules/**',
+  '**/babel.config.js'
+]
+```
+These settings exclude `test` and `__tests__` directories as well as `test.js`, `*.test.js`, and `test-*.js` files.
+Specifying your own exclude property completely replaces these defaults.
+
+**Note:** The exclude list always implicitly contains `**/node_modules/**`, even if not explicitly specified in an overriding `exclude` array.
+To reverse this you must add the negated exclude rule `!**/node_modules/`.
+
+For example, the following config will collect coverage for every file in the `src` directory regardless of whether it is `require()`'d in a test.
+It will also exclude any files with the extension `.spec.js`.
 
 ```json
 {
   "nyc": {
+    "all": true,
+    "include": [
+      "src/**/*.js"
+    ],
     "exclude": [
-      "**/*.spec.js",
-      "build"
+      "**/*.spec.js"
     ]
   }
 }
 ```
-> Note: Since version 9.0 files under `node_modules/` are excluded by default.
-  add the exclude rule `!**/node_modules/` to stop this.
 
-> Note: exclude defaults to `['coverage/**', 'test/**', 'test{,-*}.js', '**/*.test.js', '**/__tests__/**', '**/node_modules/**']`,
-which would exclude `test`/`__tests__` directories as well as `test.js`, `*.test.js`,
-and `test-*.js` files. Specifying your own exclude property overrides these defaults.
-
-## Including files
-
-As an alternative to providing a list of files to `exclude`, you can provide
-an `include` key with a list of globs to specify specific files that should be covered:
-
-```json
-{
-  "nyc": {
-    "include": ["**/build/umd/moment.js"]
-  }
-}
-```
-
-> `nyc` uses minimatch for glob expansions, you can read its documentation [here](https://www.npmjs.com/package/minimatch).
-
-> Note: include defaults to `['**']`
-
-> ### Use the `--all` flag to include files that have not been required in your tests.
+**Note:** Be wary of automatic OS glob expansion when specifying include/exclude globs with the CLI.
+To prevent this, wrap each glob in single quotes.
 
 ## Require additional modules
 
@@ -252,13 +295,11 @@ modules should be required in the subprocess collecting coverage:
 
 ## Caching
 
-You can run `nyc` with the optional `--cache` flag, to prevent it from
-instrumenting the same files multiple times. This can significantly
-improve runtime performance.
+`nyc`'s default behavior is to cache instrumented files to disk to prevent instrumenting source files multiple times, and speed `nyc` execution times. You can disable this behavior by running `nyc` with the `--cache false` flag. You can also change the default cache directory from `./node_modules/.cache/nyc` by setting the `--cache-dir` flag.
 
 ## Configuring `nyc`
 
-Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a `.nycrc` file:
+Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a `.nycrc`, `.nycrc.json`, or `nyc.config.js` file:
 
 **package.json:**
 
@@ -291,10 +332,25 @@ Any configuration options that can be set via the command line can also be speci
     ],
     "cache": true,
     "all": true,
-    "temp-directory": "./alternative-tmp",
+    "temp-dir": "./alternative-tmp",
     "report-dir": "./alternative"
   }
 }
+```
+
+Configuration can also be provided by `nyc.config.js` if programmed logic is required:
+```js
+'use strict';
+const {defaultExclude} = require('test-exclude');
+const isWindows = require('is-windows');
+
+let platformExclude = [
+  isWindows() ? 'lib/posix.js' : 'lib/win32.js'
+];
+
+module.exports = {
+  exclude: platformExclude.concat(defaultExclude)
+};
 ```
 
 ### Publish, and reuse, your nyc configuration

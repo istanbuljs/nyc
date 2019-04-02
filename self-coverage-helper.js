@@ -10,7 +10,7 @@ onExit(function () {
   if (typeof ___NYC_SELF_COVERAGE___ === 'object') coverage = ___NYC_SELF_COVERAGE___
   if (!coverage) return
 
-  var selfCoverageDir = path.join(__dirname, '../.self_coverage')
+  var selfCoverageDir = path.join(__dirname, '.self_coverage')
   mkdirp.sync(selfCoverageDir)
   fs.writeFileSync(
     path.join(selfCoverageDir, process.pid + '.json'),

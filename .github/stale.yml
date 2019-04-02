@@ -1,0 +1,6 @@
+exemptLabels:
+  - "Great First Contribution"
+  - pinned
+  - security
+
+staleLabel: stale

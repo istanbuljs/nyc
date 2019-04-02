@@ -1,8 +1,8 @@
-/* global describe, it, beforeEach */
+/* global describe, it, beforeEach, afterEach */
 
 const _ = require('lodash')
 const path = require('path')
-const bin = path.resolve(__dirname, '../bin/nyc')
+const bin = path.resolve(__dirname, '../self-coverage/bin/nyc')
 const fixturesCLI = path.resolve(__dirname, './fixtures/cli')
 const fixturesHooks = path.resolve(__dirname, './fixtures/hooks')
 const fixturesSourceMaps = path.resolve(__dirname, './fixtures/source-maps')
@@ -11,10 +11,12 @@ const fs = require('fs')
 const glob = require('glob')
 const isWindows = require('is-windows')()
 const rimraf = require('rimraf')
+const makeDir = require('make-dir')
 const spawn = require('child_process').spawn
 const si = require('strip-indent')
 
 require('chai').should()
+require('tap').mochaGlobals()
 
 // beforeEach
 rimraf.sync(path.resolve(fakebin, 'node'))
@@ -44,6 +46,38 @@ describe('the nyc cli', function () {
         stdout.should.not.match(/half-covered-failing\.js/)
         stdout.should.not.match(/test\.js/)
         done()
+      })
+    })
+  })
+
+  describe('report and check', function () {
+    it('should show coverage check along with report', function (done) {
+      // generate some coverage info
+      var args = [bin, '--silent', process.execPath, './half-covered.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        var args = [bin, 'report', '--check-coverage', '--lines=100']
+        var proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        var stderr = ''
+        proc.stderr.on('data', function (chunk) {
+          stderr += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.not.equal(0)
+          stderr.should.equal('ERROR: Coverage for lines (50%) does not meet global threshold (100%)\n')
+          done()
+        })
       })
     })
   })
@@ -278,7 +312,8 @@ describe('the nyc cli', function () {
         '--include=env.js',
         '--exclude=batman.js',
         '--extension=.js',
-        '--cache=true',
+        '--cache=false',
+        '--cache-dir=/tmp',
         '--source-map=true',
         process.execPath,
         './env.js'
@@ -286,7 +321,8 @@ describe('the nyc cli', function () {
       var expected = {
         instrumenter: './lib/instrumenters/istanbul',
         silent: true,
-        cache: true,
+        cacheDir: '/tmp',
+        cache: false,
         sourceMap: true
       }
 
@@ -329,6 +365,80 @@ describe('the nyc cli', function () {
         code.should.equal(0)
         stdout.should.match(/SF:.*half-covered\.js/)
         done()
+      })
+    })
+
+    describe('nyc.config.js', function () {
+      var cwd = path.resolve(fixturesCLI, './nyc-config-js')
+
+      it('loads configuration from package.json and nyc.config.js', function (done) {
+        var args = [bin, process.execPath, './index.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: cwd,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdout.should.match(/SF:.*index\.js/)
+          stdout.should.not.match(/SF:.*ignore\.js/)
+          stdout.should.not.match(/SF:.*nyc\.config\.js/)
+          stdout.should.not.match(/SF:.*nycrc-config\.js/)
+          done()
+        })
+      })
+
+      it('loads configuration from different module rather than nyc.config.js', function (done) {
+        var args = [bin, '--all', '--nycrc-path', './nycrc-config.js', process.execPath, './index.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: cwd,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          // should be 1 due to coverage check
+          code.should.equal(1)
+          stdout.should.match(/SF:.*index\.js/)
+          stdout.should.match(/SF:.*ignore\.js/)
+          stdout.should.match(/SF:.*nyc\.config\.js/)
+          stdout.should.match(/SF:.*nycrc-config\.js/)
+          done()
+        })
+      })
+
+      it('allows nyc.config.js configuration to be overridden with command line args', function (done) {
+        var args = [bin, '--all', '--exclude=foo.js', process.execPath, './index.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: cwd,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdout.should.match(/SF:.*index\.js/)
+          stdout.should.match(/SF:.*ignore\.js/)
+          stdout.should.match(/SF:.*nyc\.config\.js/)
+          stdout.should.match(/SF:.*nycrc-config\.js/)
+          done()
+        })
       })
     })
 
@@ -445,7 +555,7 @@ describe('the nyc cli', function () {
 
         proc.on('close', function (code) {
           code.should.equal(0)
-          stdout.should.match(/path:"\.\/half-covered\.js"/)
+          stdout.should.contain(`path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered.js'))}`)
           done()
         })
       })
@@ -470,6 +580,32 @@ describe('the nyc cli', function () {
           stdout.should.not.match(/spawn\.js"/)
           done()
         })
+      })
+
+      it('returns unmodified source if there is no transform', function (done) {
+        const args = [bin, 'instrument', './no-transform/half-covered.xjs']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        let stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdout.should.contain(`var a = 0`)
+          done()
+        })
+      })
+    })
+
+    describe('output folder specified', function () {
+      afterEach(function () {
+        rimraf.sync(path.resolve(fixturesCLI, 'output'))
       })
 
       it('works in directories without a package.json', function (done) {
@@ -510,9 +646,7 @@ describe('the nyc cli', function () {
           done()
         })
       })
-    })
 
-    describe('output folder specified', function () {
       it('allows a single file to be instrumented', function (done) {
         var args = [bin, 'instrument', './half-covered.js', './output']
 
@@ -526,7 +660,6 @@ describe('the nyc cli', function () {
           var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.length.should.equal(1)
           files.should.include('half-covered.js')
-          rimraf.sync(path.resolve(fixturesCLI, 'output'))
           done()
         })
       })
@@ -544,7 +677,6 @@ describe('the nyc cli', function () {
           var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.should.include('env.js')
           files.should.include('es6.js')
-          rimraf.sync(path.resolve(fixturesCLI, 'output'))
           done()
         })
       })
@@ -561,8 +693,136 @@ describe('the nyc cli', function () {
           code.should.equal(0)
           var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.should.include('index.js')
-          rimraf.sync(path.resolve(fixturesCLI, 'output'))
           done()
+        })
+      })
+
+      describe('es-modules', function () {
+        afterEach(function () {
+          rimraf.sync(path.resolve(fixturesCLI, './output'))
+        })
+
+        it('instruments file with `package` keyword when es-modules is disabled', function (done) {
+          const args = [bin, 'instrument', '--no-es-modules', './not-strict.js', './output']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(0)
+            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output'))
+            subdirExists.should.equal(true)
+            const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+            files.should.include('not-strict.js')
+            done()
+          })
+        })
+
+        it('fails on file with `package` keyword when es-modules is enabled', function (done) {
+          const args = [bin, 'instrument', '--exit-on-error', './not-strict.js', './output']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          let stderr = ''
+          proc.stderr.on('data', function (chunk) {
+            stderr += chunk
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(1)
+            stdoutShouldEqual(stderr, `
+              Failed to instrument ${path.resolve(fixturesCLI, 'not-strict.js')}`)
+            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output'))
+            subdirExists.should.equal(false)
+            done()
+          })
+        })
+      })
+
+      describe('delete', function () {
+        beforeEach(function () {
+          makeDir.sync(path.resolve(fixturesCLI, 'output', 'removed-by-clean'))
+        })
+
+        it('cleans the output directory if `--delete` is specified', function (done) {
+          const args = [bin, 'instrument', '--delete', 'true', './', './output']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(0)
+            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+            subdirExists.should.equal(true)
+            const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+            files.should.not.include('removed-by-clean')
+            done()
+          })
+        })
+
+        it('does not clean the output directory by default', function (done) {
+          const args = [bin, 'instrument', './', './output']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(0)
+            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+            subdirExists.should.equal(true)
+            const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+            files.should.include('removed-by-clean')
+            done()
+          })
+        })
+
+        it('aborts if trying to clean process.cwd()', function (done) {
+          const args = [bin, 'instrument', '--delete', './', './']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          let stderr = ''
+          proc.stderr.on('data', function (chunk) {
+            stderr += chunk
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(1)
+            stderr.should.include('nyc instrument failed: attempt to delete')
+            done()
+          })
+        })
+
+        it('aborts if trying to clean outside working directory', function (done) {
+          const args = [bin, 'instrument', '--delete', './', '../']
+
+          const proc = spawn(process.execPath, args, {
+            cwd: fixturesCLI,
+            env: env
+          })
+
+          let stderr = ''
+          proc.stderr.on('data', function (chunk) {
+            stderr += chunk
+          })
+
+          proc.on('close', function (code) {
+            code.should.equal(1)
+            stderr.should.include('nyc instrument failed: attempt to delete')
+            done()
+          })
         })
       })
     })
@@ -691,6 +951,116 @@ describe('the nyc cli', function () {
           err.code.should.equal('ENOENT')
           done()
         })
+      })
+    })
+  })
+
+  describe('--build-process-tree', function () {
+    it('builds, but does not display, a tree of spawned processes', function (done) {
+      var args = [bin, '--build-process-tree', process.execPath, 'selfspawn-fibonacci.js', '5']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      var stdout = ''
+      proc.stdout.setEncoding('utf8')
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        stdout.should.not.match(new RegExp('└─'))
+        fs.statSync(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'))
+        done()
+      })
+    })
+
+    it('doesn’t create the temp directory for process info files when not present', function (done) {
+      var args = [bin, process.execPath, 'selfspawn-fibonacci.js', '5']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      proc.on('exit', function (code) {
+        code.should.equal(0)
+        fs.stat(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'), function (err, stat) {
+          err.code.should.equal('ENOENT')
+          done()
+        })
+      })
+    })
+  })
+
+  describe('--temp-dir', function () {
+    beforeEach(() => {
+      rimraf.sync(path.resolve(fixturesCLI, '.nyc_output'))
+      rimraf.sync(path.resolve(fixturesCLI, '.temp_directory'))
+      rimraf.sync(path.resolve(fixturesCLI, '.temp_dir'))
+    })
+
+    it('creates the default \'tempDir\' when none is specified', function (done) {
+      var args = [bin, process.execPath, './half-covered.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      proc.on('close', function (code) {
+        code.should.equal(0)
+        var tempFiles = fs.readdirSync(path.resolve(fixturesCLI, '.nyc_output'))
+        tempFiles.length.should.equal(1)
+        var cliFiles = fs.readdirSync(path.resolve(fixturesCLI))
+        cliFiles.should.include('.nyc_output')
+        cliFiles.should.not.include('.temp_dir')
+        cliFiles.should.not.include('.temp_directory')
+        done()
+      })
+    })
+
+    it('prefers \'tempDirectory\' to \'tempDir\'', function (done) {
+      var args = [bin, '--tempDirectory', '.temp_directory', '--tempDir', '.temp_dir', process.execPath, './half-covered.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      proc.on('exit', function (code) {
+        code.should.equal(0)
+        var tempFiles = fs.readdirSync(path.resolve(fixturesCLI, '.temp_directory'))
+        tempFiles.length.should.equal(1)
+        var cliFiles = fs.readdirSync(path.resolve(fixturesCLI))
+        cliFiles.should.not.include('.nyc_output')
+        cliFiles.should.not.include('.temp_dir')
+        cliFiles.should.include('.temp_directory')
+        done()
+      })
+    })
+
+    it('uses the \'tempDir\' option if \'tempDirectory\' is not set', function (done) {
+      var args = [bin, '--tempDir', '.temp_dir', process.execPath, './half-covered.js']
+
+      var proc = spawn(process.execPath, args, {
+        cwd: fixturesCLI,
+        env: env
+      })
+
+      proc.on('exit', function (code) {
+        code.should.equal(0)
+        var tempFiles = fs.readdirSync(path.resolve(fixturesCLI, '.temp_dir'))
+        tempFiles.length.should.equal(1)
+        var cliFiles = fs.readdirSync(path.resolve(fixturesCLI))
+        cliFiles.should.not.include('.nyc_output')
+        cliFiles.should.include('.temp_dir')
+        cliFiles.should.not.include('.temp_directory')
+        rimraf.sync(path.resolve(fixturesCLI, '.temp_dir'))
+        done()
       })
     })
   })
@@ -886,6 +1256,39 @@ describe('the nyc cli', function () {
             ----------|----------|----------|----------|----------|-------------------|
             All files |    44.44 |      100 |    33.33 |    44.44 |                   |
              s1.js    |       80 |      100 |       50 |       80 |                 7 |
+             s2.js    |        0 |      100 |        0 |        0 |           1,2,4,6 |
+            ----------|----------|----------|----------|----------|-------------------|`
+          )
+          done()
+        })
+      })
+
+      it('uses source-maps to exclude original sources from reports', (done) => {
+        const args = [
+          bin,
+          '--all',
+          '--cache', 'false',
+          '--exclude', 'original/s1.js',
+          process.execPath, './instrumented/s1.min.js'
+        ]
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesSourceMaps,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdoutShouldEqual(stdout, `
+            ----------|----------|----------|----------|----------|-------------------|
+            File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+            ----------|----------|----------|----------|----------|-------------------|
+            All files |        0 |      100 |        0 |        0 |                   |
              s2.js    |        0 |      100 |        0 |        0 |           1,2,4,6 |
             ----------|----------|----------|----------|----------|-------------------|`
           )
@@ -1118,11 +1521,11 @@ describe('the nyc cli', function () {
         // the combined reports should have 100% function
         // branch and statement coverage.
         mergedCoverage['/private/tmp/contrived/library.js']
-          .s.should.eql({'0': 2, '1': 1, '2': 1, '3': 2, '4': 1, '5': 1})
+          .s.should.eql({ '0': 2, '1': 1, '2': 1, '3': 2, '4': 1, '5': 1 })
         mergedCoverage['/private/tmp/contrived/library.js']
-          .f.should.eql({'0': 1, '1': 1, '2': 2})
+          .f.should.eql({ '0': 1, '1': 1, '2': 2 })
         mergedCoverage['/private/tmp/contrived/library.js']
-          .b.should.eql({'0': [1, 1]})
+          .b.should.eql({ '0': [1, 1] })
         rimraf.sync(path.resolve(fixturesCLI, 'coverage.json'))
         return done()
       })

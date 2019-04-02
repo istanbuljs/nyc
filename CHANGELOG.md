@@ -2,13 +2,58 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="13.3.0"></a>
+# [13.3.0](https://github.com/istanbuljs/nyc/compare/v13.2.0...v13.3.0) (2019-02-14)
+
+
+### Bug Fixes
+
+* update dependencies due to vulnerabilities ([#992](https://github.com/istanbuljs/nyc/issues/992)) ([e8cc59b](https://github.com/istanbuljs/nyc/commit/e8cc59b)), closes [#991](https://github.com/istanbuljs/nyc/issues/991)
+
+
+### Features
+
+* Support nyc report --check-coverage ([#984](https://github.com/istanbuljs/nyc/issues/984)) ([dd48410](https://github.com/istanbuljs/nyc/commit/dd48410))
+
+
+
+<a name="13.2.0"></a>
+# [13.2.0](https://github.com/istanbuljs/nyc/compare/v13.1.0...v13.2.0) (2019-01-27)
+
+
+### Bug Fixes
+
+* Create directory for merge destination. ([#979](https://github.com/istanbuljs/nyc/issues/979)) ([921d386](https://github.com/istanbuljs/nyc/commit/921d386)), closes [#976](https://github.com/istanbuljs/nyc/issues/976)
+* missing command temp-directory ([#928](https://github.com/istanbuljs/nyc/issues/928)) ([28b6d09](https://github.com/istanbuljs/nyc/commit/28b6d09)), closes [#927](https://github.com/istanbuljs/nyc/issues/927)
+* nyc processing files not covered by include when `all` is enabled. ([#914](https://github.com/istanbuljs/nyc/issues/914)) ([40afc5f](https://github.com/istanbuljs/nyc/commit/40afc5f)), closes [#913](https://github.com/istanbuljs/nyc/issues/913) [#782](https://github.com/istanbuljs/nyc/issues/782)
+
+
+### Features
+
+* avoid hardcoded HOME for spawn-wrap working dir ([#957](https://github.com/istanbuljs/nyc/issues/957)) ([ff834aa](https://github.com/istanbuljs/nyc/commit/ff834aa)), closes [#951](https://github.com/istanbuljs/nyc/issues/951)
+* document the fact that cacheDir is configurable ([#968](https://github.com/istanbuljs/nyc/issues/968)) ([35cd49a](https://github.com/istanbuljs/nyc/commit/35cd49a))
+* Option Plugins ([#948](https://github.com/istanbuljs/nyc/issues/948)) ([df2730d](https://github.com/istanbuljs/nyc/commit/df2730d))
+
+
+
+<a name="13.1.0"></a>
+# [13.1.0](https://github.com/istanbuljs/nyc/compare/v13.0.1...v13.1.0) (2018-09-06)
+
+
+### Features
+
+* Bump dependencies. ([#915](https://github.com/istanbuljs/nyc/issues/915)) ([0b3d2cf](https://github.com/istanbuljs/nyc/commit/0b3d2cf))
+* Rename --temp-directory option to --temp-dir ([#897](https://github.com/istanbuljs/nyc/issues/897)) ([ccf42df](https://github.com/istanbuljs/nyc/commit/ccf42df))
+
+
+
 <a name="13.0.1"></a>
 ## [13.0.1](https://github.com/istanbuljs/nyc/compare/v13.0.0...v13.0.1) (2018-07-24)
 
 
 ### Bug Fixes
 
-* add flag to allow control of intrumenter esModules option, default to looser parsing ([#863](https://github.com/istanbuljs/nyc/issues/863)) ([6b6cd5e](https://github.com/istanbuljs/nyc/commit/6b6cd5e))
+* add flag to allow control of instrumenter esModules option, default to looser parsing ([#863](https://github.com/istanbuljs/nyc/issues/863)) ([6b6cd5e](https://github.com/istanbuljs/nyc/commit/6b6cd5e))
 * Enable es-modules by default. ([#889](https://github.com/istanbuljs/nyc/issues/889)) ([d0b76e2](https://github.com/istanbuljs/nyc/commit/d0b76e2)), closes [#796](https://github.com/istanbuljs/nyc/issues/796)
 * Update caching-transform options. ([#873](https://github.com/istanbuljs/nyc/issues/873)) ([52b69ef](https://github.com/istanbuljs/nyc/commit/52b69ef))
 * use uuid/v4 to generate unique identifiers. ([#883](https://github.com/istanbuljs/nyc/issues/883)) ([7483ed9](https://github.com/istanbuljs/nyc/commit/7483ed9))

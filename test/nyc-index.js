@@ -1,37 +1,23 @@
-/* global describe, it */
+/* global describe, it, beforeEach */
 
 require('source-map-support').install({ hookRequire: true })
 
 const fs = require('fs')
 const _ = require('lodash')
 const ap = require('any-path')
-const enableCache = false
 
-const configUtil = require('../../self-coverage/lib/config-util')
-const _NYC = require('../../self-coverage')
+const configUtil = require('../self-coverage/lib/config-util')
+const NYC = require('../self-coverage')
+// we test exit handlers in nyc-integration.js.
+NYC.prototype._wrapExit = () => {}
 
-function NYC (opts) {
-  opts = opts || {}
-  if (!opts.hasOwnProperty('enableCache')) {
-    opts.enableCache = enableCache
-  }
-  return new _NYC(opts)
-}
-
-var path = require('path')
-var glob = require('glob')
-var rimraf = require('rimraf')
-var isWindows = require('is-windows')()
-var spawn = require('child_process').spawn
-var fixtures = path.resolve(__dirname, '../fixtures')
-var bin = path.resolve(__dirname, '../../self-coverage/bin/nyc')
-
-// beforeEach
-glob.sync('**/*/{.nyc_output,.cache}').forEach(function (path) {
-  rimraf.sync(path)
-})
-
-delete process.env.NYC_CWD
+const path = require('path')
+const rimraf = require('rimraf')
+const isWindows = require('is-windows')()
+const spawn = require('child_process').spawn
+const fixtures = path.resolve(__dirname, './fixtures')
+const bin = path.resolve(__dirname, '../self-coverage/bin/nyc')
+const resetState = require('./lib/reset-state')
 
 require('chai').should()
 require('tap').mochaGlobals()
@@ -39,6 +25,8 @@ require('tap').mochaGlobals()
 const transpileHook = path.resolve(process.cwd(), './test/fixtures/transpile-hook')
 
 describe('nyc', function () {
+  beforeEach(resetState)
+
   describe('cwd', function () {
     it('sets cwd to process.cwd() if no environment variable is set', function () {
       var nyc = new NYC(configUtil.buildYargs().parse())
@@ -47,15 +35,15 @@ describe('nyc', function () {
     })
 
     it('uses NYC_CWD environment variable for cwd if it is set', function () {
-      process.env.NYC_CWD = path.resolve(__dirname, '../fixtures')
+      process.env.NYC_CWD = path.resolve(__dirname, './fixtures')
       var nyc = new NYC(configUtil.buildYargs().parse())
 
-      nyc.cwd.should.equal(path.resolve(__dirname, '../fixtures'))
+      nyc.cwd.should.equal(path.resolve(__dirname, './fixtures'))
     })
 
     it('will look upwards for package.json from cwd', function () {
       var nyc = new NYC(configUtil.buildYargs(__dirname).parse())
-      nyc.cwd.should.eql(path.join(__dirname, '../..'))
+      nyc.cwd.should.eql(path.join(__dirname, '..'))
     })
 
     it('uses --cwd for cwd if it is set (highest priority and does not look upwards for package.json) ', function () {
@@ -66,17 +54,17 @@ describe('nyc', function () {
 
   describe('config', function () {
     it("loads 'exclude' patterns from package.json#nyc", function () {
-      var nyc = new NYC(configUtil.buildYargs(path.resolve(__dirname, '../fixtures')).parse())
+      var nyc = new NYC(configUtil.buildYargs(path.resolve(__dirname, './fixtures')).parse())
       nyc.exclude.exclude.length.should.eql(8)
     })
 
     it("loads 'extension' patterns from package.json#nyc", function () {
-      var nyc = new NYC(configUtil.buildYargs(path.resolve(__dirname, '../fixtures/conf-multiple-extensions')).parse())
+      var nyc = new NYC(configUtil.buildYargs(path.resolve(__dirname, './fixtures/conf-multiple-extensions')).parse())
       nyc.extensions.length.should.eql(3)
     })
 
     it("ignores 'include' option if it's falsy or []", function () {
-      var nyc1 = new NYC(configUtil.buildYargs(path.resolve(__dirname, '../fixtures/conf-empty')).parse())
+      var nyc1 = new NYC(configUtil.buildYargs(path.resolve(__dirname, './fixtures/conf-empty')).parse())
 
       nyc1.exclude.include.should.equal(false)
 
@@ -88,7 +76,7 @@ describe('nyc', function () {
     })
 
     it("ignores 'exclude' option if it's falsy", function () {
-      var nyc1 = new NYC(configUtil.buildYargs(path.resolve(__dirname, '../fixtures/conf-empty')).parse())
+      var nyc1 = new NYC(configUtil.buildYargs(path.resolve(__dirname, './fixtures/conf-empty')).parse())
       nyc1.exclude.exclude.length.should.eql(15)
     })
 
@@ -110,9 +98,9 @@ describe('nyc', function () {
       ]))
 
       // nyc always excludes "node_modules/**"
-      nyc.exclude.shouldInstrument('/cwd/foo', 'foo').should.equal(true)
-      nyc.exclude.shouldInstrument('/cwd/node_modules/bar', 'node_modules/bar').should.equal(false)
-      nyc.exclude.shouldInstrument('/cwd/foo/node_modules/bar', 'foo/node_modules/bar').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/foo.js', 'foo.js').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/node_modules/bar.js', 'node_modules/bar.js').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/foo/node_modules/bar.js', 'foo/node_modules/bar.js').should.equal(false)
       nyc.exclude.shouldInstrument('/cwd/test.js', 'test.js').should.equal(false)
       nyc.exclude.shouldInstrument('/cwd/testfoo.js', 'testfoo.js').should.equal(true)
       nyc.exclude.shouldInstrument('/cwd/test-foo.js', 'test-foo.js').should.equal(false)
@@ -123,40 +111,26 @@ describe('nyc', function () {
       nyc.exclude.shouldInstrument('/cwd/foo/bar/__tests__/foo.js', './__tests__/foo.js').should.equal(false)
     })
 
-    it('should allow turning off default node_modules exclude', function () {
-      var nyc = new NYC(configUtil.buildYargs('/cwd').parse([
-        '--exclude-node-modules', 'false',
-        '--exclude=**/__tests__/**',
-        '--exclude=node_modules/**'
-      ]))
-      // For this test, only excluding root node_modules. Local node_modules are allowed, but we
-      // still exclude matching items inside of local node_modules.
-      nyc.exclude.shouldInstrument('/cwd/foo', 'foo').should.equal(true)
-      nyc.exclude.shouldInstrument('/cwd/node_modules/bar', 'node_modules/bar').should.equal(false)
-      nyc.exclude.shouldInstrument('/cwd/foo/node_modules/bar', 'foo/node_modules/bar').should.equal(true)
-      nyc.exclude.shouldInstrument('/cwd/foo/node_modules/bar/__tests__/baz.js', 'foo/node_modules/bar/__tests__/baz.js').should.equal(false)
-    })
-
     it('should exclude appropriately with config.exclude', function () {
       var nyc = new NYC(configUtil.buildYargs(fixtures).parse())
 
       // fixtures/package.json configures excludes: "blarg", "blerg"
-      nyc.exclude.shouldInstrument('blarg', 'blarg').should.equal(false)
+      nyc.exclude.shouldInstrument('blarg.js', 'blarg.js').should.equal(false)
       nyc.exclude.shouldInstrument('blarg/foo.js', 'blarg/foo.js').should.equal(false)
-      nyc.exclude.shouldInstrument('blerg', 'blerg').should.equal(false)
-      nyc.exclude.shouldInstrument('./blerg', './blerg').should.equal(false)
-      nyc.exclude.shouldInstrument('./blerg', '.\\blerg').should.equal(false)
+      nyc.exclude.shouldInstrument('blerg.js', 'blerg.js').should.equal(false)
+      nyc.exclude.shouldInstrument('./blerg.js', './blerg.js').should.equal(false)
+      nyc.exclude.shouldInstrument('./blerg.js', '.\\blerg.js').should.equal(false)
     })
 
     it('should exclude outside of the current working directory', function () {
       var nyc = new NYC(configUtil.buildYargs('/cwd/foo/').parse())
-      nyc.exclude.shouldInstrument('/cwd/bar', '../bar').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/bar.js', '../bar.js').should.equal(false)
     })
 
     it('should not exclude if the current working directory is inside node_modules', function () {
       var nyc = new NYC(configUtil.buildYargs('/cwd/node_modules/foo/').parse())
-      nyc.exclude.shouldInstrument('/cwd/node_modules/foo/bar', './bar').should.equal(true)
-      nyc.exclude.shouldInstrument('/cwd/node_modules/foo/bar', '.\\bar').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/node_modules/foo/bar.js', './bar.js').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/node_modules/foo/bar.js', '.\\bar.js').should.equal(true)
     })
 
     it('allows files to be explicitly included, rather than excluded', function () {
@@ -186,7 +160,7 @@ describe('nyc', function () {
       nyc.reset()
       nyc.wrap()
 
-      var check = require('../fixtures/check-instrumented')
+      var check = require('./fixtures/check-instrumented')
       check().should.equal(true)
     })
 
@@ -194,7 +168,9 @@ describe('nyc', function () {
       it('wraps modules with coverage counters when the custom require hook compiles them', function () {
         let required = false
         const hook = function (module, filename) {
-          if (filename.indexOf('check-instrumented.js') !== -1) required = true
+          if (filename.indexOf('check-instrumented.js') !== -1) {
+            required = true
+          }
           module._compile(fs.readFileSync(filename, 'utf8'), filename)
         }
 
@@ -205,7 +181,7 @@ describe('nyc', function () {
         // install the custom require hook
         require.extensions['.js'] = hook // eslint-disable-line
 
-        const check = require('../fixtures/check-instrumented')
+        const check = require('./fixtures/check-instrumented')
         check().should.equal(true)
 
         // and the hook should have been called
@@ -219,7 +195,7 @@ describe('nyc', function () {
         nyc.reset()
         nyc.wrap()
 
-        var check = require('../fixtures/stack-trace')
+        var check = require('./fixtures/stack-trace')
         check().should.match(/stack-trace.js:4:/)
       })
 
@@ -228,7 +204,7 @@ describe('nyc', function () {
         nyc.reset()
         nyc.wrap()
 
-        var check = require('../fixtures/stack-trace')
+        var check = require('./fixtures/stack-trace')
         check().should.match(/stack-trace.js:1:/)
       })
     })
@@ -236,7 +212,7 @@ describe('nyc', function () {
     describe('compile handlers for custom extensions are assigned', function () {
       it('assigns a function to custom extensions', function () {
         var nyc = new NYC(configUtil.buildYargs(
-          path.resolve(__dirname, '../fixtures/conf-multiple-extensions')
+          path.resolve(__dirname, './fixtures/conf-multiple-extensions')
         ).parse())
         nyc.reset()
         nyc.wrap()
@@ -254,7 +230,7 @@ describe('nyc', function () {
           custom: false
         }
         var nyc = new NYC(configUtil.buildYargs(
-          path.resolve(__dirname, '../fixtures/conf-multiple-extensions')
+          path.resolve(__dirname, './fixtures/conf-multiple-extensions')
         ).parse())
 
         nyc['_handleJs'] = (code, options) => {
@@ -270,8 +246,8 @@ describe('nyc', function () {
         nyc.reset()
         nyc.wrap()
 
-        require('../fixtures/conf-multiple-extensions/check-instrumented.es6')
-        require('../fixtures/conf-multiple-extensions/check-instrumented.foo.bar')
+        require('./fixtures/conf-multiple-extensions/check-instrumented.es6')
+        require('./fixtures/conf-multiple-extensions/check-instrumented.foo.bar')
         required.custom.should.equal(true)
         required.es6.should.equal(true)
       })
@@ -389,7 +365,7 @@ describe('nyc', function () {
       nyc.reset()
       nyc.wrap()
 
-      require('../fixtures/not-loaded')
+      require('./fixtures/not-loaded')
 
       nyc.writeCoverageFile()
 
@@ -512,6 +488,46 @@ describe('nyc', function () {
         code.should.equal(0)
         done()
       })
+    })
+  })
+
+  describe('_disableCachingTransform', function () {
+    it('is disabled if cache is "false"', function () {
+      const nyc = new NYC({ cache: false })
+      nyc._disableCachingTransform().should.equal(true)
+    })
+
+    it('is enabled if cache is "true" and isChildProcess is "true"', function () {
+      const nyc = new NYC({
+        cache: true,
+        isChildProcess: true
+      })
+      nyc._disableCachingTransform().should.equal(false)
+    })
+
+    it('is disabled if cache is "true" and isChildProcess is "false"', function () {
+      const nyc = new NYC({
+        cache: true,
+        isChildProcess: true
+      })
+      nyc._disableCachingTransform().should.equal(false)
+    })
+  })
+
+  describe('cacheDirectory', function () {
+    it('should resolve default cache folder to absolute path', function () {
+      const nyc = new NYC({
+        cache: true
+      })
+      path.isAbsolute(nyc.cacheDirectory).should.equal(true)
+    })
+
+    it('should resolve custom cache folder to absolute path', function () {
+      const nyc = new NYC({
+        cacheDir: '.nyc_cache',
+        cache: true
+      })
+      path.isAbsolute(nyc.cacheDirectory).should.equal(true)
     })
   })
 })

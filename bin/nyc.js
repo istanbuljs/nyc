@@ -2,12 +2,7 @@
 
 const configUtil = require('../lib/config-util')
 const foreground = require('foreground-child')
-var NYC
-try {
-  NYC = require('../index.covered.js')
-} catch (e) {
-  NYC = require('../index.js')
-}
+const NYC = require('../index.js')
 const processArgs = require('../lib/process-args')
 
 const sw = require('spawn-wrap')
@@ -42,6 +37,9 @@ if ([
   if (argv.all) nyc.addAllFiles()
 
   var env = {
+    // Support running nyc as a user without HOME (e.g. linux 'nobody'),
+    // https://github.com/istanbuljs/nyc/issues/951
+    SPAWN_WRAP_SHIM_ROOT: process.env.SPAWN_WRAP_SHIM_ROOT || process.env.XDG_CACHE_HOME || require('os').homedir(),
     NYC_CONFIG: JSON.stringify(argv),
     NYC_CWD: process.cwd(),
     NYC_ROOT_ID: nyc.rootId,
