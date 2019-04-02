@@ -123,6 +123,20 @@ describe('nyc', function () {
       nyc.exclude.shouldInstrument('/cwd/foo/bar/__tests__/foo.js', './__tests__/foo.js').should.equal(false)
     })
 
+    it('should allow turning off default node_modules exclude', function () {
+      var nyc = new NYC(configUtil.buildYargs('/cwd').parse([
+        '--exclude-node-modules', 'false',
+        '--exclude=**/__tests__/**',
+        '--exclude=node_modules/**'
+      ]))
+      // For this test, only excluding root node_modules. Local node_modules are allowed, but we
+      // still exclude matching items inside of local node_modules.
+      nyc.exclude.shouldInstrument('/cwd/foo', 'foo').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/node_modules/bar', 'node_modules/bar').should.equal(false)
+      nyc.exclude.shouldInstrument('/cwd/foo/node_modules/bar', 'foo/node_modules/bar').should.equal(true)
+      nyc.exclude.shouldInstrument('/cwd/foo/node_modules/bar/__tests__/baz.js', 'foo/node_modules/bar/__tests__/baz.js').should.equal(false)
+    })
+
     it('should exclude appropriately with config.exclude', function () {
       var nyc = new NYC(configUtil.buildYargs(fixtures).parse())
 

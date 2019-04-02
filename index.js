@@ -58,6 +58,7 @@ function NYC (config) {
     cwd: this.cwd,
     include: config.include,
     exclude: config.exclude,
+    excludeNodeModules: config.excludeNodeModules !== false,
     extension: this.extensions
   })
 
