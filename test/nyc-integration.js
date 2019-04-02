@@ -693,7 +693,7 @@ describe('the nyc cli', function () {
         })
       })
 
-      it('can instrument the root directory', function (done) {
+      it('can instrument the project directory', function (done) {
         const args = [bin, 'instrument', '.', './output']
 
         const proc = spawn(process.execPath, args, {

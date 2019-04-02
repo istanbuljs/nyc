@@ -200,11 +200,11 @@ nyc report --reporter=<custom-reporter-name>
 nyc runs a lot of file system operations relative to the project root directory.
 During startup nyc will look for the *default* project root directory.
 The *default* project root directory is the first directory found that contains a `package.json` file when searching from the current working directory up.
-If nyc fails to find a directory containing a `package.json` file, it will use current working directory.
+If nyc fails to find a directory containing a `package.json` file, it will use current working directory as the *default* project root directory.
 You can change the project root directory with the `--cwd` option.
 
 nyc uses the project root directory when:
- * looking for source files to cover
+ * looking for source files to instrument
  * creating globs for include and exclude rules during file selection
  * loading custom require hooks from the `require` array
 
@@ -217,34 +217,35 @@ nyc may create artefact directories within the project root, such as:
 
 By default, nyc only collects coverage for source files that are visited during a test.
 It does this by watching for files that are `require()`'d during the test.
+When a file is `require()`'d, nyc creates and returns an instrumented version of the source, rather than the original. 
 Only source files that are visited during a test will appear in the coverage report and contribute to coverage statistics.
 
 nyc will instrument all files if the `--all` flag is set.
 In this case all files will appear in the coverage report and contribute to coverage statistics.
 
-nyc will only collect coverage for files that are located under `cwd`, and then only `*.js` files or files with extensions listed in in the `extension` array.
+nyc will only collect coverage for files that are located under `cwd`, and then only `*.js` files or files with extensions listed in the `extension` array.
 
-You can reduce the set of covered files by adding `include` and `exclude` filter arrays to your config.
-These allow you to shape the set of covered files by specifying glob patterns that can filter files from the covered set.
+You can reduce the set of instrumented files by adding `include` and `exclude` filter arrays to your config.
+These allow you to shape the set of instrumented files by specifying glob patterns that can filter files from the default instrumented set.
 The `exclude` array may also use exclude negated glob patterns, these are specified with a `!` prefix, and can restore sub-paths of excluded paths.
 
 Globs are matched using [minimatch](https://www.npmjs.com/package/minimatch).
 
 We use the following process to remove files from consideration:
- 1. Limit the set of covered files to those files in paths listed in the `include` array.
+ 1. Limit the set of instrumented files to those files in paths listed in the `include` array.
  2. Remove any files that are found in the `exclude` array.
- 3. Restore any exclude negated files that have been excluded in the second step.
+ 3. Restore any exclude negated files that have been excluded in step 2.
 
 ### Using include and exclude arrays
 
-If there are paths specified in the `include` array, then the set of covered files will be limited to eligible files found in those paths.
+If there are paths specified in the `include` array, then the set of instrumented files will be limited to eligible files found in those paths.
 If the `include` array is left undefined all eligible files will be included, equivalent to setting `include: ['**']`.
-Include options can be specified on the command line with the `-n` switch.
+Multiple `include` globs can be specified on the command line, each must follow a `--include`, `-n` switch.
 
-If there are paths specified in the `exclude` array, then the set of covered files will not feature eligible files found in those paths.
+If there are paths specified in the `exclude` array, then the set of instrumented files will not feature eligible files found in those paths.
 You can also specify negated paths in the `exclude` array, by prefixing them with a `!`.
 Negated paths can restore paths that have been already been excluded in the `exclude` array.
-Exclude options can be specified on the command line with the `-x` switch.
+Multiple `exclude` globs can be specified on the command line, each must follow a `--exclude`, `-x` switch.
 
 The `exclude` option has the following defaults settings:
 ```js
@@ -298,7 +299,7 @@ modules should be required in the subprocess collecting coverage:
 
 ## Configuring `nyc`
 
-Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a `.nycrc` (or `.nycrc.json`) file:
+Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a `.nycrc`, `.nycrc.json`, or `nyc.config.js` file:
 
 **package.json:**
 
