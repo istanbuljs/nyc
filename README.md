@@ -307,9 +307,9 @@ To prevent this, wrap each glob in single quotes.
 We always add `**/node_modules/**` to the exclude list, even if not specified in the config.
 You can override this by setting `--exclude-node-modules=false`.
 
-For example, the following config will instrument everything in `lib/` and `node_modules/@my-org/`, except for `node_modules/@my-org/something/unwanted.js`.
-All other files in `node_modules` are filtered out by the include rules.
-The exclude rules prevent nyc instrumenting test files and `node_modules/@my-org/something/unwanted.js`
+For example, in the following config, `"excludeNodeModules: false"` will prevent `node_modules` from being added to the exclude rules. 
+The set of include rules then restrict nyc to only consider instrumenting files found under the `lib/` and `node_modules/@my-org/` directories.
+The exclude rules then prevent nyc instrumenting anything in a `test` folder and the file `node_modules/@my-org/something/unwanted.js`.
 
 ```json
 {
@@ -323,7 +323,7 @@ The exclude rules prevent nyc instrumenting test files and `node_modules/@my-org
       "node_modules/@my-org/something/unwanted.js",
       "**/test/**"
     ],
-    excludeNodeModules: false
+    "excludeNodeModules": false
   }
 }
 ```
