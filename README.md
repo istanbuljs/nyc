@@ -421,9 +421,9 @@ rather than having to ignore every instance of that method:
 }
 ```
 
-## [:arrow_forward: Integrating with coveralls](./docs/setup-coveralls.md)
+## [Integrating with coveralls](./docs/setup-coveralls.md)
 
-## [:arrow_forward: Integrating with codecov](./docs/setup-codecov.md)
+## [Integrating with codecov](./docs/setup-codecov.md)
 
 ## Integrating with TAP formatters
 
