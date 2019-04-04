@@ -4,9 +4,10 @@
 
 const arrify = require('arrify')
 const cachingTransform = require('caching-transform')
-const util = require('util')
+const cpFile = require('cp-file')
 const findCacheDir = require('find-cache-dir')
 const fs = require('fs')
+const glob = require('glob')
 const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
@@ -20,6 +21,7 @@ const resolveFrom = require('resolve-from')
 const rimraf = require('rimraf')
 const SourceMaps = require('./lib/source-maps')
 const testExclude = require('test-exclude')
+const util = require('util')
 const uuid = require('uuid/v4')
 
 const debugLog = util.debuglog('nyc')
@@ -195,7 +197,15 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     const stats = fs.lstatSync(input)
     if (stats.isDirectory()) {
       inputDir = input
-      this.walkAllFiles(input, visitor)
+
+      const filesToInstrument = this.exclude.globSync(input)
+
+      if (output) {
+        const globOptions = { dot: true, nodir: true, ignore: ['**/.git', '**/.git/**', path.join(output, '**')] }
+        glob.sync(`${path.resolve(input)}/**/*`, globOptions)
+          .forEach(src => cpFile.sync(src, path.join(output, path.relative(input, src))))
+      }
+      filesToInstrument.forEach(visitor)
     } else {
       visitor(input)
     }
