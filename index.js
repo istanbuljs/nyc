@@ -6,9 +6,7 @@ const arrify = require('arrify')
 const cachingTransform = require('caching-transform')
 const util = require('util')
 const findCacheDir = require('find-cache-dir')
-const { copySync } = require('fs-extra')
 const fs = require('fs')
-const glob = require('glob')
 const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
@@ -198,12 +196,6 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     if (stats.isDirectory()) {
       inputDir = input
       this.walkAllFiles(input, visitor)
-
-      if (output) {
-        const globOptions = { dot: true, ignore: ['**/.git', `**/${path.basename(output)}`] }
-        glob.sync(`${path.resolve(input)}/*`, globOptions)
-          .forEach(src => copySync(src, path.join(output, path.relative(input, src)), { overwrite: false }))
-      }
     } else {
       visitor(input)
     }

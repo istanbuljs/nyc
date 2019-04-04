@@ -687,8 +687,8 @@ describe('the nyc cli', function () {
           const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.should.include('index.js')
           files.should.include('ignore.js')
-          files.should.include('package.json')
-          files.should.include('node_modules')
+          files.should.not.include('package.json')
+          files.should.not.include('node_modules')
           done()
         })
       })
@@ -738,13 +738,10 @@ describe('the nyc cli', function () {
           code.should.equal(0)
           const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.length.should.not.equal(0)
-          files.should.include('exclude-me')
-          files.should.include('node_modules')
+          files.should.not.include('exclude-me')
+          files.should.not.include('node_modules')
           files.should.include('index.js')
           files.should.include('bad.js')
-          const excludeTarget = path.resolve(fixturesCLI, 'output', 'exclude-me', 'index.js')
-          fs.readFileSync(excludeTarget, 'utf8')
-            .should.not.match(/var cov_/)
           const includeTarget = path.resolve(fixturesCLI, 'output', 'index.js')
           fs.readFileSync(includeTarget, 'utf8')
             .should.match(/var cov_/)
@@ -764,16 +761,13 @@ describe('the nyc cli', function () {
           code.should.equal(0)
           const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.length.should.not.equal(0)
-          files.should.include('exclude-me')
-          const target = path.resolve(fixturesCLI, 'output', 'exclude-me', 'index.js')
-          fs.readFileSync(target, 'utf8')
-            .should.not.match(/var cov_/)
+          files.should.not.include('exclude-me')
           done()
         })
       })
 
       it('allows specifying a single sub-directory to be included', function (done) {
-        const args = [bin, 'instrument', '--include', '**/exclude-me/**', './subdir/input-dir', './output']
+        const args = [bin, 'instrument', '--include', '**/include-me/**', './subdir/input-dir', './output']
 
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
@@ -784,19 +778,16 @@ describe('the nyc cli', function () {
           code.should.equal(0)
           const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.length.should.not.equal(0)
-          files.should.include('exclude-me')
-          const instrumented = path.resolve(fixturesCLI, 'output', 'exclude-me', 'index.js')
+          files.should.include('include-me')
+          const instrumented = path.resolve(fixturesCLI, 'output', 'include-me', 'include-me.js')
           fs.readFileSync(instrumented, 'utf8')
             .should.match(/var cov_/)
-          const uninstrumented = path.resolve(fixturesCLI, 'output', 'index.js')
-          fs.readFileSync(uninstrumented, 'utf8')
-            .should.not.match(/var cov_/)
           done()
         })
       })
 
       it('allows a file to be excluded from an included directory', function (done) {
-        const args = [bin, 'instrument', '--exclude', '**/index.js', '--include', '**/exclude-me/**', './subdir/input-dir', './output']
+        const args = [bin, 'instrument', '--exclude', '**/exclude-me.js', '--include', '**/include-me/**', './subdir/input-dir', './output']
 
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
@@ -807,13 +798,14 @@ describe('the nyc cli', function () {
           code.should.equal(0)
           const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.length.should.not.equal(0)
-          files.should.include('exclude-me')
-          const instrumented = path.resolve(fixturesCLI, 'output', 'exclude-me', 'index.js')
+          files.should.include('include-me')
+          const includeMeFiles = fs.readdirSync(path.resolve(fixturesCLI, 'output', 'include-me'))
+          includeMeFiles.length.should.not.equal(0)
+          includeMeFiles.should.include('include-me.js')
+          includeMeFiles.should.not.include('exclude-me.js')
+          const instrumented = path.resolve(fixturesCLI, 'output', 'include-me', 'include-me.js')
           fs.readFileSync(instrumented, 'utf8')
-            .should.not.match(/var cov_/)
-          const uninstrumented = path.resolve(fixturesCLI, 'output', 'index.js')
-          fs.readFileSync(uninstrumented, 'utf8')
-            .should.not.match(/var cov_/)
+            .should.match(/var cov_/)
           done()
         })
       })
