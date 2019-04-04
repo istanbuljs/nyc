@@ -197,7 +197,8 @@ nyc report --reporter=<custom-reporter-name>
 
 ## Producing instrumented source
 
-The nyc `instrument` command can produce a set of instrumented source files, suitable for client side deployment in end to end testing.
+The `nyc instrument` command can produce a set of instrumented source files.
+These files are suitable for client side deployment in end to end testing.
 You can create an instrumented version of your source code by running:
 
 ```bash
@@ -212,13 +213,12 @@ Run `nyc instrument --help` to display a list of available command options.
 
 **Note:** `nyc instrument` will not copy the contents of a `.git` folder to the output directory.
 
-
 ## Setting the project root directory
 
 nyc runs a lot of file system operations relative to the project root directory.
 During startup nyc will look for the *default* project root directory.
 The *default* project root directory is the first directory found that contains a `package.json` file when searching from the current working directory up.
-If nyc fails to find a directory containing a `package.json` file, it will use current working directory as the *default* project root directory.
+If nyc fails to find a directory containing a `package.json` file, it will use the current working directory as the *default* project root directory.
 You can change the project root directory with the `--cwd` option.
 
 nyc uses the project root directory when:
@@ -281,9 +281,6 @@ The `exclude` option has the following defaults settings:
 These settings exclude `test` and `__tests__` directories as well as `test.js`, `*.test.js`, and `test-*.js` files.
 Specifying your own exclude property completely replaces these defaults.
 
-**Note:** We always add `**/node_modules/**` to the exclude list, even if not specified in the config.
-You can override this by setting the `!**/node_modules/` negated exclude rule.
-
 For example, the following config will collect coverage for every file in the `src` directory regardless of whether it is `require()`'d in a test.
 It will also exclude any files with the extension `.spec.js`.
 
@@ -303,6 +300,35 @@ It will also exclude any files with the extension `.spec.js`.
 
 **Note:** Be wary of automatic OS glob expansion when specifying include/exclude globs with the CLI.
 To prevent this, wrap each glob in single quotes.
+
+### Including files within `node_modules`
+
+We always add `**/node_modules/**` to the exclude list, even if not specified in the config.
+You can override this by setting `--exclude-node-modules=false`.
+
+For example, the following config will instrument everything in `lib/` and `node_modules/@my-org/`, except for `node_modules/@my-org/something/unwanted.js`.
+All other files in `node_modules` are filtered out by the include rules.
+The exclude rules prevent nyc instrumenting test files and `node_modules/@my-org/something/unwanted.js`
+
+```json
+{
+  "nyc": {
+    "all": true,
+    "include": [
+      "lib/**",
+      "node_modules/@my-org/**"
+    ],
+    "exclude": [
+      "node_modules/@my-org/something/unwanted.js",
+      "**/test/**"
+    ],
+    excludeNodeModules: false
+  }
+}
+```
+
+**Note:** You can also include `node_modules` files with a negated exclude rule `!**/node_modules/@my-org`.
+However you won't be able to use any further exclude rules such as `node_modules/@my-org/something/unwanted.js` with this method.
 
 ## Require additional modules
 
