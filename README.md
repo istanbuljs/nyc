@@ -207,7 +207,8 @@ nyc instrument <input> [output]
 
 `<input>` can be any file or directory within the project root directory.
 The `[output]` directory is optional and can be located anywhere, if it is not set the instrumented code will be sent to `stdout`.
-For example, `nyc instrument . ./output` will copy all files from `.` to `./output` and produce instrumented versions of any source files it finds along the way.
+For example, `nyc instrument . ./output` will produce instrumented versions of any source files it finds in `.` and store them in `./output`.
+
 
 Run `nyc instrument --help` to display a list of available command options.
 
