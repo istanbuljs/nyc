@@ -179,9 +179,11 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     const outCode = this._transform(inCode, inFile) || inCode
 
     if (output) {
+      const mode = fs.statSync(inFile).mode
       const outFile = path.resolve(output, relFile)
       mkdirp.sync(path.dirname(outFile))
-      fs.writeFileSync(outFile, outCode, 'utf-8')
+      fs.writeFileSync(outFile, outCode)
+      fs.chmodSync(outFile, mode)
     } else {
       console.log(outCode)
     }

@@ -609,17 +609,17 @@ describe('the nyc cli', function () {
       })
 
       it('works in directories without a package.json', function (done) {
-        var args = [bin, 'instrument', './input-dir', './output-dir']
+        const args = [bin, 'instrument', './input-dir', './output-dir']
 
-        var subdir = path.resolve(fixturesCLI, 'subdir')
-        var proc = spawn(process.execPath, args, {
+        const subdir = path.resolve(fixturesCLI, 'subdir')
+        const proc = spawn(process.execPath, args, {
           cwd: subdir,
           env: env
         })
 
         proc.on('exit', function (code) {
           code.should.equal(0)
-          var target = path.resolve(subdir, 'output-dir', 'index.js')
+          const target = path.resolve(subdir, 'output-dir', 'index.js')
           fs.readFileSync(target, 'utf8')
             .should.match(/console.log\('Hello, World!'\)/)
           done()
@@ -627,16 +627,10 @@ describe('the nyc cli', function () {
       })
 
       it('can be configured to exit on error', function (done) {
-        var args = [
-          bin,
-          'instrument',
-          '--exit-on-error',
-          './input-dir',
-          './output-dir'
-        ]
+        const args = [bin, 'instrument', '--exit-on-error', './input-dir', './output-dir']
 
-        var subdir = path.resolve(fixturesCLI, 'subdir')
-        var proc = spawn(process.execPath, args, {
+        const subdir = path.resolve(fixturesCLI, 'subdir')
+        const proc = spawn(process.execPath, args, {
           cwd: subdir,
           env: env
         })
@@ -648,51 +642,210 @@ describe('the nyc cli', function () {
       })
 
       it('allows a single file to be instrumented', function (done) {
-        var args = [bin, 'instrument', './half-covered.js', './output']
+        const args = [bin, 'instrument', './half-covered.js', './output']
 
-        var proc = spawn(process.execPath, args, {
+        const inputPath = path.resolve(fixturesCLI, './half-covered.js')
+        const inputMode = fs.statSync(inputPath).mode & 0o7777
+        const newMode = 0o775
+        if (process.platform !== 'win32') {
+          fs.chmodSync(inputPath, newMode)
+        }
+
+        const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
           env: env
         })
 
         proc.on('close', function (code) {
           code.should.equal(0)
-          var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.length.should.equal(1)
           files.should.include('half-covered.js')
+
+          if (process.platform !== 'win32') {
+            const outputPath = path.resolve(fixturesCLI, 'output', 'half-covered.js')
+            const outputMode = fs.statSync(outputPath).mode & 0o7777
+            outputMode.should.equal(newMode)
+
+            fs.chmodSync(inputPath, inputMode)
+          }
+
           done()
         })
       })
 
       it('allows a directory of files to be instrumented', function (done) {
-        var args = [bin, 'instrument', './', './output']
+        const args = [bin, 'instrument', './nyc-config-js', './output']
 
-        var proc = spawn(process.execPath, args, {
+        const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
           env: env
         })
 
         proc.on('close', function (code) {
           code.should.equal(0)
-          var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
-          files.should.include('env.js')
-          files.should.include('es6.js')
+          const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          files.should.include('index.js')
+          files.should.include('ignore.js')
+          files.should.not.include('package.json')
+          files.should.not.include('node_modules')
+          done()
+        })
+      })
+
+      it('can instrument the project directory', function (done) {
+        const args = [bin, 'instrument', '.', './output']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          files.should.include('args.js')
+          files.should.include('subdir')
           done()
         })
       })
 
       it('allows a sub-directory of files to be instrumented', function (done) {
-        var args = [bin, 'instrument', './subdir/input-dir', './output']
+        const args = [bin, 'instrument', './subdir/input-dir', './output']
 
-        var proc = spawn(process.execPath, args, {
+        const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
           env: env
         })
 
         proc.on('close', function (code) {
           code.should.equal(0)
-          var files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.should.include('index.js')
+          done()
+        })
+      })
+
+      it('allows a subdirectory to be excluded via .nycrc file', function (done) {
+        const args = [bin, 'instrument', '--nycrc-path', './.instrument-nycrc', './subdir/input-dir', './output']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          files.length.should.not.equal(0)
+          files.should.not.include('exclude-me')
+          files.should.not.include('node_modules')
+          files.should.include('index.js')
+          files.should.include('bad.js')
+          const includeTarget = path.resolve(fixturesCLI, 'output', 'index.js')
+          fs.readFileSync(includeTarget, 'utf8')
+            .should.match(/var cov_/)
+          done()
+        })
+      })
+
+      it('allows a file to be excluded', function (done) {
+        const args = [bin, 'instrument', '--exclude', 'exclude-me/index.js', './subdir/input-dir', './output']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          files.length.should.not.equal(0)
+          files.should.not.include('exclude-me')
+          done()
+        })
+      })
+
+      it('allows specifying a single sub-directory to be included', function (done) {
+        const args = [bin, 'instrument', '--include', '**/include-me/**', './subdir/input-dir', './output']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          files.length.should.not.equal(0)
+          files.should.include('include-me')
+          const instrumented = path.resolve(fixturesCLI, 'output', 'include-me', 'include-me.js')
+          fs.readFileSync(instrumented, 'utf8')
+            .should.match(/var cov_/)
+          done()
+        })
+      })
+
+      it('allows a file to be excluded from an included directory', function (done) {
+        const args = [bin, 'instrument', '--exclude', '**/exclude-me.js', '--include', '**/include-me/**', './subdir/input-dir', './output']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          files.length.should.not.equal(0)
+          files.should.include('include-me')
+          const includeMeFiles = fs.readdirSync(path.resolve(fixturesCLI, 'output', 'include-me'))
+          includeMeFiles.length.should.not.equal(0)
+          includeMeFiles.should.include('include-me.js')
+          includeMeFiles.should.not.include('exclude-me.js')
+          const instrumented = path.resolve(fixturesCLI, 'output', 'include-me', 'include-me.js')
+          fs.readFileSync(instrumented, 'utf8')
+            .should.match(/var cov_/)
+          done()
+        })
+      })
+
+      it('aborts if trying to write files in place', function (done) {
+        const args = [bin, 'instrument', '--delete', './', './']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        let stderr = ''
+        proc.stderr.on('data', function (chunk) {
+          stderr += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(1)
+          stderr.should.include('nyc instrument failed: cannot instrument files in place')
+          done()
+        })
+      })
+
+      it('aborts if trying to instrument files from outside the project root directory', function (done) {
+        const args = [bin, 'instrument', '--delete', '../', './']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        let stderr = ''
+        proc.stderr.on('data', function (chunk) {
+          stderr += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(1)
+          stderr.should.include('nyc instrument failed: cannot instrument files outside of project root directory')
           done()
         })
       })
@@ -750,7 +903,7 @@ describe('the nyc cli', function () {
         })
 
         it('cleans the output directory if `--delete` is specified', function (done) {
-          const args = [bin, 'instrument', '--delete', 'true', './', './output']
+          const args = [bin, 'instrument', '--delete', 'true', './subdir/input-dir', './output']
 
           const proc = spawn(process.execPath, args, {
             cwd: fixturesCLI,
@@ -759,16 +912,17 @@ describe('the nyc cli', function () {
 
           proc.on('close', function (code) {
             code.should.equal(0)
-            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output'))
             subdirExists.should.equal(true)
             const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
             files.should.not.include('removed-by-clean')
+            files.should.include('exclude-me')
             done()
           })
         })
 
         it('does not clean the output directory by default', function (done) {
-          const args = [bin, 'instrument', './', './output']
+          const args = [bin, 'instrument', './subdir/input-dir', './output']
 
           const proc = spawn(process.execPath, args, {
             cwd: fixturesCLI,
@@ -777,7 +931,7 @@ describe('the nyc cli', function () {
 
           proc.on('close', function (code) {
             code.should.equal(0)
-            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output/subdir/input-dir'))
+            const subdirExists = fs.existsSync(path.resolve(fixturesCLI, './output'))
             subdirExists.should.equal(true)
             const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
             files.should.include('removed-by-clean')
@@ -786,7 +940,7 @@ describe('the nyc cli', function () {
         })
 
         it('aborts if trying to clean process.cwd()', function (done) {
-          const args = [bin, 'instrument', '--delete', './', './']
+          const args = [bin, 'instrument', '--delete', './src', './']
 
           const proc = spawn(process.execPath, args, {
             cwd: fixturesCLI,
