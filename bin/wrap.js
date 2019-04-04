@@ -10,6 +10,10 @@ config._processInfo = {
   ppid: process.ppid,
   root: process.env.NYC_ROOT_ID
 }
+if (process.env.NYC_PROCESSINFO_EXTERNAL_ID) {
+  config._processInfo.externalId = process.env.NYC_PROCESSINFO_EXTERNAL_ID
+  delete process.env.NYC_PROCESSINFO_EXTERNAL_ID
+}
 
 ;(new NYC(config)).wrap()
 

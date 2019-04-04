@@ -65,6 +65,10 @@ if ([
   ), function (done) {
     var mainChildExitCode = process.exitCode
 
+    if (argv.showProcessTree || argv.buildProcessTree) {
+      nyc.writeProcessIndex()
+    }
+
     if (argv.checkCoverage) {
       nyc.checkCoverage({
         lines: argv.lines,
