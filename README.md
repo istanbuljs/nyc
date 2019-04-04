@@ -209,8 +209,8 @@ nyc instrument <input> [output]
 The `[output]` directory is optional and can be located anywhere, if it is not set the instrumented code will be sent to `stdout`.
 For example, `nyc instrument . ./output` will produce instrumented versions of any source files it finds in `.` and store them in `./output`.
 
-
-Run `nyc instrument --help` to display a list of available command options.
+Any existing output can be removed by specifying the `--delete` option.
+Run `nyc instrument --help` to display a full list of available command options.
 
 **Note:** `nyc instrument` will not copy the contents of a `.git` folder to the output directory.
 
