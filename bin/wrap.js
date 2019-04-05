@@ -1,15 +1,13 @@
 var sw = require('spawn-wrap')
 var NYC = require('../index.js')
 
-var parentPid = process.env.NYC_PARENT_PID || '0'
-process.env.NYC_PARENT_PID = process.pid
-
 var config = {}
 if (process.env.NYC_CONFIG) config = JSON.parse(process.env.NYC_CONFIG)
 config.isChildProcess = true
 
 config._processInfo = {
-  ppid: parentPid,
+  pid: process.pid,
+  ppid: process.ppid,
   root: process.env.NYC_ROOT_ID
 }
 
