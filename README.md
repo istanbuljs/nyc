@@ -328,9 +328,6 @@ The exclude rules then prevent nyc instrumenting anything in a `test` folder and
 }
 ```
 
-**Note:** You can also include `node_modules` files with a negated exclude rule `!**/node_modules/@my-org`.
-However you won't be able to use any further exclude rules such as `node_modules/@my-org/something/unwanted.js` with this method.
-
 ## Require additional modules
 
 The `--require` flag can be provided to `nyc` to indicate that additional
