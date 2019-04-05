@@ -68,7 +68,6 @@
   "license": "ISC",
   "dependencies": {
     "archy": "^1.0.0",
-    "arrify": "^1.0.1",
     "caching-transform": "^3.0.2",
     "convert-source-map": "^1.6.0",
     "find-cache-dir": "^2.1.0",

@@ -2,7 +2,6 @@
 
 /* global __coverage__ */
 
-const arrify = require('arrify')
 const cachingTransform = require('caching-transform')
 const util = require('util')
 const findCacheDir = require('find-cache-dir')
@@ -44,12 +43,12 @@ function NYC (config) {
   this._buildProcessTree = this._showProcessTree || config.buildProcessTree
   this._eagerInstantiation = config.eager || false
   this.cwd = config.cwd || process.cwd()
-  this.reporter = arrify(config.reporter || 'text')
+  this.reporter = [].concat(config.reporter || 'text')
 
   this.cacheDirectory = (config.cacheDir && path.resolve(config.cacheDir)) || findCacheDir({ name: 'nyc', cwd: this.cwd })
   this.cache = Boolean(this.cacheDirectory && config.cache)
 
-  this.extensions = arrify(config.extension)
+  this.extensions = [].concat(config.extension || [])
     .concat('.js')
     .map(ext => ext.toLowerCase())
     .filter((item, pos, arr) => arr.indexOf(item) === pos)
@@ -68,7 +67,7 @@ function NYC (config) {
   })
 
   // require extensions can be provided as config in package.json.
-  this.require = arrify(config.require)
+  this.require = [].concat(config.require || [])
 
   this.transforms = this.extensions.reduce((transforms, ext) => {
     transforms[ext] = this._createTransform(ext)
