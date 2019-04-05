@@ -159,7 +159,7 @@ NYC.prototype.addAllFiles = function () {
   this._loadAdditionalModules()
 
   this.fakeRequire = true
-  this.walkAllFiles(this.cwd, relFile => {
+  this.exclude.globSync(this.cwd).forEach(relFile => {
     const filename = path.resolve(this.cwd, relFile)
     this.addFile(filename)
     const coverage = coverageFinder()
@@ -213,12 +213,6 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     return cb(err)
   }
   cb()
-}
-
-NYC.prototype.walkAllFiles = function (dir, visitor) {
-  this.exclude.globSync(dir).forEach(relFile => {
-    visitor(relFile)
-  })
 }
 
 NYC.prototype._transform = function (code, filename) {
