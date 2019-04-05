@@ -200,7 +200,7 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
 
       const filesToInstrument = this.exclude.globSync(input)
 
-      if (output) {
+      if (this.config.completeCopy && output) {
         const globOptions = { dot: true, nodir: true, ignore: ['**/.git', '**/.git/**', path.join(output, '**')] }
         glob.sync(`${path.resolve(input)}/**`, globOptions)
           .forEach(src => cpFile.sync(src, path.join(output, path.relative(input, src))))

@@ -687,6 +687,28 @@ describe('the nyc cli', function () {
           const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.should.include('index.js')
           files.should.include('ignore.js')
+          files.should.not.include('package.json')
+          files.should.not.include('node_modules')
+          const includeTarget = path.resolve(fixturesCLI, 'output', 'ignore.js')
+          fs.readFileSync(includeTarget, 'utf8')
+            .should.match(/var cov_/)
+          done()
+        })
+      })
+
+      it('copies all files from <input> to <output> as well as those that have been instrumented', function (done) {
+        const args = [bin, 'instrument', '--complete-copy', './nyc-config-js', './output']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          files.should.include('index.js')
+          files.should.include('ignore.js')
           files.should.include('package.json')
           files.should.include('node_modules')
           const includeTarget = path.resolve(fixturesCLI, 'output', 'ignore.js')
@@ -756,7 +778,7 @@ describe('the nyc cli', function () {
       })
 
       it('allows a file to be excluded', function (done) {
-        const args = [bin, 'instrument', '--exclude', 'exclude-me/index.js', './subdir/input-dir', './output']
+        const args = [bin, 'instrument', '--complete-copy', '--exclude', 'exclude-me/index.js', './subdir/input-dir', './output']
 
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
@@ -796,7 +818,7 @@ describe('the nyc cli', function () {
       })
 
       it('allows a file to be excluded from an included directory', function (done) {
-        const args = [bin, 'instrument', '--exclude', '**/exclude-me.js', '--include', '**/include-me/**', './subdir/input-dir', './output']
+        const args = [bin, 'instrument', '--complete-copy', '--exclude', '**/exclude-me.js', '--include', '**/include-me/**', './subdir/input-dir', './output']
 
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
