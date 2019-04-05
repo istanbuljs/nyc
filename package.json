@@ -23,7 +23,6 @@
   "nyc": {
     "exclude": [
       "node_modules",
-      "bin",
       "coverage",
       "self-coverage",
       "test/fixtures/coverage.js",
