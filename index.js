@@ -458,9 +458,7 @@ NYC.prototype.writeProcessIndex = function () {
   // build the actual index!
   const index = infos.reduce((index, info) => {
     index.processes[info.uuid] = {}
-    if (info.parent) {
-      index.processes[info.uuid].parent = info.parent
-    }
+    index.processes[info.uuid].parent = info.parent
     if (info.externalId) {
       if (index.externalIds[info.externalId]) {
         throw new Error(`External ID ${info.externalId} used by multiple processes`)
@@ -526,19 +524,25 @@ NYC.prototype._checkCoverage = function (summary, thresholds, file) {
 }
 
 NYC.prototype._loadProcessInfos = function () {
-  var _this = this
-  var files = fs.readdirSync(this.processInfoDirectory())
-
-  return files.filter(f => f !== 'index.json').map(function (f) {
+  return fs.readdirSync(this.processInfoDirectory()).map(f => {
+    let data
     try {
-      return new ProcessInfo(JSON.parse(fs.readFileSync(
-        path.resolve(_this.processInfoDirectory(), f),
+      data = JSON.parse(fs.readFileSync(
+        path.resolve(this.processInfoDirectory(), f),
         'utf-8'
-      )))
+      ))
     } catch (e) { // handle corrupt JSON output.
-      return {}
+      return null
     }
-  })
+    if (f !== 'index.json') {
+      data.nodes = []
+      data = new ProcessInfo(data)
+    }
+    return { file: path.basename(f, '.json'), data: data }
+  }).filter(Boolean).reduce((infos, info) => {
+    infos[info.file] = info.data
+    return infos
+  }, {})
 }
 
 NYC.prototype.eachReport = function (filenames, iterator, baseDirectory) {
