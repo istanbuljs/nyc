@@ -1127,7 +1127,13 @@ describe('the nyc cli', function () {
       proc.on('close', function (code) {
         code.should.equal(0)
         stdout.should.not.match(new RegExp('└─'))
-        fs.statSync(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'))
+        const dir = path.resolve(fixturesCLI, '.nyc_output', 'processinfo')
+        fs.statSync(dir)
+        // make sure that the processinfo file has a numeric pid and ppid
+        const files = fs.readdirSync(dir).filter(f => f !== 'index.json')
+        const data = JSON.parse(fs.readFileSync(dir + '/' + files[0], 'utf8'))
+        data.pid.should.be.a('number')
+        data.ppid.should.be.a('number')
         done()
       })
     })
