@@ -8,6 +8,7 @@ config.isChildProcess = true
 config._processInfo = {
   pid: process.pid,
   ppid: process.ppid,
+  parent: process.env.NYC_PROCESS_ID,
   root: process.env.NYC_ROOT_ID
 }
 if (process.env.NYC_PROCESSINFO_EXTERNAL_ID) {

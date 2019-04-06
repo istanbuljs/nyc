@@ -52,8 +52,8 @@ t.test('validate the created processinfo data', t => {
           throw er
         const procInfoData = JSON.parse(procInfoJson)
         t.match(procInfoData, {
-          pid: /^[0-9]+$/,
-          ppid: /^[0-9]+$/,
+          pid: Number,
+          ppid: Number,
           uuid: f.replace(/\.json$/, ''),
           argv: [
             node,
@@ -65,10 +65,7 @@ t.test('validate the created processinfo data', t => {
           time: Number,
           root: /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/,
           coverageFilename: resolve(fixturesCLI, tmp, f),
-          nodes: [],
-          _coverageMap: null,
           files: [ resolvedJS ],
-          children: Array,
         })
       })
     })
