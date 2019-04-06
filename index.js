@@ -469,7 +469,7 @@ NYC.prototype.writeProcessIndex = function () {
         children: info.children
       }
     }
-    index.processes[info.uuid].children = Array.from(info.children || [])
+    index.processes[info.uuid].children = Array.from(info.children)
     return index
   }, { processes: {}, files: files, externalIds: {} })
 
