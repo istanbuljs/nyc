@@ -14,7 +14,7 @@ t.teardown(() => rimraf.sync(resolve(fixturesCLI, tmp)))
 
 t.test('build some processinfo', t => {
   var args = [
-    bin, '-t', tmp, '--build-process-tree',
+    bin, '-t', tmp,
     node, 'selfspawn-fibonacci.js', '5'
   ]
   var proc = spawn(process.execPath, args, {
