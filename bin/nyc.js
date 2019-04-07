@@ -65,35 +65,27 @@ if ([
   ), function (done) {
     var mainChildExitCode = process.exitCode
 
-    if (argv.checkCoverage) {
-      checkCoverage(argv)
-      process.exitCode = process.exitCode || mainChildExitCode
-      if (!argv.silent) report(argv)
-      return done()
-    } else {
-      if (!argv.silent) report(argv)
-      return done()
+    if (argv.showProcessTree || argv.buildProcessTree) {
+      nyc.writeProcessIndex()
     }
+
+    if (argv.checkCoverage) {
+      nyc.checkCoverage({
+        lines: argv.lines,
+        functions: argv.functions,
+        branches: argv.branches,
+        statements: argv.statements
+      }, argv['per-file'])
+      process.exitCode = process.exitCode || mainChildExitCode
+    }
+
+    if (!argv.silent) {
+      nyc.report()
+    }
+
+    return done()
   })
 } else {
   // I don't have a clue what you're doing.
   yargs.showHelp()
-}
-
-function report (argv) {
-  process.env.NYC_CWD = process.cwd()
-
-  var nyc = new NYC(argv)
-  nyc.report()
-}
-
-function checkCoverage (argv, cb) {
-  process.env.NYC_CWD = process.cwd()
-
-  ;(new NYC(argv)).checkCoverage({
-    lines: argv.lines,
-    functions: argv.functions,
-    branches: argv.branches,
-    statements: argv.statements
-  }, argv['per-file'])
 }

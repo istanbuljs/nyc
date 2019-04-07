@@ -1161,7 +1161,13 @@ describe('the nyc cli', function () {
       proc.on('close', function (code) {
         code.should.equal(0)
         stdout.should.not.match(new RegExp('└─'))
-        fs.statSync(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'))
+        const dir = path.resolve(fixturesCLI, '.nyc_output', 'processinfo')
+        fs.statSync(dir)
+        // make sure that the processinfo file has a numeric pid and ppid
+        const files = fs.readdirSync(dir).filter(f => f !== 'index.json')
+        const data = JSON.parse(fs.readFileSync(dir + '/' + files[0], 'utf8'))
+        data.pid.should.be.a('number')
+        data.ppid.should.be.a('number')
         done()
       })
     })
@@ -1762,6 +1768,138 @@ describe('the nyc cli', function () {
       proc.on('close', function (code) {
         stderr.should.match(/was not a directory/)
         return done()
+      })
+    })
+  })
+
+  describe('exclude-node-modules', () => {
+    const fixturesENM = path.resolve(__dirname, './fixtures/exclude-node-modules')
+    const globalArgs = [
+      bin,
+      '--all=true',
+      '--cache=false',
+      '--per-file=true',
+      '--exclude-node-modules=false',
+      '--include=node_modules/@istanbuljs/fake-module-1/**'
+    ]
+    const spawnOpts = {
+      cwd: fixturesENM,
+      env: env
+    }
+    const noCoverageError = `ERROR: Coverage for lines (0%) does not meet threshold (90%) for ${path.join(fixturesENM, 'node_modules/@istanbuljs/fake-module-1/index.js')}\n`
+
+    it('execute', done => {
+      function checkReport (code, stderr, stdout, next) {
+        code.should.equal(1)
+        stderr.should.equal(noCoverageError)
+        stdoutShouldEqual(stdout, `
+          ----------|----------|----------|----------|----------|-------------------|
+          File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+          ----------|----------|----------|----------|----------|-------------------|
+          All files |        0 |      100 |      100 |        0 |                   |
+           index.js |        0 |      100 |      100 |        0 |                 1 |
+          ----------|----------|----------|----------|----------|-------------------|`)
+        next()
+      }
+
+      function executeMainCommand () {
+        const args = [
+          ...globalArgs,
+          '--check-coverage=true',
+          process.execPath, './bin/do-nothing.js'
+        ]
+
+        const proc = spawn(process.execPath, args, spawnOpts)
+
+        var stderr = ''
+        proc.stderr.on('data', function (chunk) {
+          stderr += chunk
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', code => checkReport(code, stderr, stdout, executeReport))
+      }
+
+      function executeReport () {
+        const args = [
+          ...globalArgs,
+          '--check-coverage=true',
+          'report'
+        ]
+
+        const proc = spawn(process.execPath, args, spawnOpts)
+
+        var stderr = ''
+        proc.stderr.on('data', function (chunk) {
+          stderr += chunk
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', code => checkReport(code, stderr, stdout, executeCheckCoverage))
+      }
+
+      function executeCheckCoverage () {
+        const args = [
+          ...globalArgs,
+          'check-coverage'
+        ]
+
+        const proc = spawn(process.execPath, args, spawnOpts)
+
+        var stderr = ''
+        proc.stderr.on('data', function (chunk) {
+          stderr += chunk
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', code => {
+          code.should.equal(1)
+          stderr.should.equal(noCoverageError)
+          stdoutShouldEqual(stdout, '')
+          done()
+        })
+      }
+
+      executeMainCommand()
+    })
+
+    it('instrument', done => {
+      const args = [
+        ...globalArgs,
+        'instrument',
+        'node_modules'
+      ]
+
+      const proc = spawn(process.execPath, args, spawnOpts)
+
+      var stderr = ''
+      proc.stderr.on('data', function (chunk) {
+        stderr += chunk
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', code => {
+        code.should.equal(0)
+        stderr.should.equal('')
+        stdout.should.match(/fake-module-1/)
+        stdout.should.not.match(/fake-module-2/)
+        done()
       })
     })
   })

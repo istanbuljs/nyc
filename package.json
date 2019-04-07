@@ -23,7 +23,6 @@
   "nyc": {
     "exclude": [
       "node_modules",
-      "bin",
       "coverage",
       "self-coverage",
       "test/fixtures/coverage.js",
@@ -68,7 +67,6 @@
   "license": "ISC",
   "dependencies": {
     "archy": "^1.0.0",
-    "arrify": "^1.0.1",
     "caching-transform": "^3.0.2",
     "convert-source-map": "^1.6.0",
     "cp-file": "^6.2.0",
