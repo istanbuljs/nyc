@@ -3,9 +3,10 @@
 /* global __coverage__ */
 
 const cachingTransform = require('caching-transform')
-const util = require('util')
+const cpFile = require('cp-file')
 const findCacheDir = require('find-cache-dir')
 const fs = require('fs')
+const glob = require('glob')
 const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
@@ -19,6 +20,7 @@ const resolveFrom = require('resolve-from')
 const rimraf = require('rimraf')
 const SourceMaps = require('./lib/source-maps')
 const testExclude = require('test-exclude')
+const util = require('util')
 const uuid = require('uuid/v4')
 
 const debugLog = util.debuglog('nyc')
@@ -155,7 +157,7 @@ NYC.prototype.addAllFiles = function () {
   this._loadAdditionalModules()
 
   this.fakeRequire = true
-  this.walkAllFiles(this.cwd, relFile => {
+  this.exclude.globSync(this.cwd).forEach(relFile => {
     const filename = path.resolve(this.cwd, relFile)
     this.addFile(filename)
     const coverage = coverageFinder()
@@ -193,7 +195,15 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     const stats = fs.lstatSync(input)
     if (stats.isDirectory()) {
       inputDir = input
-      this.walkAllFiles(input, visitor)
+
+      const filesToInstrument = this.exclude.globSync(input)
+
+      if (this.config.completeCopy && output) {
+        const globOptions = { dot: true, nodir: true, ignore: ['**/.git', '**/.git/**', path.join(output, '**')] }
+        glob.sync(path.resolve(input, '**'), globOptions)
+          .forEach(src => cpFile.sync(src, path.join(output, path.relative(input, src))))
+      }
+      filesToInstrument.forEach(visitor)
     } else {
       visitor(input)
     }
@@ -201,12 +211,6 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     return cb(err)
   }
   cb()
-}
-
-NYC.prototype.walkAllFiles = function (dir, visitor) {
-  this.exclude.globSync(dir).forEach(relFile => {
-    visitor(relFile)
-  })
 }
 
 NYC.prototype._transform = function (code, filename) {
