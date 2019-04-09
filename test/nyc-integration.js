@@ -1090,70 +1090,6 @@ describe('the nyc cli', function () {
         done()
       })
     })
-
-    it('doesn’t create the temp directory for process info files when not present', function (done) {
-      var args = [bin, process.execPath, 'selfspawn-fibonacci.js', '5']
-
-      var proc = spawn(process.execPath, args, {
-        cwd: fixturesCLI,
-        env: env
-      })
-
-      proc.on('exit', function (code) {
-        code.should.equal(0)
-        fs.stat(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'), function (err, stat) {
-          err.code.should.equal('ENOENT')
-          done()
-        })
-      })
-    })
-  })
-
-  describe('--build-process-tree', function () {
-    it('builds, but does not display, a tree of spawned processes', function (done) {
-      var args = [bin, '--build-process-tree', process.execPath, 'selfspawn-fibonacci.js', '5']
-
-      var proc = spawn(process.execPath, args, {
-        cwd: fixturesCLI,
-        env: env
-      })
-
-      var stdout = ''
-      proc.stdout.setEncoding('utf8')
-      proc.stdout.on('data', function (chunk) {
-        stdout += chunk
-      })
-
-      proc.on('close', function (code) {
-        code.should.equal(0)
-        stdout.should.not.match(new RegExp('└─'))
-        const dir = path.resolve(fixturesCLI, '.nyc_output', 'processinfo')
-        fs.statSync(dir)
-        // make sure that the processinfo file has a numeric pid and ppid
-        const files = fs.readdirSync(dir).filter(f => f !== 'index.json')
-        const data = JSON.parse(fs.readFileSync(dir + '/' + files[0], 'utf8'))
-        data.pid.should.be.a('number')
-        data.ppid.should.be.a('number')
-        done()
-      })
-    })
-
-    it('doesn’t create the temp directory for process info files when not present', function (done) {
-      var args = [bin, process.execPath, 'selfspawn-fibonacci.js', '5']
-
-      var proc = spawn(process.execPath, args, {
-        cwd: fixturesCLI,
-        env: env
-      })
-
-      proc.on('exit', function (code) {
-        code.should.equal(0)
-        fs.stat(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'), function (err, stat) {
-          err.code.should.equal('ENOENT')
-          done()
-        })
-      })
-    })
   })
 
   describe('--temp-dir', function () {
@@ -1174,7 +1110,7 @@ describe('the nyc cli', function () {
       proc.on('close', function (code) {
         code.should.equal(0)
         var tempFiles = fs.readdirSync(path.resolve(fixturesCLI, '.nyc_output'))
-        tempFiles.length.should.equal(1)
+        tempFiles.length.should.equal(2) // the coverage file, and processinfo
         var cliFiles = fs.readdirSync(path.resolve(fixturesCLI))
         cliFiles.should.include('.nyc_output')
         cliFiles.should.not.include('.temp_dir')
@@ -1194,7 +1130,7 @@ describe('the nyc cli', function () {
       proc.on('exit', function (code) {
         code.should.equal(0)
         var tempFiles = fs.readdirSync(path.resolve(fixturesCLI, '.temp_directory'))
-        tempFiles.length.should.equal(1)
+        tempFiles.length.should.equal(2)
         var cliFiles = fs.readdirSync(path.resolve(fixturesCLI))
         cliFiles.should.not.include('.nyc_output')
         cliFiles.should.not.include('.temp_dir')
@@ -1214,7 +1150,7 @@ describe('the nyc cli', function () {
       proc.on('exit', function (code) {
         code.should.equal(0)
         var tempFiles = fs.readdirSync(path.resolve(fixturesCLI, '.temp_dir'))
-        tempFiles.length.should.equal(1)
+        tempFiles.length.should.equal(2)
         var cliFiles = fs.readdirSync(path.resolve(fixturesCLI))
         cliFiles.should.not.include('.nyc_output')
         cliFiles.should.include('.temp_dir')
