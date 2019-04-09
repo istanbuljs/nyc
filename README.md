@@ -195,12 +195,31 @@ Install custom reporters as a development dependency and you can use the `--repo
 nyc report --reporter=<custom-reporter-name>
 ```
 
+## Producing instrumented source
+
+The `nyc instrument` command can produce a set of instrumented source files.
+These files are suitable for client side deployment in end to end testing.
+You can create an instrumented version of your source code by running:
+
+```bash
+nyc instrument <input> [output]
+```
+
+`<input>` can be any file or directory within the project root directory.
+The `[output]` directory is optional and can be located anywhere, if it is not set the instrumented code will be sent to `stdout`.
+For example, `nyc instrument . ./output` will produce instrumented versions of any source files it finds in `.` and store them in `./output`.
+
+Any existing output can be removed by specifying the `--delete` option.
+Run `nyc instrument --help` to display a full list of available command options.
+
+**Note:** `nyc instrument` will not copy the contents of a `.git` folder to the output directory.
+
 ## Setting the project root directory
 
 nyc runs a lot of file system operations relative to the project root directory.
 During startup nyc will look for the *default* project root directory.
 The *default* project root directory is the first directory found that contains a `package.json` file when searching from the current working directory up.
-If nyc fails to find a directory containing a `package.json` file, it will use current working directory as the *default* project root directory.
+If nyc fails to find a directory containing a `package.json` file, it will use the current working directory as the *default* project root directory.
 You can change the project root directory with the `--cwd` option.
 
 nyc uses the project root directory when:
@@ -220,7 +239,7 @@ It does this by watching for files that are `require()`'d during the test.
 When a file is `require()`'d, nyc creates and returns an instrumented version of the source, rather than the original. 
 Only source files that are visited during a test will appear in the coverage report and contribute to coverage statistics.
 
-nyc will instrument all files if the `--all` flag is set.
+nyc will instrument all files if the `--all` flag is set or if running `nyc instrument`.
 In this case all files will appear in the coverage report and contribute to coverage statistics.
 
 nyc will only collect coverage for files that are located under `cwd`, and then only `*.js` files or files with extensions listed in the `extension` array.
@@ -263,9 +282,6 @@ The `exclude` option has the following defaults settings:
 These settings exclude `test` and `__tests__` directories as well as `test.js`, `*.test.js`, and `test-*.js` files.
 Specifying your own exclude property completely replaces these defaults.
 
-**Note:** The exclude list always implicitly contains `**/node_modules/**`, even if not explicitly specified in an overriding `exclude` array.
-To reverse this you must add the negated exclude rule `!**/node_modules/`.
-
 For example, the following config will collect coverage for every file in the `src` directory regardless of whether it is `require()`'d in a test.
 It will also exclude any files with the extension `.spec.js`.
 
@@ -285,6 +301,32 @@ It will also exclude any files with the extension `.spec.js`.
 
 **Note:** Be wary of automatic OS glob expansion when specifying include/exclude globs with the CLI.
 To prevent this, wrap each glob in single quotes.
+
+### Including files within `node_modules`
+
+We always add `**/node_modules/**` to the exclude list, even if not specified in the config.
+You can override this by setting `--exclude-node-modules=false`.
+
+For example, in the following config, `"excludeNodeModules: false"` will prevent `node_modules` from being added to the exclude rules. 
+The set of include rules then restrict nyc to only consider instrumenting files found under the `lib/` and `node_modules/@my-org/` directories.
+The exclude rules then prevent nyc instrumenting anything in a `test` folder and the file `node_modules/@my-org/something/unwanted.js`.
+
+```json
+{
+  "nyc": {
+    "all": true,
+    "include": [
+      "lib/**",
+      "node_modules/@my-org/**"
+    ],
+    "exclude": [
+      "node_modules/@my-org/something/unwanted.js",
+      "**/test/**"
+    ],
+    "excludeNodeModules": false
+  }
+}
+```
 
 ## Require additional modules
 
