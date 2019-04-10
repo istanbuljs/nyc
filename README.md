@@ -197,22 +197,45 @@ nyc report --reporter=<custom-reporter-name>
 
 ## Producing instrumented source
 
-The `nyc instrument` command can produce a set of instrumented source files.
-These files are suitable for client side deployment in end to end testing.
-You can create an instrumented version of your source code by running:
+The `nyc instrument` command can produce instrumented source files.
+These files are suitable for client side deployment during end to end testing.
+You can either pre-instrument your source, or instrument to a stream.
+ 
+You can create pre-instrumented source code by running:
 
 ```bash
 nyc instrument <input> [output]
 ```
 
 `<input>` can be any file or directory within the project root directory.
-The `[output]` directory is optional and can be located anywhere, if it is not set the instrumented code will be sent to `stdout`.
+The `[output]` directory is optional and can be located anywhere, if not set the instrumented code will be sent to `stdout`.
 For example, `nyc instrument . ./output` will produce instrumented versions of any source files it finds in `.` and store them in `./output`.
 
-Any existing output can be removed by specifying the `--delete` option.
+Existing output can be removed by specifying the `--delete` option.
+The `--complete-copy` option will copy all files from the `input` directory to the `output` directory.
+Note that `nyc instrument` will not copy the contents of a `.git` folder to the output directory.
 Run `nyc instrument --help` to display a full list of available command options.
 
-**Note:** `nyc instrument` will not copy the contents of a `.git` folder to the output directory.
+**Note:** `--complete-copy` will dereference any symlinks during the copy process, this may stop scripts running properly from the output directory.
+
+You can instrument source as a stream with:
+ 
+```bash
+nyc instrument <input>
+```
+
+This form of the command will stream instrumented source directly to `stdout`, that can then be piped to another process.
+You can use this behaviour to create a server that can instrument files on request.
+The following example shows streaming instrumentation middleware capable of instrumenting requested files.
+
+```javascript
+app.use((req, res, next) => {
+  const myOptions = ""
+  const filename = myHelper.getFilename(req)
+  const nyc = cp.spawn(`nyc instrument ${myOptions} ${filename}`)
+  nyc.stdout.pipe(res)
+})
+```
 
 ## Setting the project root directory
 
