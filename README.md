@@ -195,7 +195,7 @@ Install custom reporters as a development dependency and you can use the `--repo
 nyc report --reporter=<custom-reporter-name>
 ```
 
-## [Producing instrumented source](./docs/instrument-command.md)
+## [Producing instrumented source](./docs/instrument.md)
 
 ## Setting the project root directory
 
