@@ -2,11 +2,11 @@
 
 /* global __coverage__ */
 
-const arrify = require('arrify')
 const cachingTransform = require('caching-transform')
-const util = require('util')
+const cpFile = require('cp-file')
 const findCacheDir = require('find-cache-dir')
 const fs = require('fs')
+const glob = require('glob')
 const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
@@ -20,6 +20,7 @@ const resolveFrom = require('resolve-from')
 const rimraf = require('rimraf')
 const SourceMaps = require('./lib/source-maps')
 const testExclude = require('test-exclude')
+const util = require('util')
 const uuid = require('uuid/v4')
 
 const debugLog = util.debuglog('nyc')
@@ -41,15 +42,14 @@ function NYC (config) {
   this._reportDir = config.reportDir || 'coverage'
   this._sourceMap = typeof config.sourceMap === 'boolean' ? config.sourceMap : true
   this._showProcessTree = config.showProcessTree || false
-  this._buildProcessTree = this._showProcessTree || config.buildProcessTree
   this._eagerInstantiation = config.eager || false
   this.cwd = config.cwd || process.cwd()
-  this.reporter = arrify(config.reporter || 'text')
+  this.reporter = [].concat(config.reporter || 'text')
 
   this.cacheDirectory = (config.cacheDir && path.resolve(config.cacheDir)) || findCacheDir({ name: 'nyc', cwd: this.cwd })
   this.cache = Boolean(this.cacheDirectory && config.cache)
 
-  this.extensions = arrify(config.extension)
+  this.extensions = [].concat(config.extension || [])
     .concat('.js')
     .map(ext => ext.toLowerCase())
     .filter((item, pos, arr) => arr.indexOf(item) === pos)
@@ -68,7 +68,7 @@ function NYC (config) {
   })
 
   // require extensions can be provided as config in package.json.
-  this.require = arrify(config.require)
+  this.require = [].concat(config.require || [])
 
   this.transforms = this.extensions.reduce((transforms, ext) => {
     transforms[ext] = this._createTransform(ext)
@@ -157,7 +157,7 @@ NYC.prototype.addAllFiles = function () {
   this._loadAdditionalModules()
 
   this.fakeRequire = true
-  this.walkAllFiles(this.cwd, relFile => {
+  this.exclude.globSync(this.cwd).forEach(relFile => {
     const filename = path.resolve(this.cwd, relFile)
     this.addFile(filename)
     const coverage = coverageFinder()
@@ -195,7 +195,15 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     const stats = fs.lstatSync(input)
     if (stats.isDirectory()) {
       inputDir = input
-      this.walkAllFiles(input, visitor)
+
+      const filesToInstrument = this.exclude.globSync(input)
+
+      if (this.config.completeCopy && output) {
+        const globOptions = { dot: true, nodir: true, ignore: ['**/.git', '**/.git/**', path.join(output, '**')] }
+        glob.sync(path.resolve(input, '**'), globOptions)
+          .forEach(src => cpFile.sync(src, path.join(output, path.relative(input, src))))
+      }
+      filesToInstrument.forEach(visitor)
     } else {
       visitor(input)
     }
@@ -203,12 +211,6 @@ NYC.prototype.instrumentAllFiles = function (input, output, cb) {
     return cb(err)
   }
   cb()
-}
-
-NYC.prototype.walkAllFiles = function (dir, visitor) {
-  this.exclude.globSync(dir).forEach(relFile => {
-    visitor(relFile)
-  })
 }
 
 NYC.prototype._transform = function (code, filename) {
@@ -294,9 +296,7 @@ NYC.prototype.createTempDirectory = function () {
   mkdirp.sync(this.tempDirectory())
   if (this.cache) mkdirp.sync(this.cacheDirectory)
 
-  if (this._buildProcessTree) {
-    mkdirp.sync(this.processInfoDirectory())
-  }
+  mkdirp.sync(this.processInfoDirectory())
 }
 
 NYC.prototype.reset = function () {
@@ -313,6 +313,7 @@ NYC.prototype._wrapExit = function () {
 }
 
 NYC.prototype.wrap = function (bin) {
+  process.env.NYC_PROCESS_ID = this.processInfo.uuid
   this._addRequireHooks()
   this._wrapExit()
   this._loadAdditionalModules()
@@ -342,7 +343,7 @@ NYC.prototype.writeCoverageFile = function () {
     coverage = this.sourceMaps.remapCoverage(coverage)
   }
 
-  var id = this.generateUniqueID()
+  var id = this.processInfo.uuid
   var coverageFilename = path.resolve(this.tempDirectory(), id + '.json')
 
   fs.writeFileSync(
@@ -351,11 +352,8 @@ NYC.prototype.writeCoverageFile = function () {
     'utf-8'
   )
 
-  if (!this._buildProcessTree) {
-    return
-  }
-
   this.processInfo.coverageFilename = coverageFilename
+  this.processInfo.files = Object.keys(coverage)
 
   fs.writeFileSync(
     path.resolve(this.processInfoDirectory(), id + '.json'),
@@ -413,6 +411,80 @@ NYC.prototype.report = function () {
   }
 }
 
+// XXX(@isaacs) Index generation should move to istanbul-lib-processinfo
+NYC.prototype.writeProcessIndex = function () {
+  const dir = this.processInfoDirectory()
+  const pidToUid = new Map()
+  const infoByUid = new Map()
+  const eidToUid = new Map()
+  const infos = fs.readdirSync(dir).filter(f => f !== 'index.json').map(f => {
+    try {
+      const info = JSON.parse(fs.readFileSync(path.resolve(dir, f), 'utf-8'))
+      info.children = []
+      pidToUid.set(info.uuid, info.pid)
+      pidToUid.set(info.pid, info.uuid)
+      infoByUid.set(info.uuid, info)
+      if (info.externalId) {
+        eidToUid.set(info.externalId, info.uuid)
+      }
+      return info
+    } catch (er) {
+      return null
+    }
+  }).filter(Boolean)
+
+  // create all the parent-child links and write back the updated info
+  infos.forEach(info => {
+    if (info.parent) {
+      const parentInfo = infoByUid.get(info.parent)
+      if (parentInfo.children.indexOf(info.uuid) === -1) {
+        parentInfo.children.push(info.uuid)
+      }
+    }
+  })
+
+  // figure out which files were touched by each process.
+  const files = infos.reduce((files, info) => {
+    info.files.forEach(f => {
+      files[f] = files[f] || []
+      files[f].push(info.uuid)
+    })
+    return files
+  }, {})
+
+  // build the actual index!
+  const index = infos.reduce((index, info) => {
+    index.processes[info.uuid] = {}
+    index.processes[info.uuid].parent = info.parent
+    if (info.externalId) {
+      if (index.externalIds[info.externalId]) {
+        throw new Error(`External ID ${info.externalId} used by multiple processes`)
+      }
+      index.processes[info.uuid].externalId = info.externalId
+      index.externalIds[info.externalId] = {
+        root: info.uuid,
+        children: info.children
+      }
+    }
+    index.processes[info.uuid].children = Array.from(info.children)
+    return index
+  }, { processes: {}, files: files, externalIds: {} })
+
+  // flatten the descendant sets of all the externalId procs
+  Object.keys(index.externalIds).forEach(eid => {
+    const { children } = index.externalIds[eid]
+    // push the next generation onto the list so we accumulate them all
+    for (let i = 0; i < children.length; i++) {
+      const nextGen = index.processes[children[i]].children
+      if (nextGen && nextGen.length) {
+        children.push(...nextGen.filter(uuid => children.indexOf(uuid) === -1))
+      }
+    }
+  })
+
+  fs.writeFileSync(path.resolve(dir, 'index.json'), JSON.stringify(index))
+}
+
 NYC.prototype.showProcessTree = function () {
   var processTree = ProcessInfo.buildProcessTree(this._loadProcessInfos())
 
@@ -449,19 +521,25 @@ NYC.prototype._checkCoverage = function (summary, thresholds, file) {
 }
 
 NYC.prototype._loadProcessInfos = function () {
-  var _this = this
-  var files = fs.readdirSync(this.processInfoDirectory())
-
-  return files.map(function (f) {
+  return fs.readdirSync(this.processInfoDirectory()).map(f => {
+    let data
     try {
-      return new ProcessInfo(JSON.parse(fs.readFileSync(
-        path.resolve(_this.processInfoDirectory(), f),
+      data = JSON.parse(fs.readFileSync(
+        path.resolve(this.processInfoDirectory(), f),
         'utf-8'
-      )))
+      ))
     } catch (e) { // handle corrupt JSON output.
-      return {}
+      return null
     }
-  })
+    if (f !== 'index.json') {
+      data.nodes = []
+      data = new ProcessInfo(data)
+    }
+    return { file: path.basename(f, '.json'), data: data }
+  }).filter(Boolean).reduce((infos, info) => {
+    infos[info.file] = info.data
+    return infos
+  }, {})
 }
 
 NYC.prototype.eachReport = function (filenames, iterator, baseDirectory) {

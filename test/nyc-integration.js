@@ -731,6 +731,31 @@ describe('the nyc cli', function () {
           files.should.include('ignore.js')
           files.should.not.include('package.json')
           files.should.not.include('node_modules')
+          const includeTarget = path.resolve(fixturesCLI, 'output', 'ignore.js')
+          fs.readFileSync(includeTarget, 'utf8')
+            .should.match(/var cov_/)
+          done()
+        })
+      })
+
+      it('copies all files from <input> to <output> as well as those that have been instrumented', function (done) {
+        const args = [bin, 'instrument', '--complete-copy', './nyc-config-js', './output']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
+          files.should.include('index.js')
+          files.should.include('ignore.js')
+          files.should.include('package.json')
+          files.should.include('node_modules')
+          const includeTarget = path.resolve(fixturesCLI, 'output', 'ignore.js')
+          fs.readFileSync(includeTarget, 'utf8')
+            .should.match(/var cov_/)
           done()
         })
       })
@@ -780,19 +805,22 @@ describe('the nyc cli', function () {
           code.should.equal(0)
           const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.length.should.not.equal(0)
-          files.should.not.include('exclude-me')
-          files.should.not.include('node_modules')
+          files.should.include('exclude-me')
+          files.should.include('node_modules')
           files.should.include('index.js')
           files.should.include('bad.js')
           const includeTarget = path.resolve(fixturesCLI, 'output', 'index.js')
           fs.readFileSync(includeTarget, 'utf8')
             .should.match(/var cov_/)
+          const excludeTarget = path.resolve(fixturesCLI, 'output', 'exclude-me', 'index.js')
+          fs.readFileSync(excludeTarget, 'utf8')
+            .should.not.match(/var cov_/)
           done()
         })
       })
 
       it('allows a file to be excluded', function (done) {
-        const args = [bin, 'instrument', '--exclude', 'exclude-me/index.js', './subdir/input-dir', './output']
+        const args = [bin, 'instrument', '--complete-copy', '--exclude', 'exclude-me/index.js', './subdir/input-dir', './output']
 
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
@@ -803,7 +831,10 @@ describe('the nyc cli', function () {
           code.should.equal(0)
           const files = fs.readdirSync(path.resolve(fixturesCLI, './output'))
           files.length.should.not.equal(0)
-          files.should.not.include('exclude-me')
+          files.should.include('exclude-me')
+          const excludeTarget = path.resolve(fixturesCLI, 'output', 'exclude-me', 'index.js')
+          fs.readFileSync(excludeTarget, 'utf8')
+            .should.not.match(/var cov_/)
           done()
         })
       })
@@ -829,7 +860,7 @@ describe('the nyc cli', function () {
       })
 
       it('allows a file to be excluded from an included directory', function (done) {
-        const args = [bin, 'instrument', '--exclude', '**/exclude-me.js', '--include', '**/include-me/**', './subdir/input-dir', './output']
+        const args = [bin, 'instrument', '--complete-copy', '--exclude', '**/exclude-me.js', '--include', '**/include-me/**', './subdir/input-dir', './output']
 
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
@@ -844,10 +875,13 @@ describe('the nyc cli', function () {
           const includeMeFiles = fs.readdirSync(path.resolve(fixturesCLI, 'output', 'include-me'))
           includeMeFiles.length.should.not.equal(0)
           includeMeFiles.should.include('include-me.js')
-          includeMeFiles.should.not.include('exclude-me.js')
-          const instrumented = path.resolve(fixturesCLI, 'output', 'include-me', 'include-me.js')
-          fs.readFileSync(instrumented, 'utf8')
+          includeMeFiles.should.include('exclude-me.js')
+          const includeTarget = path.resolve(fixturesCLI, 'output', 'include-me', 'include-me.js')
+          fs.readFileSync(includeTarget, 'utf8')
             .should.match(/var cov_/)
+          const excludeTarget = path.resolve(fixturesCLI, 'output', 'exclude-me', 'index.js')
+          fs.readFileSync(excludeTarget, 'utf8')
+            .should.not.match(/var cov_/)
           done()
         })
       })
@@ -1132,64 +1166,6 @@ describe('the nyc cli', function () {
         done()
       })
     })
-
-    it('doesn’t create the temp directory for process info files when not present', function (done) {
-      var args = [bin, process.execPath, 'selfspawn-fibonacci.js', '5']
-
-      var proc = spawn(process.execPath, args, {
-        cwd: fixturesCLI,
-        env: env
-      })
-
-      proc.on('exit', function (code) {
-        code.should.equal(0)
-        fs.stat(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'), function (err, stat) {
-          err.code.should.equal('ENOENT')
-          done()
-        })
-      })
-    })
-  })
-
-  describe('--build-process-tree', function () {
-    it('builds, but does not display, a tree of spawned processes', function (done) {
-      var args = [bin, '--build-process-tree', process.execPath, 'selfspawn-fibonacci.js', '5']
-
-      var proc = spawn(process.execPath, args, {
-        cwd: fixturesCLI,
-        env: env
-      })
-
-      var stdout = ''
-      proc.stdout.setEncoding('utf8')
-      proc.stdout.on('data', function (chunk) {
-        stdout += chunk
-      })
-
-      proc.on('close', function (code) {
-        code.should.equal(0)
-        stdout.should.not.match(new RegExp('└─'))
-        fs.statSync(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'))
-        done()
-      })
-    })
-
-    it('doesn’t create the temp directory for process info files when not present', function (done) {
-      var args = [bin, process.execPath, 'selfspawn-fibonacci.js', '5']
-
-      var proc = spawn(process.execPath, args, {
-        cwd: fixturesCLI,
-        env: env
-      })
-
-      proc.on('exit', function (code) {
-        code.should.equal(0)
-        fs.stat(path.resolve(fixturesCLI, '.nyc_output', 'processinfo'), function (err, stat) {
-          err.code.should.equal('ENOENT')
-          done()
-        })
-      })
-    })
   })
 
   describe('--temp-dir', function () {
@@ -1210,7 +1186,7 @@ describe('the nyc cli', function () {
       proc.on('close', function (code) {
         code.should.equal(0)
         var tempFiles = fs.readdirSync(path.resolve(fixturesCLI, '.nyc_output'))
-        tempFiles.length.should.equal(1)
+        tempFiles.length.should.equal(2) // the coverage file, and processinfo
         var cliFiles = fs.readdirSync(path.resolve(fixturesCLI))
         cliFiles.should.include('.nyc_output')
         cliFiles.should.not.include('.temp_dir')
@@ -1230,7 +1206,7 @@ describe('the nyc cli', function () {
       proc.on('exit', function (code) {
         code.should.equal(0)
         var tempFiles = fs.readdirSync(path.resolve(fixturesCLI, '.temp_directory'))
-        tempFiles.length.should.equal(1)
+        tempFiles.length.should.equal(2)
         var cliFiles = fs.readdirSync(path.resolve(fixturesCLI))
         cliFiles.should.not.include('.nyc_output')
         cliFiles.should.not.include('.temp_dir')
@@ -1250,7 +1226,7 @@ describe('the nyc cli', function () {
       proc.on('exit', function (code) {
         code.should.equal(0)
         var tempFiles = fs.readdirSync(path.resolve(fixturesCLI, '.temp_dir'))
-        tempFiles.length.should.equal(1)
+        tempFiles.length.should.equal(2)
         var cliFiles = fs.readdirSync(path.resolve(fixturesCLI))
         cliFiles.should.not.include('.nyc_output')
         cliFiles.should.include('.temp_dir')
@@ -1770,6 +1746,138 @@ describe('the nyc cli', function () {
       proc.on('close', function (code) {
         stderr.should.match(/was not a directory/)
         return done()
+      })
+    })
+  })
+
+  describe('exclude-node-modules', () => {
+    const fixturesENM = path.resolve(__dirname, './fixtures/exclude-node-modules')
+    const globalArgs = [
+      bin,
+      '--all=true',
+      '--cache=false',
+      '--per-file=true',
+      '--exclude-node-modules=false',
+      '--include=node_modules/@istanbuljs/fake-module-1/**'
+    ]
+    const spawnOpts = {
+      cwd: fixturesENM,
+      env: env
+    }
+    const noCoverageError = `ERROR: Coverage for lines (0%) does not meet threshold (90%) for ${path.join(fixturesENM, 'node_modules/@istanbuljs/fake-module-1/index.js')}\n`
+
+    it('execute', done => {
+      function checkReport (code, stderr, stdout, next) {
+        code.should.equal(1)
+        stderr.should.equal(noCoverageError)
+        stdoutShouldEqual(stdout, `
+          ----------|----------|----------|----------|----------|-------------------|
+          File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+          ----------|----------|----------|----------|----------|-------------------|
+          All files |        0 |      100 |      100 |        0 |                   |
+           index.js |        0 |      100 |      100 |        0 |                 1 |
+          ----------|----------|----------|----------|----------|-------------------|`)
+        next()
+      }
+
+      function executeMainCommand () {
+        const args = [
+          ...globalArgs,
+          '--check-coverage=true',
+          process.execPath, './bin/do-nothing.js'
+        ]
+
+        const proc = spawn(process.execPath, args, spawnOpts)
+
+        var stderr = ''
+        proc.stderr.on('data', function (chunk) {
+          stderr += chunk
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', code => checkReport(code, stderr, stdout, executeReport))
+      }
+
+      function executeReport () {
+        const args = [
+          ...globalArgs,
+          '--check-coverage=true',
+          'report'
+        ]
+
+        const proc = spawn(process.execPath, args, spawnOpts)
+
+        var stderr = ''
+        proc.stderr.on('data', function (chunk) {
+          stderr += chunk
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', code => checkReport(code, stderr, stdout, executeCheckCoverage))
+      }
+
+      function executeCheckCoverage () {
+        const args = [
+          ...globalArgs,
+          'check-coverage'
+        ]
+
+        const proc = spawn(process.execPath, args, spawnOpts)
+
+        var stderr = ''
+        proc.stderr.on('data', function (chunk) {
+          stderr += chunk
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', code => {
+          code.should.equal(1)
+          stderr.should.equal(noCoverageError)
+          stdoutShouldEqual(stdout, '')
+          done()
+        })
+      }
+
+      executeMainCommand()
+    })
+
+    it('instrument', done => {
+      const args = [
+        ...globalArgs,
+        'instrument',
+        'node_modules'
+      ]
+
+      const proc = spawn(process.execPath, args, spawnOpts)
+
+      var stderr = ''
+      proc.stderr.on('data', function (chunk) {
+        stderr += chunk
+      })
+
+      var stdout = ''
+      proc.stdout.on('data', function (chunk) {
+        stdout += chunk
+      })
+
+      proc.on('close', code => {
+        code.should.equal(0)
+        stderr.should.equal('')
+        stdout.should.match(/fake-module-1/)
+        stdout.should.not.match(/fake-module-2/)
+        done()
       })
     })
   })
