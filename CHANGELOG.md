@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [14.0.0](https://github.com/istanbuljs/nyc/compare/v13.3.0...v14.0.0) (2019-04-15)
+
+
+### Bug Fixes
+
+* Add `cwd` option to instrument command ([#1024](https://github.com/istanbuljs/nyc/issues/1024)) ([051d95a](https://github.com/istanbuljs/nyc/commit/051d95a))
+* Add config values to hash salt ([#988](https://github.com/istanbuljs/nyc/issues/988)) ([7ac325d](https://github.com/istanbuljs/nyc/commit/7ac325d)), closes [#522](https://github.com/istanbuljs/nyc/issues/522)
+* Exclude negated not working with '--all' switch ([#977](https://github.com/istanbuljs/nyc/issues/977)) ([91de23c](https://github.com/istanbuljs/nyc/commit/91de23c))
+* Make --all work for transpiled code ([#1047](https://github.com/istanbuljs/nyc/issues/1047)) ([18e04ba](https://github.com/istanbuljs/nyc/commit/18e04ba))
+* Resolve absolute paths in nyc instrument ([#1012](https://github.com/istanbuljs/nyc/issues/1012)) ([3cb1861](https://github.com/istanbuljs/nyc/commit/3cb1861)), closes [#1014](https://github.com/istanbuljs/nyc/issues/1014)
+* Set processinfo pid/ppid to actual numbers ([#1057](https://github.com/istanbuljs/nyc/issues/1057)) ([32f75b0](https://github.com/istanbuljs/nyc/commit/32f75b0))
+* Use a single instance of nyc for all actions of main command. ([#1059](https://github.com/istanbuljs/nyc/issues/1059)) ([b909575](https://github.com/istanbuljs/nyc/commit/b909575))
+
+
+### Features
+
+* Add `delete` option to instrument command ([#1005](https://github.com/istanbuljs/nyc/issues/1005)) ([d6db551](https://github.com/istanbuljs/nyc/commit/d6db551))
+* Add `include` and `exclude` options to instrument command ([#1007](https://github.com/istanbuljs/nyc/issues/1007)) ([8da097e](https://github.com/istanbuljs/nyc/commit/8da097e))
+* Add processinfo index, add externalId ([#1055](https://github.com/istanbuljs/nyc/issues/1055)) ([8dcf180](https://github.com/istanbuljs/nyc/commit/8dcf180))
+* Add support for nyc.config.js ([#1019](https://github.com/istanbuljs/nyc/issues/1019)) ([3b203c7](https://github.com/istanbuljs/nyc/commit/3b203c7))
+* Add support to exclude files on coverage report generation ([#982](https://github.com/istanbuljs/nyc/issues/982)) ([509c6aa](https://github.com/istanbuljs/nyc/commit/509c6aa))
+* Add test-exclude args to check-coverage and report subcommands. ([0fc217e](https://github.com/istanbuljs/nyc/commit/0fc217e))
+* Always build the processinfo temp dir ([#1061](https://github.com/istanbuljs/nyc/issues/1061)) ([c213469](https://github.com/istanbuljs/nyc/commit/c213469))
+* Enable `es-modules` option for nyc instrument command ([#1006](https://github.com/istanbuljs/nyc/issues/1006)) ([596b120](https://github.com/istanbuljs/nyc/commit/596b120))
+* Fix excludeAfterRemap functionality. ([36bcc0b](https://github.com/istanbuljs/nyc/commit/36bcc0b))
+* Implement `nyc instrument --complete-copy` ([#1056](https://github.com/istanbuljs/nyc/issues/1056)) ([2eb13c6](https://github.com/istanbuljs/nyc/commit/2eb13c6))
+* Remove bundling ([#1017](https://github.com/istanbuljs/nyc/issues/1017)) ([b25492a](https://github.com/istanbuljs/nyc/commit/b25492a))
+* Support turning off node_modules default exclude via `exclude-node-modules` option ([#912](https://github.com/istanbuljs/nyc/issues/912)) ([b7e16cd](https://github.com/istanbuljs/nyc/commit/b7e16cd))
+* Add support for `--exclude-node-modules` to subcommands. ([#1053](https://github.com/istanbuljs/nyc/issues/1053)) ([e597c46](https://github.com/istanbuljs/nyc/commit/e597c46))
+
+
+### BREAKING CHANGES
+
+* The `--exclude-after-remap` option is now functional and enabled by default.  This causes the `include` and `exclude` lists to be processed after using source maps to determine the original filename of sources.
+* Add a file named 'index.json' to the .nyc_output/processinfo directory, which has a different format from the other files in this dir.
+* Change the data type of the pid/ppid fields in processinfo files
+* `nyc instrument` now honors `include` and `exclude` settings, potentially resulting in some files that were previously instrumented being ignored.
+* The `plugins` option has been renamed to `parser-plugins`.
+* The logic involving include/exclude processing has changed.  Results should be verified to ensure all desired sources have coverage data.
+* `nyc instrument` now enables the `--es-module` option by default.  This can cause failures to instrument scripts which violate `'use strict'` rules.
+
+
+
 <a name="13.3.0"></a>
 # [13.3.0](https://github.com/istanbuljs/nyc/compare/v13.2.0...v13.3.0) (2019-02-14)
 
