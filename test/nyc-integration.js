@@ -1839,6 +1839,37 @@ describe('the nyc cli', function () {
       })
     })
   })
+
+  it('recursive run does not throw', done => {
+    const args = [
+      bin,
+      process.execPath,
+      bin,
+      process.execPath,
+      bin,
+      process.execPath,
+      bin,
+      'true'
+    ]
+    const proc = spawn(process.execPath, args, {
+      cwd: path.resolve(__dirname, './fixtures/recursive-run')
+    })
+
+    let stdio = ''
+    proc.stderr.on('data', chunk => {
+      stdio += chunk
+    })
+
+    proc.stdout.on('data', chunk => {
+      stdio += chunk
+    })
+
+    proc.on('close', code => {
+      code.should.equal(0)
+      stdio.should.equal('')
+      done()
+    })
+  })
 })
 
 function stdoutShouldEqual (stdout, expected) {
