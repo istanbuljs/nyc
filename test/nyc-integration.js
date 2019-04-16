@@ -488,6 +488,48 @@ describe('the nyc cli', function () {
         })
       })
 
+      it('loads configuration from .nycrc.yml', function (done) {
+        var args = [bin, '--nycrc-path', './.nycrc.yml', process.execPath, './index.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: cwd,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdout.should.match(/SF:.*index\.js/)
+          stdout.should.not.match(/SF:.*ignore\.js/)
+          done()
+        })
+      })
+
+      it('loads configuration from .nycrc.yaml', function (done) {
+        var args = [bin, '--nycrc-path', './.nycrc.yaml', process.execPath, './index.js']
+
+        var proc = spawn(process.execPath, args, {
+          cwd: cwd,
+          env: env
+        })
+
+        var stdout = ''
+        proc.stdout.on('data', function (chunk) {
+          stdout += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          stdout.should.match(/SF:.*index\.js/)
+          stdout.should.not.match(/SF:.*ignore\.js/)
+          done()
+        })
+      })
+
       it('allows .nycrc configuration to be overridden with command line args', function (done) {
         var args = [bin, '--exclude=foo.js', process.execPath, './index.js']
 

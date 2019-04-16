@@ -341,7 +341,15 @@ modules should be required in the subprocess collecting coverage:
 
 ## Configuring `nyc`
 
-Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a `.nycrc`, `.nycrc.json`, or `nyc.config.js` file:
+Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a seperate configuration file - a variety of flavors are available:
+
+| File name       | File Association |
+|-----------------|------------------|
+| `.nycrc`        | JSON             |
+| `.nycrc.json`   | JSON             |
+| `.nycrc.yaml`   | YAML             |
+| `.nycrc.yml`    | YAML             |
+| `nyc.config.js` | CommonJS export  |
 
 **package.json:**
 
