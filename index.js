@@ -437,7 +437,7 @@ NYC.prototype.writeProcessIndex = function () {
   infos.forEach(info => {
     if (info.parent) {
       const parentInfo = infoByUid.get(info.parent)
-      if (parentInfo.children.indexOf(info.uuid) === -1) {
+      if (parentInfo && !parentInfo.children.includes(info.uuid)) {
         parentInfo.children.push(info.uuid)
       }
     }
