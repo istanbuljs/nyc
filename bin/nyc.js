@@ -85,5 +85,6 @@ if ([
   })
 } else {
   // I don't have a clue what you're doing.
+  process.exitCode = 1
   yargs.showHelp()
 }

@@ -12,7 +12,7 @@ const glob = require('glob')
 const isWindows = require('is-windows')()
 const rimraf = require('rimraf')
 const makeDir = require('make-dir')
-const spawn = require('child_process').spawn
+const { spawn, spawnSync } = require('child_process')
 const si = require('strip-indent')
 
 require('chai').should()
@@ -1077,6 +1077,23 @@ describe('the nyc cli', function () {
         done()
       })
     })
+  })
+
+  it('help shows to stderr when main command doesn\'t know what to do', () => {
+    const opts = {
+      cwd: fixturesCLI,
+      env,
+      encoding: 'utf8'
+    }
+
+    const help = spawnSync(process.execPath, [bin, '--help'], opts)
+    const unknown = spawnSync(process.execPath, [bin], opts)
+    help.status.should.equal(0)
+    unknown.status.should.equal(1)
+    help.stderr.should.equal('')
+    unknown.stdout.should.equal('')
+    help.stdout.should.not.equal('')
+    help.stdout.should.equal(unknown.stderr)
   })
 
   describe('args', function () {
