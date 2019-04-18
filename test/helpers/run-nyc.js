@@ -38,13 +38,15 @@ function sanitizeString (str, cwd, leavePathSep) {
    *   - replace full node path with 'node'
    *   - replace all Windows path separators ('\\') with POSIX path separators
    */
+  str = str
+    .split(cwd).join('.')
+    .split(process.execPath).join('node')
+
   if (!leavePathSep) {
-    str = str.replace(/\\/, '/')
+    str = str.replace(/\\/g, '/')
   }
 
   return str
-    .split(cwd).join('.')
-    .split(process.execPath).join('node')
 }
 
 function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI }) {

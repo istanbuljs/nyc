@@ -195,7 +195,14 @@ t.test('reports appropriate coverage information for es6 source files', t => tes
 }))
 
 t.test('hooks provide coverage for requireJS and AMD modules', t => testSuccess(t, {
-  args: ['--hook-run-in-this-context', '--hook-require=false', process.execPath, './index.js'],
+  args: [
+    /* This effectively excludes ./index.js, normalizing results before/after node.js 11.11.0 */
+    '--include=lib/**',
+    '--hook-run-in-this-context',
+    '--hook-require=false',
+    process.execPath,
+    './index.js'
+  ],
   cwd: path.resolve(__dirname, './fixtures/hooks')
 }))
 
