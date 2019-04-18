@@ -206,9 +206,16 @@ t.test('hooks provide coverage for requireJS and AMD modules', t => testSuccess(
   cwd: path.resolve(__dirname, './fixtures/hooks')
 }))
 
-t.test('does not interpret args intended for instrumented bin', t => testSuccess(t, {
-  args: ['--silent', process.execPath, 'args.js', '--help', '--version']
-}))
+t.test('does not interpret args intended for instrumented bin', t => {
+  return runNYC({
+    args: ['--silent', process.execPath, 'args.js', '--help', '--version'],
+    leavePathSep: true
+  }).then(({ status, stderr, stdout }) => {
+    t.is(status, 0)
+    t.is(stderr, '')
+    t.matchSnapshot(JSON.parse(stdout).slice(2))
+  })
+})
 
 t.test('interprets first args after -- as Node.js execArgv', t => testSuccess(t, {
   args: ['--', '--expose-gc', path.resolve(fixturesCLI, 'gc.js')]

@@ -519,9 +519,8 @@ All files |      100 |      100 |      100 |      100 |                   |
 
 `
 
-exports[`test/nyc-integration-snap.js TAP does not interpret args intended for instrumented bin > stdout 1`] = `
-["node","./args.js","--help","--version"]
-
+exports[`test/nyc-integration-snap.js TAP does not interpret args intended for instrumented bin > undefined 1`] = `
+[ '--help', '--version' ]
 `
 
 exports[`test/nyc-integration-snap.js TAP interprets first args after -- as Node.js execArgv > stdout 1`] = `
