@@ -31,7 +31,23 @@ function promisifySpawn (exe, args, opts) {
   })
 }
 
-function runNYC ({ args, tempDir, cwd = fixturesCLI }) {
+function sanitizeString (str, cwd, leavePathSep) {
+  /*
+   * File paths are different on different systems:
+   *   - make everything relative to cwd
+   *   - replace full node path with 'node'
+   *   - replace all Windows path separators ('\\') with POSIX path separators
+   */
+  if (!leavePathSep) {
+    str = str.replace(/\\/, '/')
+  }
+
+  return str
+    .split(cwd).join('.')
+    .split(process.execPath).join('node')
+}
+
+function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI }) {
   const runArgs = [nycBin].concat(tempDir ? ['--temp-dir', tempDir] : [], args)
   return promisifySpawn(process.execPath, runArgs, {
     cwd: cwd,
@@ -39,8 +55,8 @@ function runNYC ({ args, tempDir, cwd = fixturesCLI }) {
     encoding: 'utf8'
   }).then(({ status, stderr, stdout }) => ({
     status,
-    stderr: stderr.split(cwd).join('.').split(process.execPath).join('node'),
-    stdout: stdout.split(cwd).join('.').split(process.execPath).join('node')
+    stderr: sanitizeString(stderr, cwd, leavePathSep),
+    stdout: sanitizeString(stdout, cwd, leavePathSep)
   }))
 }
 

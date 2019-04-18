@@ -59,7 +59,13 @@ t.test('--include can be used to limit bin to instrumenting specific files', t =
 }))
 
 t.test('--exclude should allow default exclude rules to be overridden', t => testSuccess(t, {
-  args: ['--all', '--exclude', '**/half-covered.js', process.execPath, './half-covered.js']
+  args: [
+    '--all',
+    '--exclude=**/half-covered.js',
+    '--exclude=**/coverage',
+    process.execPath,
+    './half-covered.js'
+  ]
 }))
 
 t.test('report and check should show coverage check along with report', t => {
@@ -103,6 +109,7 @@ t.test('--check-coverage fails when the expected file coverage is below a thresh
 t.test('passes configuration via environment variables', t => {
   return runNYC({
     tempDir: t.tempDir,
+    leavePathSep: true,
     args: [
       '--silent',
       '--require=make-dir',

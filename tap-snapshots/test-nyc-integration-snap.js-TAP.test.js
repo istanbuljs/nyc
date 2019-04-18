@@ -33,10 +33,6 @@ All files                        |        0 |        0 |        0 |        0 |  
   selfspawn-fibonacci.js         |        0 |        0 |        0 |        0 |... 24,25,26,27,28 |
   skip-full.js                   |        0 |      100 |      100 |        0 |               1,2 |
   test.js                        |        0 |        0 |        0 |        0 |                   |
- cli/coverage/lcov-report        |        0 |        0 |        0 |        0 |                   |
-  block-navigation.js            |        0 |        0 |        0 |        0 |... 69,70,74,75,79 |
-  prettify.js                    |        0 |        0 |        0 |        0 |                 2 |
-  sorter.js                      |        0 |        0 |        0 |        0 |... 64,165,166,170 |
  cli/fakebin                     |        0 |      100 |      100 |        0 |                   |
   npm-template.js                |        0 |      100 |      100 |        0 |         2,3,4,7,9 |
  cli/nyc-config-js               |        0 |        0 |      100 |        0 |                   |
