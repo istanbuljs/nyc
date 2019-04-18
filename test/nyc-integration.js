@@ -1254,6 +1254,48 @@ describe('the nyc cli', function () {
     })
   })
 
+  it('handles --clean / --no-clean properly', () => {
+    rimraf.sync(path.resolve(fixturesCLI, '.nyc_output'))
+    const args = (doClean, arg) => [
+      bin,
+      doClean ? '--clean' : '--no-clean',
+      process.execPath,
+      './by-arg2.js',
+      arg
+    ]
+    const opts = {
+      cwd: fixturesCLI,
+      env: env,
+      encoding: 'utf8'
+    }
+
+    const proc1 = spawnSync(process.execPath, args(true, '1'), opts)
+    proc1.status.should.equal(0)
+    stdoutShouldEqual(proc1.stdout, `
+      1
+      ------------|----------|----------|----------|----------|-------------------|
+      File        |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+      ------------|----------|----------|----------|----------|-------------------|
+      All files   |       50 |       25 |      100 |       50 |                   |
+       by-arg2.js |       50 |       25 |      100 |       50 |             4,5,7 |
+      ------------|----------|----------|----------|----------|-------------------|`
+    )
+    proc1.stderr.should.equal('')
+
+    const proc2 = spawnSync(process.execPath, args(false, '2'), opts)
+    proc2.status.should.equal(0)
+    stdoutShouldEqual(proc2.stdout, `
+      2
+      ------------|----------|----------|----------|----------|-------------------|
+      File        |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+      ------------|----------|----------|----------|----------|-------------------|
+      All files   |    83.33 |       75 |      100 |    83.33 |                   |
+       by-arg2.js |    83.33 |       75 |      100 |    83.33 |                 7 |
+      ------------|----------|----------|----------|----------|-------------------|`
+    )
+    proc2.stderr.should.equal('')
+  })
+
   describe('noop instrumenter', function () {
     it('setting instrument to "false" configures noop instrumenter', function (done) {
       var args = [
