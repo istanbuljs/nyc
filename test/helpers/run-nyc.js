@@ -11,22 +11,18 @@ const env = {
 function promisifySpawn (exe, args, opts) {
   return new Promise(resolve => {
     const proc = spawn(exe, args, opts)
-    const result = {
-      stdout: '',
-      stderr: ''
-    }
+    const stdout = []
+    const stderr = []
 
-    proc.stdout.on('data', chunk => {
-      result.stdout += chunk
-    })
+    proc.stdout.on('data', buf => stdout.push(buf))
+    proc.stderr.on('data', buf => stderr.push(buf))
 
-    proc.stderr.on('data', chunk => {
-      result.stderr += chunk
-    })
-
-    proc.on('close', code => {
-      result.status = code
-      resolve(result)
+    proc.on('close', status => {
+      resolve({
+        status,
+        stdout: Buffer.concat(stdout).toString(),
+        stderr: Buffer.concat(stderr).toString()
+      })
     })
   })
 }
@@ -53,8 +49,7 @@ function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI }) {
   const runArgs = [nycBin].concat(tempDir ? ['--temp-dir', tempDir] : [], args)
   return promisifySpawn(process.execPath, runArgs, {
     cwd: cwd,
-    env,
-    encoding: 'utf8'
+    env
   }).then(({ status, stderr, stdout }) => ({
     status,
     stderr: sanitizeString(stderr, cwd, leavePathSep),
