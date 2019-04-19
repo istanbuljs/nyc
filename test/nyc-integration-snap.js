@@ -1,58 +1,19 @@
-const fs = require('fs')
 const path = require('path')
 const os = require('os')
 
 const t = require('tap')
-const makeDir = require('make-dir')
-const pify = require('pify')
-const _rimraf = require('rimraf')
 
-const { runNYC, fixturesCLI } = require('./helpers/run-nyc')
+const { fixturesCLI, runNYC, testSuccess, testFailure } = require('./helpers/run-nyc')
+const tempDirSetup = require('./helpers/temp-dir-setup')
 
-const rimraf = pify(_rimraf)
-const mkdtemp = pify(fs.mkdtemp)
-
-const tempDirBase = path.resolve(__dirname, 'temp-dir-base')
 const nycConfigJS = path.resolve(fixturesCLI, './nyc-config-js')
 const nycrcDir = path.resolve(fixturesCLI, './nycrc')
-
-makeDir.sync(tempDirBase)
 
 if (process.env.TAP_SNAPSHOT !== '1') {
   t.jobs = os.cpus().length
 }
 
-t.beforeEach(function () {
-  return mkdtemp(tempDirBase + '/').then(tempDir => {
-    this.tempDir = tempDir
-  })
-})
-
-t.afterEach(function () {
-  return rimraf(this.tempDir)
-})
-
-t.tearDown(() => {
-  return rimraf(tempDirBase)
-})
-
-function testSuccess (t, opts) {
-  opts.tempDir = t.tempDir
-  return runNYC(opts).then(({ status, stderr, stdout }) => {
-    t.equal(status, 0)
-    t.equal(stderr, '')
-    t.matchSnapshot(stdout, 'stdout')
-  })
-}
-
-function testFailure (t, opts) {
-  opts.tempDir = t.tempDir
-  return runNYC(opts).then(({ status, stderr, stdout }) => {
-    t.equal(status, 1)
-    t.matchSnapshot(stderr, 'stderr')
-    t.matchSnapshot(stdout, 'stdout')
-  })
-}
+tempDirSetup(t, __filename)
 
 t.test('--include can be used to limit bin to instrumenting specific files', t => testSuccess(t, {
   args: ['--all', '--include', 'half-covered.js', process.execPath, './half-covered.js']

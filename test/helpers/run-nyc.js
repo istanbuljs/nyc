@@ -62,7 +62,27 @@ function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI }) {
   }))
 }
 
+function testSuccess (t, opts) {
+  opts.tempDir = t.tempDir
+  return runNYC(opts).then(({ status, stderr, stdout }) => {
+    t.equal(status, 0)
+    t.equal(stderr, '')
+    t.matchSnapshot(stdout, 'stdout')
+  })
+}
+
+function testFailure (t, opts) {
+  opts.tempDir = t.tempDir
+  return runNYC(opts).then(({ status, stderr, stdout }) => {
+    t.equal(status, 1)
+    t.matchSnapshot(stderr, 'stderr')
+    t.matchSnapshot(stdout, 'stdout')
+  })
+}
+
 module.exports = {
+  fixturesCLI,
   runNYC,
-  fixturesCLI
+  testSuccess,
+  testFailure
 }
