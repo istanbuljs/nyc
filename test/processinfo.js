@@ -65,7 +65,6 @@ t.test('validate the created processinfo data', t => {
           execArgv: [],
           cwd: fixturesCLI,
           time: Number,
-          root: /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/,
           coverageFilename: resolve(fixturesCLI, tmp, f),
           files: [ resolvedJS ]
         })
@@ -86,7 +85,6 @@ t.test('check out the index', t => {
     },
     externalIds: {
       blorp: {
-        root: u,
         children: [ u, u, u, u, u, u, u, u ]
       }
     }

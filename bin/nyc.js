@@ -41,9 +41,7 @@ if ([
     // https://github.com/istanbuljs/nyc/issues/951
     SPAWN_WRAP_SHIM_ROOT: process.env.SPAWN_WRAP_SHIM_ROOT || process.env.XDG_CACHE_HOME || require('os').homedir(),
     NYC_CONFIG: JSON.stringify(argv),
-    NYC_CWD: process.cwd(),
-    NYC_ROOT_ID: nyc.rootId,
-    NYC_INSTRUMENTER: argv.instrumenter
+    NYC_CWD: process.cwd()
   }
 
   if (argv['babel-cache'] === false) {
