@@ -236,6 +236,12 @@ class NYC {
     return this._transform(code, filename)
   }
 
+  maybePurgeSourceMapCache () {
+    if (!this.cache) {
+      this.sourceMaps.purgeCache()
+    }
+  }
+
   _transformFactory (cacheDir) {
     const instrumenter = this.instrumenter()
     let instrumented

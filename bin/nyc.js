@@ -67,6 +67,7 @@ if ([
 
     nyc.writeProcessIndex()
 
+    nyc.maybePurgeSourceMapCache()
     if (argv.checkCoverage) {
       nyc.checkCoverage({
         lines: argv.lines,
