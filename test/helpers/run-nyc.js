@@ -9,7 +9,7 @@ const env = {
 }
 
 function promisifySpawn (exe, args, opts) {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const proc = spawn(exe, args, opts)
     const stdout = []
     const stderr = []
@@ -17,6 +17,7 @@ function promisifySpawn (exe, args, opts) {
     proc.stdout.on('data', buf => stdout.push(buf))
     proc.stderr.on('data', buf => stderr.push(buf))
 
+    proc.on('error', reject)
     proc.on('close', status => {
       resolve({
         status,

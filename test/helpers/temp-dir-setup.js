@@ -13,7 +13,7 @@ function tempDirSetup (t, testFile) {
 
   makeDir.sync(tempDirBase)
 
-  // Do not use array function for beforeEach
+  // Do not use arrow function for beforeEach
   // or afterEach, they need this from tap.
   t.beforeEach(function () {
     return mkdtemp(tempDirBase + '/').then(tempDir => {
