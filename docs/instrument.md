@@ -27,7 +27,7 @@ When using `--complete-copy` nyc will not copy the contents of a `.git` folder t
 
 ## Streaming instrumentation
 
-This form of the command will stream instrumented source directly to `stdout`, that can then be piped to another process.
+`nyc instrument` will stream instrumented source directly to `stdout`, that can then be piped to another process.
 You can use this behaviour to create a server that can instrument files on request.
 The following example shows streaming instrumentation middleware capable of instrumenting files on request.
 
