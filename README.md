@@ -195,24 +195,7 @@ Install custom reporters as a development dependency and you can use the `--repo
 nyc report --reporter=<custom-reporter-name>
 ```
 
-## Producing instrumented source
-
-The `nyc instrument` command can produce a set of instrumented source files.
-These files are suitable for client side deployment in end to end testing.
-You can create an instrumented version of your source code by running:
-
-```bash
-nyc instrument <input> [output]
-```
-
-`<input>` can be any file or directory within the project root directory.
-The `[output]` directory is optional and can be located anywhere, if it is not set the instrumented code will be sent to `stdout`.
-For example, `nyc instrument . ./output` will produce instrumented versions of any source files it finds in `.` and store them in `./output`.
-
-Any existing output can be removed by specifying the `--delete` option.
-Run `nyc instrument --help` to display a full list of available command options.
-
-**Note:** `nyc instrument` will not copy the contents of a `.git` folder to the output directory.
+## [Producing instrumented source](./docs/instrument.md)
 
 ## Setting the project root directory
 
