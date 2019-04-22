@@ -5,7 +5,7 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/nyc-integration-snap.js TAP --include can be used to limit bin to instrumenting specific files > stdout 1`] = `
+exports[`test/nyc-integration.js TAP --include can be used to limit bin to instrumenting specific files > stdout 1`] = `
 -----------------|----------|----------|----------|----------|-------------------|
 File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
 -----------------|----------|----------|----------|----------|-------------------|
@@ -15,7 +15,7 @@ All files        |       50 |       50 |      100 |       50 |                  
 
 `
 
-exports[`test/nyc-integration-snap.js TAP --exclude should allow default exclude rules to be overridden > stdout 1`] = `
+exports[`test/nyc-integration.js TAP --exclude should allow default exclude rules to be overridden > stdout 1`] = `
 ---------------------------------|----------|----------|----------|----------|-------------------|
 File                             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
 ---------------------------------|----------|----------|----------|----------|-------------------|
@@ -54,16 +54,16 @@ All files                        |        0 |        0 |        0 |        0 |  
 
 `
 
-exports[`test/nyc-integration-snap.js TAP report and check should show coverage check along with report > stdout 1`] = `
+exports[`test/nyc-integration.js TAP report and check should show coverage check along with report > stdout 1`] = `
 
 `
 
-exports[`test/nyc-integration-snap.js TAP report and check should show coverage check along with report > stderr 1`] = `
+exports[`test/nyc-integration.js TAP report and check should show coverage check along with report > stderr 1`] = `
 ERROR: Coverage for lines (50%) does not meet global threshold (100%)
 
 `
 
-exports[`test/nyc-integration-snap.js TAP report and check should show coverage check along with report > stdout 2`] = `
+exports[`test/nyc-integration.js TAP report and check should show coverage check along with report > stdout 2`] = `
 -----------------|----------|----------|----------|----------|-------------------|
 File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
 -----------------|----------|----------|----------|----------|-------------------|
@@ -73,7 +73,7 @@ All files        |       50 |       50 |      100 |       50 |                  
 
 `
 
-exports[`test/nyc-integration-snap.js TAP --ignore-class-method skips methods that match ignored name but still catches those that are not > stdout 1`] = `
+exports[`test/nyc-integration.js TAP --ignore-class-method skips methods that match ignored name but still catches those that are not > stdout 1`] = `
 ---------------------------------|----------|----------|----------|----------|-------------------|
 File                             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
 ---------------------------------|----------|----------|----------|----------|-------------------|
@@ -115,12 +115,12 @@ All files                        |     1.61 |        0 |     5.56 |     2.15 |  
 
 `
 
-exports[`test/nyc-integration-snap.js TAP --check-coverage fails when the expected coverage is below a threshold > stderr 1`] = `
+exports[`test/nyc-integration.js TAP --check-coverage fails when the expected coverage is below a threshold > stderr 1`] = `
 ERROR: Coverage for lines (50%) does not meet global threshold (51%)
 
 `
 
-exports[`test/nyc-integration-snap.js TAP --check-coverage fails when the expected coverage is below a threshold > stdout 1`] = `
+exports[`test/nyc-integration.js TAP --check-coverage fails when the expected coverage is below a threshold > stdout 1`] = `
 -----------------|----------|----------|----------|----------|-------------------|
 File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
 -----------------|----------|----------|----------|----------|-------------------|
@@ -130,7 +130,7 @@ All files        |       50 |       50 |      100 |       50 |                  
 
 `
 
-exports[`test/nyc-integration-snap.js TAP --check-coverage fails when check-coverage command is used rather than flag > stdout 1`] = `
+exports[`test/nyc-integration.js TAP --check-coverage fails when check-coverage command is used rather than flag > stdout 1`] = `
 -----------------|----------|----------|----------|----------|-------------------|
 File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
 -----------------|----------|----------|----------|----------|-------------------|
@@ -140,16 +140,16 @@ All files        |       50 |       50 |      100 |       50 |                  
 
 `
 
-exports[`test/nyc-integration-snap.js TAP --check-coverage fails when check-coverage command is used rather than flag > stderr 1`] = `
+exports[`test/nyc-integration.js TAP --check-coverage fails when check-coverage command is used rather than flag > stderr 1`] = `
 ERROR: Coverage for lines (50%) does not meet global threshold (51%)
 
 `
 
-exports[`test/nyc-integration-snap.js TAP --check-coverage fails when check-coverage command is used rather than flag > stdout 2`] = `
+exports[`test/nyc-integration.js TAP --check-coverage fails when check-coverage command is used rather than flag > stdout 2`] = `
 
 `
 
-exports[`test/nyc-integration-snap.js TAP --check-coverage succeeds when the expected coverage is above a threshold > stdout 1`] = `
+exports[`test/nyc-integration.js TAP --check-coverage succeeds when the expected coverage is above a threshold > stdout 1`] = `
 -----------------|----------|----------|----------|----------|-------------------|
 File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
 -----------------|----------|----------|----------|----------|-------------------|
@@ -159,12 +159,12 @@ All files        |       50 |       50 |      100 |       50 |                  
 
 `
 
-exports[`test/nyc-integration-snap.js TAP --check-coverage fails in any case when the underlying test failed > stderr 1`] = `
+exports[`test/nyc-integration.js TAP --check-coverage fails in any case when the underlying test failed > stderr 1`] = `
 ERROR: Coverage for lines (33.33%) does not meet global threshold (49%)
 
 `
 
-exports[`test/nyc-integration-snap.js TAP --check-coverage fails in any case when the underlying test failed > stdout 1`] = `
+exports[`test/nyc-integration.js TAP --check-coverage fails in any case when the underlying test failed > stdout 1`] = `
 -------------------------|----------|----------|----------|----------|-------------------|
 File                     |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
 -------------------------|----------|----------|----------|----------|-------------------|
@@ -174,12 +174,12 @@ All files                |    33.33 |        0 |      100 |    33.33 |          
 
 `
 
-exports[`test/nyc-integration-snap.js TAP --check-coverage fails when the expected file coverage is below a threshold > stderr 1`] = `
+exports[`test/nyc-integration.js TAP --check-coverage fails when the expected file coverage is below a threshold > stderr 1`] = `
 ERROR: Coverage for lines (50%) does not meet threshold (51%) for ./half-covered.js
 
 `
 
-exports[`test/nyc-integration-snap.js TAP --check-coverage fails when the expected file coverage is below a threshold > stdout 1`] = `
+exports[`test/nyc-integration.js TAP --check-coverage fails when the expected file coverage is below a threshold > stdout 1`] = `
 -----------------|----------|----------|----------|----------|-------------------|
 File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
 -----------------|----------|----------|----------|----------|-------------------|
@@ -189,7 +189,7 @@ All files        |       50 |       50 |      100 |       50 |                  
 
 `
 
-exports[`test/nyc-integration-snap.js TAP passes configuration via environment variables > undefined 1`] = `
+exports[`test/nyc-integration.js TAP passes configuration via environment variables > undefined 1`] = `
 { silent: true,
   cache: false,
   sourceMap: true,
@@ -201,7 +201,7 @@ exports[`test/nyc-integration-snap.js TAP passes configuration via environment v
   instrumenter: './lib/instrumenters/istanbul' }
 `
 
-exports[`test/nyc-integration-snap.js TAP allows package.json configuration to be overridden with command line args > stdout 1`] = `
+exports[`test/nyc-integration.js TAP allows package.json configuration to be overridden with command line args > stdout 1`] = `
 TN:
 SF:./half-covered.js
 FNF:0
@@ -222,7 +222,7 @@ end_of_record
 
 `
 
-exports[`test/nyc-integration-snap.js TAP loads configuration from package.json and nyc.config.js > stdout 1`] = `
+exports[`test/nyc-integration.js TAP loads configuration from package.json and nyc.config.js > stdout 1`] = `
 TN:
 SF:./index.js
 FNF:0
@@ -244,7 +244,7 @@ end_of_record
 
 `
 
-exports[`test/nyc-integration-snap.js TAP loads configuration from different module rather than nyc.config.js > stderr 1`] = `
+exports[`test/nyc-integration.js TAP loads configuration from different module rather than nyc.config.js > stderr 1`] = `
 ERROR: Coverage for lines (57.14%) does not meet threshold (100%) for ./index.js
 ERROR: Coverage for branches (50%) does not meet threshold (100%) for ./index.js
 ERROR: Coverage for statements (57.14%) does not meet threshold (100%) for ./index.js
@@ -255,7 +255,7 @@ ERROR: Coverage for statements (0%) does not meet threshold (100%) for ./nycrc-c
 
 `
 
-exports[`test/nyc-integration-snap.js TAP loads configuration from different module rather than nyc.config.js > stdout 1`] = `
+exports[`test/nyc-integration.js TAP loads configuration from different module rather than nyc.config.js > stdout 1`] = `
 TN:
 SF:./ignore.js
 FNF:0
@@ -307,7 +307,7 @@ end_of_record
 
 `
 
-exports[`test/nyc-integration-snap.js TAP allows nyc.config.js configuration to be overridden with command line args > stdout 1`] = `
+exports[`test/nyc-integration.js TAP allows nyc.config.js configuration to be overridden with command line args > stdout 1`] = `
 TN:
 SF:./ignore.js
 FNF:0
@@ -359,7 +359,7 @@ end_of_record
 
 `
 
-exports[`test/nyc-integration-snap.js TAP loads configuration from package.json and .nycrc > stdout 1`] = `
+exports[`test/nyc-integration.js TAP loads configuration from package.json and .nycrc > stdout 1`] = `
 TN:
 SF:./index.js
 FNF:0
@@ -381,14 +381,14 @@ end_of_record
 
 `
 
-exports[`test/nyc-integration-snap.js TAP loads configuration from different file rather than .nycrc > stderr 1`] = `
+exports[`test/nyc-integration.js TAP loads configuration from different file rather than .nycrc > stderr 1`] = `
 ERROR: Coverage for lines (57.14%) does not meet threshold (100%) for ./index.js
 ERROR: Coverage for branches (50%) does not meet threshold (100%) for ./index.js
 ERROR: Coverage for statements (57.14%) does not meet threshold (100%) for ./index.js
 
 `
 
-exports[`test/nyc-integration-snap.js TAP loads configuration from different file rather than .nycrc > stdout 1`] = `
+exports[`test/nyc-integration.js TAP loads configuration from different file rather than .nycrc > stdout 1`] = `
 TN:
 SF:./ignore.js
 FNF:0
@@ -420,7 +420,7 @@ end_of_record
 
 `
 
-exports[`test/nyc-integration-snap.js TAP loads configuration from .nycrc.yml > stdout 1`] = `
+exports[`test/nyc-integration.js TAP loads configuration from .nycrc.yml > stdout 1`] = `
 TN:
 SF:./index.js
 FNF:0
@@ -442,7 +442,7 @@ end_of_record
 
 `
 
-exports[`test/nyc-integration-snap.js TAP loads configuration from .nycrc.yaml > stdout 1`] = `
+exports[`test/nyc-integration.js TAP loads configuration from .nycrc.yaml > stdout 1`] = `
 TN:
 SF:./index.js
 FNF:0
@@ -464,7 +464,7 @@ end_of_record
 
 `
 
-exports[`test/nyc-integration-snap.js TAP allows .nycrc configuration to be overridden with command line args > stdout 1`] = `
+exports[`test/nyc-integration.js TAP allows .nycrc configuration to be overridden with command line args > stdout 1`] = `
 TN:
 SF:./ignore.js
 FNF:0
@@ -496,7 +496,7 @@ end_of_record
 
 `
 
-exports[`test/nyc-integration-snap.js TAP reports appropriate coverage information for es6 source files > stdout 1`] = `
+exports[`test/nyc-integration.js TAP reports appropriate coverage information for es6 source files > stdout 1`] = `
 sup
 do not hit
 ----------|----------|----------|----------|----------|-------------------|
@@ -508,7 +508,7 @@ All files |     62.5 |      100 |       40 |     62.5 |                   |
 
 `
 
-exports[`test/nyc-integration-snap.js TAP hooks provide coverage for requireJS and AMD modules > stdout 1`] = `
+exports[`test/nyc-integration.js TAP hooks provide coverage for requireJS and AMD modules > stdout 1`] = `
 ----------|----------|----------|----------|----------|-------------------|
 File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
 ----------|----------|----------|----------|----------|-------------------|
@@ -519,11 +519,11 @@ All files |      100 |      100 |      100 |      100 |                   |
 
 `
 
-exports[`test/nyc-integration-snap.js TAP does not interpret args intended for instrumented bin > undefined 1`] = `
+exports[`test/nyc-integration.js TAP does not interpret args intended for instrumented bin > undefined 1`] = `
 [ '--help', '--version' ]
 `
 
-exports[`test/nyc-integration-snap.js TAP interprets first args after -- as Node.js execArgv > stdout 1`] = `
+exports[`test/nyc-integration.js TAP interprets first args after -- as Node.js execArgv > stdout 1`] = `
 I’m still running
 ----------|----------|----------|----------|----------|-------------------|
 File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
@@ -534,7 +534,7 @@ All files |      100 |      100 |      100 |      100 |                   |
 
 `
 
-exports[`test/nyc-integration-snap.js TAP --show-process-tree displays a tree of spawned processes > stdout 1`] = `
+exports[`test/nyc-integration.js TAP --show-process-tree displays a tree of spawned processes > stdout 1`] = `
 3
 ------------------------|----------|----------|----------|----------|-------------------|
 File                    |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
