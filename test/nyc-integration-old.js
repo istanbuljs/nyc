@@ -271,6 +271,10 @@ describe('the nyc cli', function () {
       it('copies all files from <input> to <output> as well as those that have been instrumented', function (done) {
         const args = [bin, 'instrument', '--complete-copy', './nyc-config-js', './output']
 
+        // force node_modules to exist so we can verify that it is copied.
+        const nmDir = path.resolve(fixturesCLI, 'nyc-config-js', 'node_modules');
+        makeDir.sync(nmDir);
+        fs.writeFileSync(path.join(nmDir, 'test-file'), '')
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
           env: env
