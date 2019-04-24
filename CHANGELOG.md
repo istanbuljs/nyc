@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [14.1.0](https://github.com/istanbuljs/nyc/compare/v14.0.0...v14.1.0) (2019-04-24)
+
+
+### Bug Fixes
+
+* Do not crash when nyc is run inside itself. ([#1068](https://github.com/istanbuljs/nyc/issues/1068)) ([c4fcf5e](https://github.com/istanbuljs/nyc/commit/c4fcf5e)), closes [#1067](https://github.com/istanbuljs/nyc/issues/1067)
+* Exit with code 1 when nyc doesn't know what to do. ([#1070](https://github.com/istanbuljs/nyc/issues/1070)) ([21fb2c8](https://github.com/istanbuljs/nyc/commit/21fb2c8))
+* Purge source-map cache before reporting if cache is disabled. ([#1080](https://github.com/istanbuljs/nyc/issues/1080)) ([3d9eaa4](https://github.com/istanbuljs/nyc/commit/3d9eaa4))
+* Use correct config property for parser plugins ([#1082](https://github.com/istanbuljs/nyc/issues/1082)) ([a7bc7ae](https://github.com/istanbuljs/nyc/commit/a7bc7ae))
+
+
+### Features
+
+* add support for yaml configuration file ([#1054](https://github.com/istanbuljs/nyc/issues/1054)) ([ca37ffa](https://github.com/istanbuljs/nyc/commit/ca37ffa))
+
+
+
 # [14.0.0](https://github.com/istanbuljs/nyc/compare/v13.3.0...v14.0.0) (2019-04-15)
 
 
