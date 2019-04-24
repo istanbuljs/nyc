@@ -190,15 +190,44 @@ All files        |       50 |       50 |      100 |       50 |                  
 `
 
 exports[`test/nyc-integration.js TAP passes configuration via environment variables > undefined 1`] = `
-{ silent: true,
-  cache: false,
-  sourceMap: true,
-  require: 'make-dir',
-  include: 'env.js',
-  exclude: 'batman.js',
-  extension: '.js',
-  cacheDir: '/tmp',
-  instrumenter: './lib/instrumenters/istanbul' }
+[
+  [
+    "cache",
+    false
+  ],
+  [
+    "cacheDir",
+    "/tmp"
+  ],
+  [
+    "exclude",
+    "batman.js"
+  ],
+  [
+    "extension",
+    ".js"
+  ],
+  [
+    "include",
+    "env.js"
+  ],
+  [
+    "instrumenter",
+    "./lib/instrumenters/istanbul"
+  ],
+  [
+    "require",
+    "make-dir"
+  ],
+  [
+    "silent",
+    true
+  ],
+  [
+    "sourceMap",
+    true
+  ]
+]
 `
 
 exports[`test/nyc-integration.js TAP allows package.json configuration to be overridden with command line args > stdout 1`] = `
