@@ -1,6 +1,6 @@
 var a = 0
 
-throw new Error
+process.exit(1)
 
 if (a === 0) {
   a++;
