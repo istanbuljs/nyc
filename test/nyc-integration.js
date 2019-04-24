@@ -97,14 +97,17 @@ t.test('passes configuration via environment variables', t => {
       'extension'
     ]
 
-    const { NYC_CONFIG } = JSON.parse(stdout)
-    const config = JSON.parse(NYC_CONFIG, (key, value) => {
-      return key === '' || checkOptions.includes(key) ? value : undefined
-    })
+    const config = JSON.parse(JSON.parse(stdout).NYC_CONFIG)
 
     t.is(status, 0)
     t.is(stderr, '')
-    t.matchSnapshot(config)
+    t.matchSnapshot(
+      JSON.stringify(
+        checkOptions.sort().map(option => [option, config[option]]),
+        null,
+        2
+      )
+    )
   })
 })
 
