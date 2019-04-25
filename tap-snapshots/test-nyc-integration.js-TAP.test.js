@@ -101,11 +101,11 @@ All files                        |        0 |        0 |        0 |        0 |  
   test.js                        |        0 |        0 |        0 |        0 |                   |
  cli/fakebin                     |        0 |      100 |      100 |        0 |                   |
   npm-template.js                |        0 |      100 |      100 |        0 |         2,3,4,7,9 |
- cli/nyc-config-js               |        0 |        0 |      100 |        0 |                   |
+ cli/nyc-config-js               |        0 |        0 |        0 |        0 |                   |
   ignore.js                      |        0 |      100 |      100 |        0 |                 1 |
   index.js                       |        0 |        0 |      100 |        0 |    1,3,5,7,8,9,10 |
   nyc.config.js                  |        0 |      100 |      100 |        0 |                 1 |
-  nycrc-config.js                |        0 |      100 |      100 |        0 |                 1 |
+  nycrc-config.js                |        0 |      100 |        0 |        0 |               1,3 |
  cli/nycrc                       |        0 |        0 |      100 |        0 |                   |
   ignore.js                      |        0 |      100 |      100 |        0 |                 1 |
   index.js                       |        0 |        0 |      100 |        0 |    1,3,5,7,8,9,10 |
@@ -124,7 +124,7 @@ exports[`test/nyc-integration.js TAP --ignore-class-method skips methods that ma
 ---------------------------------|----------|----------|----------|----------|-------------------|
 File                             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
 ---------------------------------|----------|----------|----------|----------|-------------------|
-All files                        |      1.5 |        0 |     5.56 |     1.96 |                   |
+All files                        |     1.49 |        0 |     5.26 |     1.94 |                   |
  cli                             |     2.11 |        0 |     5.56 |     3.13 |                   |
   args.js                        |        0 |      100 |      100 |        0 |                 1 |
   by-arg2.js                     |        0 |        0 |      100 |        0 |       1,2,3,4,5,7 |
@@ -142,10 +142,10 @@ All files                        |      1.5 |        0 |     5.56 |     1.96 |  
   skip-full.js                   |        0 |      100 |      100 |        0 |               1,2 |
  cli/fakebin                     |        0 |      100 |      100 |        0 |                   |
   npm-template.js                |        0 |      100 |      100 |        0 |         2,3,4,7,9 |
- cli/nyc-config-js               |        0 |        0 |      100 |        0 |                   |
+ cli/nyc-config-js               |        0 |        0 |        0 |        0 |                   |
   ignore.js                      |        0 |      100 |      100 |        0 |                 1 |
   index.js                       |        0 |        0 |      100 |        0 |    1,3,5,7,8,9,10 |
-  nycrc-config.js                |        0 |      100 |      100 |        0 |                 1 |
+  nycrc-config.js                |        0 |      100 |        0 |        0 |               1,3 |
  cli/nycrc                       |        0 |        0 |      100 |        0 |                   |
   ignore.js                      |        0 |      100 |      100 |        0 |                 1 |
   index.js                       |        0 |        0 |      100 |        0 |    1,3,5,7,8,9,10 |
@@ -278,10 +278,13 @@ BRH:0
 end_of_record
 TN:
 SF:./nycrc-config.js
-FNF:0
+FN:2,(anonymous_0)
+FNF:1
 FNH:0
+FNDA:0,(anonymous_0)
 DA:1,0
-LF:1
+DA:3,0
+LF:2
 LH:0
 BRF:0
 BRH:0
@@ -426,6 +429,7 @@ ERROR: Coverage for statements (57.14%) does not meet threshold (100%) for ./ind
 ERROR: Coverage for lines (0%) does not meet threshold (100%) for ./nyc.config.js
 ERROR: Coverage for statements (0%) does not meet threshold (100%) for ./nyc.config.js
 ERROR: Coverage for lines (0%) does not meet threshold (100%) for ./nycrc-config.js
+ERROR: Coverage for functions (0%) does not meet threshold (100%) for ./nycrc-config.js
 ERROR: Coverage for statements (0%) does not meet threshold (100%) for ./nycrc-config.js
 
 `
@@ -471,10 +475,13 @@ BRH:0
 end_of_record
 TN:
 SF:./nycrc-config.js
-FNF:0
+FN:2,(anonymous_0)
+FNF:1
 FNH:0
+FNDA:0,(anonymous_0)
 DA:1,0
-LF:1
+DA:3,0
+LF:2
 LH:0
 BRF:0
 BRH:0
