@@ -52,6 +52,87 @@ and a `text-lcov` coverage report.
 nyc --reporter=lcov --reporter=text-lcov npm test
 ```
 
+## Configuring `nyc`
+
+### Babel projects
+
+Please start with the pre-configured [@istanbuljs/nyc-config-babel preset](https://www.npmjs.com/package/@istanbuljs/nyc-config-babel).
+You can add your custom configuration options as shown below.
+
+### TypeScript projects
+
+Please start with the pre-configured [@istanbuljs/nyc-config-typescript preset](https://www.npmjs.com/package/@istanbuljs/nyc-config-typescript).
+
+#### Adding your overrides
+
+```json
+{
+  "nyc": {
+    "extends": "@istanbuljs/nyc-config-typescript",
+    "all": true
+  }
+}
+```
+### Configuration files
+
+Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a seperate configuration file - a variety of flavors are available:
+
+| File name       | File Association |
+|-----------------|------------------|
+| `.nycrc`        | JSON             |
+| `.nycrc.json`   | JSON             |
+| `.nycrc.yaml`   | YAML             |
+| `.nycrc.yml`    | YAML             |
+| `nyc.config.js` | CommonJS export  |
+
+### Common Configuration Options
+
+See `npx nyc --help` for all options available.
+You can set these in any of the files listed above, or from the command line.
+This table is a quick TLDR for the rest of this readme and there are more advanced docs available.
+
+| Option name | Description | Type | Default |
+| ----------- | ----------- | ---- | ------- |
+| `all` | whether or not to instrument all files (not just the ones touched by your test suite) | `Boolean` | `false` |
+| `check-coverage` | check whether coverage is within thresholds, fail if not | `Boolean` | `false` |
+| `extension` | a list of extensions that nyc should attempt to handle in addition to `.js` | `Array<String>` | `['.js']` |
+| `include` | [globs of files to be included from instrumentation](#selecting-files-for-coverage) | `Array<String>` | `['**']`|
+| `exclude` | See [selecting files for coverage for more info](#selecting-files-for-coverage) | `Array<String>` | [list](https://github.com/istanbuljs/istanbuljs/blob/master/packages/test-exclude/index.js#L176-L184) |
+| `reporter` | [coverage reporters to use](https://istanbul.js.org/docs/advanced/alternative-reporters/) | `Array<String>` | `['text']` |
+| `report-dir` | where to put the coverage report files | `String` | `./coverage` |
+| `temp-dir` | directory to output raw coverage information to | `String` | `./.nyc_output` |
+
+Configuration can also be provided by `nyc.config.js` if programmed logic is required:
+```js
+'use strict'; 
+const {defaultExclude} = require('test-exclude');
+const isWindows = require('is-windows');
+
+let platformExclude = [
+  isWindows() ? 'lib/posix.js' : 'lib/win32.js'
+];
+
+module.exports = {
+  exclude: platformExclude.concat(defaultExclude)
+};
+```
+
+### Publish and reuse your nyc configuration
+
+nyc allows you to inherit other configurations using the key `extends`.
+As an example, an alternative way to configure nyc for `babel-plugin-istanbul` would be to use the [@istanbuljs/nyc-config-babel preset](https://www.npmjs.com/package/@istanbuljs/nyc-config-babel):
+
+```json
+{
+  "nyc": {
+    "extends": "@istanbuljs/nyc-config-babel"
+    //add your custom overrides here
+  }
+}
+```
+
+To publish and reuse your own `nyc` configuration, simply create an npm module that exports an `index.json` with your `nyc` config.
+
 ### Accurate stack traces using source-maps
 
 When `produce-source-map` is set to true, then the instrumented source files will
@@ -79,121 +160,6 @@ _Important: If you are using nyc with a project that pre-instruments its code,
 run nyc with the configuration option `--exclude-after-remap` set to `false`.
 Otherwise nyc's reports will exclude any files that source-maps remap to folders
 covered under exclude rules._
-
-## Use with `babel-plugin-istanbul` for Babel Support
-
-We recommend using [`babel-plugin-istanbul`] if your project uses the babel tool chain:
-
-1. enable the `babel-plugin-istanbul` plugin:
-
-  ```json
-    {
-      "babel": {
-        "presets": ["@babel/preset-env"],
-        "env": {
-          "test": {
-            "plugins": ["istanbul"]
-          }
-        }
-      }
-    }
-  ```
-
-  Note: With this configuration, the Istanbul instrumentation will only be active when `NODE_ENV` or `BABEL_ENV` is `test` unless the environment is a valid entry in `"env"` within the `.babelrc` file.
-
-  We recommend using the [`cross-env`](https://npmjs.com/package/cross-env) package to set these environment variables
-  in your `package.json` scripts in a way that works cross-platform.
-
-2. disable nyc's instrumentation and source-maps, e.g. in `package.json`:
-
-  ```json
-  {
-    "nyc": {
-      "require": [
-        "@babel/register"
-      ],
-      "sourceMap": false,
-      "instrument": false
-    },
-    "scripts": {
-      "test": "cross-env NODE_ENV=test nyc mocha"
-    }
-  }
-  ```
-
-That's all there is to it, better ES2015+ syntax highlighting awaits:
-
-<img width="500" src="screen2.png">
-
-## Support for alternate file extensions (.jsx, .mjs)
-
-Supporting file extensions can be configured through either the configuration arguments or with the `nyc` config section in `package.json`.
-
-```shell
-nyc --extension .jsx --extension .mjs npm test
-```
-
-```json
-{
-  "nyc": {
-    "extension": [
-      ".jsx",
-      ".mjs"
-    ]
-  }
-}
-```
-
-## Checking coverage
-
-nyc can fail tests if coverage falls below a threshold.
-After running your tests with nyc, simply run:
-
-```shell
-nyc check-coverage --lines 95 --functions 95 --branches 95
-```
-
-nyc also accepts a `--check-coverage` shorthand, which can be used to
-both run tests and check that coverage falls within the threshold provided:
-
-```shell
-nyc --check-coverage --lines 100 npm test
-```
-
-The above check fails if coverage falls below 100%.
-
-To check thresholds on a per-file basis run:
-
-```shell
-nyc check-coverage --lines 95 --per-file
-```
-
-## Running reports
-
-Once you've run your tests with nyc, simply run:
-
-```bash
-nyc report
-```
-
-To view your coverage report:
-
-<img width="500" src="screen.png">
-
-You can use [any reporters that are supported by `istanbul`](https://github.com/istanbuljs/istanbuljs/tree/master/packages/istanbul-reports/lib): `clover`, `cobertura`, `html`, `json-summary`, `json`, `lcov`, `lcovonly`, `none`, `teamcity`, `text-lcov`, `text-summary`, `text`.
-
-```bash
-nyc report --reporter=lcov
-```
-
-You can find examples of the output for various reporters [here](https://istanbul.js.org/docs/advanced/alternative-reporters).
-
-You also have the choice of using a [custom reporter](https://github.com/pedrocarrico/istanbul-reporter-aws-cloudwatch-metrics).
-Install custom reporters as a development dependency and you can use the `--reporter` flag to load and view them:
-
-```bash
-nyc report --reporter=<custom-reporter-name>
-```
 
 ## [Producing instrumented source](./docs/instrument.md)
 
@@ -321,87 +287,6 @@ modules should be required in the subprocess collecting coverage:
 ## Caching
 
 `nyc`'s default behavior is to cache instrumented files to disk to prevent instrumenting source files multiple times, and speed `nyc` execution times. You can disable this behavior by running `nyc` with the `--cache false` flag. You can also change the default cache directory from `./node_modules/.cache/nyc` by setting the `--cache-dir` flag.
-
-## Configuring `nyc`
-
-Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a seperate configuration file - a variety of flavors are available:
-
-| File name       | File Association |
-|-----------------|------------------|
-| `.nycrc`        | JSON             |
-| `.nycrc.json`   | JSON             |
-| `.nycrc.yaml`   | YAML             |
-| `.nycrc.yml`    | YAML             |
-| `nyc.config.js` | CommonJS export  |
-
-**package.json:**
-
-```json
-{
-  "description": "These are just examples for demonstration, nothing prescriptive",
-  "nyc": {
-    "check-coverage": true,
-    "per-file": true,
-    "lines": 99,
-    "statements": 99,
-    "functions": 99,
-    "branches": 99,
-    "include": [
-      "src/**/*.js"
-    ],
-    "exclude": [
-      "src/**/*.spec.js"
-    ],
-    "ignore-class-method": "methodToIgnore",
-    "reporter": [
-      "lcov",
-      "text-summary"
-    ],
-    "require": [
-      "./test/helpers/some-helper.js"
-    ],
-    "extension": [
-      ".jsx"
-    ],
-    "cache": true,
-    "all": true,
-    "temp-dir": "./alternative-tmp",
-    "report-dir": "./alternative"
-  }
-}
-```
-
-Configuration can also be provided by `nyc.config.js` if programmed logic is required:
-```js
-'use strict';
-const {defaultExclude} = require('test-exclude');
-const isWindows = require('is-windows');
-
-let platformExclude = [
-  isWindows() ? 'lib/posix.js' : 'lib/win32.js'
-];
-
-module.exports = {
-  exclude: platformExclude.concat(defaultExclude)
-};
-```
-
-### Publish, and reuse, your nyc configuration
-
-nyc allows you to inherit other configurations using the key `extends`. As an example,
-an alternative way to configure nyc for `babel-plugin-istanbul` would be to use the
-[@istanbuljs/nyc-config-babel preset](https://www.npmjs.com/package/@istanbuljs/nyc-config-babel):
-
-```json
-{
-  "nyc": {
-    "extends": "@istanbuljs/nyc-config-babel"
-  }
-}
-```
-
-To publish and resuse your own `nyc` configuration, simply create an npm module that
-exports an `index.json` with your `nyc` config.
 
 ## High and low watermarks
 
