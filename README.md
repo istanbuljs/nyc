@@ -215,34 +215,6 @@ The exclude rules then prevent nyc instrumenting anything in a `test` folder and
 }
 ```
 
-## Accurate stack traces using source-maps
-
-When `produce-source-map` is set to true, then the instrumented source files will
-include inline source maps for the instrumenter transform. When combined with
-[source-map-support](https://github.com/evanw/node-source-map-support),
-stack traces for instrumented code will reflect their original lines.
-
-### Support for custom require hooks (babel, typescript, etc.)
-
-nyc supports custom require hooks like [`@babel/register`]. nyc can load
-the hooks for you, [using the `--require` flag](#require-additional-modules).
-
-Source maps are used to map coverage information back to the appropriate lines
-of the pre-transpiled code. You'll have to configure your custom require hook
-to inline the source-map in the transpiled code. For Babel that means setting
-the `sourceMaps` option to `inline`.
-
-### Source-Map support for pre-instrumented codebases
-
-If you opt to pre-instrument your source-code (rather than using a just-in-time
-transpiler like [`@babel/register`]) nyc supports both inline source-maps and
-`.map` files.
-
-_Important: If you are using nyc with a project that pre-instruments its code,
-run nyc with the configuration option `--exclude-after-remap` set to `false`.
-Otherwise nyc's reports will exclude any files that source-maps remap to folders
-covered under exclude rules._
-
 ## Setting the project root directory
 
 nyc runs a lot of file system operations relative to the project root directory.
@@ -340,6 +312,34 @@ rather than having to ignore every instance of that method:
   }
 }
 ```
+
+## Accurate stack traces using source-maps
+
+When `produce-source-map` is set to true, then the instrumented source files will
+include inline source maps for the instrumenter transform. When combined with
+[source-map-support](https://github.com/evanw/node-source-map-support),
+stack traces for instrumented code will reflect their original lines.
+
+### Support for custom require hooks (babel, typescript, etc.)
+
+nyc supports custom require hooks like [`@babel/register`]. nyc can load
+the hooks for you, [using the `--require` flag](#require-additional-modules).
+
+Source maps are used to map coverage information back to the appropriate lines
+of the pre-transpiled code. You'll have to configure your custom require hook
+to inline the source-map in the transpiled code. For Babel that means setting
+the `sourceMaps` option to `inline`.
+
+### Source-Map support for pre-instrumented codebases
+
+If you opt to pre-instrument your source-code (rather than using a just-in-time
+transpiler like [`@babel/register`]) nyc supports both inline source-maps and
+`.map` files.
+
+_Important: If you are using nyc with a project that pre-instruments its code,
+run nyc with the configuration option `--exclude-after-remap` set to `false`.
+Otherwise nyc's reports will exclude any files that source-maps remap to folders
+covered under exclude rules._
 
 ## [Integrating with coveralls](./docs/setup-coveralls.md)
 
