@@ -13,46 +13,31 @@ Istanbul's state of the art command line interface, with support for:
 * applications that spawn subprocesses.
 * ES2015 transforms, via [`babel-plugin-istanbul`], or source-maps.
 
-## Instrumenting your code
+## Installation & Usage
 
-You can install nyc as a development dependency and add it to the test stanza
-in your package.json.
-
-```shell
-npm i nyc --save-dev
-```
+You can use `npx` instead of installing nyc as a dependency.
+Simply add `nyc` before your test runner is invoked (replace `mocha` with your test runner everywhere you see it):
 
 ```json
 {
   "scripts": {
-    "test": "nyc mocha"
+    "test": "npx nyc mocha"
   }
 }
 ```
 
-Alternatively, you can install nyc globally and use it to execute `npm test`:
-
-```shell
-npm i nyc -g
-```
-
-```shell
-nyc npm test
-```
-
-nyc accepts a wide variety of configuration arguments, run `nyc --help` for
-thorough documentation.
-
-Configuration arguments should be provided prior to the program that nyc
-is executing. As an example, the following command executes `npm test`,
-and indicates to nyc that it should output both an `lcov`
-and a `text-lcov` coverage report.
-
-```shell
-nyc --reporter=lcov --reporter=text-lcov npm test
-```
+Or use your package manager to add a dev dependency: `npm i -D nyc` or `yarn add -D nyc`.
 
 ## Configuring `nyc`
+
+nyc accepts a wide variety of configuration arguments, run `npx nyc --help` for thorough documentation.
+
+Configuration arguments on the command-line should be provided prior to the program that nyc is executing.
+As an example, the following command executes `npm test`, and indicates to nyc that it should output both an `lcov` and a `text-summary` coverage report.
+
+```shell
+npx nyc --reporter=lcov --reporter=text-summary npm test
+```
 
 ### Babel projects
 
