@@ -100,6 +100,7 @@ This table is a quick TLDR for the rest of this readme and there are more advanc
 | `exclude` | See [selecting files for coverage for more info](#selecting-files-for-coverage) | `Array<String>` | [list](https://github.com/istanbuljs/istanbuljs/blob/master/packages/test-exclude/index.js#L176-L184) |
 | `reporter` | [coverage reporters to use](https://istanbul.js.org/docs/advanced/alternative-reporters/) | `Array<String>` | `['text']` |
 | `report-dir` | where to put the coverage report files | `String` | `./coverage` |
+| `skip-full` | don't show files with 100% statement, branch, and function coverage | `Boolean` | `false` |
 | `temp-dir` | directory to output raw coverage information to | `String` | `./.nyc_output` |
 
 Configuration can also be provided by `nyc.config.js` if programmed logic is required:
@@ -132,54 +133,6 @@ As an example, an alternative way to configure nyc for `babel-plugin-istanbul` w
 ```
 
 To publish and reuse your own `nyc` configuration, simply create an npm module that exports an `index.json` with your `nyc` config.
-
-### Accurate stack traces using source-maps
-
-When `produce-source-map` is set to true, then the instrumented source files will
-include inline source maps for the instrumenter transform. When combined with
-[source-map-support](https://github.com/evanw/node-source-map-support),
-stack traces for instrumented code will reflect their original lines.
-
-### Support for custom require hooks (babel, typescript, etc.)
-
-nyc supports custom require hooks like [`@babel/register`]. nyc can load
-the hooks for you, [using the `--require` flag](#require-additional-modules).
-
-Source maps are used to map coverage information back to the appropriate lines
-of the pre-transpiled code. You'll have to configure your custom require hook
-to inline the source-map in the transpiled code. For Babel that means setting
-the `sourceMaps` option to `inline`.
-
-### Source-Map support for pre-instrumented codebases
-
-If you opt to pre-instrument your source-code (rather than using a just-in-time
-transpiler like [`@babel/register`]) nyc supports both inline source-maps and
-`.map` files.
-
-_Important: If you are using nyc with a project that pre-instruments its code,
-run nyc with the configuration option `--exclude-after-remap` set to `false`.
-Otherwise nyc's reports will exclude any files that source-maps remap to folders
-covered under exclude rules._
-
-## [Producing instrumented source](./docs/instrument.md)
-
-## Setting the project root directory
-
-nyc runs a lot of file system operations relative to the project root directory.
-During startup nyc will look for the *default* project root directory.
-The *default* project root directory is the first directory found that contains a `package.json` file when searching from the current working directory up.
-If nyc fails to find a directory containing a `package.json` file, it will use the current working directory as the *default* project root directory.
-You can change the project root directory with the `--cwd` option.
-
-nyc uses the project root directory when:
- * looking for source files to instrument
- * creating globs for include and exclude rules during file selection
- * loading custom require hooks from the `require` array
-
-nyc may create artefact directories within the project root, such as:
-  * the report directory, `<project-root>/coverage`
-  * the cache directory, `<project-root>/node_modules/.cache/nyc`
-  * the temp directory, `<project-root>/.nyc_output`
 
 ## Selecting files for coverage
 
@@ -277,6 +230,52 @@ The exclude rules then prevent nyc instrumenting anything in a `test` folder and
 }
 ```
 
+## Accurate stack traces using source-maps
+
+When `produce-source-map` is set to true, then the instrumented source files will
+include inline source maps for the instrumenter transform. When combined with
+[source-map-support](https://github.com/evanw/node-source-map-support),
+stack traces for instrumented code will reflect their original lines.
+
+### Support for custom require hooks (babel, typescript, etc.)
+
+nyc supports custom require hooks like [`@babel/register`]. nyc can load
+the hooks for you, [using the `--require` flag](#require-additional-modules).
+
+Source maps are used to map coverage information back to the appropriate lines
+of the pre-transpiled code. You'll have to configure your custom require hook
+to inline the source-map in the transpiled code. For Babel that means setting
+the `sourceMaps` option to `inline`.
+
+### Source-Map support for pre-instrumented codebases
+
+If you opt to pre-instrument your source-code (rather than using a just-in-time
+transpiler like [`@babel/register`]) nyc supports both inline source-maps and
+`.map` files.
+
+_Important: If you are using nyc with a project that pre-instruments its code,
+run nyc with the configuration option `--exclude-after-remap` set to `false`.
+Otherwise nyc's reports will exclude any files that source-maps remap to folders
+covered under exclude rules._
+
+## Setting the project root directory
+
+nyc runs a lot of file system operations relative to the project root directory.
+During startup nyc will look for the *default* project root directory.
+The *default* project root directory is the first directory found that contains a `package.json` file when searching from the current working directory up.
+If nyc fails to find a directory containing a `package.json` file, it will use the current working directory as the *default* project root directory.
+You can change the project root directory with the `--cwd` option.
+
+nyc uses the project root directory when:
+ * looking for source files to instrument
+ * creating globs for include and exclude rules during file selection
+ * loading custom require hooks from the `require` array
+
+nyc may create artefact directories within the project root, such as:
+  * the report directory, `<project-root>/coverage`
+  * the cache directory, `<project-root>/node_modules/.cache/nyc`
+  * the temp directory, `<project-root>/.nyc_output`
+
 ## Require additional modules
 
 The `--require` flag can be provided to `nyc` to indicate that additional
@@ -288,7 +287,25 @@ modules should be required in the subprocess collecting coverage:
 
 `nyc`'s default behavior is to cache instrumented files to disk to prevent instrumenting source files multiple times, and speed `nyc` execution times. You can disable this behavior by running `nyc` with the `--cache false` flag. You can also change the default cache directory from `./node_modules/.cache/nyc` by setting the `--cache-dir` flag.
 
-## High and low watermarks
+## Coverage thresholds
+
+You can set custom coverage thresholds that will fail if `check-coverage` is set to `true` and your coverage drops below those thresholds.
+For example, in the following configuration, dropping below 80% branch, line, functions, or statements coverage would fail the build (you can have any combination of these):
+
+```json
+{
+  "nyc": {
+    "branches": 80,
+    "lines": 80,
+    "functions": 80,
+    "statements": 80
+  }
+}
+```
+
+To do this check on a per-file basis (as opposed to in aggregate), set the `per-file` option to `true`.
+
+### High and low watermarks
 
 Several of the coverage reporters supported by nyc display special information
 for high and low watermarks:
@@ -342,6 +359,8 @@ rather than having to ignore every instance of that method:
 ## [Integrating with coveralls](./docs/setup-coveralls.md)
 
 ## [Integrating with codecov](./docs/setup-codecov.md)
+
+## [Producing instrumented source](./docs/instrument.md)
 
 ## Integrating with TAP formatters
 
