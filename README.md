@@ -78,15 +78,15 @@ This table is a quick TLDR for the rest of this readme and there are more advanc
 
 | Option name | Description | Type | Default |
 | ----------- | ----------- | ---- | ------- |
-| `all` | whether or not to instrument all files (not just the ones touched by your test suite) | `Boolean` | `false` |
-| `check-coverage` | check whether coverage is within thresholds, fail if not | `Boolean` | `false` |
-| `extension` | a list of extensions that nyc should attempt to handle in addition to `.js` | `Array<String>` | `['.js']` |
-| `include` | [globs of files to be included from instrumentation](#selecting-files-for-coverage) | `Array<String>` | `['**']`|
-| `exclude` | See [selecting files for coverage for more info](#selecting-files-for-coverage) | `Array<String>` | [list](https://github.com/istanbuljs/istanbuljs/blob/master/packages/test-exclude/index.js#L176-L184) |
-| `reporter` | [coverage reporters to use](https://istanbul.js.org/docs/advanced/alternative-reporters/) | `Array<String>` | `['text']` |
-| `report-dir` | where to put the coverage report files | `String` | `./coverage` |
-| `skip-full` | don't show files with 100% statement, branch, and function coverage | `Boolean` | `false` |
-| `temp-dir` | directory to output raw coverage information to | `String` | `./.nyc_output` |
+| `all` | Whether or not to instrument all files (not just the ones touched by your test suite) | `Boolean` | `false` |
+| `check-coverage` | Check whether coverage is within thresholds, fail if not | `Boolean` | `false` |
+| `extension` | List of extensions that nyc should attempt to handle in addition to `.js` | `Array<String>` | `['.js']` |
+| `include` | See [selecting files for coverage] for more info | `Array<String>` | `['**']`|
+| `exclude` | See [selecting files for coverage] for more info | `Array<String>` | [list](https://github.com/istanbuljs/istanbuljs/blob/master/packages/test-exclude/index.js#L176-L184) |
+| `reporter` | [Coverage reporters to use](https://istanbul.js.org/docs/advanced/alternative-reporters/) | `Array<String>` | `['text']` |
+| `report-dir` | Where to put the coverage report files | `String` | `./coverage` |
+| `skip-full` | Don't show files with 100% statement, branch, and function coverage | `Boolean` | `false` |
+| `temp-dir` | Directory to output raw coverage information to | `String` | `./.nyc_output` |
 
 Configuration can also be provided by `nyc.config.js` if programmed logic is required:
 ```js
@@ -117,7 +117,7 @@ As an example, an alternative way to configure nyc for `babel-plugin-istanbul` w
 }
 ```
 
-To publish and reuse your own `nyc` configuration, simply create an npm module that exports an `index.json` with your `nyc` config.
+To publish and reuse your own `nyc` configuration, simply create an npm module that exports your JSON config (via [`index.json`](https://github.com/istanbuljs/istanbuljs/blob/master/packages/nyc-config-typescript/) or a CJS [`index.js`](https://github.com/istanbuljs/istanbuljs/blob/master/packages/nyc-config-hook-run-in-this-context/)).
 
 ## Selecting files for coverage
 
@@ -354,3 +354,4 @@ Take a look at http://istanbul.js.org/docs/advanced/ and please feel free to [co
 
 [`@babel/register`]: https://www.npmjs.com/package/@babel/register
 [`babel-plugin-istanbul`]: https://github.com/istanbuljs/babel-plugin-istanbul
+[selecting files for coverage]: #selecting-files-for-coverage
