@@ -235,14 +235,17 @@ nyc may create artefact directories within the project root, such as:
 
 ## Require additional modules
 
-The `--require` flag can be provided to `nyc` to indicate that additional
-modules should be required in the subprocess collecting coverage:
+The `--require` flag can be provided to `nyc` to indicate that additional modules should be required in the subprocess collecting coverage:
 
-`nyc --require @babel/register --require @babel/polyfill mocha`
+```
+nyc --require @babel/register --require @babel/polyfill mocha
+```
 
 ## Caching
 
-`nyc`'s default behavior is to cache instrumented files to disk to prevent instrumenting source files multiple times, and speed `nyc` execution times. You can disable this behavior by running `nyc` with the `--cache false` flag. You can also change the default cache directory from `./node_modules/.cache/nyc` by setting the `--cache-dir` flag.
+`nyc`'s default behavior is to cache instrumented files to disk to prevent instrumenting source files multiple times, and speed `nyc` execution times.
+You can disable this behavior by running `nyc` with the `--cache false` flag.
+You can also change the default cache directory from `./node_modules/.cache/nyc` by setting the `--cache-dir` flag.
 
 ## Coverage thresholds
 
@@ -264,13 +267,10 @@ To do this check on a per-file basis (as opposed to in aggregate), set the `per-
 
 ### High and low watermarks
 
-Several of the coverage reporters supported by nyc display special information
-for high and low watermarks:
+Several of the coverage reporters supported by nyc display special information for high and low watermarks:
 
-* high-watermarks represent healthy test coverage (in many reports
-  this is represented with green highlighting).
-* low-watermarks represent sub-optimal coverage levels (in many reports
-  this is represented with red highlighting).
+* high-watermarks represent healthy test coverage (in many reports this is represented with green highlighting).
+* low-watermarks represent sub-optimal coverage levels (in many reports this is represented with red highlighting).
 
 You can specify custom high and low watermarks in nyc's configuration:
 
@@ -313,14 +313,7 @@ rather than having to ignore every instance of that method:
 }
 ```
 
-## Accurate stack traces using source-maps
-
-When `produce-source-map` is set to true, then the instrumented source files will
-include inline source maps for the instrumenter transform. When combined with
-[source-map-support](https://github.com/evanw/node-source-map-support),
-stack traces for instrumented code will reflect their original lines.
-
-### Support for custom require hooks (babel, typescript, etc.)
+## Support for custom require hooks (babel, typescript, etc.)
 
 nyc supports custom require hooks like [`@babel/register`]. nyc can load
 the hooks for you, [using the `--require` flag](#require-additional-modules).
@@ -330,7 +323,7 @@ of the pre-transpiled code. You'll have to configure your custom require hook
 to inline the source-map in the transpiled code. For Babel that means setting
 the `sourceMaps` option to `inline`.
 
-### Source-Map support for pre-instrumented codebases
+## Source-Map support for pre-instrumented codebases
 
 If you opt to pre-instrument your source-code (rather than using a just-in-time
 transpiler like [`@babel/register`]) nyc supports both inline source-maps and
