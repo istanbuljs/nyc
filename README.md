@@ -124,7 +124,7 @@ module.exports = {
 
 To publish and reuse your own `nyc` configuration, simply create an npm module that exports your JSON config (via [`index.json`](https://github.com/istanbuljs/istanbuljs/blob/master/packages/nyc-config-typescript/) or a CJS [`index.js`](https://github.com/istanbuljs/istanbuljs/blob/master/packages/nyc-config-hook-run-in-this-context/)).
 
-A more advanced use case would be to combine multiple shared in a `nyc.config.js` file:
+A more advanced use case would be to combine multiple shared configs in a `nyc.config.js` file:
 ```js
 const babelConfig = require('@istanbuljs/nyc-config-babel');
 const hookRunInThisContextConfig = require('@istanbuljs/nyc-config-hook-run-in-this-context');
@@ -256,7 +256,7 @@ nyc may create artefact directories within the project root, such as:
 The `--require` flag can be provided to `nyc` to indicate that additional modules should be required in the subprocess collecting coverage:
 
 ```
-nyc --require @babel/register --require @babel/polyfill mocha
+nyc --require esm mocha
 ```
 
 ## Caching
