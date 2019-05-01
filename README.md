@@ -16,17 +16,30 @@ Istanbul's state of the art command line interface, with support for:
 ## Installation & Usage
 
 You can use `npx` instead of installing nyc as a dependency.
-Simply add `nyc` before your test runner is invoked (replace `mocha` with your test runner everywhere you see it):
+Simply add `nyc@latest` before your test runner is invoked (replace `mocha` with your test runner everywhere you see it):
 
 ```json
 {
   "scripts": {
-    "test": "npx nyc mocha"
+    "test": "npx nyc@latest mocha"
   }
 }
 ```
 
-Or use your package manager to add a dev dependency: `npm i -D nyc` or `yarn add -D nyc`.
+Or use your package manager to add it as a dev dependency: `npm i -D nyc` or `yarn add -D nyc`.
+You can also use nyc to call npm scripts (assuming they don't already have nyc executed in them), like so:
+```json
+{
+  "scripts": {
+    "test": "mocha",
+    "coverage": "nyc npm run test"
+  }
+}
+```
+
+**Note**: If you use [`jest`](https://npm.im/jest) or [`tap`](https://www.node-tap.org/), you do not need to install `nyc`.
+Those runners already have the IstanbulJS libraries to provide coverage for you.
+Follow their documentation to enable and configure coverage reporting.
 
 ## Configuring `nyc`
 
@@ -50,14 +63,18 @@ Please start with the pre-configured [@istanbuljs/nyc-config-typescript preset](
 
 #### Adding your overrides
 
+nyc allows you to inherit other configurations using the key `extends`.
+You can then add the specific configuration options you want that aren't in that particular shared config, e.g.
 ```json
 {
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",
-    "all": true
+    "all": true,
+    "check-coverage": true
   }
 }
 ```
+
 ### Configuration files
 
 Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a seperate configuration file - a variety of flavors are available:
@@ -103,21 +120,22 @@ module.exports = {
 };
 ```
 
-### Publish and reuse your nyc configuration
-
-nyc allows you to inherit other configurations using the key `extends`.
-As an example, an alternative way to configure nyc for `babel-plugin-istanbul` would be to use the [@istanbuljs/nyc-config-babel preset](https://www.npmjs.com/package/@istanbuljs/nyc-config-babel):
-
-```json
-{
-  "nyc": {
-    "extends": "@istanbuljs/nyc-config-babel"
-    //add your custom overrides here
-  }
-}
-```
+### Publish and reuse your nyc configuration(s)
 
 To publish and reuse your own `nyc` configuration, simply create an npm module that exports your JSON config (via [`index.json`](https://github.com/istanbuljs/istanbuljs/blob/master/packages/nyc-config-typescript/) or a CJS [`index.js`](https://github.com/istanbuljs/istanbuljs/blob/master/packages/nyc-config-hook-run-in-this-context/)).
+
+A more advanced use case would be to combine multiple shared in a `nyc.config.js` file:
+```js
+const babelConfig = require('@istanbuljs/nyc-config-babel');
+const hookRunInThisContextConfig = require('@istanbuljs/nyc-config-hook-run-in-this-context');
+
+module.exports = {
+  ...babelConfig,
+  ...hookRunInThisContextConfig,
+  all: true,
+  'check-coverage': true
+};
+```
 
 ## Selecting files for coverage
 
@@ -153,7 +171,7 @@ You can also specify negated paths in the `exclude` array, by prefixing them wit
 Negated paths can restore paths that have been already been excluded in the `exclude` array.
 Multiple `exclude` globs can be specified on the command line, each must follow a `--exclude`, `-x` switch.
 
-The `exclude` option has the following defaults settings:
+The `exclude` option has the following defaults:
 ```js
 [
   'coverage/**',
