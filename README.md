@@ -54,16 +54,16 @@ npx nyc --reporter=lcov --reporter=text-summary npm test
 
 ### Babel projects
 
-Please start with the pre-configured [@istanbuljs/nyc-config-babel preset](https://www.npmjs.com/package/@istanbuljs/nyc-config-babel).
+Please start with the pre-configured [`@istanbuljs/nyc-config-babel`] preset.
 You can add your custom configuration options as shown below.
 
 ### TypeScript projects
 
-Please start with the pre-configured [@istanbuljs/nyc-config-typescript preset](https://www.npmjs.com/package/@istanbuljs/nyc-config-typescript).
+Please start with the pre-configured [`@istanbuljs/nyc-config-typescript`](https://www.npmjs.com/package/@istanbuljs/nyc-config-typescript) preset.
 
 #### Adding your overrides
 
-nyc allows you to inherit other configurations using the key `extends`.
+nyc allows you to inherit other configurations using the key `extends` in the `package.json` stanza, `.nycrc`, or YAML files.
 You can then add the specific configuration options you want that aren't in that particular shared config, e.g.
 ```json
 {
@@ -259,6 +259,13 @@ The `--require` flag can be provided to `nyc` to indicate that additional module
 nyc --require esm mocha
 ```
 
+### Interaction with `--all` flag
+
+The `--require` flag also operates on the main nyc process for use by `--all`.
+For example, in situations with `nyc --all --instrument false` and babel-plugin-istanbul setup the `--all` option only works if `--require @babel/register` is passed to nyc.
+Passing it to mocha would cause the tests to be instrumented but unloaded sources would not be seen.
+The [`@istanbuljs/nyc-config-babel`] package handles this for you!
+
 ## Caching
 
 `nyc`'s default behavior is to cache instrumented files to disk to prevent instrumenting source files multiple times, and speed `nyc` execution times.
@@ -372,4 +379,5 @@ Take a look at http://istanbul.js.org/docs/advanced/ and please feel free to [co
 
 [`@babel/register`]: https://www.npmjs.com/package/@babel/register
 [`babel-plugin-istanbul`]: https://github.com/istanbuljs/babel-plugin-istanbul
+[`@istanbuljs/nyc-config-babel`]: https://www.npmjs.com/package/@istanbuljs/nyc-config-babel
 [selecting files for coverage]: #selecting-files-for-coverage
