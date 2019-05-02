@@ -1,7 +1,7 @@
 # nyc
 
 [![Build Status](https://travis-ci.org/istanbuljs/nyc.svg?branch=master)](https://travis-ci.org/istanbuljs/nyc)
-[![Coverage Status](https://coveralls.io/repos/bcoe/nyc/badge.svg?branch=)](https://coveralls.io/r/bcoe/nyc?branch=master)
+[![Coverage Status](https://coveralls.io/repos/istanbuljs/nyc/badge.svg?branch=)](https://coveralls.io/r/istanbuljs/nyc?branch=master)
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![community slack](http://devtoolscommunity.herokuapp.com/badge.svg)](http://devtoolscommunity.herokuapp.com)
@@ -11,12 +11,23 @@ _Having problems? want to contribute? join our [community slack](http://devtools
 Istanbul's state of the art command line interface, with support for:
 
 * applications that spawn subprocesses.
-* ES2015 transforms, via [`babel-plugin-istanbul`], or source-maps.
+* source mapped coverage of Babel and TypeScript projects
 
 ## Installation & Usage
 
-You can use `npx` instead of installing nyc as a dependency.
-Simply add `nyc@latest` before your test runner is invoked (replace `mocha` with your test runner everywhere you see it):
+Use your package manager to add it as a dev dependency: `npm i -D nyc` or `yarn add -D nyc`.
+You can use nyc to call npm scripts (assuming they don't already have nyc executed in them), like so (replace `mocha` with your test runner everywhere you see it):
+```json
+{
+  "scripts": {
+    "test": "mocha",
+    "coverage": "nyc npm run test"
+  }
+}
+```
+
+You can use also `npx` instead of installing nyc as a dependency, but you might get updates you are not ready for; to get around this, pin to a specific major version by specifying, e.g. `nyc@14`.
+In general, simply add `nyc` before your test runner is invoked:
 
 ```json
 {
@@ -26,16 +37,7 @@ Simply add `nyc@latest` before your test runner is invoked (replace `mocha` with
 }
 ```
 
-Or use your package manager to add it as a dev dependency: `npm i -D nyc` or `yarn add -D nyc`.
-You can also use nyc to call npm scripts (assuming they don't already have nyc executed in them), like so:
-```json
-{
-  "scripts": {
-    "test": "mocha",
-    "coverage": "nyc npm run test"
-  }
-}
-```
+This is a good way of testing upcoming releases of nyc, usually on the `next` tag.
 
 **Note**: If you use [`jest`](https://npm.im/jest) or [`tap`](https://www.node-tap.org/), you do not need to install `nyc`.
 Those runners already have the IstanbulJS libraries to provide coverage for you.
@@ -49,7 +51,7 @@ Configuration arguments on the command-line should be provided prior to the prog
 As an example, the following command executes `npm test`, and indicates to nyc that it should output both an `lcov` and a `text-summary` coverage report.
 
 ```shell
-npx nyc --reporter=lcov --reporter=text-summary npm test
+nyc --reporter=lcov --reporter=text-summary npm test
 ```
 
 ### Babel projects
@@ -89,7 +91,7 @@ Any configuration options that can be set via the command line can also be speci
 
 ### Common Configuration Options
 
-See `npx nyc --help` for all options available.
+See `nyc --help` for all options available.
 You can set these in any of the files listed above, or from the command line.
 This table is a quick TLDR for the rest of this readme and there are more advanced docs available.
 
@@ -262,7 +264,7 @@ nyc --require esm mocha
 ### Interaction with `--all` flag
 
 The `--require` flag also operates on the main nyc process for use by `--all`.
-For example, in situations with `nyc --all --instrument false` and babel-plugin-istanbul setup the `--all` option only works if `--require @babel/register` is passed to nyc.
+For example, in situations with `nyc --all --instrument false` and [`babel-plugin-istanbul`] setup the `--all` option only works if `--require @babel/register` is passed to nyc.
 Passing it to mocha would cause the tests to be instrumented but unloaded sources would not be seen.
 The [`@istanbuljs/nyc-config-babel`] package handles this for you!
 

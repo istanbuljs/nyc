@@ -20,7 +20,6 @@ create a basic `nyc-bug-demo` repository and link to that please [mandatory].
 <!--
 [mandatory] run the following script: 
   npx envinfo@latest --preset nyc
-  npx nyc --version
 -->
 ```
 # paste the output here
