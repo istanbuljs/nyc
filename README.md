@@ -246,7 +246,7 @@ nyc uses the project root directory when:
  * creating globs for include and exclude rules during file selection
  * loading custom require hooks from the `require` array
 
-nyc may create artefact directories within the project root, such as:
+nyc may create artefact directories within the project root, with these defaults:
   * the report directory, `<project-root>/coverage`
   * the cache directory, `<project-root>/node_modules/.cache/nyc`
   * the temp directory, `<project-root>/.nyc_output`
@@ -338,26 +338,40 @@ rather than having to ignore every instance of that method:
 }
 ```
 
-## Support for custom require hooks (babel, typescript, etc.)
+## Combining reports from multiple runs
+If for whatever reason you have different test runners in your project or a different series of test runs for different kinds of tests, nyc will automatically combine the coverage report for you if configured correctly with the `--no-clean` flag and the `report` command.
+Originally inspired by @janiukjf in #1001, here's an example, where the `test:*` scripts (not shown) invoke only your test runner(s) and not nyc:
 
-nyc supports custom require hooks like [`@babel/register`]. nyc can load
-the hooks for you, [using the `--require` flag](#require-additional-modules).
+```json
+{
+  "scripts": {
+    "cover": "npm run cover:unit && npm run cover:integration && npm run cover:report",
+    "cover:unit": "nyc --silent npm run test:unit",
+    "cover:integration": "nyc --silent --no-clean npm run test:integration",
+    "cover:report": "nyc report --reporter=lcov --reporter=text"
+  }
+}
+```
 
-Source maps are used to map coverage information back to the appropriate lines
-of the pre-transpiled code. You'll have to configure your custom require hook
-to inline the source-map in the transpiled code. For Babel that means setting
-the `sourceMaps` option to `inline`.
+### What about `nyc merge`?
+
+The `nyc merge` command is for producing one _raw coverage output file_ that combines the results from many test runs.
+So if you had the above setup and needed to produce a single `coverage.json` for some external tool, you could do:
+
+```json
+{
+  "scripts": {
+    "cover:merge": "npm run cover:unit && npm run cover:integration && nyc merge .nyc_output coverage.json"
+  }
+}
+```
 
 ## Source-Map support for pre-instrumented codebases
 
-If you opt to pre-instrument your source-code (rather than using a just-in-time
-transpiler like [`@babel/register`]) nyc supports both inline source-maps and
-`.map` files.
+If you opt to pre-instrument your source-code (rather than using a just-in-time transpiler like [`@babel/register`]) nyc supports both inline source-maps and `.map` files.
 
-_Important: If you are using nyc with a project that pre-instruments its code,
-run nyc with the configuration option `--exclude-after-remap` set to `false`.
-Otherwise nyc's reports will exclude any files that source-maps remap to folders
-covered under exclude rules._
+_Important: If you are using nyc with a project that pre-instruments its code, run nyc with the configuration option `--exclude-after-remap` set to `false`.
+Otherwise nyc's reports will exclude any files that source-maps remap to folders covered under exclude rules._
 
 ## [Integrating with coveralls](./docs/setup-coveralls.md)
 
