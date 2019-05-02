@@ -27,7 +27,6 @@ You can use nyc to call npm scripts (assuming they don't already have nyc execut
 ```
 
 You can use also `npx` instead of installing nyc as a dependency, but you might get updates you are not ready for; to get around this, pin to a specific major version by specifying, e.g. `nyc@14`.
-In general, simply add `nyc` before your test runner is invoked:
 
 ```json
 {
@@ -48,10 +47,10 @@ Follow their documentation to enable and configure coverage reporting.
 nyc accepts a wide variety of configuration arguments, run `npx nyc --help` for thorough documentation.
 
 Configuration arguments on the command-line should be provided prior to the program that nyc is executing.
-As an example, the following command executes `npm test`, and indicates to nyc that it should output both an `lcov` and a `text-summary` coverage report.
+As an example, the following command executes `ava`, and indicates to nyc that it should output both an `lcov` (`lcov.info` + html report) and a `text-summary` coverage report.
 
 ```shell
-nyc --reporter=lcov --reporter=text-summary npm test
+nyc --reporter=lcov --reporter=text-summary ava
 ```
 
 ### Babel projects
