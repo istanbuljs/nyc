@@ -10,9 +10,7 @@ const { fixturesCLI, runNYC, tempDirSetup, testSuccess, testFailure } = require(
 const nycConfigJS = path.resolve(fixturesCLI, 'nyc-config-js')
 const nycrcDir = path.resolve(fixturesCLI, 'nycrc')
 
-if (process.env.TAP_SNAPSHOT !== '1') {
-  t.jobs = os.cpus().length
-}
+t.jobs = os.cpus().length
 
 tempDirSetup(t, __filename)
 
