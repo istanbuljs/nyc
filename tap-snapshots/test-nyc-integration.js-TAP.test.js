@@ -5,7 +5,71 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/nyc-integration.js TAP --include can be used to limit bin to instrumenting specific files > stdout 1`] = `
+exports[`test/nyc-integration.js TAP --check-coverage fails in any case when the underlying test failed > stderr 1`] = `
+ERROR: Coverage for lines (33.33%) does not meet global threshold (49%)
+
+`
+
+exports[`test/nyc-integration.js TAP --check-coverage fails in any case when the underlying test failed > stdout 1`] = `
+-------------------------|----------|----------|----------|----------|-------------------|
+File                     |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+-------------------------|----------|----------|----------|----------|-------------------|
+All files                |    33.33 |        0 |      100 |    33.33 |                   |
+ half-covered-failing.js |    33.33 |        0 |      100 |    33.33 |           5,6,7,8 |
+-------------------------|----------|----------|----------|----------|-------------------|
+
+`
+
+exports[`test/nyc-integration.js TAP --check-coverage fails when check-coverage command is used rather than flag > stderr 1`] = `
+ERROR: Coverage for lines (50%) does not meet global threshold (51%)
+
+`
+
+exports[`test/nyc-integration.js TAP --check-coverage fails when check-coverage command is used rather than flag > stdout 1`] = `
+-----------------|----------|----------|----------|----------|-------------------|
+File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+-----------------|----------|----------|----------|----------|-------------------|
+All files        |       50 |       50 |      100 |       50 |                   |
+ half-covered.js |       50 |       50 |      100 |       50 |             6,7,8 |
+-----------------|----------|----------|----------|----------|-------------------|
+
+`
+
+exports[`test/nyc-integration.js TAP --check-coverage fails when check-coverage command is used rather than flag > stdout 2`] = `
+
+`
+
+exports[`test/nyc-integration.js TAP --check-coverage fails when the expected coverage is below a threshold > stderr 1`] = `
+ERROR: Coverage for lines (50%) does not meet global threshold (51%)
+
+`
+
+exports[`test/nyc-integration.js TAP --check-coverage fails when the expected coverage is below a threshold > stdout 1`] = `
+-----------------|----------|----------|----------|----------|-------------------|
+File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+-----------------|----------|----------|----------|----------|-------------------|
+All files        |       50 |       50 |      100 |       50 |                   |
+ half-covered.js |       50 |       50 |      100 |       50 |             6,7,8 |
+-----------------|----------|----------|----------|----------|-------------------|
+
+`
+
+exports[`test/nyc-integration.js TAP --check-coverage fails when the expected file coverage is below a threshold > stderr 1`] = `
+ERROR: Coverage for lines (50%) does not meet threshold (51%) for ./half-covered.js
+
+`
+
+exports[`test/nyc-integration.js TAP --check-coverage fails when the expected file coverage is below a threshold > stdout 1`] = `
+-----------------|----------|----------|----------|----------|-------------------|
+File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+-----------------|----------|----------|----------|----------|-------------------|
+All files        |       50 |       50 |      100 |       50 |                   |
+ half-covered.js |       50 |       50 |      100 |       50 |             6,7,8 |
+-----------------|----------|----------|----------|----------|-------------------|
+
+`
+
+exports[`test/nyc-integration.js TAP --check-coverage succeeds when the expected coverage is above a threshold > stdout 1`] = `
 -----------------|----------|----------|----------|----------|-------------------|
 File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
 -----------------|----------|----------|----------|----------|-------------------|
@@ -56,25 +120,6 @@ All files                        |        0 |        0 |        0 |        0 |  
 
 `
 
-exports[`test/nyc-integration.js TAP report and check should show coverage check along with report > stdout 1`] = `
-
-`
-
-exports[`test/nyc-integration.js TAP report and check should show coverage check along with report > stderr 1`] = `
-ERROR: Coverage for lines (50%) does not meet global threshold (100%)
-
-`
-
-exports[`test/nyc-integration.js TAP report and check should show coverage check along with report > stdout 2`] = `
------------------|----------|----------|----------|----------|-------------------|
-File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
------------------|----------|----------|----------|----------|-------------------|
-All files        |       50 |       50 |      100 |       50 |                   |
- half-covered.js |       50 |       50 |      100 |       50 |             6,7,8 |
------------------|----------|----------|----------|----------|-------------------|
-
-`
-
 exports[`test/nyc-integration.js TAP --ignore-class-method skips methods that match ignored name but still catches those that are not > stdout 1`] = `
 ---------------------------------|----------|----------|----------|----------|-------------------|
 File                             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
@@ -119,12 +164,7 @@ All files                        |      1.5 |        0 |     5.56 |     1.96 |  
 
 `
 
-exports[`test/nyc-integration.js TAP --check-coverage fails when the expected coverage is below a threshold > stderr 1`] = `
-ERROR: Coverage for lines (50%) does not meet global threshold (51%)
-
-`
-
-exports[`test/nyc-integration.js TAP --check-coverage fails when the expected coverage is below a threshold > stdout 1`] = `
+exports[`test/nyc-integration.js TAP --include can be used to limit bin to instrumenting specific files > stdout 1`] = `
 -----------------|----------|----------|----------|----------|-------------------|
 File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
 -----------------|----------|----------|----------|----------|-------------------|
@@ -134,104 +174,119 @@ All files        |       50 |       50 |      100 |       50 |                  
 
 `
 
-exports[`test/nyc-integration.js TAP --check-coverage fails when check-coverage command is used rather than flag > stdout 1`] = `
------------------|----------|----------|----------|----------|-------------------|
-File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
------------------|----------|----------|----------|----------|-------------------|
-All files        |       50 |       50 |      100 |       50 |                   |
- half-covered.js |       50 |       50 |      100 |       50 |             6,7,8 |
------------------|----------|----------|----------|----------|-------------------|
+exports[`test/nyc-integration.js TAP --show-process-tree displays a tree of spawned processes > stdout 1`] = `
+3
+------------------------|----------|----------|----------|----------|-------------------|
+File                    |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+------------------------|----------|----------|----------|----------|-------------------|
+All files               |    90.91 |       70 |      100 |      100 |                   |
+ selfspawn-fibonacci.js |    90.91 |       70 |      100 |      100 |           4,25,27 |
+------------------------|----------|----------|----------|----------|-------------------|
+nyc
+└─┬ node ./selfspawn-fibonacci.js 5
+  │   100 % Lines
+  ├─┬ node ./selfspawn-fibonacci.js 4
+  │ │   100 % Lines
+  │ ├─┬ node ./selfspawn-fibonacci.js 3
+  │ │ │   100 % Lines
+  │ │ ├── node ./selfspawn-fibonacci.js 2
+  │ │ │     31.58 % Lines
+  │ │ └── node ./selfspawn-fibonacci.js 1
+  │ │       26.32 % Lines
+  │ └── node ./selfspawn-fibonacci.js 2
+  │       31.58 % Lines
+  └─┬ node ./selfspawn-fibonacci.js 3
+    │   100 % Lines
+    ├── node ./selfspawn-fibonacci.js 2
+    │     31.58 % Lines
+    └── node ./selfspawn-fibonacci.js 1
+          26.32 % Lines
+
 
 `
 
-exports[`test/nyc-integration.js TAP --check-coverage fails when check-coverage command is used rather than flag > stderr 1`] = `
-ERROR: Coverage for lines (50%) does not meet global threshold (51%)
+exports[`test/nyc-integration.js TAP allows .nycrc configuration to be overridden with command line args > stdout 1`] = `
+TN:
+SF:./ignore.js
+FNF:0
+FNH:0
+DA:1,1
+LF:1
+LH:1
+BRF:0
+BRH:0
+end_of_record
+TN:
+SF:./index.js
+FNF:0
+FNH:0
+DA:1,1
+DA:3,1
+DA:5,1
+DA:7,1
+DA:8,0
+DA:9,0
+DA:10,0
+LF:7
+LH:4
+BRDA:7,0,0,0
+BRDA:7,0,1,1
+BRF:2
+BRH:1
+end_of_record
 
 `
 
-exports[`test/nyc-integration.js TAP --check-coverage fails when check-coverage command is used rather than flag > stdout 2`] = `
+exports[`test/nyc-integration.js TAP allows nyc.config.js configuration to be overridden with command line args > stdout 1`] = `
+TN:
+SF:./ignore.js
+FNF:0
+FNH:0
+DA:1,1
+LF:1
+LH:1
+BRF:0
+BRH:0
+end_of_record
+TN:
+SF:./index.js
+FNF:0
+FNH:0
+DA:1,1
+DA:3,1
+DA:5,1
+DA:7,1
+DA:8,0
+DA:9,0
+DA:10,0
+LF:7
+LH:4
+BRDA:7,0,0,0
+BRDA:7,0,1,1
+BRF:2
+BRH:1
+end_of_record
+TN:
+SF:./nyc.config.js
+FNF:0
+FNH:0
+DA:1,0
+LF:1
+LH:0
+BRF:0
+BRH:0
+end_of_record
+TN:
+SF:./nycrc-config.js
+FNF:0
+FNH:0
+DA:1,0
+LF:1
+LH:0
+BRF:0
+BRH:0
+end_of_record
 
-`
-
-exports[`test/nyc-integration.js TAP --check-coverage succeeds when the expected coverage is above a threshold > stdout 1`] = `
------------------|----------|----------|----------|----------|-------------------|
-File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
------------------|----------|----------|----------|----------|-------------------|
-All files        |       50 |       50 |      100 |       50 |                   |
- half-covered.js |       50 |       50 |      100 |       50 |             6,7,8 |
------------------|----------|----------|----------|----------|-------------------|
-
-`
-
-exports[`test/nyc-integration.js TAP --check-coverage fails in any case when the underlying test failed > stderr 1`] = `
-ERROR: Coverage for lines (33.33%) does not meet global threshold (49%)
-
-`
-
-exports[`test/nyc-integration.js TAP --check-coverage fails in any case when the underlying test failed > stdout 1`] = `
--------------------------|----------|----------|----------|----------|-------------------|
-File                     |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
--------------------------|----------|----------|----------|----------|-------------------|
-All files                |    33.33 |        0 |      100 |    33.33 |                   |
- half-covered-failing.js |    33.33 |        0 |      100 |    33.33 |           5,6,7,8 |
--------------------------|----------|----------|----------|----------|-------------------|
-
-`
-
-exports[`test/nyc-integration.js TAP --check-coverage fails when the expected file coverage is below a threshold > stderr 1`] = `
-ERROR: Coverage for lines (50%) does not meet threshold (51%) for ./half-covered.js
-
-`
-
-exports[`test/nyc-integration.js TAP --check-coverage fails when the expected file coverage is below a threshold > stdout 1`] = `
------------------|----------|----------|----------|----------|-------------------|
-File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
------------------|----------|----------|----------|----------|-------------------|
-All files        |       50 |       50 |      100 |       50 |                   |
- half-covered.js |       50 |       50 |      100 |       50 |             6,7,8 |
------------------|----------|----------|----------|----------|-------------------|
-
-`
-
-exports[`test/nyc-integration.js TAP passes configuration via environment variables > undefined 1`] = `
-[
-  [
-    "cache",
-    false
-  ],
-  [
-    "cacheDir",
-    "/tmp"
-  ],
-  [
-    "exclude",
-    "batman.js"
-  ],
-  [
-    "extension",
-    ".js"
-  ],
-  [
-    "include",
-    "env.js"
-  ],
-  [
-    "instrumenter",
-    "./lib/instrumenters/istanbul"
-  ],
-  [
-    "require",
-    "make-dir"
-  ],
-  [
-    "silent",
-    true
-  ],
-  [
-    "sourceMap",
-    true
-  ]
-]
 `
 
 exports[`test/nyc-integration.js TAP allows package.json configuration to be overridden with command line args > stdout 1`] = `
@@ -255,7 +310,94 @@ end_of_record
 
 `
 
-exports[`test/nyc-integration.js TAP loads configuration from package.json and nyc.config.js > stdout 1`] = `
+exports[`test/nyc-integration.js TAP does not interpret args intended for instrumented bin > undefined 1`] = `
+[ '--help', '--version' ]
+`
+
+exports[`test/nyc-integration.js TAP hooks provide coverage for requireJS and AMD modules > stdout 1`] = `
+----------|----------|----------|----------|----------|-------------------|
+File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+----------|----------|----------|----------|----------|-------------------|
+All files |      100 |      100 |      100 |      100 |                   |
+ ipsum.js |      100 |      100 |      100 |      100 |                   |
+ lorem.js |      100 |      100 |      100 |      100 |                   |
+----------|----------|----------|----------|----------|-------------------|
+
+`
+
+exports[`test/nyc-integration.js TAP interprets first args after -- as Node.js execArgv > stdout 1`] = `
+I’m still running
+----------|----------|----------|----------|----------|-------------------|
+File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+----------|----------|----------|----------|----------|-------------------|
+All files |      100 |      100 |      100 |      100 |                   |
+ gc.js    |      100 |      100 |      100 |      100 |                   |
+----------|----------|----------|----------|----------|-------------------|
+
+`
+
+exports[`test/nyc-integration.js TAP loads configuration from .nycrc.yaml > stdout 1`] = `
+TN:
+SF:./index.js
+FNF:0
+FNH:0
+DA:1,1
+DA:3,1
+DA:5,1
+DA:7,1
+DA:8,0
+DA:9,0
+DA:10,0
+LF:7
+LH:4
+BRDA:7,0,0,0
+BRDA:7,0,1,1
+BRF:2
+BRH:1
+end_of_record
+
+`
+
+exports[`test/nyc-integration.js TAP loads configuration from .nycrc.yml > stdout 1`] = `
+TN:
+SF:./index.js
+FNF:0
+FNH:0
+DA:1,1
+DA:3,1
+DA:5,1
+DA:7,1
+DA:8,0
+DA:9,0
+DA:10,0
+LF:7
+LH:4
+BRDA:7,0,0,0
+BRDA:7,0,1,1
+BRF:2
+BRH:1
+end_of_record
+
+`
+
+exports[`test/nyc-integration.js TAP loads configuration from different file rather than .nycrc > stderr 1`] = `
+ERROR: Coverage for lines (57.14%) does not meet threshold (100%) for ./index.js
+ERROR: Coverage for branches (50%) does not meet threshold (100%) for ./index.js
+ERROR: Coverage for statements (57.14%) does not meet threshold (100%) for ./index.js
+
+`
+
+exports[`test/nyc-integration.js TAP loads configuration from different file rather than .nycrc > stdout 1`] = `
+TN:
+SF:./ignore.js
+FNF:0
+FNH:0
+DA:1,1
+LF:1
+LH:1
+BRF:0
+BRH:0
+end_of_record
 TN:
 SF:./index.js
 FNF:0
@@ -340,58 +482,6 @@ end_of_record
 
 `
 
-exports[`test/nyc-integration.js TAP allows nyc.config.js configuration to be overridden with command line args > stdout 1`] = `
-TN:
-SF:./ignore.js
-FNF:0
-FNH:0
-DA:1,1
-LF:1
-LH:1
-BRF:0
-BRH:0
-end_of_record
-TN:
-SF:./index.js
-FNF:0
-FNH:0
-DA:1,1
-DA:3,1
-DA:5,1
-DA:7,1
-DA:8,0
-DA:9,0
-DA:10,0
-LF:7
-LH:4
-BRDA:7,0,0,0
-BRDA:7,0,1,1
-BRF:2
-BRH:1
-end_of_record
-TN:
-SF:./nyc.config.js
-FNF:0
-FNH:0
-DA:1,0
-LF:1
-LH:0
-BRF:0
-BRH:0
-end_of_record
-TN:
-SF:./nycrc-config.js
-FNF:0
-FNH:0
-DA:1,0
-LF:1
-LH:0
-BRF:0
-BRH:0
-end_of_record
-
-`
-
 exports[`test/nyc-integration.js TAP loads configuration from package.json and .nycrc > stdout 1`] = `
 TN:
 SF:./index.js
@@ -414,24 +504,7 @@ end_of_record
 
 `
 
-exports[`test/nyc-integration.js TAP loads configuration from different file rather than .nycrc > stderr 1`] = `
-ERROR: Coverage for lines (57.14%) does not meet threshold (100%) for ./index.js
-ERROR: Coverage for branches (50%) does not meet threshold (100%) for ./index.js
-ERROR: Coverage for statements (57.14%) does not meet threshold (100%) for ./index.js
-
-`
-
-exports[`test/nyc-integration.js TAP loads configuration from different file rather than .nycrc > stdout 1`] = `
-TN:
-SF:./ignore.js
-FNF:0
-FNH:0
-DA:1,1
-LF:1
-LH:1
-BRF:0
-BRH:0
-end_of_record
+exports[`test/nyc-integration.js TAP loads configuration from package.json and nyc.config.js > stdout 1`] = `
 TN:
 SF:./index.js
 FNF:0
@@ -453,79 +526,63 @@ end_of_record
 
 `
 
-exports[`test/nyc-integration.js TAP loads configuration from .nycrc.yml > stdout 1`] = `
-TN:
-SF:./index.js
-FNF:0
-FNH:0
-DA:1,1
-DA:3,1
-DA:5,1
-DA:7,1
-DA:8,0
-DA:9,0
-DA:10,0
-LF:7
-LH:4
-BRDA:7,0,0,0
-BRDA:7,0,1,1
-BRF:2
-BRH:1
-end_of_record
+exports[`test/nyc-integration.js TAP passes configuration via environment variables > undefined 1`] = `
+[
+  [
+    "cache",
+    false
+  ],
+  [
+    "cacheDir",
+    "/tmp"
+  ],
+  [
+    "exclude",
+    "batman.js"
+  ],
+  [
+    "extension",
+    ".js"
+  ],
+  [
+    "include",
+    "env.js"
+  ],
+  [
+    "instrumenter",
+    "./lib/instrumenters/istanbul"
+  ],
+  [
+    "require",
+    "make-dir"
+  ],
+  [
+    "silent",
+    true
+  ],
+  [
+    "sourceMap",
+    true
+  ]
+]
+`
+
+exports[`test/nyc-integration.js TAP report and check should show coverage check along with report > stderr 1`] = `
+ERROR: Coverage for lines (50%) does not meet global threshold (100%)
 
 `
 
-exports[`test/nyc-integration.js TAP loads configuration from .nycrc.yaml > stdout 1`] = `
-TN:
-SF:./index.js
-FNF:0
-FNH:0
-DA:1,1
-DA:3,1
-DA:5,1
-DA:7,1
-DA:8,0
-DA:9,0
-DA:10,0
-LF:7
-LH:4
-BRDA:7,0,0,0
-BRDA:7,0,1,1
-BRF:2
-BRH:1
-end_of_record
+exports[`test/nyc-integration.js TAP report and check should show coverage check along with report > stdout 1`] = `
 
 `
 
-exports[`test/nyc-integration.js TAP allows .nycrc configuration to be overridden with command line args > stdout 1`] = `
-TN:
-SF:./ignore.js
-FNF:0
-FNH:0
-DA:1,1
-LF:1
-LH:1
-BRF:0
-BRH:0
-end_of_record
-TN:
-SF:./index.js
-FNF:0
-FNH:0
-DA:1,1
-DA:3,1
-DA:5,1
-DA:7,1
-DA:8,0
-DA:9,0
-DA:10,0
-LF:7
-LH:4
-BRDA:7,0,0,0
-BRDA:7,0,1,1
-BRF:2
-BRH:1
-end_of_record
+exports[`test/nyc-integration.js TAP report and check should show coverage check along with report > stdout 2`] = `
+-----------------|----------|----------|----------|----------|-------------------|
+File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+-----------------|----------|----------|----------|----------|-------------------|
+All files        |       50 |       50 |      100 |       50 |                   |
+ half-covered.js |       50 |       50 |      100 |       50 |             6,7,8 |
+-----------------|----------|----------|----------|----------|-------------------|
 
 `
 
@@ -538,62 +595,5 @@ File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
 All files |     62.5 |      100 |       40 |     62.5 |                   |
  es6.js   |     62.5 |      100 |       40 |     62.5 |          11,16,17 |
 ----------|----------|----------|----------|----------|-------------------|
-
-`
-
-exports[`test/nyc-integration.js TAP hooks provide coverage for requireJS and AMD modules > stdout 1`] = `
-----------|----------|----------|----------|----------|-------------------|
-File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
-----------|----------|----------|----------|----------|-------------------|
-All files |      100 |      100 |      100 |      100 |                   |
- ipsum.js |      100 |      100 |      100 |      100 |                   |
- lorem.js |      100 |      100 |      100 |      100 |                   |
-----------|----------|----------|----------|----------|-------------------|
-
-`
-
-exports[`test/nyc-integration.js TAP does not interpret args intended for instrumented bin > undefined 1`] = `
-[ '--help', '--version' ]
-`
-
-exports[`test/nyc-integration.js TAP interprets first args after -- as Node.js execArgv > stdout 1`] = `
-I’m still running
-----------|----------|----------|----------|----------|-------------------|
-File      |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
-----------|----------|----------|----------|----------|-------------------|
-All files |      100 |      100 |      100 |      100 |                   |
- gc.js    |      100 |      100 |      100 |      100 |                   |
-----------|----------|----------|----------|----------|-------------------|
-
-`
-
-exports[`test/nyc-integration.js TAP --show-process-tree displays a tree of spawned processes > stdout 1`] = `
-3
-------------------------|----------|----------|----------|----------|-------------------|
-File                    |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
-------------------------|----------|----------|----------|----------|-------------------|
-All files               |    90.91 |       70 |      100 |      100 |                   |
- selfspawn-fibonacci.js |    90.91 |       70 |      100 |      100 |           4,25,27 |
-------------------------|----------|----------|----------|----------|-------------------|
-nyc
-└─┬ node ./selfspawn-fibonacci.js 5
-  │   100 % Lines
-  ├─┬ node ./selfspawn-fibonacci.js 4
-  │ │   100 % Lines
-  │ ├─┬ node ./selfspawn-fibonacci.js 3
-  │ │ │   100 % Lines
-  │ │ ├── node ./selfspawn-fibonacci.js 2
-  │ │ │     31.58 % Lines
-  │ │ └── node ./selfspawn-fibonacci.js 1
-  │ │       26.32 % Lines
-  │ └── node ./selfspawn-fibonacci.js 2
-  │       31.58 % Lines
-  └─┬ node ./selfspawn-fibonacci.js 3
-    │   100 % Lines
-    ├── node ./selfspawn-fibonacci.js 2
-    │     31.58 % Lines
-    └── node ./selfspawn-fibonacci.js 1
-          26.32 % Lines
-
 
 `
