@@ -52,7 +52,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### BREAKING CHANGES
 
-* The `--exclude-after-remap` option is now functional and enabled by default.  This causes the `include` and `exclude` lists to be processed after using source maps to determine the original filename of sources.
+* The `--exclude-after-remap` option is now functional and enabled by default.  This causes the `include`, `exclude` and `extension` lists to be processed after using source maps to determine the original filename of sources.
 * Add a file named 'index.json' to the .nyc_output/processinfo directory, which has a different format from the other files in this dir.
 * Change the data type of the pid/ppid fields in processinfo files
 * `nyc instrument` now honors `include` and `exclude` settings, potentially resulting in some files that were previously instrumented being ignored.
