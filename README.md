@@ -138,6 +138,8 @@ module.exports = {
 };
 ```
 
+### [Publish and use an nyc configuration generator](./docs/config-generator.md)
+
 ## Selecting files for coverage
 
 By default, nyc only collects coverage for source files that are visited during a test.
