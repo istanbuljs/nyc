@@ -17,7 +17,7 @@ const isWindows = require('is-windows')()
 const spawn = require('child_process').spawn
 const fixtures = path.resolve(__dirname, './fixtures')
 const bin = path.resolve(__dirname, '../self-coverage/bin/nyc')
-const resetState = require('./lib/reset-state')
+const resetState = require('./helpers/reset-state')
 
 require('chai').should()
 require('tap').mochaGlobals()
