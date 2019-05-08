@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/istanbuljs/nyc/badge.svg?branch=)](https://coveralls.io/r/istanbuljs/nyc?branch=master)
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
-[![community slack](http://devtoolscommunity.herokuapp.com/badge.svg)](http://devtoolscommunity.herokuapp.com)
+[![community slack](https://devtoolscommunity.herokuapp.com/badge.svg)](http://devtoolscommunity.herokuapp.com)
 
 _Having problems? want to contribute? join our [community slack](http://devtoolscommunity.herokuapp.com)_.
 
