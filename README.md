@@ -172,20 +172,7 @@ You can also specify negated paths in the `exclude` array, by prefixing them wit
 Negated paths can restore paths that have been already been excluded in the `exclude` array.
 Multiple `exclude` globs can be specified on the command line, each must follow a `--exclude`, `-x` switch.
 
-The `exclude` option has the following defaults:
-```js
-[
-  'coverage/**',
-  'packages/*/test/**',
-  'test/**',
-  'test{,-*}.js',
-  '**/*{.,-}test.js',
-  '**/__tests__/**',
-  '**/node_modules/**',
-  '**/babel.config.js'
-]
-```
-These settings exclude `test` and `__tests__` directories as well as `test.js`, `*.test.js`, and `test-*.js` files.
+The default `exclude` list is defined in the [test-exclude module](https://github.com/istanbuljs/istanbuljs/blob/master/packages/test-exclude/default-exclude.js).
 Specifying your own exclude property completely replaces these defaults.
 
 For example, the following config will collect coverage for every file in the `src` directory regardless of whether it is `require()`'d in a test.
