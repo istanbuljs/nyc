@@ -100,7 +100,7 @@ This table is a quick TLDR for the rest of this readme and there are more advanc
 | `check-coverage` | Check whether coverage is within thresholds, fail if not | `Boolean` | `false` |
 | `extension` | List of extensions that nyc should attempt to handle in addition to `.js` | `Array<String>` | `['.js']` |
 | `include` | See [selecting files for coverage] for more info | `Array<String>` | `['**']`|
-| `exclude` | See [selecting files for coverage] for more info | `Array<String>` | [list](https://github.com/istanbuljs/istanbuljs/blob/master/packages/test-exclude/index.js#L176-L184) |
+| `exclude` | See [selecting files for coverage] for more info | `Array<String>` | [list](https://github.com/istanbuljs/istanbuljs/blob/master/packages/test-exclude/default-exclude.js) |
 | `reporter` | [Coverage reporters to use](https://istanbul.js.org/docs/advanced/alternative-reporters/) | `Array<String>` | `['text']` |
 | `report-dir` | Where to put the coverage report files | `String` | `./coverage` |
 | `skip-full` | Don't show files with 100% statement, branch, and function coverage | `Boolean` | `false` |
