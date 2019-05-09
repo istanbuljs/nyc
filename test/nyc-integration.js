@@ -45,11 +45,11 @@ t.test('--check-coverage fails when the expected coverage is below a threshold',
 }))
 
 // https://github.com/istanbuljs/nyc/issues/384
-t.test('--check-coverage fails when check-coverage command is used rather than flag', t => {
+t.test('check-coverage command is equivalent to the flag', t => {
   return testSuccess(t, {
     args: [process.execPath, './half-covered.js']
   }).then(() => testFailure(t, {
-    args: ['check-coverage', '--lines', '51', process.execPath, './half-covered.js']
+    args: ['check-coverage', '--lines', '51']
   }))
 })
 

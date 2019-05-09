@@ -20,25 +20,6 @@ All files                |    33.33 |        0 |      100 |    33.33 |          
 
 `
 
-exports[`test/nyc-integration.js TAP --check-coverage fails when check-coverage command is used rather than flag > stderr 1`] = `
-ERROR: Coverage for lines (50%) does not meet global threshold (51%)
-
-`
-
-exports[`test/nyc-integration.js TAP --check-coverage fails when check-coverage command is used rather than flag > stdout 1`] = `
------------------|----------|----------|----------|----------|-------------------|
-File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
------------------|----------|----------|----------|----------|-------------------|
-All files        |       50 |       50 |      100 |       50 |                   |
- half-covered.js |       50 |       50 |      100 |       50 |             6,7,8 |
------------------|----------|----------|----------|----------|-------------------|
-
-`
-
-exports[`test/nyc-integration.js TAP --check-coverage fails when check-coverage command is used rather than flag > stdout 2`] = `
-
-`
-
 exports[`test/nyc-integration.js TAP --check-coverage fails when the expected coverage is below a threshold > stderr 1`] = `
 ERROR: Coverage for lines (50%) does not meet global threshold (51%)
 
@@ -307,6 +288,25 @@ BRDA:5,0,1,1
 BRF:2
 BRH:1
 end_of_record
+
+`
+
+exports[`test/nyc-integration.js TAP check-coverage command is equivalent to the flag > stderr 1`] = `
+ERROR: Coverage for lines (50%) does not meet global threshold (51%)
+
+`
+
+exports[`test/nyc-integration.js TAP check-coverage command is equivalent to the flag > stdout 1`] = `
+-----------------|----------|----------|----------|----------|-------------------|
+File             |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
+-----------------|----------|----------|----------|----------|-------------------|
+All files        |       50 |       50 |      100 |       50 |                   |
+ half-covered.js |       50 |       50 |      100 |       50 |             6,7,8 |
+-----------------|----------|----------|----------|----------|-------------------|
+
+`
+
+exports[`test/nyc-integration.js TAP check-coverage command is equivalent to the flag > stdout 2`] = `
 
 `
 
