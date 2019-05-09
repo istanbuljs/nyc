@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.1.1](https://github.com/istanbuljs/nyc/compare/v14.1.0...v14.1.1) (2019-05-09)
+
+
+### Bug Fixes
+
+* **check-coverage:** make the --temp-dir option visible ([#1101](https://github.com/istanbuljs/nyc/issues/1101)) ([b5b67de](https://github.com/istanbuljs/nyc/commit/b5b67de))
+* **cli:** Report error if unwanted positional arguments are received ([#1100](https://github.com/istanbuljs/nyc/issues/1100)) ([57debc1](https://github.com/istanbuljs/nyc/commit/57debc1)), closes [#401](https://github.com/istanbuljs/nyc/issues/401)
+
+
+
 # [14.1.0](https://github.com/istanbuljs/nyc/compare/v14.0.0...v14.1.0) (2019-04-24)
 
 
