@@ -21,7 +21,6 @@ const rimraf = require('rimraf')
 const SourceMaps = require('./lib/source-maps')
 const testExclude = require('test-exclude')
 const util = require('util')
-const uuid = require('uuid/v4')
 
 const debugLog = util.debuglog('nyc')
 
@@ -89,7 +88,6 @@ class NYC {
     this.fakeRequire = null
 
     this.processInfo = new ProcessInfo(config && config._processInfo)
-    this.rootId = this.processInfo.root || uuid()
 
     this.hashCache = {}
   }
