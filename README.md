@@ -4,9 +4,9 @@
 [![Coverage Status](https://coveralls.io/repos/istanbuljs/nyc/badge.svg?branch=)](https://coveralls.io/r/istanbuljs/nyc?branch=master)
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
-[![community slack](https://devtoolscommunity.herokuapp.com/badge.svg)](http://devtoolscommunity.herokuapp.com)
+[![community slack](https://devtoolscommunity.herokuapp.com/badge.svg)](https://devtoolscommunity.herokuapp.com)
 
-_Having problems? want to contribute? join our [community slack](http://devtoolscommunity.herokuapp.com)_.
+_Having problems? want to contribute? join our [community slack](https://devtoolscommunity.herokuapp.com)_.
 
 Istanbul's state of the art command line interface, with support for:
 
@@ -371,13 +371,11 @@ Otherwise nyc's reports will exclude any files that source-maps remap to folders
 
 Many testing frameworks (Mocha, Tape, Tap, etc.) can produce [TAP](https://en.wikipedia.org/wiki/Test_Anything_Protocol) output. [tap-nyc](https://github.com/MegaArman/tap-nyc) is a TAP formatter designed to look nice with nyc.
 
-## More tutorials
+## Tutorials and Advanced Documentation
 
-You can find more tutorials at http://istanbul.js.org/docs/tutorials
+See [more nyc tutorials](https://istanbul.js.org/docs/tutorials) and [advanced nyc documentation](https://istanbul.js.org/docs/advanced/).
 
-## Other advanced features
-
-Take a look at http://istanbul.js.org/docs/advanced/ and please feel free to [contribute documentation](https://github.com/istanbuljs/istanbuljs.github.io/tree/development/content).
+Please feel free to [contribute documentation](https://github.com/istanbuljs/istanbuljs.github.io/tree/development/content) to help us improve.
 
 [`@babel/register`]: https://www.npmjs.com/package/@babel/register
 [`babel-plugin-istanbul`]: https://github.com/istanbuljs/babel-plugin-istanbul
