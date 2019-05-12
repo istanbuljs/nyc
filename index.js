@@ -93,9 +93,10 @@ class NYC {
   }
 
   _createTransform (ext) {
-    var opts = {
+    const opts = {
       salt: Hash.salt(this.config),
       hashData: (input, metadata) => [metadata.filename],
+      filenamePrefix: metadata => path.parse(metadata.filename).name + '-',
       onHash: (input, metadata, hash) => {
         this.hashCache[metadata.filename] = hash
       },

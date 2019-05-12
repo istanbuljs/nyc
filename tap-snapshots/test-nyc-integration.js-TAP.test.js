@@ -362,6 +362,26 @@ All files |     100 |      100 |     100 |     100 |
 
 `
 
+exports[`test/nyc-integration.js TAP caches inline source-maps > stdout 1`] = `
+----------|---------|----------|---------|---------|-------------------
+File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------|---------|----------|---------|---------|-------------------
+All files |     100 |      100 |     100 |     100 |                   
+ s2.js    |     100 |      100 |     100 |     100 |                   
+----------|---------|----------|---------|---------|-------------------
+
+`
+
+exports[`test/nyc-integration.js TAP caches source-maps from .map files > stdout 1`] = `
+----------|---------|----------|---------|---------|-------------------
+File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------|---------|----------|---------|---------|-------------------
+All files |      80 |      100 |      50 |      80 |                   
+ s1.js    |      80 |      100 |      50 |      80 | 7                 
+----------|---------|----------|---------|---------|-------------------
+
+`
+
 exports[`test/nyc-integration.js TAP can run "npm test" which directly invokes a test file > stdout 1`] = `
 
 > @ test .

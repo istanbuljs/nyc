@@ -404,6 +404,32 @@ t.test('--all uses source-maps to exclude original sources from reports', t => t
   cwd: fixturesSourceMaps
 }))
 
+t.test('caches source-maps from .map files', t => {
+  return testSuccess(t, {
+    args: [
+      process.execPath,
+      './instrumented/s1.min.js'
+    ],
+    cwd: fixturesSourceMaps
+  }).then(() => {
+    const files = fs.readdirSync(path.resolve(fixturesSourceMaps, 'node_modules/.cache/nyc'))
+    t.true(files.some(f => f.startsWith('s1.min-') && f.endsWith('.map')))
+  })
+})
+
+t.test('caches inline source-maps', t => {
+  return testSuccess(t, {
+    args: [
+      process.execPath,
+      './instrumented/s2.min.js'
+    ],
+    cwd: fixturesSourceMaps
+  }).then(() => {
+    const files = fs.readdirSync(path.resolve(fixturesSourceMaps, 'node_modules/.cache/nyc'))
+    t.true(files.some(f => f.startsWith('s2.min-') && f.endsWith('.map')))
+  })
+})
+
 t.test('appropriately instruments file with corresponding .map file', t => testSuccess(t, {
   args: [
     '--cache=false',
