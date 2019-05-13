@@ -14,7 +14,7 @@ create a basic `nyc-bug-demo` repository and link to that please [mandatory].
 ## Observed Behavior
 
 ### Troubleshooting steps
-- [ ] still occurrring when I put `cache: false` in my nyc config
+- [ ] still occurring when I put `cache: false` in my nyc config
 
 ## Environment Information
 <!--
