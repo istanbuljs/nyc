@@ -20,6 +20,8 @@ For example, `nyc instrument . ./output` will produce instrumented versions of a
 
 The `--delete` option will remove the existing output directory before instrumenting.
 
+The '--in-place' option will allow you to run the instrument command
+
 The `--complete-copy` option will copy all remaining files from the `input` directory to the `output` directory.
 When using `--complete-copy` nyc will not copy the contents of a `.git` folder to the output directory.
 
@@ -27,8 +29,8 @@ When using `--complete-copy` nyc will not copy the contents of a `.git` folder t
 
 ## Streaming instrumentation
 
-`nyc instrument` will stream instrumented source directly to `stdout`, that can then be piped to another process.
-You can use this behaviour to create a server that can instrument files on request.
+`nyc instrument <input>` will stream instrumented source directly to `stdout` and that output can then be piped to another process.
+You can use this behaviour to create a server that dynamically instruments files on request.
 The following example shows streaming instrumentation middleware capable of instrumenting files on request.
 
 ```javascript

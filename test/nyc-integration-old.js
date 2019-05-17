@@ -329,7 +329,7 @@ describe('the nyc cli', function () {
 
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
-          env: env
+          env
         })
 
         let stderr = ''
@@ -339,7 +339,53 @@ describe('the nyc cli', function () {
 
         proc.on('close', function (code) {
           code.should.equal(1)
-          stderr.should.include('nyc instrument failed: cannot instrument files in place')
+          stderr.should.include('cannot instrument files in place')
+          done()
+        })
+      })
+
+      it('can write files in place with --in-place switch', function (done) {
+        const args = [bin, 'instrument', '--in-place', '--include', '*/file1.js', './instrument-inplace']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env
+        })
+
+        let stderr = ''
+        proc.stderr.on('data', function (chunk) {
+          stderr += chunk
+        })
+
+        proc.on('close', function (code) {
+          console.log(`stderr:  ${stderr}`)
+          code.should.equal(0)
+          const file1 = path.resolve(fixturesCLI, 'instrument-inplace', 'file1.js')
+          fs.readFileSync(file1, 'utf8')
+            .should.match(/var cov_/)
+          const file2 = path.resolve(fixturesCLI, 'instrument-inplace', 'file2.js')
+          fs.readFileSync(file2, 'utf8')
+            .should.not.match(/var cov_/)
+          done()
+        })
+      })
+
+      it('aborts if trying to delete while writing files in place', function (done) {
+        const args = [bin, 'instrument', '--in-place', '--delete', '--include', 'file1.js', './instrument-inplace']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env
+        })
+
+        let stderr = ''
+        proc.stderr.on('data', function (chunk) {
+          stderr += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(1)
+          stderr.should.include(`cannot use '--delete' when instrumenting files in place`)
           done()
         })
       })
@@ -349,7 +395,7 @@ describe('the nyc cli', function () {
 
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
-          env: env
+          env
         })
 
         let stderr = ''
@@ -359,7 +405,7 @@ describe('the nyc cli', function () {
 
         proc.on('close', function (code) {
           code.should.equal(1)
-          stderr.should.include('nyc instrument failed: cannot instrument files outside of project root directory')
+          stderr.should.include('cannot instrument files outside project root directory')
           done()
         })
       })
@@ -374,7 +420,7 @@ describe('the nyc cli', function () {
 
           const proc = spawn(process.execPath, args, {
             cwd: fixturesCLI,
-            env: env
+            env
           })
 
           proc.on('close', function (code) {
@@ -393,7 +439,7 @@ describe('the nyc cli', function () {
 
           const proc = spawn(process.execPath, args, {
             cwd: fixturesCLI,
-            env: env
+            env
           })
 
           proc.on('close', function (code) {
@@ -411,7 +457,7 @@ describe('the nyc cli', function () {
 
           const proc = spawn(process.execPath, args, {
             cwd: fixturesCLI,
-            env: env
+            env
           })
 
           let stderr = ''
@@ -421,7 +467,7 @@ describe('the nyc cli', function () {
 
           proc.on('close', function (code) {
             code.should.equal(1)
-            stderr.should.include('nyc instrument failed: attempt to delete')
+            stderr.should.include('attempt to delete')
             done()
           })
         })
@@ -431,7 +477,7 @@ describe('the nyc cli', function () {
 
           const proc = spawn(process.execPath, args, {
             cwd: fixturesCLI,
-            env: env
+            env
           })
 
           let stderr = ''
@@ -441,7 +487,7 @@ describe('the nyc cli', function () {
 
           proc.on('close', function (code) {
             code.should.equal(1)
-            stderr.should.include('nyc instrument failed: attempt to delete')
+            stderr.should.include('attempt to delete')
             done()
           })
         })
