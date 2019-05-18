@@ -98,7 +98,7 @@ This table is a quick TLDR for the rest of this readme and there are more advanc
 | ----------- | ----------- | ---- | ------- |
 | `all` | Whether or not to instrument all files (not just the ones touched by your test suite) | `Boolean` | `false` |
 | `check-coverage` | Check whether coverage is within thresholds, fail if not | `Boolean` | `false` |
-| `extension` | List of extensions that nyc should attempt to handle in addition to `.js` | `Array<String>` | `['.js']` |
+| `extension` | List of extensions that nyc should attempt to handle in addition to `.js` | `Array<String>` | `['.js', '.cjs', '.mjs', '.ts', '.tsx', '.jsx']` |
 | `include` | See [selecting files for coverage] for more info | `Array<String>` | `['**']`|
 | `exclude` | See [selecting files for coverage] for more info | `Array<String>` | [list](https://github.com/istanbuljs/istanbuljs/blob/master/packages/test-exclude/default-exclude.js) |
 | `reporter` | [Coverage reporters to use](https://istanbul.js.org/docs/advanced/alternative-reporters/) | `Array<String>` | `['text']` |
@@ -148,7 +148,7 @@ Only source files that are visited during a test will appear in the coverage rep
 nyc will instrument all files if the `--all` flag is set or if running `nyc instrument`.
 In this case all files will appear in the coverage report and contribute to coverage statistics.
 
-nyc will only collect coverage for files that are located under `cwd`, and then only `*.js` files or files with extensions listed in the `extension` array.
+nyc will only collect coverage for files that are located under `cwd`, and then only files with extensions listed in the `extension` array.
 
 You can reduce the set of instrumented files by adding `include` and `exclude` filter arrays to your config.
 These allow you to shape the set of instrumented files by specifying glob patterns that can filter files from the default instrumented set.
