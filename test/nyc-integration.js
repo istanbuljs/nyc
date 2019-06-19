@@ -236,13 +236,25 @@ t.test('nyc instrument fails on file with `package` keyword when es-modules is e
   args: ['instrument', '--exit-on-error', './not-strict.js']
 }))
 
-t.test('nyc --help', t => testSuccess(t, {
-  args: ['--help']
-}))
+t.test('nyc displays help to stderr when it doesn\'t know what to do', t => {
+  let helpmsg
 
-t.test('nyc displays help to stderr when it doesn\'t know what to do', t => testFailure(t, {
-  args: []
-}))
+  return runNYC({
+    tempDir: t.tempDir,
+    args: ['--help']
+  }).then(({ status, stderr, stdout }) => {
+    t.is(status, 0)
+    t.is(stderr, '')
+    helpmsg = stdout
+  }).then(() => runNYC({
+    tempDir: t.tempDir,
+    args: []
+  })).then(({ status, stderr, stdout }) => {
+    t.equal(status, 1)
+    t.equal(stdout, '')
+    t.equal(stderr, helpmsg)
+  })
+})
 
 t.test('handles --clean / --no-clean properly', t => {
   return testSuccess(t, {
