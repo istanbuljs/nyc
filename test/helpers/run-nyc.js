@@ -3,7 +3,7 @@
 const { nycBin, fixturesCLI } = require('./paths')
 const spawn = require('./spawn')
 
-const env = {
+const envPath = {
   PATH: process.env.PATH
 }
 
@@ -25,11 +25,11 @@ function sanitizeString (str, cwd, leavePathSep) {
   return str
 }
 
-function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI }) {
+function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI, env = {} }) {
   const runArgs = [nycBin].concat(tempDir ? ['--temp-dir', tempDir] : [], args)
   return spawn(process.execPath, runArgs, {
     cwd: cwd,
-    env
+    env: Object.assign({}, envPath, env)
   }).then(({ status, stderr, stdout }) => ({
     status,
     stderr: sanitizeString(stderr, cwd, leavePathSep),
