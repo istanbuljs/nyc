@@ -165,6 +165,7 @@ t.test('hooks provide coverage for requireJS and AMD modules', t => testSuccess(
 
 t.test('does not interpret args intended for instrumented bin', t => {
   return runNYC({
+    tempDir: t.tempDir,
     args: ['--silent', process.execPath, 'args.js', '--help', '--version'],
     leavePathSep: true
   }).then(({ status, stderr, stdout }) => {
@@ -192,22 +193,44 @@ t.test('can run "npm test" which indirectly invokes a test file', t => testSucce
   cwd: path.resolve(fixturesCLI, 'run-npm-test-recursive')
 }))
 
-t.test('nyc instrument single file to console', t => testSuccess(t, {
-  args: ['instrument', './half-covered.js']
-}))
+t.test('nyc instrument single file to console', t => {
+  return runNYC({
+    tempDir: t.tempDir,
+    args: ['instrument', './half-covered.js']
+  }).then(({ status, stderr, stdout }) => {
+    t.is(status, 0)
+    t.is(stderr, '')
+    t.match(stdout, `path:${JSON.stringify('./half-covered.js')}`)
+  })
+})
 
-t.test('nyc instrument a directory of files', t => testSuccess(t, {
-  args: ['instrument', './'],
-  cwd: nycConfigJS
-}))
+t.test('nyc instrument a directory of files', t => {
+  return runNYC({
+    tempDir: t.tempDir,
+    args: ['instrument', './']
+  }).then(({ status, stderr, stdout }) => {
+    t.is(status, 0)
+    t.is(stderr, '')
+    t.match(stdout, `path:${JSON.stringify('./half-covered.js')}`)
+    t.match(stdout, `path:${JSON.stringify('./half-covered-failing.js')}`)
+    t.notMatch(stdout, `path:${JSON.stringify('./test.js')}`)
+  })
+})
 
 t.test('nyc instrument returns unmodified source if there is no transform', t => testSuccess(t, {
   args: ['instrument', './no-transform/half-covered.xjs']
 }))
 
-t.test('nyc instrument on file with `package` keyword when es-modules is disabled', t => testSuccess(t, {
-  args: ['instrument', '--no-es-modules', './not-strict.js']
-}))
+t.test('nyc instrument on file with `package` keyword when es-modules is disabled', t => {
+  return runNYC({
+    tempDir: t.tempDir,
+    args: ['instrument', '--no-es-modules', './not-strict.js']
+  }).then(({ status, stderr, stdout }) => {
+    t.is(status, 0)
+    t.is(stderr, '')
+    t.match(stdout, `path:${JSON.stringify('./not-strict.js')}`)
+  })
+})
 
 t.test('nyc instrument fails on file with `package` keyword when es-modules is enabled', t => testFailure(t, {
   args: ['instrument', '--exit-on-error', './not-strict.js']
@@ -445,11 +468,18 @@ t.test('execute with exclude-node-modules=false', t => {
   }))
 })
 
-t.test('instrument with exclude-node-modules=false', t => testSuccess(t, {
-  args: [
-    ...executeNodeModulesArgs,
-    'instrument',
-    'node_modules'
-  ],
-  cwd: fixturesENM
-}))
+t.test('instrument with exclude-node-modules=false', t => {
+  return runNYC({
+    tempDir: t.tempDir,
+    args: [
+      ...executeNodeModulesArgs,
+      'instrument',
+      'node_modules'
+    ],
+    cwd: fixturesENM
+  }).then(({ status, stderr, stdout }) => {
+    t.is(status, 0)
+    t.is(stderr, '')
+    t.match(stdout, 'fake-module-1')
+  })
+})

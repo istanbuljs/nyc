@@ -542,11 +542,6 @@ All files |      100 |      100 |      100 |      100 |                   |
 
 `
 
-exports[`test/nyc-integration.js TAP instrument with exclude-node-modules=false > stdout 1`] = `
-var cov_2n0o5mis6y=function(){var path="./node_modules/@istanbuljs/fake-module-1/index.js";var hash="438e459a1ff94bd44776e0b7a9892265cb48564e";var global=new Function("return this")();var gcv="__coverage__";var coverageData={path:"./node_modules/@istanbuljs/fake-module-1/index.js",statementMap:{"0":{start:{line:1,column:0},end:{line:1,column:27}}},fnMap:{},branchMap:{},s:{"0":0},f:{},b:{},_coverageSchema:"43e27e138ebf9cfc5966b082cf9a028302ed4184",hash:"438e459a1ff94bd44776e0b7a9892265cb48564e"};var coverage=global[gcv]||(global[gcv]={});if(coverage[path]&&coverage[path].hash===hash){return coverage[path];}return coverage[path]=coverageData;}();cov_2n0o5mis6y.s[0]++;console.log('hello world');
-
-`
-
 exports[`test/nyc-integration.js TAP interprets first args after -- as Node.js execArgv > stdout 1`] = `
 I’m still running
 ----------|----------|----------|----------|----------|-------------------|
@@ -956,22 +951,12 @@ exports[`test/nyc-integration.js TAP nyc displays help to stderr when it doesn't
 
 `
 
-exports[`test/nyc-integration.js TAP nyc instrument a directory of files > stdout 1`] = `
-var cov_226g64md1a=function(){var path="./index.js";var hash="208202ca9f633dc22f0f76b00cfee03bde297234";var global=new Function("return this")();var gcv="__coverage__";var coverageData={path:"./index.js",statementMap:{"0":{start:{line:1,column:0},end:{line:1,column:19}},"1":{start:{line:3,column:8},end:{line:3,column:9}},"2":{start:{line:5,column:0},end:{line:5,column:3}},"3":{start:{line:7,column:0},end:{line:11,column:1}},"4":{start:{line:8,column:2},end:{line:8,column:6}},"5":{start:{line:9,column:2},end:{line:9,column:6}},"6":{start:{line:10,column:2},end:{line:10,column:6}}},fnMap:{},branchMap:{"0":{loc:{start:{line:7,column:0},end:{line:11,column:1}},type:"if",locations:[{start:{line:7,column:0},end:{line:11,column:1}},{start:{line:7,column:0},end:{line:11,column:1}}],line:7}},s:{"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0},f:{},b:{"0":[0,0]},_coverageSchema:"43e27e138ebf9cfc5966b082cf9a028302ed4184",hash:"208202ca9f633dc22f0f76b00cfee03bde297234"};var coverage=global[gcv]||(global[gcv]={});if(coverage[path]&&coverage[path].hash===hash){return coverage[path];}return coverage[path]=coverageData;}();cov_226g64md1a.s[0]++;require('./ignore');var a=(cov_226g64md1a.s[1]++,0);cov_226g64md1a.s[2]++;a++;cov_226g64md1a.s[3]++;if(a===0){cov_226g64md1a.b[0][0]++;cov_226g64md1a.s[4]++;a++;cov_226g64md1a.s[5]++;a--;cov_226g64md1a.s[6]++;a++;}else{cov_226g64md1a.b[0][1]++;}
-
-`
-
 exports[`test/nyc-integration.js TAP nyc instrument fails on file with \`package\` keyword when es-modules is enabled > stderr 1`] = `
 Failed to instrument ./not-strict.js
 
 `
 
 exports[`test/nyc-integration.js TAP nyc instrument fails on file with \`package\` keyword when es-modules is enabled > stdout 1`] = `
-
-`
-
-exports[`test/nyc-integration.js TAP nyc instrument on file with \`package\` keyword when es-modules is disabled > stdout 1`] = `
-var cov_1ys3qh1gyl=function(){var path="./not-strict.js";var hash="90f195badac1a0b8242dadc78cf641b48b3e172c";var global=new Function("return this")();var gcv="__coverage__";var coverageData={path:"./not-strict.js",statementMap:{"0":{start:{line:2,column:1},end:{line:2,column:10}},"1":{start:{line:5,column:0},end:{line:5,column:10}}},fnMap:{"0":{name:"package",decl:{start:{line:1,column:9},end:{line:1,column:16}},loc:{start:{line:1,column:19},end:{line:3,column:1}},line:1}},branchMap:{},s:{"0":0,"1":0},f:{"0":0},b:{},_coverageSchema:"43e27e138ebf9cfc5966b082cf9a028302ed4184",hash:"90f195badac1a0b8242dadc78cf641b48b3e172c"};var coverage=global[gcv]||(global[gcv]={});if(coverage[path]&&coverage[path].hash===hash){return coverage[path];}return coverage[path]=coverageData;}();function package(){cov_1ys3qh1gyl.f[0]++;cov_1ys3qh1gyl.s[0]++;return 1;}cov_1ys3qh1gyl.s[1]++;package();
 
 `
 
@@ -986,11 +971,6 @@ if (a === 0) {
   a++;
 }
 
-
-`
-
-exports[`test/nyc-integration.js TAP nyc instrument single file to console > stdout 1`] = `
-var cov_6fpw9b013=function(){var path="./half-covered.js";var hash="28db5afcb38f40f37a8eedd33c935a767fc38f49";var global=new Function("return this")();var gcv="__coverage__";var coverageData={path:"./half-covered.js",statementMap:{"0":{start:{line:1,column:8},end:{line:1,column:9}},"1":{start:{line:3,column:0},end:{line:3,column:3}},"2":{start:{line:5,column:0},end:{line:9,column:1}},"3":{start:{line:6,column:2},end:{line:6,column:6}},"4":{start:{line:7,column:2},end:{line:7,column:6}},"5":{start:{line:8,column:2},end:{line:8,column:6}}},fnMap:{},branchMap:{"0":{loc:{start:{line:5,column:0},end:{line:9,column:1}},type:"if",locations:[{start:{line:5,column:0},end:{line:9,column:1}},{start:{line:5,column:0},end:{line:9,column:1}}],line:5}},s:{"0":0,"1":0,"2":0,"3":0,"4":0,"5":0},f:{},b:{"0":[0,0]},_coverageSchema:"43e27e138ebf9cfc5966b082cf9a028302ed4184",hash:"28db5afcb38f40f37a8eedd33c935a767fc38f49"};var coverage=global[gcv]||(global[gcv]={});if(coverage[path]&&coverage[path].hash===hash){return coverage[path];}return coverage[path]=coverageData;}();var a=(cov_6fpw9b013.s[0]++,0);cov_6fpw9b013.s[1]++;a++;cov_6fpw9b013.s[2]++;if(a===0){cov_6fpw9b013.b[0][0]++;cov_6fpw9b013.s[3]++;a++;cov_6fpw9b013.s[4]++;a--;cov_6fpw9b013.s[5]++;a++;}else{cov_6fpw9b013.b[0][1]++;}
 
 `
 
