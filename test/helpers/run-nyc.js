@@ -32,6 +32,10 @@ function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI, env = {} }) {
     env: Object.assign({}, envPath, env)
   }).then(({ status, stderr, stdout }) => ({
     status,
+    originalText: {
+      stderr,
+      stdout
+    },
     stderr: sanitizeString(stderr, cwd, leavePathSep),
     stdout: sanitizeString(stdout, cwd, leavePathSep)
   }))

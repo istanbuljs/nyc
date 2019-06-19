@@ -197,10 +197,10 @@ t.test('nyc instrument single file to console', t => {
   return runNYC({
     tempDir: t.tempDir,
     args: ['instrument', './half-covered.js']
-  }).then(({ status, stderr, stdout }) => {
+  }).then(({ status, stderr, originalText }) => {
     t.is(status, 0)
     t.is(stderr, '')
-    t.match(stdout, `path:${JSON.stringify('./half-covered.js')}`)
+    t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered.js'))}`)
   })
 })
 
@@ -208,12 +208,12 @@ t.test('nyc instrument a directory of files', t => {
   return runNYC({
     tempDir: t.tempDir,
     args: ['instrument', './']
-  }).then(({ status, stderr, stdout }) => {
+  }).then(({ status, stderr, originalText }) => {
     t.is(status, 0)
     t.is(stderr, '')
-    t.match(stdout, `path:${JSON.stringify('./half-covered.js')}`)
-    t.match(stdout, `path:${JSON.stringify('./half-covered-failing.js')}`)
-    t.notMatch(stdout, `path:${JSON.stringify('./test.js')}`)
+    t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered.js'))}`)
+    t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered-failing.js'))}`)
+    t.notMatch(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'test.js'))}`)
   })
 })
 
@@ -225,10 +225,10 @@ t.test('nyc instrument on file with `package` keyword when es-modules is disable
   return runNYC({
     tempDir: t.tempDir,
     args: ['instrument', '--no-es-modules', './not-strict.js']
-  }).then(({ status, stderr, stdout }) => {
+  }).then(({ status, stderr, originalText }) => {
     t.is(status, 0)
     t.is(stderr, '')
-    t.match(stdout, `path:${JSON.stringify('./not-strict.js')}`)
+    t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'not-strict.js'))}`)
   })
 })
 
