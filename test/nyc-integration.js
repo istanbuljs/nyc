@@ -3,9 +3,10 @@
 const path = require('path')
 const fs = require('fs')
 const os = require('os')
+const { promisify } = require('util')
 
 const t = require('tap')
-const glob = require('glob')
+const glob = promisify(require('glob'))
 const rimraf = require('rimraf')
 
 const { fixturesCLI, runNYC, tempDirSetup, testSuccess, testFailure, envCheckConfig } = require('./helpers')
@@ -41,12 +42,13 @@ t.test('--exclude should allow default exclude rules to be overridden', t => tes
   ]
 }))
 
-t.test('report and check should show coverage check along with report', t => {
-  return testSuccess(t, {
+t.test('report and check should show coverage check along with report', async t => {
+  await testSuccess(t, {
     args: ['--silent', process.execPath, './half-covered.js']
-  }).then(() => testFailure(t, {
+  })
+  await testFailure(t, {
     args: ['report', '--check-coverage', '--lines=100']
-  }))
+  })
 })
 
 t.test('--ignore-class-method skips methods that match ignored name but still catches those that are not', t => testSuccess(t, {
@@ -58,12 +60,14 @@ t.test('--check-coverage fails when the expected coverage is below a threshold',
 }))
 
 // https://github.com/istanbuljs/nyc/issues/384
-t.test('check-coverage command is equivalent to the flag', t => {
-  return testSuccess(t, {
+t.test('check-coverage command is equivalent to the flag', async t => {
+  await testSuccess(t, {
     args: [process.execPath, './half-covered.js']
-  }).then(() => testFailure(t, {
+  })
+
+  await testFailure(t, {
     args: ['check-coverage', '--lines', '51']
-  }))
+  })
 })
 
 t.test('--check-coverage succeeds when the expected coverage is above a threshold', t => testSuccess(t, {
@@ -163,16 +167,15 @@ t.test('hooks provide coverage for requireJS and AMD modules', t => testSuccess(
   cwd: path.resolve(__dirname, './fixtures/hooks')
 }))
 
-t.test('does not interpret args intended for instrumented bin', t => {
-  return runNYC({
+t.test('does not interpret args intended for instrumented bin', async t => {
+  const { status, stderr, stdout } = await runNYC({
     tempDir: t.tempDir,
     args: ['--silent', process.execPath, 'args.js', '--help', '--version'],
     leavePathSep: true
-  }).then(({ status, stderr, stdout }) => {
-    t.is(status, 0)
-    t.is(stderr, '')
-    t.matchSnapshot(JSON.parse(stdout).slice(2))
   })
+  t.is(status, 0)
+  t.is(stderr, '')
+  t.matchSnapshot(JSON.parse(stdout).slice(2))
 })
 
 t.test('interprets first args after -- as Node.js execArgv', t => testSuccess(t, {
@@ -193,93 +196,95 @@ t.test('can run "npm test" which indirectly invokes a test file', t => testSucce
   cwd: path.resolve(fixturesCLI, 'run-npm-test-recursive')
 }))
 
-t.test('nyc instrument single file to console', t => {
-  return runNYC({
+t.test('nyc instrument single file to console', async t => {
+  const { status, stderr, originalText } = await runNYC({
     tempDir: t.tempDir,
     args: ['instrument', './half-covered.js']
-  }).then(({ status, stderr, originalText }) => {
-    t.is(status, 0)
-    t.is(stderr, '')
-    t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered.js'))}`)
   })
+
+  t.is(status, 0)
+  t.is(stderr, '')
+  t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered.js'))}`)
 })
 
-t.test('nyc instrument a directory of files', t => {
-  return runNYC({
+t.test('nyc instrument a directory of files', async t => {
+  const { status, stderr, originalText } = await runNYC({
     tempDir: t.tempDir,
     args: ['instrument', './']
-  }).then(({ status, stderr, originalText }) => {
-    t.is(status, 0)
-    t.is(stderr, '')
-    t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered.js'))}`)
-    t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered-failing.js'))}`)
-    t.notMatch(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'test.js'))}`)
   })
+
+  t.is(status, 0)
+  t.is(stderr, '')
+  t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered.js'))}`)
+  t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered-failing.js'))}`)
+  t.notMatch(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'test.js'))}`)
 })
 
-t.test('nyc instrument returns unmodified source if there is no transform', t => {
-  return runNYC({
+t.test('nyc instrument returns unmodified source if there is no transform', async t => {
+  const { status, stderr, stdout } = await runNYC({
     tempDir: t.tempDir,
     args: ['instrument', './no-transform/half-covered.xjs']
-  }).then(({ status, stderr, stdout }) => {
-    t.is(status, 0)
-    t.is(stderr, '')
-    t.match(stdout, 'var a = 0')
-    t.notMatch(stdout, 'cov_')
   })
+
+  t.is(status, 0)
+  t.is(stderr, '')
+  t.match(stdout, 'var a = 0')
+  t.notMatch(stdout, 'cov_')
 })
 
-t.test('nyc instrument on file with `package` keyword when es-modules is disabled', t => {
-  return runNYC({
+t.test('nyc instrument on file with `package` keyword when es-modules is disabled', async t => {
+  const { status, stderr, originalText } = await runNYC({
     tempDir: t.tempDir,
     args: ['instrument', '--no-es-modules', './not-strict.js']
-  }).then(({ status, stderr, originalText }) => {
-    t.is(status, 0)
-    t.is(stderr, '')
-    t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'not-strict.js'))}`)
   })
+
+  t.is(status, 0)
+  t.is(stderr, '')
+  t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'not-strict.js'))}`)
 })
 
 t.test('nyc instrument fails on file with `package` keyword when es-modules is enabled', t => testFailure(t, {
   args: ['instrument', '--exit-on-error', './not-strict.js']
 }))
 
-t.test('nyc displays help to stderr when it doesn\'t know what to do', t => {
-  let helpmsg
-
-  return runNYC({
+t.test('nyc displays help to stderr when it doesn\'t know what to do', async t => {
+  const help = await runNYC({
     tempDir: t.tempDir,
     args: ['--help']
-  }).then(({ status, stderr, stdout }) => {
-    t.is(status, 0)
-    t.is(stderr, '')
-    helpmsg = stdout
-  }).then(() => runNYC({
+  })
+
+  t.is(help.status, 0)
+  t.is(help.stderr, '')
+  t.isNot(help.stdout, '')
+
+  const { status, stderr, stdout } = await runNYC({
     tempDir: t.tempDir,
     args: []
-  })).then(({ status, stderr, stdout }) => {
-    t.equal(status, 1)
-    t.equal(stdout, '')
-    t.equal(stderr, helpmsg)
   })
+
+  t.equal(status, 1)
+  t.equal(stdout, '')
+  t.equal(stderr, help.stdout)
 })
 
-t.test('handles --clean / --no-clean properly', t => {
-  return testSuccess(t, {
+t.test('handles --clean / --no-clean properly', async t => {
+  await testSuccess(t, {
     args: [
       '--clean',
       process.execPath,
       './by-arg2.js',
       '1'
     ]
-  }).then(() => testSuccess(t, {
+  })
+
+  await testSuccess(t, {
     args: [
       '--no-clean',
       process.execPath,
       './by-arg2.js',
       '2'
     ]
-  }))
+  })
 })
 
 t.test('setting instrument to "false" configures noop instrumenter', t => envCheckConfig(t, {
@@ -296,8 +301,8 @@ t.test('setting instrument to "false" configures noop instrumenter', t => envChe
   ]
 }))
 
-t.test('extracts coverage headers from unexecuted files', t => {
-  return envCheckConfig(t, {
+t.test('extracts coverage headers from unexecuted files', async t => {
+  await envCheckConfig(t, {
     configArgs: [
       '--all',
       '--silent',
@@ -311,61 +316,54 @@ t.test('extracts coverage headers from unexecuted files', t => {
       'sourceMap',
       'instrumenter'
     ]
-  }).then(() => new Promise((resolve, reject) => {
-    glob(path.join(t.tempDir, '*.json'), (err, files) => {
-      if (err) {
-        return reject(err)
-      }
-
-      resolve(files)
-    })
-  })).then(files => {
-    const coverage = files.reduce(
-      (obj, file) => Object.assign(obj, JSON.parse(fs.readFileSync(file, 'utf-8'))),
-      {}
-    )
-
-    // we should not have executed file, so all counts sould be 0.
-    const data = coverage['./external-instrumenter.js']
-    t.type(data, 'object')
-
-    t.false(Object.keys(data.s).some(k => data.s[k] !== 0))
   })
+
+  const files = await glob(path.join(t.tempDir, '*.json'))
+  const coverage = files.reduce(
+    (obj, file) => Object.assign(obj, JSON.parse(fs.readFileSync(file, 'utf-8'))),
+    {}
+  )
+
+  // we should not have executed file, so all counts sould be 0.
+  const data = coverage['./external-instrumenter.js']
+  t.type(data, 'object')
+
+  t.false(Object.values(data.s).some(s => s !== 0))
 })
 
-t.test('allows an alternative cache folder to be specified', t => {
+t.test('allows an alternative cache folder to be specified', async t => {
   const cacheDir = path.resolve(fixturesCLI, 'foo-cache')
 
-  return testSuccess(t, {
+  await testSuccess(t, {
     args: [
       `--cache-dir=${cacheDir}`,
       '--cache=true',
       process.execPath,
       './half-covered.js'
     ]
-  }).then(() => {
-    // we should have created foo-cache rather
-    // than the default ./node_modules/.cache.
-    t.is(1, fs.readdirSync(cacheDir).length)
-
-    rimraf.sync(cacheDir)
   })
+
+  // we should have created foo-cache rather
+  // than the default ./node_modules/.cache.
+  t.is(1, fs.readdirSync(cacheDir).length)
+
+  rimraf.sync(cacheDir)
 })
 
 // see: https://github.com/istanbuljs/nyc/issues/563
-t.test('does not create .cache folder if cache is "false"', t => {
+t.test('does not create .cache folder if cache is "false"', async t => {
   const cacheDir = path.resolve(fixturesCLI, './disabled-cache')
 
-  return testSuccess(t, {
+  await testSuccess(t, {
     args: [
       `--cache-dir=${cacheDir}`,
       '--cache=false',
       process.execPath,
       './half-covered.js'
     ]
-  }).then(() => {
-    t.false(fs.existsSync(cacheDir))
   })
+
+  t.false(fs.existsSync(cacheDir))
 })
 
 t.test('allows alternative high and low watermarks to be configured', t => testSuccess(t, {
@@ -463,8 +461,8 @@ t.test('forbids reserved word when es-modules is not disabled', t => testFailure
   ]
 }))
 
-t.test('execute with exclude-node-modules=false', t => {
-  return testFailure(t, {
+t.test('execute with exclude-node-modules=false', async t => {
+  await testFailure(t, {
     args: [
       ...executeNodeModulesArgs,
       '--check-coverage=true',
@@ -472,24 +470,28 @@ t.test('execute with exclude-node-modules=false', t => {
       './bin/do-nothing.js'
     ],
     cwd: fixturesENM
-  }).then(() => testFailure(t, {
+  })
+
+  await testFailure(t, {
     args: [
       ...executeNodeModulesArgs,
       '--check-coverage=true',
       'report'
     ],
     cwd: fixturesENM
-  })).then(() => testFailure(t, {
+  })
+
+  await testFailure(t, {
     args: [
       ...executeNodeModulesArgs,
       'check-coverage'
     ],
     cwd: fixturesENM
-  }))
+  })
 })
 
-t.test('instrument with exclude-node-modules=false', t => {
-  return runNYC({
+t.test('instrument with exclude-node-modules=false', async t => {
+  const { status, stderr, stdout } = await runNYC({
     tempDir: t.tempDir,
     args: [
       ...executeNodeModulesArgs,
@@ -497,9 +499,9 @@ t.test('instrument with exclude-node-modules=false', t => {
       'node_modules'
     ],
     cwd: fixturesENM
-  }).then(({ status, stderr, stdout }) => {
-    t.is(status, 0)
-    t.is(stderr, '')
-    t.match(stdout, 'fake-module-1')
   })
+
+  t.is(status, 0)
+  t.is(stderr, '')
+  t.match(stdout, 'fake-module-1')
 })

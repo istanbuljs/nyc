@@ -393,20 +393,18 @@ class NYC {
   }
 
   report () {
-    var tree
-    var map = this.getCoverageMapFromAllCoverageFiles()
-    var context = libReport.createContext({
+    const context = libReport.createContext({
       dir: this.reportDirectory(),
-      watermarks: this.config.watermarks
+      watermarks: this.config.watermarks,
+      coverageMap: this.getCoverageMapFromAllCoverageFiles()
     })
 
-    tree = libReport.summarizers.pkg(map)
-
     this.reporter.forEach((_reporter) => {
-      tree.visit(reports.create(_reporter, {
+      reports.create(_reporter, {
         skipEmpty: this.config.skipEmpty,
-        skipFull: this.config.skipFull
-      }), context)
+        skipFull: this.config.skipFull,
+        maxCols: process.stdout.columns || 100
+      }).execute(context)
     })
 
     if (this._showProcessTree) {

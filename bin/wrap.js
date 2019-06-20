@@ -16,8 +16,11 @@ if (process.env.NYC_PROCESSINFO_EXTERNAL_ID) {
 }
 
 if (process.env.NYC_CONFIG_OVERRIDE) {
-  var override = JSON.parse(process.env.NYC_CONFIG_OVERRIDE)
-  config = Object.assign(config, override)
+  const override = JSON.parse(process.env.NYC_CONFIG_OVERRIDE)
+  config = {
+    ...config,
+    ...override
+  }
   process.env.NYC_CONFIG = JSON.stringify(config)
 }
 

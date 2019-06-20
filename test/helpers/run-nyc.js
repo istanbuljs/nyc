@@ -25,12 +25,17 @@ function sanitizeString (str, cwd, leavePathSep) {
   return str
 }
 
-function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI, env = {} }) {
+async function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI, env = {} }) {
   const runArgs = [nycBin].concat(tempDir ? ['--temp-dir', tempDir] : [], args)
-  return spawn(process.execPath, runArgs, {
+  const { status, stderr, stdout } = await spawn(process.execPath, runArgs, {
     cwd: cwd,
-    env: Object.assign({}, envPath, env)
-  }).then(({ status, stderr, stdout }) => ({
+    env: {
+      ...envPath,
+      ...env
+    }
+  })
+
+  return {
     status,
     originalText: {
       stderr,
@@ -38,7 +43,7 @@ function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI, env = {} }) {
     },
     stderr: sanitizeString(stderr, cwd, leavePathSep),
     stdout: sanitizeString(stdout, cwd, leavePathSep)
-  }))
+  }
 }
 
 module.exports = runNYC

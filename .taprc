@@ -1,0 +1,7 @@
+{
+	"test-ignore": "^test/(helpers|src)/",
+	"coverage": false,
+	"jobs": 1,
+	"timeout": 360,
+	"bail": false
+}

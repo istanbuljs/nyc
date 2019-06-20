@@ -2,8 +2,8 @@
 
 const runNYC = require('./run-nyc')
 
-module.exports = function envCheckConfig (t, { configArgs, checkOptions }) {
-  return runNYC({
+async function envCheckConfig (t, { configArgs, checkOptions }) {
+  const { stdout, stderr, status } = await runNYC({
     tempDir: t.tempDir,
     leavePathSep: true,
     args: [
@@ -11,17 +11,19 @@ module.exports = function envCheckConfig (t, { configArgs, checkOptions }) {
       process.execPath,
       './env.js'
     ]
-  }).then(({ stdout, stderr, status }) => {
-    const config = JSON.parse(JSON.parse(stdout).NYC_CONFIG)
-
-    t.is(status, 0)
-    t.is(stderr, '')
-    t.matchSnapshot(
-      JSON.stringify(
-        checkOptions.sort().map(option => [option, config[option]]),
-        null,
-        2
-      )
-    )
   })
+
+  const config = JSON.parse(JSON.parse(stdout).NYC_CONFIG)
+
+  t.is(status, 0)
+  t.is(stderr, '')
+  t.matchSnapshot(
+    JSON.stringify(
+      checkOptions.sort().map(option => [option, config[option]]),
+      null,
+      2
+    )
+  )
 }
+
+module.exports = envCheckConfig
