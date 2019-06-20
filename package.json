@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "standard",
     "pretest": "npm run lint && npm run clean && npm run instrument",
-    "test": "tap -t360 --no-cov test/*.js",
+    "test": "tap -t360 --no-cov -b test/*.js",
     "snap": "cross-env TAP_SNAPSHOT=1 npm test",
     "posttest": "npm run report",
     "clean": "rimraf ./.nyc_output ./node_modules/.cache ./.self_coverage ./test/fixtures/.nyc_output ./test/fixtures/node_modules/.cache ./self-coverage",

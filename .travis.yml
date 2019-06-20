@@ -1,8 +1,8 @@
 language: node_js
 os:
   - windows
-#  - linux
-#  - osx
+  - linux
+  - osx
 node_js:
   - "node"
   - 10
