@@ -8,5 +8,6 @@ module.exports = {
   testSuccess: require('./test-success'),
   testFailure: require('./test-failure'),
   runNYC: require('./run-nyc'),
-  tempDirSetup: require('./temp-dir-setup')
+  tempDirSetup: require('./temp-dir-setup'),
+  envCheckConfig: require('./env-check-config')
 }
