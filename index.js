@@ -320,9 +320,11 @@ class NYC {
   _wrapExit () {
     // we always want to write coverage
     // regardless of how the process exits.
-    onExit(() => {
-      this.writeCoverageFile()
-    }, { alwaysLast: true })
+    onExit(
+      /* istanbul ignore next: the callback is run but coverage is not recorded */
+      () => this.writeCoverageFile(),
+      { alwaysLast: true }
+    )
   }
 
   wrap (bin) {
