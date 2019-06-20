@@ -752,20 +752,6 @@ exports[`test/nyc-integration.js TAP nyc instrument fails on file with \`package
 
 `
 
-exports[`test/nyc-integration.js TAP nyc instrument returns unmodified source if there is no transform > stdout 1`] = `
-var a = 0
-
-a++
-
-if (a === 0) {
-  a++;
-  a--;
-  a++;
-}
-
-
-`
-
 exports[`test/nyc-integration.js TAP passes configuration via environment variables > undefined 1`] = `
 [
   [

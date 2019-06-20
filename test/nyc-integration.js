@@ -217,9 +217,17 @@ t.test('nyc instrument a directory of files', t => {
   })
 })
 
-t.test('nyc instrument returns unmodified source if there is no transform', t => testSuccess(t, {
-  args: ['instrument', './no-transform/half-covered.xjs']
-}))
+t.test('nyc instrument returns unmodified source if there is no transform', t => {
+  return runNYC({
+    tempDir: t.tempDir,
+    args: ['instrument', './no-transform/half-covered.xjs']
+  }).then(({ status, stderr, stdout }) => {
+    t.is(status, 0)
+    t.is(stderr, '')
+    t.match(stdout, 'var a = 0')
+    t.notMatch(stdout, 'cov_')
+  })
+})
 
 t.test('nyc instrument on file with `package` keyword when es-modules is disabled', t => {
   return runNYC({
