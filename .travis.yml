@@ -9,7 +9,7 @@ node_js:
   - 8
   - 6
 matrix:
-## An ENOMEM error occurs with 11.6.0 under Travis-CI for Windows.
+## An ENOMEM error occurs with 10+ under Travis-CI for Windows.
 ## Disable until we can determine the cause.
 #  include:
 #    - os: windows
@@ -17,6 +17,8 @@ matrix:
   exclude:
     - os: windows
       node_js: "node"
+    - os: windows
+      node_js: 10
 git:
   depth:
     1
