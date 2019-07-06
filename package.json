@@ -9,7 +9,7 @@
     "test": "tap -t360 --no-cov -b test/*.js",
     "snap": "cross-env TAP_SNAPSHOT=1 npm test",
     "posttest": "npm run report",
-    "clean": "rimraf ./.nyc_output ./node_modules/.cache ./.self_coverage ./test/fixtures/.nyc_output ./test/fixtures/node_modules/.cache ./self-coverage",
+    "clean": "rimraf ./.nyc_output ./node_modules/.cache ./.self_coverage ./test/fixtures/.nyc_output ./test/fixtures/node_modules/.cache ./test/fixtures/cli/foo-cache ./test/temp-dir-* ./self-coverage",
     "instrument": "node ./build-self-coverage.js",
     "report": "node ./bin/nyc report --temp-dir ./.self_coverage/ -r text -r lcov",
     "release": "standard-version"
