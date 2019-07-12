@@ -9,12 +9,12 @@ exports[`test/config-override.js TAP spawn that does config overriding > stdout 
 in parent { include: 'conf-override-root.js' }
 in child { include: 'conf-override-module.js' }
 in module { include: 'conf-override-module.js' }
--------------------------|----------|----------|----------|----------|-------------------|
-File                     |  % Stmts | % Branch |  % Funcs |  % Lines | Uncovered Line #s |
--------------------------|----------|----------|----------|----------|-------------------|
-All files                |    77.78 |       50 |      100 |    77.78 |                   |
- conf-override-module.js |      100 |      100 |      100 |      100 |                   |
- conf-override-root.js   |    71.43 |       50 |      100 |    71.43 |             22,23 |
--------------------------|----------|----------|----------|----------|-------------------|
+-------------------------|---------|----------|---------|---------|-------------------
+File                     | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------------|---------|----------|---------|---------|-------------------
+All files                |   77.78 |       50 |     100 |   77.78 |                   
+ conf-override-module.js |     100 |      100 |     100 |     100 |                   
+ conf-override-root.js   |   71.43 |       50 |     100 |   71.43 | 22,23             
+-------------------------|---------|----------|---------|---------|-------------------
 
 `

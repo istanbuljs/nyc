@@ -2,13 +2,15 @@
 
 const runNYC = require('./run-nyc')
 
-function testSuccess (t, opts) {
-  opts.tempDir = t.tempDir
-  return runNYC(opts).then(({ status, stderr, stdout }) => {
-    t.equal(status, 0)
-    t.equal(stderr, '')
-    t.matchSnapshot(stdout, 'stdout')
+async function testSuccess (t, opts) {
+  const { status, stderr, stdout } = await runNYC({
+    tempDir: t.tempDir,
+    ...opts
   })
+
+  t.equal(status, 0)
+  t.equal(stderr, '')
+  t.matchSnapshot(stdout, 'stdout')
 }
 
 module.exports = testSuccess
