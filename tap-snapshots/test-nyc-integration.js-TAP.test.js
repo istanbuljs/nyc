@@ -185,6 +185,7 @@ All files               |   90.91 |       70 |     100 |     100 |
  selfspawn-fibonacci.js |   90.91 |       70 |     100 |     100 | 4,25,27           
 ------------------------|---------|----------|---------|---------|-------------------
 nyc
+│   100 % Lines
 └─┬ node ./selfspawn-fibonacci.js 5
   │   100 % Lines
   ├─┬ node ./selfspawn-fibonacci.js 4

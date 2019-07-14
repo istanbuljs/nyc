@@ -10,6 +10,7 @@ const glob = require('glob')
 const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
+const { ProcessInfo, ProcessDB } = require('istanbul-lib-processinfo')
 const libReport = require('istanbul-lib-report')
 const mkdirp = require('make-dir')
 const Module = require('module')
@@ -23,8 +24,6 @@ const testExclude = require('test-exclude')
 const util = require('util')
 
 const debugLog = util.debuglog('nyc')
-
-const ProcessInfo = require('./lib/process.js')
 
 /* istanbul ignore next */
 if (/self-coverage/.test(__dirname)) {
@@ -87,7 +86,9 @@ class NYC {
     this.hookRunInThisContext = config.hookRunInThisContext
     this.fakeRequire = null
 
-    this.processInfo = new ProcessInfo(config && config._processInfo)
+    this.processInfo = new ProcessInfo(Object.assign({}, config._processInfo, {
+      directory: path.resolve(this.tempDirectory(), 'processinfo')
+    }))
 
     this.hashCache = {}
   }
@@ -308,7 +309,7 @@ class NYC {
     mkdirp.sync(this.tempDirectory())
     if (this.cache) mkdirp.sync(this.cacheDirectory)
 
-    mkdirp.sync(this.processInfoDirectory())
+    mkdirp.sync(this.processInfo.directory)
   }
 
   reset () {
@@ -364,12 +365,7 @@ class NYC {
 
     this.processInfo.coverageFilename = coverageFilename
     this.processInfo.files = Object.keys(coverage)
-
-    fs.writeFileSync(
-      path.resolve(this.processInfoDirectory(), id + '.json'),
-      JSON.stringify(this.processInfo),
-      'utf-8'
-    )
+    this.processInfo.save()
   }
 
   getCoverageMapFromAllCoverageFiles (baseDirectory) {
@@ -412,84 +408,14 @@ class NYC {
     }
   }
 
-  // XXX(@isaacs) Index generation should move to istanbul-lib-processinfo
   writeProcessIndex () {
-    const dir = this.processInfoDirectory()
-    const pidToUid = new Map()
-    const infoByUid = new Map()
-    const eidToUid = new Map()
-    const infos = fs.readdirSync(dir).filter(f => f !== 'index.json').map(f => {
-      try {
-        const info = JSON.parse(fs.readFileSync(path.resolve(dir, f), 'utf-8'))
-        info.children = []
-        pidToUid.set(info.uuid, info.pid)
-        pidToUid.set(info.pid, info.uuid)
-        infoByUid.set(info.uuid, info)
-        if (info.externalId) {
-          eidToUid.set(info.externalId, info.uuid)
-        }
-        return info
-      } catch (er) {
-        return null
-      }
-    }).filter(Boolean)
-
-    // create all the parent-child links and write back the updated info
-    infos.forEach(info => {
-      if (info.parent) {
-        const parentInfo = infoByUid.get(info.parent)
-        if (parentInfo && !parentInfo.children.includes(info.uuid)) {
-          parentInfo.children.push(info.uuid)
-        }
-      }
-    })
-
-    // figure out which files were touched by each process.
-    const files = infos.reduce((files, info) => {
-      info.files.forEach(f => {
-        files[f] = files[f] || []
-        files[f].push(info.uuid)
-      })
-      return files
-    }, {})
-
-    // build the actual index!
-    const index = infos.reduce((index, info) => {
-      index.processes[info.uuid] = {}
-      index.processes[info.uuid].parent = info.parent
-      if (info.externalId) {
-        if (index.externalIds[info.externalId]) {
-          throw new Error(`External ID ${info.externalId} used by multiple processes`)
-        }
-        index.processes[info.uuid].externalId = info.externalId
-        index.externalIds[info.externalId] = {
-          root: info.uuid,
-          children: info.children
-        }
-      }
-      index.processes[info.uuid].children = Array.from(info.children)
-      return index
-    }, { processes: {}, files: files, externalIds: {} })
-
-    // flatten the descendant sets of all the externalId procs
-    Object.keys(index.externalIds).forEach(eid => {
-      const { children } = index.externalIds[eid]
-      // push the next generation onto the list so we accumulate them all
-      for (let i = 0; i < children.length; i++) {
-        const nextGen = index.processes[children[i]].children
-        if (nextGen && nextGen.length) {
-          children.push(...nextGen.filter(uuid => children.indexOf(uuid) === -1))
-        }
-      }
-    })
-
-    fs.writeFileSync(path.resolve(dir, 'index.json'), JSON.stringify(index))
+    const db = new ProcessDB(this.processInfo.directory)
+    db.writeIndex()
   }
 
   showProcessTree () {
-    var processTree = ProcessInfo.buildProcessTree(this._loadProcessInfos())
-
-    console.log(processTree.render(this))
+    const db = new ProcessDB(this.processInfo.directory)
+    console.log(db.renderTree(this))
   }
 
   checkCoverage (thresholds, perFile) {
@@ -519,28 +445,6 @@ class NYC {
         }
       }
     })
-  }
-
-  _loadProcessInfos () {
-    return fs.readdirSync(this.processInfoDirectory()).map(f => {
-      let data
-      try {
-        data = JSON.parse(fs.readFileSync(
-          path.resolve(this.processInfoDirectory(), f),
-          'utf-8'
-        ))
-      } catch (e) { // handle corrupt JSON output.
-        return null
-      }
-      if (f !== 'index.json') {
-        data.nodes = []
-        data = new ProcessInfo(data)
-      }
-      return { file: path.basename(f, '.json'), data: data }
-    }).filter(Boolean).reduce((infos, info) => {
-      infos[info.file] = info.data
-      return infos
-    }, {})
   }
 
   eachReport (filenames, iterator, baseDirectory) {
@@ -587,10 +491,6 @@ class NYC {
 
   reportDirectory () {
     return path.resolve(this.cwd, this._reportDir)
-  }
-
-  processInfoDirectory () {
-    return path.resolve(this.tempDirectory(), 'processinfo')
   }
 }
 
