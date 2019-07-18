@@ -4,7 +4,6 @@
 const configUtil = require('../lib/config-util')
 const foreground = require('foreground-child')
 const NYC = require('../index.js')
-const processArgs = require('../lib/process-args')
 
 const sw = require('spawn-wrap')
 const wrapper = require.resolve('./wrap.js')
@@ -13,13 +12,10 @@ const wrapper = require.resolve('./wrap.js')
 // we keep these values in a few different forms,
 // used in the various execution contexts of nyc:
 // reporting, instrumenting subprocesses, etc.
-const yargs = configUtil.buildYargs()
-const instrumenterArgs = processArgs.hideInstrumenteeArgs()
-const config = configUtil.loadConfig(yargs.parse(instrumenterArgs))
-configUtil.addCommandsAndHelp(yargs)
-const argv = yargs.config(config).parse(instrumenterArgs)
 
 async function main () {
+  const { argv, childArgs, yargs } = await configUtil()
+
   if (['check-coverage', 'report', 'instrument', 'merge'].includes(argv._[0])) {
     // look in lib/commands for logic.
     return
@@ -68,11 +64,7 @@ async function main () {
   // set process.exitCode. Keep track so that both children are run, but
   // a non-zero exit codes in either one leads to an overall non-zero exit code.
   process.exitCode = 0
-  foreground(processArgs.hideInstrumenterArgs(
-    // use the same argv description, but don't exit
-    // for flags like --help.
-    configUtil.buildYargs().parse(process.argv.slice(2))
-  ), async () => {
+  foreground(childArgs, async () => {
     var mainChildExitCode = process.exitCode
 
     await nyc.writeProcessIndex()

@@ -586,3 +586,8 @@ t.test('reports error if input directory is missing', t => testFailure(t, {
 t.test('reports error if input is not a directory', t => testFailure(t, {
   args: ['merge', './package.json']
 }))
+
+t.test('--all instruments unknown extensions as js', t => testSuccess(t, {
+  cwd: path.resolve(fixturesCLI, '../conf-multiple-extensions'),
+  args: ['--all', process.execPath, './run.js']
+}))

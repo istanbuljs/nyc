@@ -16,6 +16,21 @@ All files |   44.44 |      100 |   33.33 |   44.44 |
 
 `
 
+exports[`test/nyc-integration.js TAP --all instruments unknown extensions as js > stdout 1`] = `
+run
+------------------------|---------|----------|---------|---------|-------------------
+File                    | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+------------------------|---------|----------|---------|---------|-------------------
+All files               |   11.11 |      100 |       0 |   11.11 |                   
+ check-instrumented.es6 |       0 |      100 |       0 |       0 | 5,6               
+ check-instrumented.js  |       0 |      100 |       0 |       0 | 5,6               
+ not-loaded.es6         |       0 |      100 |     100 |       0 | 1,2               
+ not-loaded.js          |       0 |      100 |     100 |       0 | 1,2               
+ run.js                 |     100 |      100 |     100 |     100 |                   
+------------------------|---------|----------|---------|---------|-------------------
+
+`
+
 exports[`test/nyc-integration.js TAP --all uses source-maps to exclude original sources from reports > stdout 1`] = `
 ----------|---------|----------|---------|---------|-------------------
 File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
@@ -836,6 +851,30 @@ exports[`test/nyc-integration.js TAP passes configuration via environment variab
     true
   ]
 ]
+`
+
+exports[`test/nyc-integration.js TAP produce-source-map enabled > stdout 1`] = `
+Error: Blarrh
+    at blah (./stack-trace.js:3:1)
+----------------|---------|----------|---------|---------|-------------------
+File            | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------------|---------|----------|---------|---------|-------------------
+All files       |     100 |      100 |     100 |     100 |                   
+ stack-trace.js |     100 |      100 |     100 |     100 |                   
+----------------|---------|----------|---------|---------|-------------------
+
+`
+
+exports[`test/nyc-integration.js TAP produce-source-map not enabled > stdout 1`] = `
+Error: Blarrh
+    at blah (./stack-trace.js:1:1037)
+----------------|---------|----------|---------|---------|-------------------
+File            | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------------|---------|----------|---------|---------|-------------------
+All files       |     100 |      100 |     100 |     100 |                   
+ stack-trace.js |     100 |      100 |     100 |     100 |                   
+----------------|---------|----------|---------|---------|-------------------
+
 `
 
 exports[`test/nyc-integration.js TAP recursive run does not throw > stdout 1`] = `

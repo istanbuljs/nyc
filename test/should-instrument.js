@@ -1,13 +1,15 @@
 const path = require('path')
 const NYC = require('../self-coverage')
-const configUtil = require('../self-coverage/lib/config-util')
+
+const { parseArgv } = require('./helpers')
+
 const fixtures = path.resolve(__dirname, './fixtures')
 
 const t = require('tap')
 
 const rootDir = path.resolve('/')
-t.test('should exclude appropriately with defaults', t => {
-  const nyc = new NYC(configUtil.buildYargs(rootDir).parse([
+t.test('should exclude appropriately with defaults', async t => {
+  const nyc = new NYC(await parseArgv(rootDir, [
     '--exclude=test/**',
     '--exclude=test{,-*}.js',
     '--exclude=**/*.test.js',
@@ -26,11 +28,10 @@ t.test('should exclude appropriately with defaults', t => {
   t.false(nyc.exclude.shouldInstrument(path.join(rootDir, 'foo/bar/test.js'), '.\\test.js'))
   t.false(nyc.exclude.shouldInstrument(path.join(rootDir, 'foo/bar/foo.test.js'), './foo.test.js'))
   t.false(nyc.exclude.shouldInstrument(path.join(rootDir, 'foo/bar/__tests__/foo.js'), './__tests__/foo.js'))
-  t.done()
 })
 
-t.test('should exclude appropriately with config.exclude', t => {
-  const nyc = new NYC(configUtil.buildYargs(fixtures).parse())
+t.test('should exclude appropriately with config.exclude', async t => {
+  const nyc = new NYC(await parseArgv(fixtures))
 
   // fixtures/package.json configures excludes: "blarg", "blerg"
   t.false(nyc.exclude.shouldInstrument(path.join(rootDir, 'blarg.js'), 'blarg.js'))
@@ -38,33 +39,29 @@ t.test('should exclude appropriately with config.exclude', t => {
   t.false(nyc.exclude.shouldInstrument(path.join(rootDir, 'blerg.js'), 'blerg.js'))
   t.false(nyc.exclude.shouldInstrument(path.join(rootDir, 'blerg.js'), './blerg.js'))
   t.false(nyc.exclude.shouldInstrument(path.join(rootDir, 'blerg.js'), '.\\blerg.js'))
-  t.done()
 })
 
-t.test('should exclude outside of the current working directory', t => {
-  const nyc = new NYC(configUtil.buildYargs(path.join(rootDir, 'foo')).parse())
+t.test('should exclude outside of the current working directory', async t => {
+  const nyc = new NYC(await parseArgv(path.join(rootDir, 'foo')))
   t.false(nyc.exclude.shouldInstrument(path.join(rootDir, 'bar.js'), '../bar.js'))
-  t.done()
 })
 
-t.test('should not exclude if the current working directory is inside node_modules', t => {
+t.test('should not exclude if the current working directory is inside node_modules', async t => {
   const cwd = path.join(rootDir, 'node_modules', 'foo')
-  const nyc = new NYC(configUtil.buildYargs(cwd).parse())
+  const nyc = new NYC(await parseArgv(cwd))
   t.true(nyc.exclude.shouldInstrument(path.join(cwd, 'bar.js'), './bar.js'))
   t.true(nyc.exclude.shouldInstrument(path.join(cwd, 'bar.js'), '.\\bar.js'))
-  t.done()
 })
 
-t.test('allows files to be explicitly included, rather than excluded', t => {
-  const nyc = new NYC(configUtil.buildYargs(rootDir).parse(['--include=foo.js']))
+t.test('allows files to be explicitly included, rather than excluded', async t => {
+  const nyc = new NYC(await parseArgv(rootDir, ['--include=foo.js']))
 
   t.true(nyc.exclude.shouldInstrument(path.join(rootDir, 'foo.js'), 'foo.js'))
   t.false(nyc.exclude.shouldInstrument(path.join(rootDir, 'index.js'), 'index.js'))
-  t.done()
 })
 
-t.test('exclude overrides include', t => {
-  const nyc = new NYC(configUtil.buildYargs(rootDir).parse([
+t.test('exclude overrides include', async t => {
+  const nyc = new NYC(await parseArgv(rootDir, [
     '--include=foo.js',
     '--include=test.js',
     '--exclude=**/node_modules/**',
@@ -74,5 +71,4 @@ t.test('exclude overrides include', t => {
 
   t.true(nyc.exclude.shouldInstrument(path.join(rootDir, 'foo.js'), 'foo.js'))
   t.false(nyc.exclude.shouldInstrument(path.join(rootDir, 'test.js'), 'test.js'))
-  t.done()
 })

@@ -68,6 +68,7 @@
   "author": "Ben Coe <ben@npmjs.com>",
   "license": "ISC",
   "dependencies": {
+    "@istanbuljs/load-nyc-config": "^1.0.0-alpha.0",
     "caching-transform": "^4.0.0",
     "convert-source-map": "^1.6.0",
     "cp-file": "^7.0.0",

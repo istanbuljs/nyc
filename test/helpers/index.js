@@ -11,5 +11,6 @@ module.exports = {
   testFailure: require('./test-failure'),
   runNYC: require('./run-nyc'),
   tempDirSetup: require('./temp-dir-setup'),
-  envCheckConfig: require('./env-check-config')
+  envCheckConfig: require('./env-check-config'),
+  parseArgv: require('./parse-argv')
 }

@@ -5,22 +5,23 @@ const path = require('path')
 const { test } = require('tap')
 
 const NYC = require('../self-coverage')
-const configUtil = require('../self-coverage/lib/config-util')
+
+const { parseArgv } = require('./helpers')
 
 test("loads 'exclude' patterns from package.json#nyc", async t => {
-  const nyc = new NYC(configUtil.buildYargs(path.resolve(__dirname, './fixtures')).parse())
+  const nyc = new NYC(await parseArgv(path.resolve(__dirname, './fixtures')))
 
   t.strictEqual(nyc.exclude.exclude.length, 8)
 })
 
 test("loads 'extension' patterns from package.json#nyc", async t => {
-  const nyc = new NYC(configUtil.buildYargs(path.resolve(__dirname, './fixtures/conf-multiple-extensions')).parse())
+  const nyc = new NYC(await parseArgv(path.resolve(__dirname, './fixtures/conf-multiple-extensions')))
 
   t.strictEqual(nyc.extensions.length, 3)
 })
 
 test("ignores 'include' option if it's falsy or []", async t => {
-  const nyc1 = new NYC(configUtil.buildYargs(path.resolve(__dirname, './fixtures/conf-empty')).parse())
+  const nyc1 = new NYC(await parseArgv(path.resolve(__dirname, './fixtures/conf-empty')))
 
   t.strictEqual(nyc1.exclude.include, false)
 
@@ -32,7 +33,7 @@ test("ignores 'include' option if it's falsy or []", async t => {
 })
 
 test("ignores 'exclude' option if it's falsy", async t => {
-  const nyc = new NYC(configUtil.buildYargs(path.resolve(__dirname, './fixtures/conf-empty')).parse())
+  const nyc = new NYC(await parseArgv(path.resolve(__dirname, './fixtures/conf-empty')))
 
   t.strictEqual(nyc.exclude.exclude.length, 15)
 })

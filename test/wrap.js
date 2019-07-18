@@ -6,9 +6,8 @@ const path = require('path')
 const t = require('tap')
 
 const NYC = require('../self-coverage')
-const configUtil = require('../self-coverage/lib/config-util')
 
-const resetState = require('./helpers/reset-state')
+const { parseArgv, resetState } = require('./helpers')
 
 // we test exit handlers in nyc-integration.js.
 NYC.prototype._wrapExit = () => {}
@@ -19,7 +18,7 @@ const configMultExt = path.resolve(fixtures, 'conf-multiple-extensions')
 t.beforeEach(resetState)
 
 t.test('wraps modules with coverage counters when they are required', async t => {
-  const nyc = new NYC(configUtil.buildYargs().parse())
+  const nyc = new NYC(await parseArgv())
   await nyc.reset()
   nyc.wrap()
 
@@ -36,7 +35,7 @@ t.test('wraps modules with coverage counters when the custom require hook compil
     module._compile(fs.readFileSync(filename, 'utf8'), filename)
   }
 
-  const nyc = new NYC(configUtil.buildYargs().parse())
+  const nyc = new NYC(await parseArgv())
   await nyc.reset()
   nyc.wrap()
 
@@ -49,7 +48,7 @@ t.test('wraps modules with coverage counters when the custom require hook compil
 })
 
 t.test('assigns a function to custom extensions', async t => {
-  const nyc = new NYC(configUtil.buildYargs(configMultExt).parse())
+  const nyc = new NYC(await parseArgv(configMultExt))
   await nyc.reset()
   nyc.wrap()
 
@@ -62,7 +61,7 @@ t.test('assigns a function to custom extensions', async t => {
 
 t.test('calls the `_handleJs` function for custom file extensions', async t => {
   const required = {}
-  const nyc = new NYC(configUtil.buildYargs(configMultExt).parse())
+  const nyc = new NYC(await parseArgv(configMultExt))
 
   nyc._handleJs = (code, options) => {
     if (options.filename.includes('check-instrumented.es6')) {
@@ -86,7 +85,7 @@ t.test('calls the `_handleJs` function for custom file extensions', async t => {
 })
 
 t.test('does not output coverage for files that have not been included, by default', async t => {
-  const nyc = new NYC(configUtil.buildYargs(process.cwd()).parse())
+  const nyc = new NYC(await parseArgv(process.cwd()))
   nyc.wrap()
   await nyc.reset()
 
@@ -95,7 +94,7 @@ t.test('does not output coverage for files that have not been included, by defau
 })
 
 t.test('tracks coverage appropriately once the file is required', async t => {
-  const nyc = new NYC(configUtil.buildYargs(fixtures).parse())
+  const nyc = new NYC(await parseArgv(fixtures))
   await nyc.reset()
   nyc.wrap()
 

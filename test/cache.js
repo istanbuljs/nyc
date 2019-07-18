@@ -7,16 +7,15 @@ const t = require('tap')
 const rimraf = promisify(require('rimraf'))
 
 const NYC = require('../self-coverage')
-const configUtil = require('../self-coverage/lib/config-util')
 
-const { resetState, runNYC } = require('./helpers')
+const { parseArgv, resetState, runNYC } = require('./helpers')
 
 const fixtures = path.resolve(__dirname, './fixtures')
 
 t.beforeEach(resetState)
 
 async function cacheTest (t, script) {
-  const nyc = new NYC(configUtil.buildYargs(fixtures).parse())
+  const nyc = new NYC(await parseArgv(fixtures))
   await rimraf(nyc.cacheDirectory)
 
   const { status } = await runNYC({
