@@ -78,7 +78,7 @@
     "istanbul-lib-coverage": "^3.0.0-alpha.0",
     "istanbul-lib-hook": "^3.0.0-alpha.0",
     "istanbul-lib-instrument": "^4.0.0-alpha.0",
-    "istanbul-lib-processinfo": "istanbuljs/istanbul-lib-processinfo#master",
+    "istanbul-lib-processinfo": "^2.0.0",
     "istanbul-lib-report": "^3.0.0-alpha.0",
     "istanbul-lib-source-maps": "^4.0.0-alpha.0",
     "istanbul-reports": "^3.0.0-alpha.1",
