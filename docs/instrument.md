@@ -20,7 +20,7 @@ For example, `nyc instrument . ./output` will produce instrumented versions of a
 
 The `--delete` option will remove the existing output directory before instrumenting.
 
-The '--in-place' option will allow you to run the instrument command
+The `--in-place` option will allow you to run the instrument command.
 
 The `--complete-copy` option will copy all remaining files from the `input` directory to the `output` directory.
 When using `--complete-copy` nyc will not copy the contents of a `.git` folder to the output directory.

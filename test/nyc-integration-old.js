@@ -7,6 +7,7 @@ const fixturesCLI = path.resolve(__dirname, './fixtures/cli')
 const fakebin = path.resolve(fixturesCLI, 'fakebin')
 const fs = require('fs')
 const isWindows = require('is-windows')()
+const cpFile = require('cp-file')
 const rimraf = require('rimraf')
 const makeDir = require('make-dir')
 const { spawn } = require('child_process')
@@ -325,11 +326,11 @@ describe('the nyc cli', function () {
       })
 
       it('aborts if trying to write files in place', function (done) {
-        const args = [bin, 'instrument', '--delete', './', './']
+        const args = [bin, 'instrument', './', './']
 
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
-          env
+          env: env
         })
 
         let stderr = ''
@@ -345,27 +346,28 @@ describe('the nyc cli', function () {
       })
 
       it('can write files in place with --in-place switch', function (done) {
-        const args = [bin, 'instrument', '--in-place', '--include', '*/file1.js', './instrument-inplace']
+        const args = [bin, 'instrument', '--in-place', '--include', '*/file1.js', './test-instrument-inplace']
+
+        const sourceDir = path.resolve(fixturesCLI, 'instrument-inplace')
+        const destDir = path.resolve(fixturesCLI, 'test-instrument-inplace')
+        makeDir.sync(destDir)
+        cpFile.sync(path.join(sourceDir, 'file1.js'), path.join(destDir, 'file1.js'))
+        cpFile.sync(path.join(sourceDir, 'file2.js'), path.join(destDir, 'file2.js'))
 
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
-          env
-        })
-
-        let stderr = ''
-        proc.stderr.on('data', function (chunk) {
-          stderr += chunk
+          env: env
         })
 
         proc.on('close', function (code) {
-          console.log(`stderr:  ${stderr}`)
           code.should.equal(0)
-          const file1 = path.resolve(fixturesCLI, 'instrument-inplace', 'file1.js')
+          const file1 = path.resolve(destDir, 'file1.js')
           fs.readFileSync(file1, 'utf8')
             .should.match(/var cov_/)
-          const file2 = path.resolve(fixturesCLI, 'instrument-inplace', 'file2.js')
+          const file2 = path.resolve(destDir, 'file2.js')
           fs.readFileSync(file2, 'utf8')
             .should.not.match(/var cov_/)
+          rimraf.sync(destDir)
           done()
         })
       })
@@ -375,7 +377,7 @@ describe('the nyc cli', function () {
 
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
-          env
+          env: env
         })
 
         let stderr = ''
@@ -395,7 +397,7 @@ describe('the nyc cli', function () {
 
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
-          env
+          env: env
         })
 
         let stderr = ''
@@ -420,7 +422,7 @@ describe('the nyc cli', function () {
 
           const proc = spawn(process.execPath, args, {
             cwd: fixturesCLI,
-            env
+            env: env
           })
 
           proc.on('close', function (code) {
@@ -439,7 +441,7 @@ describe('the nyc cli', function () {
 
           const proc = spawn(process.execPath, args, {
             cwd: fixturesCLI,
-            env
+            env: env
           })
 
           proc.on('close', function (code) {
@@ -457,7 +459,7 @@ describe('the nyc cli', function () {
 
           const proc = spawn(process.execPath, args, {
             cwd: fixturesCLI,
-            env
+            env: env
           })
 
           let stderr = ''
@@ -477,7 +479,7 @@ describe('the nyc cli', function () {
 
           const proc = spawn(process.execPath, args, {
             cwd: fixturesCLI,
-            env
+            env: env
           })
 
           let stderr = ''

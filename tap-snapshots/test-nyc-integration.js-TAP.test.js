@@ -103,6 +103,9 @@ All files                        |       0 |        0 |       0 |       0 |
   test.js                        |       0 |        0 |       0 |       0 |                         
  cli/fakebin                     |       0 |      100 |     100 |       0 |                         
   npm-template.js                |       0 |      100 |     100 |       0 | 2,3,4,7,9               
+ cli/instrument-inplace          |       0 |      100 |       0 |       0 |                         
+  file1.js                       |       0 |      100 |       0 |       0 | 2,5                     
+  file2.js                       |       0 |      100 |       0 |       0 | 2,5                     
  cli/nyc-config-js               |       0 |        0 |     100 |       0 |                         
   ignore.js                      |       0 |      100 |     100 |       0 | 1                       
   index.js                       |       0 |        0 |     100 |       0 | 1,3,5,7,8,9,10          
@@ -126,7 +129,7 @@ exports[`test/nyc-integration.js TAP --ignore-class-method skips methods that ma
 ---------------------------------|---------|----------|---------|---------|-------------------------
 File                             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s       
 ---------------------------------|---------|----------|---------|---------|-------------------------
-All files                        |    1.49 |        0 |    5.56 |    1.96 |                         
+All files                        |    1.45 |        0 |       5 |    1.89 |                         
  cli                             |    2.08 |        0 |    5.56 |    3.13 |                         
   args.js                        |       0 |      100 |     100 |       0 | 1                       
   by-arg2.js                     |       0 |        0 |     100 |       0 | 1,2,3,4,5,7             
@@ -144,6 +147,9 @@ All files                        |    1.49 |        0 |    5.56 |    1.96 |
   skip-full.js                   |       0 |      100 |     100 |       0 | 1,2                     
  cli/fakebin                     |       0 |      100 |     100 |       0 |                         
   npm-template.js                |       0 |      100 |     100 |       0 | 2,3,4,7,9               
+ cli/instrument-inplace          |       0 |      100 |       0 |       0 |                         
+  file1.js                       |       0 |      100 |       0 |       0 | 2,5                     
+  file2.js                       |       0 |      100 |       0 |       0 | 2,5                     
  cli/nyc-config-js               |       0 |        0 |     100 |       0 |                         
   ignore.js                      |       0 |      100 |     100 |       0 | 1                       
   index.js                       |       0 |        0 |     100 |       0 | 1,3,5,7,8,9,10          
@@ -753,6 +759,7 @@ Failed to instrument ./not-strict.js
 `
 
 exports[`test/nyc-integration.js TAP nyc instrument fails on file with \`package\` keyword when es-modules is enabled > stdout 1`] = `
+Running nyc from .
 
 `
 
