@@ -759,7 +759,6 @@ Failed to instrument ./not-strict.js
 `
 
 exports[`test/nyc-integration.js TAP nyc instrument fails on file with \`package\` keyword when es-modules is enabled > stdout 1`] = `
-Running nyc from .
 
 `
 
