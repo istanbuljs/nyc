@@ -7,6 +7,7 @@ const fixturesCLI = path.resolve(__dirname, './fixtures/cli')
 const fakebin = path.resolve(fixturesCLI, 'fakebin')
 const fs = require('fs')
 const isWindows = require('is-windows')()
+const cpFile = require('cp-file')
 const rimraf = require('rimraf')
 const makeDir = require('make-dir')
 const { spawn } = require('child_process')
@@ -325,7 +326,7 @@ describe('the nyc cli', function () {
       })
 
       it('aborts if trying to write files in place', function (done) {
-        const args = [bin, 'instrument', '--delete', './', './']
+        const args = [bin, 'instrument', './', './']
 
         const proc = spawn(process.execPath, args, {
           cwd: fixturesCLI,
@@ -339,7 +340,54 @@ describe('the nyc cli', function () {
 
         proc.on('close', function (code) {
           code.should.equal(1)
-          stderr.should.include('nyc instrument failed: cannot instrument files in place')
+          stderr.should.include('cannot instrument files in place')
+          done()
+        })
+      })
+
+      it('can write files in place with --in-place switch', function (done) {
+        const args = [bin, 'instrument', '--in-place', '--include', '*/file1.js', './test-instrument-inplace']
+
+        const sourceDir = path.resolve(fixturesCLI, 'instrument-inplace')
+        const destDir = path.resolve(fixturesCLI, 'test-instrument-inplace')
+        makeDir.sync(destDir)
+        cpFile.sync(path.join(sourceDir, 'file1.js'), path.join(destDir, 'file1.js'))
+        cpFile.sync(path.join(sourceDir, 'file2.js'), path.join(destDir, 'file2.js'))
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(0)
+          const file1 = path.resolve(destDir, 'file1.js')
+          fs.readFileSync(file1, 'utf8')
+            .should.match(/var cov_/)
+          const file2 = path.resolve(destDir, 'file2.js')
+          fs.readFileSync(file2, 'utf8')
+            .should.not.match(/var cov_/)
+          rimraf.sync(destDir)
+          done()
+        })
+      })
+
+      it('aborts if trying to delete while writing files in place', function (done) {
+        const args = [bin, 'instrument', '--in-place', '--delete', '--include', 'file1.js', './instrument-inplace']
+
+        const proc = spawn(process.execPath, args, {
+          cwd: fixturesCLI,
+          env: env
+        })
+
+        let stderr = ''
+        proc.stderr.on('data', function (chunk) {
+          stderr += chunk
+        })
+
+        proc.on('close', function (code) {
+          code.should.equal(1)
+          stderr.should.include(`cannot use '--delete' when instrumenting files in place`)
           done()
         })
       })
@@ -359,7 +407,7 @@ describe('the nyc cli', function () {
 
         proc.on('close', function (code) {
           code.should.equal(1)
-          stderr.should.include('nyc instrument failed: cannot instrument files outside of project root directory')
+          stderr.should.include('cannot instrument files outside project root directory')
           done()
         })
       })
@@ -421,7 +469,7 @@ describe('the nyc cli', function () {
 
           proc.on('close', function (code) {
             code.should.equal(1)
-            stderr.should.include('nyc instrument failed: attempt to delete')
+            stderr.should.include('attempt to delete')
             done()
           })
         })
@@ -441,7 +489,7 @@ describe('the nyc cli', function () {
 
           proc.on('close', function (code) {
             code.should.equal(1)
-            stderr.should.include('nyc instrument failed: attempt to delete')
+            stderr.should.include('attempt to delete')
             done()
           })
         })
