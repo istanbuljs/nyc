@@ -170,7 +170,11 @@ class NYC {
       const coverage = coverageFinder()
       const lastCoverage = this.instrumenter().lastFileCoverage()
       if (lastCoverage) {
-        coverage[lastCoverage.path] = lastCoverage
+        coverage[lastCoverage.path] = {
+          ...lastCoverage,
+          // Only use this data if we don't have it without `all: true`
+          all: true
+        }
       }
     })
     this.fakeRequire = false
