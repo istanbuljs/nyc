@@ -22,6 +22,6 @@ git:
   depth:
     1
 before_script:
-  - npm i npm@latest
+  - npm i npm@latest -g
 after_script:
   - "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
