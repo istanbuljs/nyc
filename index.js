@@ -129,6 +129,10 @@ class NYC {
   }
 
   _loadAdditionalModules () {
+    if (!this.config.useSpawnWrap) {
+      return
+    }
+
     this.require.forEach(requireModule => {
       // Attempt to require the module relative to the directory being instrumented.
       // Then try other locations, e.g. the nyc node_modules folder.
@@ -347,6 +351,12 @@ class NYC {
 
   wrap (bin) {
     process.env.NYC_PROCESS_ID = this.processInfo.uuid
+    // This is a bug with the spawn-wrap method where
+    // we cannot force propagation of NYC_PROCESS_ID.
+    if (!this.config.useSpawnWrap) {
+      const { propagateEnv } = require('node-preload')
+      propagateEnv.NYC_PROCESS_ID = this.processInfo.uuid
+    }
     this._addRequireHooks()
     this._wrapExit()
     this._loadAdditionalModules()

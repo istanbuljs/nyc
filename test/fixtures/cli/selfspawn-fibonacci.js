@@ -1,6 +1,8 @@
 'use strict';
 var cp = require('child_process');
 
+process.env = {};
+
 var index = +process.argv[2] || 0
 if (index <= 1) {
   console.log(0)

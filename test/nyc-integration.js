@@ -186,6 +186,14 @@ t.test('--show-process-tree displays a tree of spawned processes', t => testSucc
   args: ['--show-process-tree', process.execPath, 'selfspawn-fibonacci.js', '5']
 }))
 
+t.test('--use-spawn-wrap=true is functional', t => testSuccess(t, {
+  args: ['--use-spawn-wrap=true', process.execPath, 'selfspawn-fibonacci.js', '5']
+}))
+
+t.test('--use-spawn-wrap=false is functional', t => testSuccess(t, {
+  args: ['--use-spawn-wrap=false', process.execPath, 'selfspawn-fibonacci.js', '5']
+}))
+
 t.test('can run "npm test" which directly invokes a test file', t => testSuccess(t, {
   args: ['npm', 'test'],
   cwd: path.resolve(fixturesCLI, 'run-npm-test')
