@@ -9,7 +9,7 @@
     "test": "tap",
     "snap": "npm test -- --snapshot",
     "posttest": "npm run report",
-    "clean": "rimraf ./.nyc_output ./node_modules/.cache ./.self_coverage ./test/fixtures/.nyc_output ./test/fixtures/node_modules/.cache ./test/fixtures/cli/foo-cache ./test/temp-dir-* ./self-coverage",
+    "clean": "node ./npm-run-clean.js",
     "instrument": "node ./build-self-coverage.js",
     "report": "node ./bin/nyc report --temp-dir ./.self_coverage/ -r text -r lcov",
     "release": "standard-version"
