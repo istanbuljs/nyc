@@ -1,3 +1,5 @@
+daysUntilStale: 365
+
 exemptLabels:
   - "Great First Contribution"
   - pinned
