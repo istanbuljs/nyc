@@ -444,6 +444,11 @@ exports[`test/nyc-integration.js TAP check-coverage command is equivalent to the
 
 `
 
+exports[`test/nyc-integration.js TAP combines multiple coverage reports > stdout 1`] = `
+coverage files in ./merge-input merged into coverage.json
+
+`
+
 exports[`test/nyc-integration.js TAP does not create .cache folder if cache is "false" > stdout 1`] = `
 -----------------|---------|----------|---------|---------|-------------------
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
@@ -823,6 +828,10 @@ exports[`test/nyc-integration.js TAP passes configuration via environment variab
 ]
 `
 
+exports[`test/nyc-integration.js TAP recursive run does not throw > stdout 1`] = `
+
+`
+
 exports[`test/nyc-integration.js TAP report and check should show coverage check along with report > stderr 1`] = `
 ERROR: Coverage for lines (50%) does not meet global threshold (100%)
 
@@ -851,6 +860,26 @@ File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 All files |    62.5 |      100 |      40 |    62.5 |                   
  es6.js   |    62.5 |      100 |      40 |    62.5 | 11,16,17          
 ----------|---------|----------|---------|---------|-------------------
+
+`
+
+exports[`test/nyc-integration.js TAP reports error if input directory is missing > stderr 1`] = `
+failed access input directory ./DIRECTORY_THAT_IS_MISSING with error:
+
+ENOENT: no such file or directory, stat './DIRECTORY_THAT_IS_MISSING'
+
+`
+
+exports[`test/nyc-integration.js TAP reports error if input directory is missing > stdout 1`] = `
+
+`
+
+exports[`test/nyc-integration.js TAP reports error if input is not a directory > stderr 1`] = `
+./package.json was not a directory
+
+`
+
+exports[`test/nyc-integration.js TAP reports error if input is not a directory > stdout 1`] = `
 
 `
 

@@ -7,9 +7,9 @@ const { promisify } = require('util')
 
 const t = require('tap')
 const glob = promisify(require('glob'))
-const rimraf = require('rimraf')
+const rimraf = promisify(require('rimraf'))
 
-const { fixturesCLI, runNYC, tempDirSetup, testSuccess, testFailure, envCheckConfig } = require('./helpers')
+const { fixturesCLI, nycBin, runNYC, tempDirSetup, testSuccess, testFailure, envCheckConfig } = require('./helpers')
 
 const nycConfigJS = path.resolve(fixturesCLI, 'nyc-config-js')
 const nycrcDir = path.resolve(fixturesCLI, 'nycrc')
@@ -347,7 +347,7 @@ t.test('allows an alternative cache folder to be specified', async t => {
   // than the default ./node_modules/.cache.
   t.is(1, fs.readdirSync(cacheDir).length)
 
-  rimraf.sync(cacheDir)
+  await rimraf(cacheDir)
 })
 
 // see: https://github.com/istanbuljs/nyc/issues/563
@@ -531,3 +531,47 @@ t.test('instrument with exclude-node-modules=false', async t => {
   t.is(stderr, '')
   t.match(stdout, 'fake-module-1')
 })
+
+t.test('recursive run does not throw', t => testSuccess(t, {
+  args: [
+    process.execPath,
+    nycBin,
+    process.execPath,
+    nycBin,
+    process.execPath,
+    nycBin,
+    'true'
+  ],
+  cwd: path.resolve(__dirname, 'fixtures/recursive-run')
+}))
+
+t.test('combines multiple coverage reports', async t => {
+  await testSuccess(t, {
+    args: ['merge', './merge-input']
+  })
+
+  const mergedCoverage = require('./fixtures/cli/coverage')
+  // the combined reports should have 100% function
+  // branch and statement coverage.
+  t.strictDeepEqual(
+    mergedCoverage['/private/tmp/contrived/library.js'].s,
+    { '0': 2, '1': 1, '2': 1, '3': 2, '4': 1, '5': 1 }
+  )
+  t.strictDeepEqual(
+    mergedCoverage['/private/tmp/contrived/library.js'].f,
+    { '0': 1, '1': 1, '2': 2 }
+  )
+  t.strictDeepEqual(
+    mergedCoverage['/private/tmp/contrived/library.js'].b,
+    { '0': [1, 1] }
+  )
+  await rimraf(path.resolve(fixturesCLI, 'coverage.json'))
+})
+
+t.test('reports error if input directory is missing', t => testFailure(t, {
+  args: ['merge', './DIRECTORY_THAT_IS_MISSING']
+}))
+
+t.test('reports error if input is not a directory', t => testFailure(t, {
+  args: ['merge', './package.json']
+}))
