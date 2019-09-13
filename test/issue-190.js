@@ -1,8 +1,7 @@
 'use strict'
 
-const fs = require('fs')
+const fs = require('../lib/fs-promises')
 const path = require('path')
-const { promisify } = require('util')
 
 const t = require('tap')
 const isWindows = require('is-windows')()
@@ -10,12 +9,6 @@ const isWindows = require('is-windows')()
 const { spawn, fixturesCLI, nycBin } = require('./helpers')
 
 const fakebin = path.resolve(fixturesCLI, 'fakebin')
-
-const unlink = promisify(fs.unlink)
-const readFile = promisify(fs.readFile)
-const writeFile = promisify(fs.writeFile)
-const chmod = promisify(fs.chmod)
-const symlink = promisify(fs.symlink)
 
 const spawnOptions = {
   cwd: path.resolve(fixturesCLI, 'run-npm-test-recursive'),
@@ -26,9 +19,9 @@ const spawnOptions = {
 
 async function writeFakeNPM (shebang) {
   const targetPath = path.resolve(fakebin, 'npm')
-  const source = await readFile(path.resolve(fakebin, 'npm-template.js'))
-  await writeFile(targetPath, '#!' + shebang + '\n' + source)
-  await chmod(targetPath, 493) // 0o755
+  const source = await fs.readFile(path.resolve(fakebin, 'npm-template.js'))
+  await fs.writeFile(targetPath, '#!' + shebang + '\n' + source)
+  await fs.chmod(targetPath, 493) // 0o755
 }
 
 async function runFakeNPM (t) {
@@ -40,8 +33,8 @@ async function runFakeNPM (t) {
 }
 
 t.beforeEach(() => Promise.all([
-  unlink(path.resolve(fakebin, 'node')).catch(() => {}),
-  unlink(path.resolve(fakebin, 'npm')).catch(() => {})
+  fs.unlink(path.resolve(fakebin, 'node')).catch(() => {}),
+  fs.unlink(path.resolve(fakebin, 'npm')).catch(() => {})
 ]))
 
 t.test('can run "npm test", absolute shebang edition', async t => {
@@ -60,6 +53,6 @@ t.test('can run "npm test", weird bash+dirname shebang edition', async t => {
 
   // This string is taken verbatim from tools/install.py in Node core v5.x
   await writeFakeNPM('/bin/sh\n// 2>/dev/null; exec "`dirname "$0"`/node" "$0" "$@"')
-  await symlink(process.execPath, path.resolve(fakebin, 'node'))
+  await fs.symlink(process.execPath, path.resolve(fakebin, 'node'))
   await runFakeNPM(t)
 })

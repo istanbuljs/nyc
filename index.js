@@ -5,8 +5,10 @@
 const cachingTransform = require('caching-transform')
 const cpFile = require('cp-file')
 const findCacheDir = require('find-cache-dir')
-const fs = require('fs')
-const glob = require('glob')
+const fs = require('./lib/fs-promises')
+const os = require('os')
+const { debuglog, promisify } = require('util')
+const glob = promisify(require('glob'))
 const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
@@ -18,12 +20,12 @@ const onExit = require('signal-exit')
 const path = require('path')
 const reports = require('istanbul-reports')
 const resolveFrom = require('resolve-from')
-const rimraf = require('rimraf')
+const rimraf = promisify(require('rimraf'))
 const SourceMaps = require('./lib/source-maps')
 const testExclude = require('test-exclude')
-const util = require('util')
+const pMap = require('p-map')
 
-const debugLog = util.debuglog('nyc')
+const debugLog = debuglog('nyc')
 
 let selfCoverageHelper
 
@@ -168,11 +170,12 @@ class NYC {
     return source
   }
 
-  addAllFiles () {
+  async addAllFiles () {
     this._loadAdditionalModules()
 
     this.fakeRequire = true
-    this.exclude.globSync(this.cwd).forEach(relFile => {
+    const files = await this.exclude.glob(this.cwd)
+    files.forEach(relFile => {
       const filename = path.resolve(this.cwd, relFile)
       this.addFile(filename)
       const coverage = coverageFinder()
@@ -190,19 +193,20 @@ class NYC {
     this.writeCoverageFile()
   }
 
-  instrumentAllFiles (input, output, cb) {
+  async instrumentAllFiles (input, output) {
     let inputDir = '.' + path.sep
-    const visitor = relFile => {
+    const visitor = async relFile => {
       const inFile = path.resolve(inputDir, relFile)
-      const inCode = fs.readFileSync(inFile, 'utf-8')
+      const inCode = await fs.readFile(inFile, 'utf-8')
       const outCode = this._transform(inCode, inFile) || inCode
 
       if (output) {
-        const mode = fs.statSync(inFile).mode
+        const { mode } = await fs.stat(inFile)
         const outFile = path.resolve(output, relFile)
-        mkdirp.sync(path.dirname(outFile))
-        fs.writeFileSync(outFile, outCode)
-        fs.chmodSync(outFile, mode)
+
+        await mkdirp(path.dirname(outFile))
+        await fs.writeFile(outFile, outCode)
+        await fs.chmod(outFile, mode)
       } else {
         console.log(outCode)
       }
@@ -210,26 +214,29 @@ class NYC {
 
     this._loadAdditionalModules()
 
-    try {
-      const stats = fs.lstatSync(input)
-      if (stats.isDirectory()) {
-        inputDir = input
+    const stats = await fs.lstat(input)
+    if (stats.isDirectory()) {
+      inputDir = input
 
-        const filesToInstrument = this.exclude.globSync(input)
+      const filesToInstrument = await this.exclude.glob(input)
 
-        if (this.config.completeCopy && output) {
-          const globOptions = { dot: true, nodir: true, ignore: ['**/.git', '**/.git/**', path.join(output, '**')] }
-          glob.sync(path.resolve(input, '**'), globOptions)
-            .forEach(src => cpFile.sync(src, path.join(output, path.relative(input, src))))
-        }
-        filesToInstrument.forEach(visitor)
-      } else {
-        visitor(input)
+      const concurrency = output ? os.cpus().length : 1
+      if (this.config.completeCopy && output) {
+        await pMap(
+          await glob(path.resolve(input, '**'), {
+            dot: true,
+            nodir: true,
+            ignore: ['**/.git', '**/.git/**', path.join(output, '**')]
+          }),
+          src => cpFile(src, path.join(output, path.relative(input, src))),
+          { concurrency }
+        )
       }
-    } catch (err) {
-      return cb(err)
+
+      await pMap(filesToInstrument, visitor, { concurrency })
+    } else {
+      await visitor(input)
     }
-    cb()
   }
 
   _transform (code, filename) {
@@ -307,26 +314,21 @@ class NYC {
     }
   }
 
-  cleanup () {
-    if (!process.env.NYC_CWD) rimraf.sync(this.tempDirectory())
-  }
-
-  clearCache () {
+  async createTempDirectory () {
+    await mkdirp(this.tempDirectory())
     if (this.cache) {
-      rimraf.sync(this.cacheDirectory)
+      await mkdirp(this.cacheDirectory)
     }
+
+    await mkdirp(this.processInfo.directory)
   }
 
-  createTempDirectory () {
-    mkdirp.sync(this.tempDirectory())
-    if (this.cache) mkdirp.sync(this.cacheDirectory)
+  async reset () {
+    if (!process.env.NYC_CWD) {
+      await rimraf(this.tempDirectory())
+    }
 
-    mkdirp.sync(this.processInfo.directory)
-  }
-
-  reset () {
-    this.cleanup()
-    this.createTempDirectory()
+    await this.createTempDirectory()
   }
 
   _wrapExit () {
@@ -386,14 +388,15 @@ class NYC {
     this.processInfo.save()
   }
 
-  getCoverageMapFromAllCoverageFiles (baseDirectory) {
+  async getCoverageMapFromAllCoverageFiles (baseDirectory) {
     const map = libCoverage.createCoverageMap({})
 
-    this.eachReport(undefined, (report) => {
+    const data = await this.coverageData(baseDirectory)
+    data.forEach(report => {
       map.merge(report)
-    }, baseDirectory)
+    })
 
-    map.data = this.sourceMaps.remapCoverage(map.data)
+    map.data = await this.sourceMaps.remapCoverage(map.data)
 
     // depending on whether source-code is pre-instrumented
     // or instrumented using a JIT plugin like @babel/require
@@ -406,11 +409,11 @@ class NYC {
     return map
   }
 
-  report () {
+  async report () {
     const context = libReport.createContext({
       dir: this.reportDirectory(),
       watermarks: this.config.watermarks,
-      coverageMap: this.getCoverageMapFromAllCoverageFiles()
+      coverageMap: await this.getCoverageMapFromAllCoverageFiles()
     })
 
     this.reporter.forEach((_reporter) => {
@@ -422,32 +425,31 @@ class NYC {
     })
 
     if (this._showProcessTree) {
-      this.showProcessTree()
+      await this.showProcessTree()
     }
   }
 
-  writeProcessIndex () {
+  async writeProcessIndex () {
     const db = new ProcessDB(this.processInfo.directory)
-    db.writeIndex()
+    await db.writeIndex()
   }
 
-  showProcessTree () {
+  async showProcessTree () {
     const db = new ProcessDB(this.processInfo.directory)
-    console.log(db.renderTree(this))
+    console.log(await db.renderTree(this))
   }
 
-  checkCoverage (thresholds, perFile) {
-    var map = this.getCoverageMapFromAllCoverageFiles()
-    var nyc = this
+  async checkCoverage (thresholds, perFile) {
+    const map = await this.getCoverageMapFromAllCoverageFiles()
 
     if (perFile) {
-      map.files().forEach(function (file) {
+      map.files().forEach(file => {
         // ERROR: Coverage for lines (90.12%) does not meet threshold (120%) for index.js
-        nyc._checkCoverage(map.fileCoverageFor(file).toSummary(), thresholds, file)
+        this._checkCoverage(map.fileCoverageFor(file).toSummary(), thresholds, file)
       })
     } else {
       // ERROR: Coverage for lines (90.12%) does not meet global threshold (120%)
-      nyc._checkCoverage(map.getCoverageSummary(), thresholds)
+      this._checkCoverage(map.getCoverageSummary(), thresholds)
     }
   }
 
@@ -465,6 +467,28 @@ class NYC {
     })
   }
 
+  async coverageFiles (baseDirectory) {
+    const files = await fs.readdir(baseDirectory)
+
+    return files.map(f => path.resolve(baseDirectory, f))
+  }
+
+  async coverageFileLoad (filename) {
+    try {
+      const report = JSON.parse(await fs.readFile(filename), 'utf8')
+      await this.sourceMaps.reloadCachedSourceMaps(report)
+      return report
+    } catch (error) {
+      return {}
+    }
+  }
+
+  async coverageData (baseDirectory = this.tempDirectory()) {
+    const files = await this.coverageFiles(baseDirectory)
+    return pMap(files, f => this.coverageFileLoad(f), { concurrency: os.cpus().length })
+  }
+
+  /* istanbul ignore next: legacy function used by istanbul-lib-processinfo. */
   eachReport (filenames, iterator, baseDirectory) {
     baseDirectory = baseDirectory || this.tempDirectory()
 
@@ -484,23 +508,13 @@ class NYC {
           'utf-8'
         ))
 
-        _this.sourceMaps.reloadCachedSourceMaps(report)
+        _this.sourceMaps.reloadCachedSourceMapsSync(report)
       } catch (e) { // handle corrupt JSON output.
         report = {}
       }
 
       iterator(report)
     })
-  }
-
-  loadReports (filenames) {
-    var reports = []
-
-    this.eachReport(filenames, (report) => {
-      reports.push(report)
-    })
-
-    return reports
   }
 
   tempDirectory () {

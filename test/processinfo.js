@@ -1,18 +1,20 @@
 'use strict'
 
 const { resolve } = require('path')
-const bin = resolve(__dirname, '../self-coverage/bin/nyc')
+const { promisify } = require('util')
 const { spawn } = require('child_process')
 const t = require('tap')
-const rimraf = require('rimraf')
+const rimraf = promisify(require('rimraf'))
+const fs = require('../lib/fs-promises')
+
 const node = process.execPath
+const bin = resolve(__dirname, '../self-coverage/bin/nyc')
 const fixturesCLI = resolve(__dirname, './fixtures/cli')
 const tmp = 'processinfo-test'
-const fs = require('fs')
 const resolvedJS = resolve(fixturesCLI, 'selfspawn-fibonacci.js')
 
 rimraf.sync(resolve(fixturesCLI, tmp))
-t.teardown(() => rimraf.sync(resolve(fixturesCLI, tmp)))
+t.teardown(() => rimraf(resolve(fixturesCLI, tmp)))
 
 t.test('build some processinfo', t => {
   var args = [
@@ -36,48 +38,38 @@ t.test('build some processinfo', t => {
   })
 })
 
-t.test('validate the created processinfo data', t => {
-  const covs = fs.readdirSync(resolve(fixturesCLI, tmp))
+t.test('validate the created processinfo data', async t => {
+  const covs = (await fs.readdir(resolve(fixturesCLI, tmp)))
     .filter(f => f !== 'processinfo')
-  t.plan(covs.length * 2)
 
-  covs.forEach(f => {
-    fs.readFile(resolve(fixturesCLI, tmp, f), 'utf8', (er, covjson) => {
-      if (er) {
-        throw er
-      }
-      const covdata = JSON.parse(covjson)
-      t.same(Object.keys(covdata), [resolvedJS])
-      // should have matching processinfo for each cov json
-      const procInfoFile = resolve(fixturesCLI, tmp, 'processinfo', f)
-      fs.readFile(procInfoFile, 'utf8', (er, procInfoJson) => {
-        if (er) {
-          throw er
-        }
-        const procInfoData = JSON.parse(procInfoJson)
-        t.match(procInfoData, {
-          pid: Number,
-          ppid: Number,
-          uuid: f.replace(/\.json$/, ''),
-          argv: [
-            node,
-            resolvedJS,
-            /[1-5]/
-          ],
-          execArgv: [],
-          cwd: fixturesCLI,
-          time: Number,
-          coverageFilename: resolve(fixturesCLI, tmp, f),
-          files: [ resolvedJS ]
-        })
-      })
+  await Promise.all(covs.map(async f => {
+    const covdata = JSON.parse(await fs.readFile(resolve(fixturesCLI, tmp, f), 'utf8'))
+    t.same(Object.keys(covdata), [resolvedJS])
+
+    // should have matching processinfo for each cov json
+    const procInfoFile = resolve(fixturesCLI, tmp, 'processinfo', f)
+    const procInfoData = JSON.parse(await fs.readFile(procInfoFile, 'utf8'))
+    t.match(procInfoData, {
+      pid: Number,
+      ppid: Number,
+      uuid: f.replace(/\.json$/, ''),
+      argv: [
+        node,
+        resolvedJS,
+        /[1-5]/
+      ],
+      execArgv: [],
+      cwd: fixturesCLI,
+      time: Number,
+      coverageFilename: resolve(fixturesCLI, tmp, f),
+      files: [ resolvedJS ]
     })
-  })
+  }))
 })
 
-t.test('check out the index', t => {
+t.test('check out the index', async t => {
   const indexFile = resolve(fixturesCLI, tmp, 'processinfo', 'index.json')
-  const indexJson = fs.readFileSync(indexFile, 'utf-8')
+  const indexJson = await fs.readFile(indexFile, 'utf-8')
   const index = JSON.parse(indexJson)
   const u = /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/
   t.match(index, {
@@ -91,5 +83,4 @@ t.test('check out the index', t => {
       }
     }
   })
-  t.end()
 })

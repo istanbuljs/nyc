@@ -1,7 +1,7 @@
 'use strict'
 
 const path = require('path')
-const fs = require('fs')
+const fs = require('../lib/fs-promises')
 const os = require('os')
 const { promisify } = require('util')
 
@@ -319,16 +319,18 @@ t.test('extracts coverage headers from unexecuted files', async t => {
   })
 
   const files = await glob(path.join(t.tempDir, '*.json'))
-  const coverage = files.reduce(
-    (obj, file) => Object.assign(obj, JSON.parse(fs.readFileSync(file, 'utf-8'))),
-    {}
-  )
+  const coverage = []
+  await Promise.all(files.map(async file => {
+    const data = JSON.parse(await fs.readFile(file, 'utf-8'))
+    if (data['./external-instrumenter.js']) {
+      coverage.push(data['./external-instrumenter.js'])
+    }
+  }))
 
+  t.true(coverage.length !== 0)
+  t.true(coverage.every(data => typeof data === 'object'))
   // we should not have executed file, so all counts sould be 0.
-  const data = coverage['./external-instrumenter.js']
-  t.type(data, 'object')
-
-  t.false(Object.values(data.s).some(s => s !== 0))
+  t.true(coverage.every(data => Object.values(data.s).every(s => s === 0)))
 })
 
 t.test('allows an alternative cache folder to be specified', async t => {
@@ -345,7 +347,7 @@ t.test('allows an alternative cache folder to be specified', async t => {
 
   // we should have created foo-cache rather
   // than the default ./node_modules/.cache.
-  t.is(1, fs.readdirSync(cacheDir).length)
+  t.is(1, (await fs.readdir(cacheDir)).length)
 
   await rimraf(cacheDir)
 })
@@ -404,30 +406,30 @@ t.test('--all uses source-maps to exclude original sources from reports', t => t
   cwd: fixturesSourceMaps
 }))
 
-t.test('caches source-maps from .map files', t => {
-  return testSuccess(t, {
+t.test('caches source-maps from .map files', async t => {
+  await testSuccess(t, {
     args: [
       process.execPath,
       './instrumented/s1.min.js'
     ],
     cwd: fixturesSourceMaps
-  }).then(() => {
-    const files = fs.readdirSync(path.resolve(fixturesSourceMaps, 'node_modules/.cache/nyc'))
-    t.true(files.some(f => f.startsWith('s1.min-') && f.endsWith('.map')))
   })
+
+  const files = await fs.readdir(path.resolve(fixturesSourceMaps, 'node_modules/.cache/nyc'))
+  t.true(files.some(f => f.startsWith('s1.min-') && f.endsWith('.map')))
 })
 
-t.test('caches inline source-maps', t => {
-  return testSuccess(t, {
+t.test('caches inline source-maps', async t => {
+  await testSuccess(t, {
     args: [
       process.execPath,
       './instrumented/s2.min.js'
     ],
     cwd: fixturesSourceMaps
-  }).then(() => {
-    const files = fs.readdirSync(path.resolve(fixturesSourceMaps, 'node_modules/.cache/nyc'))
-    t.true(files.some(f => f.startsWith('s2.min-') && f.endsWith('.map')))
   })
+
+  const files = await fs.readdir(path.resolve(fixturesSourceMaps, 'node_modules/.cache/nyc'))
+  t.true(files.some(f => f.startsWith('s2.min-') && f.endsWith('.map')))
 })
 
 t.test('appropriately instruments file with corresponding .map file', t => testSuccess(t, {
@@ -502,6 +504,15 @@ t.test('execute with exclude-node-modules=false', async t => {
     args: [
       ...executeNodeModulesArgs,
       '--check-coverage=true',
+      'report'
+    ],
+    cwd: fixturesENM
+  })
+
+  await testSuccess(t, {
+    args: [
+      ...executeNodeModulesArgs,
+      '--check-coverage=false',
       'report'
     ],
     cwd: fixturesENM

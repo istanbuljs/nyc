@@ -1,6 +1,6 @@
 'use strict'
 
-const fs = require('fs')
+const fs = require('../lib/fs-promises')
 const path = require('path')
 const { promisify } = require('util')
 
@@ -11,12 +11,6 @@ const isWindows = require('is-windows')()
 const rimraf = promisify(require('rimraf'))
 
 const { runNYC, fixturesCLI } = require('./helpers')
-
-const chmod = promisify(fs.chmod)
-const readdir = promisify(fs.readdir)
-const readFile = promisify(fs.readFile)
-const stat = promisify(fs.stat)
-const writeFile = promisify(fs.writeFile)
 
 const subdir = path.resolve(fixturesCLI, 'subdir')
 const outputDir = path.resolve(subdir, './output-dir')
@@ -40,7 +34,7 @@ t.test('works in directories without a package.json', async t => {
 
   t.strictEqual(status, 0)
   const target = path.resolve(subdir, 'output-dir', 'index.js')
-  t.match(await readFile(target, 'utf8'), /console.log\('Hello, World!'\)/)
+  t.match(await fs.readFile(target, 'utf8'), /console.log\('Hello, World!'\)/)
 })
 
 t.test('can be configured to exit on error', async t => {
@@ -54,10 +48,10 @@ t.test('can be configured to exit on error', async t => {
 
 t.test('allows a single file to be instrumented', async t => {
   const inputPath = path.resolve(fixturesCLI, './half-covered.js')
-  const inputMode = (await stat(inputPath)).mode & 0o7777
+  const inputMode = (await fs.stat(inputPath)).mode & 0o7777
   const newMode = 0o775
   if (!isWindows) {
-    await chmod(inputPath, newMode)
+    await fs.chmod(inputPath, newMode)
   }
 
   const { status } = await runNYC({
@@ -66,15 +60,15 @@ t.test('allows a single file to be instrumented', async t => {
 
   t.strictEqual(status, 0)
 
-  const files = await readdir(outputDir)
+  const files = await fs.readdir(outputDir)
   t.strictSame(files, ['half-covered.js'])
 
   if (!isWindows) {
     const outputPath = path.resolve(outputDir, 'half-covered.js')
-    const outputMode = (await stat(outputPath)).mode & 0o7777
+    const outputMode = (await fs.stat(outputPath)).mode & 0o7777
     t.strictEqual(outputMode, newMode)
 
-    await chmod(inputPath, inputMode)
+    await fs.chmod(inputPath, inputMode)
   }
 })
 
@@ -92,14 +86,14 @@ t.test('allows a directory of files to be instrumented', async t => {
   t.strictEqual(files.includes('node_modules'), false)
 
   const includeTarget = path.resolve(outputDir, 'ignore.js')
-  t.match(await readFile(includeTarget, 'utf8'), /function cov_/)
+  t.match(await fs.readFile(includeTarget, 'utf8'), /function cov_/)
 })
 
 t.test('copies all files from <input> to <output> as well as those that have been instrumented', async t => {
   // force node_modules to exist so we can verify that it is copied.
   const nmDir = path.resolve(fixturesCLI, 'nyc-config-js', 'node_modules')
   await makeDir(nmDir)
-  await writeFile(path.join(nmDir, 'test-file'), '')
+  await fs.writeFile(path.join(nmDir, 'test-file'), '')
 
   const { status } = await runNYC({
     args: ['instrument', '--complete-copy', './nyc-config-js', outputDir]
@@ -107,14 +101,14 @@ t.test('copies all files from <input> to <output> as well as those that have bee
 
   t.strictEqual(status, 0)
 
-  const files = await readdir(outputDir)
+  const files = await fs.readdir(outputDir)
   t.strictEqual(files.includes('index.js'), true)
   t.strictEqual(files.includes('ignore.js'), true)
   t.strictEqual(files.includes('package.json'), true)
   t.strictEqual(files.includes('node_modules'), true)
 
   const includeTarget = path.resolve(outputDir, 'ignore.js')
-  t.match(await readFile(includeTarget, 'utf8'), /function cov_/)
+  t.match(await fs.readFile(includeTarget, 'utf8'), /function cov_/)
 })
 
 t.test('can instrument the project directory', async t => {
@@ -124,7 +118,7 @@ t.test('can instrument the project directory', async t => {
 
   t.strictEqual(status, 0)
 
-  const files = await readdir(outputDir)
+  const files = await fs.readdir(outputDir)
   t.strictEqual(files.includes('args.js'), true)
   t.strictEqual(files.includes('subdir'), true)
 })
@@ -136,7 +130,7 @@ t.test('allows a sub-directory of files to be instrumented', async t => {
 
   t.strictEqual(status, 0)
 
-  const files = await readdir(outputDir)
+  const files = await fs.readdir(outputDir)
   t.strictEqual(files.includes('index.js'), true)
 })
 
@@ -160,10 +154,10 @@ t.test('allows a subdirectory to be excluded via .nycrc file', async t => {
   t.strictEqual(files.includes('bad.js'), true)
 
   const includeTarget = path.resolve(outputDir, 'index.js')
-  t.match(await readFile(includeTarget, 'utf8'), /function cov_/)
+  t.match(await fs.readFile(includeTarget, 'utf8'), /function cov_/)
 
   const excludeTarget = path.resolve(outputDir, 'exclude-me', 'index.js')
-  t.notMatch(await readFile(excludeTarget, 'utf8'), /function cov_/)
+  t.notMatch(await fs.readFile(excludeTarget, 'utf8'), /function cov_/)
 })
 
 t.test('allows a file to be excluded', async t => {
@@ -180,11 +174,11 @@ t.test('allows a file to be excluded', async t => {
 
   t.strictEqual(status, 0)
 
-  const files = await readdir(outputDir)
+  const files = await fs.readdir(outputDir)
   t.strictEqual(files.includes('exclude-me'), true)
 
   const excludeTarget = path.resolve(outputDir, 'exclude-me', 'index.js')
-  t.notMatch(await readFile(excludeTarget, 'utf8'), /function cov_/)
+  t.notMatch(await fs.readFile(excludeTarget, 'utf8'), /function cov_/)
 })
 
 t.test('allows specifying a single sub-directory to be included', async t => {
@@ -200,10 +194,10 @@ t.test('allows specifying a single sub-directory to be included', async t => {
 
   t.strictEqual(status, 0)
 
-  const files = await readdir(outputDir)
+  const files = await fs.readdir(outputDir)
   t.strictEqual(files.includes('include-me'), true)
   const instrumented = path.resolve(outputDir, 'include-me', 'include-me.js')
-  t.match(await readFile(instrumented, 'utf8'), /function cov_/)
+  t.match(await fs.readFile(instrumented, 'utf8'), /function cov_/)
 })
 
 t.test('allows a file to be excluded from an included directory', async t => {
@@ -222,18 +216,18 @@ t.test('allows a file to be excluded from an included directory', async t => {
 
   t.strictEqual(status, 0)
 
-  const files = await readdir(outputDir)
+  const files = await fs.readdir(outputDir)
   t.strictEqual(files.includes('include-me'), true)
 
-  const includeMeFiles = await readdir(path.resolve(outputDir, 'include-me'))
+  const includeMeFiles = await fs.readdir(path.resolve(outputDir, 'include-me'))
   t.strictEqual(includeMeFiles.includes('include-me.js'), true)
   t.strictEqual(includeMeFiles.includes('exclude-me.js'), true)
 
   const includeTarget = path.resolve(outputDir, 'include-me', 'include-me.js')
-  t.match(await readFile(includeTarget, 'utf8'), /function cov_/)
+  t.match(await fs.readFile(includeTarget, 'utf8'), /function cov_/)
 
   const excludeTarget = path.resolve(outputDir, 'exclude-me', 'index.js')
-  t.notMatch(await readFile(excludeTarget, 'utf8'), /function cov_/)
+  t.notMatch(await fs.readFile(excludeTarget, 'utf8'), /function cov_/)
 })
 
 t.test('aborts if trying to write files in place', async t => {
@@ -266,10 +260,10 @@ t.test('can write files in place with --in-place switch', async t => {
   t.strictEqual(status, 0)
 
   const file1 = path.resolve(outputDir, 'file1.js')
-  t.match(await readFile(file1, 'utf8'), /function cov_/)
+  t.match(await fs.readFile(file1, 'utf8'), /function cov_/)
 
   const file2 = path.resolve(outputDir, 'file2.js')
-  t.notMatch(await readFile(file2, 'utf8'), /function cov_/)
+  t.notMatch(await fs.readFile(file2, 'utf8'), /function cov_/)
 })
 
 t.test('aborts if trying to delete while writing files in place', async t => {
@@ -316,7 +310,7 @@ t.test('cleans the output directory if `--delete` is specified', async t => {
 
   t.strictEqual(status, 0)
 
-  const files = await readdir(outputDir)
+  const files = await fs.readdir(outputDir)
   t.strictEqual(files.includes('removed-by-clean'), false)
   t.strictEqual(files.includes('exclude-me'), true)
 })
@@ -334,7 +328,7 @@ t.test('does not clean the output directory by default', async t => {
 
   t.strictEqual(status, 0)
 
-  const files = await readdir(outputDir)
+  const files = await fs.readdir(outputDir)
   t.strictEqual(files.includes('removed-by-clean'), true)
 })
 

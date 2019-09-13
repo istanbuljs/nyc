@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+'use strict'
 
 const configUtil = require('../lib/config-util')
 const foreground = require('foreground-child')
@@ -18,11 +19,19 @@ const config = configUtil.loadConfig(yargs.parse(instrumenterArgs))
 configUtil.addCommandsAndHelp(yargs)
 const argv = yargs.config(config).parse(instrumenterArgs)
 
-if ([
-  'check-coverage', 'report', 'instrument', 'merge'
-].indexOf(argv._[0]) !== -1) {
-  // look in lib/commands for logic.
-} else if (argv._.length) {
+async function main () {
+  if (['check-coverage', 'report', 'instrument', 'merge'].includes(argv._[0])) {
+    // look in lib/commands for logic.
+    return
+  }
+
+  if (argv._.length === 0) {
+    // I don't have a clue what you're doing.
+    process.exitCode = 1
+    yargs.showHelp()
+    return
+  }
+
   // if instrument is set to false,
   // enable a noop instrumenter.
   if (!argv.instrument) argv.instrumenter = './lib/instrumenters/noop'
@@ -30,11 +39,14 @@ if ([
 
   var nyc = (new NYC(argv))
   if (argv.clean) {
-    nyc.reset()
+    await nyc.reset()
   } else {
-    nyc.createTempDirectory()
+    await nyc.createTempDirectory()
   }
-  if (argv.all) nyc.addAllFiles()
+
+  if (argv.all) {
+    await nyc.addAllFiles()
+  }
 
   var env = {
     // Support running nyc as a user without HOME (e.g. linux 'nobody'),
@@ -60,14 +72,14 @@ if ([
     // use the same argv description, but don't exit
     // for flags like --help.
     configUtil.buildYargs().parse(process.argv.slice(2))
-  ), function (done) {
+  ), async () => {
     var mainChildExitCode = process.exitCode
 
-    nyc.writeProcessIndex()
+    await nyc.writeProcessIndex()
 
     nyc.maybePurgeSourceMapCache()
     if (argv.checkCoverage) {
-      nyc.checkCoverage({
+      await nyc.checkCoverage({
         lines: argv.lines,
         functions: argv.functions,
         branches: argv.branches,
@@ -77,13 +89,9 @@ if ([
     }
 
     if (!argv.silent) {
-      nyc.report()
+      await nyc.report()
     }
-
-    return done()
   })
-} else {
-  // I don't have a clue what you're doing.
-  process.exitCode = 1
-  yargs.showHelp()
 }
+
+main()

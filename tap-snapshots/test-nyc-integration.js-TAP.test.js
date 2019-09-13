@@ -502,6 +502,16 @@ All files |       0 |      100 |     100 |       0 |
 `
 
 exports[`test/nyc-integration.js TAP execute with exclude-node-modules=false > stdout 3`] = `
+----------|---------|----------|---------|---------|-------------------
+File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------|---------|----------|---------|---------|-------------------
+All files |       0 |      100 |     100 |       0 |                   
+ index.js |       0 |      100 |     100 |       0 | 1                 
+----------|---------|----------|---------|---------|-------------------
+
+`
+
+exports[`test/nyc-integration.js TAP execute with exclude-node-modules=false > stdout 4`] = `
 
 `
 

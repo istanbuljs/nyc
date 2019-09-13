@@ -1,8 +1,10 @@
 'use strict'
 
 const path = require('path')
+const { promisify } = require('util')
 
 const t = require('tap')
+const rimraf = promisify(require('rimraf'))
 
 const NYC = require('../self-coverage')
 const configUtil = require('../self-coverage/lib/config-util')
@@ -15,7 +17,7 @@ t.beforeEach(resetState)
 
 async function cacheTest (t, script) {
   const nyc = new NYC(configUtil.buildYargs(fixtures).parse())
-  nyc.clearCache()
+  await rimraf(nyc.cacheDirectory)
 
   const { status } = await runNYC({
     args: [

@@ -31,7 +31,7 @@ async function testSignal (t, signal) {
   })
 
   const checkFile = path.join(fixtures, `${signal}.js`)
-  const reports = nyc.loadReports().filter(report => report[checkFile])
+  const reports = (await nyc.coverageData()).filter(report => report[checkFile])
 
   t.strictEqual(reports.length, 1)
 }
@@ -44,9 +44,9 @@ t.test('allows coverage report to be output in an alternative directory', async 
   const nyc = new NYC(configUtil.buildYargs().parse(
     ['--report-dir=./alternative-report', '--reporter=lcov']
   ))
-  nyc.reset()
+  await nyc.reset()
 
-  nyc.report()
+  await nyc.report()
   t.strictEqual(fs.existsSync('./alternative-report/lcov.info'), true)
   await rimraf('./alternative-report')
 })

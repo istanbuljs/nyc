@@ -16,7 +16,7 @@ t.beforeEach(resetState)
 
 t.test('handles stack traces', async t => {
   const nyc = new NYC(configUtil.buildYargs().parse('--produce-source-map'))
-  nyc.reset()
+  await nyc.reset()
   nyc.wrap()
 
   const check = require('./fixtures/stack-trace')
@@ -26,7 +26,7 @@ t.test('handles stack traces', async t => {
 
 t.test('does not handle stack traces when disabled', async t => {
   const nyc = new NYC(configUtil.buildYargs().parse())
-  nyc.reset()
+  await nyc.reset()
   nyc.wrap()
 
   const check = require('./fixtures/stack-trace')
