@@ -5,6 +5,8 @@ const { fixturesCLI, nycBin } = require('./paths')
 module.exports = {
   fixturesCLI,
   nycBin,
+  resetState: require('./reset-state'),
+  spawn: require('./spawn'),
   testSuccess: require('./test-success'),
   testFailure: require('./test-failure'),
   runNYC: require('./run-nyc'),

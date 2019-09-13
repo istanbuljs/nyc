@@ -1,80 +1,79 @@
-/* global describe, it */
+'use strict'
 
-require('chai').should()
-require('tap').mochaGlobals()
+const { test } = require('tap')
+const yargs = require('yargs/yargs')
 
 const processArgs = require('../self-coverage/lib/process-args')
 
-describe('process-args', function () {
-  describe('hideInstrumenterArgs', function () {
-    it('removes dashed options that proceed bin', function () {
-      process.argv = ['/Users/benjamincoe/bin/iojs',
-        '/Users/benjamincoe/bin/nyc.js',
-        '--reporter',
-        'lcov',
-        'node',
-        'test/nyc-tap.js'
-      ]
+const nycBin = require.resolve('../bin/nyc.js')
 
-      var yargv = require('yargs/yargs')(process.argv.slice(2)).argv
+test('hideInstrumenterArgs removes dashed options that proceed bin', async t => {
+  process.argv = [
+    process.execPath,
+    nycBin,
+    '--reporter',
+    'lcov',
+    'node',
+    'test/nyc-tap.js'
+  ]
 
-      var munged = processArgs.hideInstrumenterArgs(yargv)
+  const { argv } = yargs(process.argv.slice(2))
+  const munged = processArgs.hideInstrumenterArgs(argv)
 
-      munged.should.eql(['node', 'test/nyc-tap.js'])
-    })
+  t.strictSame(munged, ['node', 'test/nyc-tap.js'])
+})
 
-    it('parses extra args directly after -- as Node execArgv', function () {
-      process.argv = ['/Users/benjamincoe/bin/iojs',
-        '/Users/benjamincoe/bin/nyc.js',
-        '--',
-        '--expose-gc',
-        'index.js'
-      ]
+test('hideInstrumenterArgs parses extra args directly after -- as Node execArgv', async t => {
+  process.argv = [
+    process.execPath,
+    nycBin,
+    '--',
+    '--expose-gc',
+    'index.js'
+  ]
 
-      var yargv = require('yargs/yargs')(process.argv.slice(2)).argv
+  const { argv } = yargs(process.argv.slice(2))
+  const munged = processArgs.hideInstrumenterArgs(argv)
 
-      var munged = processArgs.hideInstrumenterArgs(yargv)
+  t.strictSame(munged, [process.execPath, '--expose-gc', 'index.js'])
+})
 
-      munged.should.eql([process.execPath, '--expose-gc', 'index.js'])
-    })
-  })
+test('hideInstrumenteeArgs ignores arguments after the instrumented bin', async t => {
+  process.argv = [
+    process.execPath,
+    nycBin,
+    '--reporter',
+    'lcov',
+    'node',
+    'test/nyc-tap.js',
+    '--arg',
+    '--'
+  ]
 
-  describe('hideInstrumenteeArgs', function () {
-    it('ignores arguments after the instrumented bin', function () {
-      process.argv = ['/Users/benjamincoe/bin/iojs',
-        '/Users/benjamincoe/bin/nyc.js',
-        '--reporter',
-        'lcov',
-        'node',
-        'test/nyc-tap.js',
-        '--arg',
-        '--'
-      ]
+  const munged = processArgs.hideInstrumenteeArgs()
+  t.strictSame(munged, ['--reporter', 'lcov', 'node'])
+})
 
-      var munged = processArgs.hideInstrumenteeArgs()
-      munged.should.eql(['--reporter', 'lcov', 'node'])
-    })
+test('hideInstrumenteeArgs does not ignore arguments if command is recognized', async t => {
+  process.argv = [
+    process.execPath,
+    nycBin,
+    'report',
+    '--reporter',
+    'lcov'
+  ]
 
-    it('does not ignore arguments if command is recognized', function () {
-      process.argv = ['/Users/benjamincoe/bin/iojs',
-        '/Users/benjamincoe/bin/nyc.js',
-        'report',
-        '--reporter',
-        'lcov'
-      ]
+  const munged = processArgs.hideInstrumenteeArgs()
+  t.strictSame(munged, ['report', '--reporter', 'lcov'])
+})
 
-      var munged = processArgs.hideInstrumenteeArgs()
-      munged.should.eql(['report', '--reporter', 'lcov'])
-    })
+test('hideInstrumenteeArgs does not ignore arguments if no command is provided', async t => {
+  process.argv = [
+    process.execPath,
+    nycBin,
+    '--version'
+  ]
 
-    it('does not ignore arguments if no command is provided', function () {
-      process.argv = ['/Users/benjamincoe/bin/iojs',
-        '/Users/benjamincoe/bin/nyc.js',
-        '--version'
-      ]
-
-      var munged = processArgs.hideInstrumenteeArgs()
-      munged.should.eql(['--version'])
-    })
-  })
+  const munged = processArgs.hideInstrumenteeArgs()
+  t.strictSame(munged, ['--version'])
 })

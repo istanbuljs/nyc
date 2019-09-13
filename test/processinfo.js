@@ -1,3 +1,5 @@
+'use strict'
+
 const { resolve } = require('path')
 const bin = resolve(__dirname, '../self-coverage/bin/nyc')
 const { spawn } = require('child_process')
