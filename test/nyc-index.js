@@ -3,7 +3,6 @@
 require('source-map-support').install({ hookRequire: true })
 
 const fs = require('fs')
-const _ = require('lodash')
 const ap = require('any-path')
 
 const configUtil = require('../self-coverage/lib/config-util')
@@ -197,9 +196,8 @@ describe('nyc', function () {
       })
 
       proc.on('close', function () {
-        var reports = _.filter(nyc.loadReports(), function (report) {
-          return report[path.join(fixtures, signal + '.js')]
-        })
+        const checkFile = path.join(fixtures, signal + '.js')
+        const reports = nyc.loadReports().filter(report => report[checkFile])
         reports.length.should.equal(1)
         return done()
       })
@@ -220,9 +218,7 @@ describe('nyc', function () {
       nyc.wrap()
       nyc.reset()
 
-      var reports = _.filter(nyc.loadReports(), function (report) {
-        return report['./test/fixtures/not-loaded.js']
-      })
+      const reports = nyc.loadReports().filter(report => report['./test/fixtures/not-loaded.js'])
       reports.length.should.equal(0)
       return done()
     })
@@ -256,11 +252,9 @@ describe('nyc', function () {
       nyc.reset()
       nyc.addAllFiles()
 
-      var notLoadedPath = path.join(fixtures, './not-loaded.js')
-      var reports = _.filter(nyc.loadReports(), function (report) {
-        return ap(report)[notLoadedPath]
-      })
-      var report = reports[0][notLoadedPath]
+      const notLoadedPath = path.join(fixtures, './not-loaded.js')
+      const reports = nyc.loadReports().filter(report => ap(report)[notLoadedPath])
+      const report = reports[0][notLoadedPath]
 
       reports.length.should.equal(1)
       report.s['0'].should.equal(0)
@@ -274,9 +268,9 @@ describe('nyc', function () {
       nyc.reset()
       nyc.addAllFiles()
 
-      var notLoadedPath1 = path.join(cwd, './not-loaded.es6')
-      var notLoadedPath2 = path.join(cwd, './not-loaded.js')
-      var reports = _.filter(nyc.loadReports(), function (report) {
+      const notLoadedPath1 = path.join(cwd, './not-loaded.es6')
+      const notLoadedPath2 = path.join(cwd, './not-loaded.js')
+      const reports = nyc.loadReports().filter(report => {
         var apr = ap(report)
         return apr[notLoadedPath1] || apr[notLoadedPath2]
       })
@@ -303,11 +297,9 @@ describe('nyc', function () {
 
       nyc.writeCoverageFile()
 
-      var notLoadedPath = path.join(fixtures, './not-loaded.js')
-      var reports = _.filter(nyc.loadReports(), function (report) {
-        return report[notLoadedPath]
-      })
-      var report = reports[0][notLoadedPath]
+      const notLoadedPath = path.join(fixtures, './not-loaded.js')
+      const reports = nyc.loadReports().filter(report => report[notLoadedPath])
+      const report = reports[0][notLoadedPath]
 
       reports.length.should.equal(1)
       report.s['0'].should.equal(1)
@@ -327,11 +319,9 @@ describe('nyc', function () {
       nyc.reset()
       nyc.addAllFiles()
 
-      var needsTranspilePath = path.join(fixtures, './needs-transpile.js')
-      var reports = _.filter(nyc.loadReports(), function (report) {
-        return ap(report)[needsTranspilePath]
-      })
-      var report = reports[0][needsTranspilePath]
+      const needsTranspilePath = path.join(fixtures, './needs-transpile.js')
+      const reports = nyc.loadReports().filter(report => ap(report)[needsTranspilePath])
+      const report = reports[0][needsTranspilePath]
 
       reports.length.should.equal(1)
       report.s['0'].should.equal(0)
@@ -376,11 +366,9 @@ describe('nyc', function () {
     nyc.reset()
     nyc.addAllFiles()
 
-    var needsTranspilePath = path.join(fixtures, './needs-transpile.whatever')
-    var reports = _.filter(nyc.loadReports(), function (report) {
-      return ap(report)[needsTranspilePath]
-    })
-    var report = reports[0][needsTranspilePath]
+    const needsTranspilePath = path.join(fixtures, './needs-transpile.whatever')
+    const reports = nyc.loadReports().filter(report => ap(report)[needsTranspilePath])
+    const report = reports[0][needsTranspilePath]
 
     reports.length.should.equal(1)
     report.s['0'].should.equal(0)
