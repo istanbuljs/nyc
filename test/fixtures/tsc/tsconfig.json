@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "sourceMap": true
+  },
+  "files": [
+    "mapping.ts"
+  ]
+}

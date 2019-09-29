@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "scripts": {
+    "postinstall": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^3.6.3"
+  },
+  "nyc": {
+    "reporter": [
+      "text",
+      "html"
+    ]
+  }
+}
