@@ -3,5 +3,6 @@
 	"coverage": false,
 	"jobs": 1,
 	"timeout": 360,
-	"bail": false
+	"bail": false,
+	"esm": false
 }
