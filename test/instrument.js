@@ -92,7 +92,7 @@ t.test('allows a directory of files to be instrumented', async t => {
   t.strictEqual(files.includes('node_modules'), false)
 
   const includeTarget = path.resolve(outputDir, 'ignore.js')
-  t.match(await readFile(includeTarget, 'utf8'), /var cov_/)
+  t.match(await readFile(includeTarget, 'utf8'), /function cov_/)
 })
 
 t.test('copies all files from <input> to <output> as well as those that have been instrumented', async t => {
@@ -114,7 +114,7 @@ t.test('copies all files from <input> to <output> as well as those that have bee
   t.strictEqual(files.includes('node_modules'), true)
 
   const includeTarget = path.resolve(outputDir, 'ignore.js')
-  t.match(await readFile(includeTarget, 'utf8'), /var cov_/)
+  t.match(await readFile(includeTarget, 'utf8'), /function cov_/)
 })
 
 t.test('can instrument the project directory', async t => {
@@ -160,10 +160,10 @@ t.test('allows a subdirectory to be excluded via .nycrc file', async t => {
   t.strictEqual(files.includes('bad.js'), true)
 
   const includeTarget = path.resolve(outputDir, 'index.js')
-  t.match(await readFile(includeTarget, 'utf8'), /var cov_/)
+  t.match(await readFile(includeTarget, 'utf8'), /function cov_/)
 
   const excludeTarget = path.resolve(outputDir, 'exclude-me', 'index.js')
-  t.notMatch(await readFile(excludeTarget, 'utf8'), /var cov_/)
+  t.notMatch(await readFile(excludeTarget, 'utf8'), /function cov_/)
 })
 
 t.test('allows a file to be excluded', async t => {
@@ -184,7 +184,7 @@ t.test('allows a file to be excluded', async t => {
   t.strictEqual(files.includes('exclude-me'), true)
 
   const excludeTarget = path.resolve(outputDir, 'exclude-me', 'index.js')
-  t.notMatch(await readFile(excludeTarget, 'utf8'), /var cov_/)
+  t.notMatch(await readFile(excludeTarget, 'utf8'), /function cov_/)
 })
 
 t.test('allows specifying a single sub-directory to be included', async t => {
@@ -203,7 +203,7 @@ t.test('allows specifying a single sub-directory to be included', async t => {
   const files = await readdir(outputDir)
   t.strictEqual(files.includes('include-me'), true)
   const instrumented = path.resolve(outputDir, 'include-me', 'include-me.js')
-  t.match(await readFile(instrumented, 'utf8'), /var cov_/)
+  t.match(await readFile(instrumented, 'utf8'), /function cov_/)
 })
 
 t.test('allows a file to be excluded from an included directory', async t => {
@@ -230,10 +230,10 @@ t.test('allows a file to be excluded from an included directory', async t => {
   t.strictEqual(includeMeFiles.includes('exclude-me.js'), true)
 
   const includeTarget = path.resolve(outputDir, 'include-me', 'include-me.js')
-  t.match(await readFile(includeTarget, 'utf8'), /var cov_/)
+  t.match(await readFile(includeTarget, 'utf8'), /function cov_/)
 
   const excludeTarget = path.resolve(outputDir, 'exclude-me', 'index.js')
-  t.notMatch(await readFile(excludeTarget, 'utf8'), /var cov_/)
+  t.notMatch(await readFile(excludeTarget, 'utf8'), /function cov_/)
 })
 
 t.test('aborts if trying to write files in place', async t => {
@@ -266,10 +266,10 @@ t.test('can write files in place with --in-place switch', async t => {
   t.strictEqual(status, 0)
 
   const file1 = path.resolve(outputDir, 'file1.js')
-  t.match(await readFile(file1, 'utf8'), /var cov_/)
+  t.match(await readFile(file1, 'utf8'), /function cov_/)
 
   const file2 = path.resolve(outputDir, 'file2.js')
-  t.notMatch(await readFile(file2, 'utf8'), /var cov_/)
+  t.notMatch(await readFile(file2, 'utf8'), /function cov_/)
 })
 
 t.test('aborts if trying to delete while writing files in place', async t => {
