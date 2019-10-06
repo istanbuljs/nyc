@@ -20,7 +20,7 @@ t.beforeEach(resetState)
 
 t.test('wraps modules with coverage counters when they are required', async t => {
   const nyc = new NYC(configUtil.buildYargs().parse())
-  nyc.reset()
+  await nyc.reset()
   nyc.wrap()
 
   const check = require('./fixtures/check-instrumented')
@@ -37,7 +37,7 @@ t.test('wraps modules with coverage counters when the custom require hook compil
   }
 
   const nyc = new NYC(configUtil.buildYargs().parse())
-  nyc.reset()
+  await nyc.reset()
   nyc.wrap()
 
   // install the custom require hook
@@ -50,7 +50,7 @@ t.test('wraps modules with coverage counters when the custom require hook compil
 
 t.test('assigns a function to custom extensions', async t => {
   const nyc = new NYC(configUtil.buildYargs(configMultExt).parse())
-  nyc.reset()
+  await nyc.reset()
   nyc.wrap()
 
   t.type(require.extensions['.es6'], 'function') // eslint-disable-line
@@ -76,7 +76,7 @@ t.test('calls the `_handleJs` function for custom file extensions', async t => {
     return code
   }
 
-  nyc.reset()
+  await nyc.reset()
   nyc.wrap()
 
   require('./fixtures/conf-multiple-extensions/check-instrumented.es6')
@@ -88,15 +88,15 @@ t.test('calls the `_handleJs` function for custom file extensions', async t => {
 t.test('does not output coverage for files that have not been included, by default', async t => {
   const nyc = new NYC(configUtil.buildYargs(process.cwd()).parse())
   nyc.wrap()
-  nyc.reset()
+  await nyc.reset()
 
-  const reports = nyc.loadReports().filter(report => report['./test/fixtures/not-loaded.js'])
+  const reports = (await nyc.coverageData()).filter(report => report['./test/fixtures/not-loaded.js'])
   t.strictEqual(reports.length, 0)
 })
 
 t.test('tracks coverage appropriately once the file is required', async t => {
   const nyc = new NYC(configUtil.buildYargs(fixtures).parse())
-  nyc.reset()
+  await nyc.reset()
   nyc.wrap()
 
   require('./fixtures/not-loaded')
@@ -104,7 +104,7 @@ t.test('tracks coverage appropriately once the file is required', async t => {
   nyc.writeCoverageFile()
 
   const notLoadedPath = path.join(fixtures, './not-loaded.js')
-  const reports = nyc.loadReports().filter(report => report[notLoadedPath])
+  const reports = (await nyc.coverageData()).filter(report => report[notLoadedPath])
   const report = reports[0][notLoadedPath]
 
   t.strictEqual(reports.length, 1)
