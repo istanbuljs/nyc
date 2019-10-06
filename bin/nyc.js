@@ -57,7 +57,7 @@ if ([
   // a non-zero exit codes in either one leads to an overall non-zero exit code.
   process.exitCode = 0
   foreground(processArgs.hideInstrumenterArgs(
-    // use the same argv descrption, but don't exit
+    // use the same argv description, but don't exit
     // for flags like --help.
     configUtil.buildYargs().parse(process.argv.slice(2))
   ), function (done) {
