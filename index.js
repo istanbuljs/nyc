@@ -369,7 +369,7 @@ class NYC {
         }
       }, this)
     } else {
-      coverage = this.sourceMaps.remapCoverage(coverage)
+      this.sourceMaps.addSourceMaps(coverage)
     }
 
     var id = this.processInfo.uuid
