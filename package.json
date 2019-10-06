@@ -69,9 +69,11 @@
   "license": "ISC",
   "dependencies": {
     "@istanbuljs/load-nyc-config": "^1.0.0-alpha.0",
+    "@istanbuljs/schema": "^0.1.1",
     "caching-transform": "^4.0.0",
     "convert-source-map": "^1.6.0",
     "cp-file": "^7.0.0",
+    "decamelize": "^1.2.0",
     "find-cache-dir": "^3.0.0",
     "find-up": "^4.1.0",
     "foreground-child": "^2.0.0",
