@@ -25,9 +25,16 @@ const util = require('util')
 
 const debugLog = util.debuglog('nyc')
 
+let selfCoverageHelper
+
 /* istanbul ignore next */
 if (/self-coverage/.test(__dirname)) {
-  require('../self-coverage-helper')
+  selfCoverageHelper = require('../self-coverage-helper')
+} else {
+  // Avoid additional conditional code
+  selfCoverageHelper = {
+    onExit () {}
+  }
 }
 
 function coverageFinder () {
@@ -323,11 +330,15 @@ class NYC {
   }
 
   _wrapExit () {
+    selfCoverageHelper.registered = true
+
     // we always want to write coverage
     // regardless of how the process exits.
     onExit(
-      /* istanbul ignore next: the callback is run but coverage is not recorded */
-      () => this.writeCoverageFile(),
+      () => {
+        this.writeCoverageFile()
+        selfCoverageHelper.onExit()
+      },
       { alwaysLast: true }
     )
   }
