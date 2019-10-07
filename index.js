@@ -475,15 +475,13 @@ class NYC {
     })
   }
 
-  async coverageFiles (baseDirectory) {
-    const files = await fs.readdir(baseDirectory)
-
-    return files.map(f => path.resolve(baseDirectory, f))
+  coverageFiles (baseDirectory = this.tempDirectory()) {
+    return fs.readdir(baseDirectory)
   }
 
-  async coverageFileLoad (filename) {
+  async coverageFileLoad (filename, baseDirectory = this.tempDirectory()) {
     try {
-      const report = JSON.parse(await fs.readFile(filename), 'utf8')
+      const report = JSON.parse(await fs.readFile(path.resolve(baseDirectory, filename)), 'utf8')
       await this.sourceMaps.reloadCachedSourceMaps(report)
       return report
     } catch (error) {
@@ -491,9 +489,13 @@ class NYC {
     }
   }
 
-  async coverageData (baseDirectory = this.tempDirectory()) {
+  async coverageData (baseDirectory) {
     const files = await this.coverageFiles(baseDirectory)
-    return pMap(files, f => this.coverageFileLoad(f), { concurrency: os.cpus().length })
+    return pMap(
+      files,
+      f => this.coverageFileLoad(f, baseDirectory),
+      { concurrency: os.cpus().length }
+    )
   }
 
   /* istanbul ignore next: legacy function used by istanbul-lib-processinfo. */
