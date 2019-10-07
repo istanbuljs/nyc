@@ -393,7 +393,7 @@ class NYC {
 
     this.processInfo.coverageFilename = coverageFilename
     this.processInfo.files = Object.keys(coverage)
-    this.processInfo.save()
+    this.processInfo.saveSync()
   }
 
   async getCoverageMapFromAllCoverageFiles (baseDirectory) {
