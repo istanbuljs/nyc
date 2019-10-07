@@ -167,6 +167,16 @@ t.test('hooks provide coverage for requireJS and AMD modules', t => testSuccess(
   cwd: path.resolve(__dirname, './fixtures/hooks')
 }))
 
+t.test('run-in-context provide coverage for vm.runInContext', t => testSuccess(t, {
+  args: [
+    '--hook-run-in-context',
+    '--hook-require=false',
+    process.execPath,
+    './run-in-context.js'
+  ],
+  cwd: path.resolve(__dirname, './fixtures/hooks')
+}))
+
 t.test('does not interpret args intended for instrumented bin', async t => {
   const { status, stderr, stdout } = await runNYC({
     tempDir: t.tempDir,
@@ -213,6 +223,18 @@ t.test('nyc instrument single file to console', async t => {
   t.is(status, 0)
   t.is(stderr, '')
   t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered.js'))}`)
+})
+
+t.test('nyc instrument disabled instrument', async t => {
+  const { status, stderr, stdout } = await runNYC({
+    tempDir: t.tempDir,
+    args: ['instrument', '--instrument=false', 'half-covered.js']
+  })
+
+  t.is(status, 0)
+  t.is(stderr, '')
+  t.match(stdout, 'var a = 0')
+  t.notMatch(stdout, 'cov_')
 })
 
 t.test('nyc instrument a directory of files', async t => {
@@ -570,7 +592,6 @@ t.test('combines multiple coverage reports', async t => {
   })
 
   const mergedCoverage = require('./fixtures/cli/coverage')
-  console.log(Object.keys(mergedCoverage))
   // the combined reports should have 100% function
   // branch and statement coverage.
   t.strictDeepEqual(
@@ -600,3 +621,48 @@ t.test('--all instruments unknown extensions as js', t => testSuccess(t, {
   cwd: path.resolve(fixturesCLI, '../conf-multiple-extensions'),
   args: ['--all', process.execPath, './run.js']
 }))
+
+t.test('instrument with invalid --require fails when using node-preload', async t => {
+  const { status, stderr, stdout } = await runNYC({
+    tempDir: t.tempDir,
+    args: [
+      '--require=@istanbuljs/this-module-does-not-exist',
+      'instrument',
+      './skip-full.js'
+    ]
+  })
+
+  t.is(status, 1)
+  t.match(stderr, /Cannot find module '@istanbuljs\/this-module-does-not-exist'/)
+  t.is(stdout, '')
+})
+
+t.test('invalid --require fails when using node-preload', async t => {
+  const { status, stderr, stdout } = await runNYC({
+    tempDir: t.tempDir,
+    args: [
+      '--require=@istanbuljs/this-module-does-not-exist',
+      './skip-full.js'
+    ]
+  })
+
+  t.is(status, 1)
+  t.match(stderr, /Cannot find module '@istanbuljs\/this-module-does-not-exist'/)
+  t.is(stdout, '')
+})
+
+t.test('invalid --require fails when using spawn-wrap', async t => {
+  const { status, stderr, stdout } = await runNYC({
+    tempDir: t.tempDir,
+    args: [
+      '--use-spawn-wrap=true',
+      '--require=@istanbuljs/this-module-does-not-exist',
+      'instrument',
+      './skip-full.js'
+    ]
+  })
+
+  t.is(status, 1)
+  t.match(stderr, /Cannot find module '@istanbuljs\/this-module-does-not-exist'/)
+  t.is(stdout, '')
+})

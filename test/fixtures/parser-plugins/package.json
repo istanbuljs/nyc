@@ -1,0 +1,7 @@
+{
+  "nyc": {
+    "parser-plugins": [
+      "v8intrinsic"
+    ]
+  }
+}

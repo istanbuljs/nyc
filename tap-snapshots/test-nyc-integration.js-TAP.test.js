@@ -930,6 +930,16 @@ exports[`test/nyc-integration.js TAP reports error if input is not a directory >
 
 `
 
+exports[`test/nyc-integration.js TAP run-in-context provide coverage for vm.runInContext > stdout 1`] = `
+---------------|---------|----------|---------|---------|-------------------
+File           | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+---------------|---------|----------|---------|---------|-------------------
+All files      |     100 |      100 |     100 |     100 |                   
+ in-context.js |     100 |      100 |     100 |     100 |                   
+---------------|---------|----------|---------|---------|-------------------
+
+`
+
 exports[`test/nyc-integration.js TAP setting instrument to "false" configures noop instrumenter > must match snapshot 1`] = `
 [
   [

@@ -43,6 +43,7 @@ async function main () {
     NYC_CWD: process.cwd()
   }
 
+  /* istanbul ignore else */
   if (argv['babel-cache'] === false) {
     // babel's cache interferes with some configurations, so is
     // disabled by default. opt in by setting babel-cache=true.
@@ -103,6 +104,6 @@ async function main () {
 
 /* istanbul ignore next: the error branch should be unreachable */
 main().catch(error => {
-  console.log('nyc error:', error)
+  console.error(error.message)
   process.exit(1)
 })

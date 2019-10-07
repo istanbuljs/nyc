@@ -1,0 +1,2 @@
+function fn() {}
+%GetOptimizationStatus(fn)
