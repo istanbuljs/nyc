@@ -14,7 +14,9 @@ require('source-map-support').install({ hookRequire: true })
 t.beforeEach(resetState)
 
 t.test('handles stack traces', async t => {
-  const nyc = new NYC(await parseArgv(undefined, ['--produce-source-map']))
+  const nyc = new NYC(await parseArgv(undefined, [
+    '--produce-source-map=true'
+  ]))
   await nyc.reset()
   nyc.wrap()
 
@@ -24,7 +26,9 @@ t.test('handles stack traces', async t => {
 })
 
 t.test('does not handle stack traces when disabled', async t => {
-  const nyc = new NYC(await parseArgv())
+  const nyc = new NYC(await parseArgv(undefined, [
+    '--produce-source-map=false'
+  ]))
   await nyc.reset()
   nyc.wrap()
 

@@ -570,6 +570,7 @@ t.test('combines multiple coverage reports', async t => {
   })
 
   const mergedCoverage = require('./fixtures/cli/coverage')
+  console.log(Object.keys(mergedCoverage))
   // the combined reports should have 100% function
   // branch and statement coverage.
   t.strictDeepEqual(
