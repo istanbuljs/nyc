@@ -492,15 +492,8 @@ class NYC {
   eachReport (filenames, iterator, baseDirectory) {
     baseDirectory = baseDirectory || this.tempDirectory()
 
-    if (typeof filenames === 'function') {
-      iterator = filenames
-      filenames = undefined
-    }
-
-    var _this = this
-    var files = filenames || fs.readdirSync(baseDirectory)
-
-    files.forEach(function (f) {
+    const files = filenames || fs.readdirSync(baseDirectory)
+    files.forEach(f => {
       var report
       try {
         report = JSON.parse(fs.readFileSync(
@@ -508,7 +501,7 @@ class NYC {
           'utf-8'
         ))
 
-        _this.sourceMaps.reloadCachedSourceMapsSync(report)
+        this.sourceMaps.reloadCachedSourceMapsSync(report)
       } catch (e) { // handle corrupt JSON output.
         report = {}
       }

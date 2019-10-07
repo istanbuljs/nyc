@@ -7,9 +7,8 @@ const t = require('tap')
 const ap = require('any-path')
 
 const NYC = require('../self-coverage')
-const configUtil = require('../self-coverage/lib/config-util')
 
-const resetState = require('./helpers/reset-state')
+const { parseArgv, resetState } = require('./helpers')
 
 const fixtures = path.resolve(__dirname, 'fixtures')
 const transpileHook = path.resolve(__dirname, 'fixtures/transpile-hook')
@@ -17,7 +16,7 @@ const transpileHook = path.resolve(__dirname, 'fixtures/transpile-hook')
 t.beforeEach(resetState)
 
 t.test('outputs an empty coverage report for all files that are not excluded', async t => {
-  const nyc = new NYC(configUtil.buildYargs(fixtures).parse())
+  const nyc = new NYC(await parseArgv(fixtures))
   await nyc.reset()
   await nyc.addAllFiles()
 
@@ -32,7 +31,7 @@ t.test('outputs an empty coverage report for all files that are not excluded', a
 
 t.test('outputs an empty coverage report for multiple configured extensions', async t => {
   const cwd = path.resolve(fixtures, './conf-multiple-extensions')
-  const nyc = new NYC(configUtil.buildYargs(cwd).parse())
+  const nyc = new NYC(await parseArgv(cwd))
   await nyc.reset()
   await nyc.addAllFiles()
 
@@ -61,7 +60,7 @@ t.test('transpiles .js files added via addAllFiles', async t => {
     'utf-8'
   )
 
-  const nyc = new NYC(configUtil.buildYargs(fixtures).parse(['--require', transpileHook]))
+  const nyc = new NYC(await parseArgv(fixtures, ['--require', transpileHook]))
   await nyc.reset()
   await nyc.addAllFiles()
 
@@ -83,7 +82,7 @@ t.test('does not attempt to transpile files when they are excluded', async t => 
     'utf-8'
   )
 
-  const nyc = new NYC(configUtil.buildYargs(fixtures).parse([
+  const nyc = new NYC(await parseArgv(fixtures, [
     `--require=${transpileHook}`,
     '--extension=.do-not-transpile',
     '--include=needs-transpile.do-not-transpile'
@@ -103,10 +102,10 @@ t.test('transpiles non-.js files added via addAllFiles', async t => {
     'utf-8'
   )
 
-  const nyc = (new NYC(configUtil.buildYargs(fixtures).parse([
+  const nyc = new NYC(await parseArgv(fixtures, [
     `--require=${transpileHook}`,
     '--extension=.whatever'
-  ])))
+  ]))
 
   await nyc.reset()
   await nyc.addAllFiles()

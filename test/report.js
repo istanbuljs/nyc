@@ -9,9 +9,8 @@ const isWindows = require('is-windows')()
 const rimraf = promisify(require('rimraf'))
 
 const NYC = require('../self-coverage')
-const configUtil = require('../self-coverage/lib/config-util')
 
-const { runNYC, resetState } = require('./helpers')
+const { parseArgv, runNYC, resetState } = require('./helpers')
 
 const fixtures = path.resolve(__dirname, 'fixtures')
 
@@ -24,7 +23,7 @@ async function testSignal (t, signal) {
     return
   }
 
-  const nyc = new NYC(configUtil.buildYargs(fixtures).parse())
+  const nyc = new NYC(await parseArgv(fixtures))
   await runNYC({
     args: [`./${signal}.js`],
     cwd: fixtures
@@ -41,9 +40,10 @@ t.test('writes coverage report when process is killed with SIGTERM', t => testSi
 t.test('writes coverage report when process is killed with SIGINT', t => testSignal(t, 'sigint'))
 
 t.test('allows coverage report to be output in an alternative directory', async t => {
-  const nyc = new NYC(configUtil.buildYargs().parse(
-    ['--report-dir=./alternative-report', '--reporter=lcov']
-  ))
+  const nyc = new NYC(await parseArgv(undefined, [
+    '--report-dir=./alternative-report',
+    '--reporter=lcov'
+  ]))
   await nyc.reset()
 
   await nyc.report()
