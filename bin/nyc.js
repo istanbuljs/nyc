@@ -38,10 +38,6 @@ async function main () {
     await nyc.createTempDirectory()
   }
 
-  if (argv.all) {
-    await nyc.addAllFiles()
-  }
-
   const env = {
     NYC_CONFIG: JSON.stringify(argv),
     NYC_CWD: process.cwd()
@@ -65,7 +61,9 @@ async function main () {
     Object.assign(propagateEnv, env)
   }
 
-  if (argv.all) nyc.addAllFiles()
+  if (argv.all) {
+    await nyc.addAllFiles()
+  }
 
   if (argv.useSpawnWrap) {
     const wrapper = require.resolve('./wrap.js')
@@ -103,4 +101,8 @@ async function main () {
   })
 }
 
-main()
+/* istanbul ignore next: the error branch should be unreachable */
+main().catch(error => {
+  console.log('nyc error:', error)
+  process.exit(1)
+})
