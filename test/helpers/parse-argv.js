@@ -1,3 +1,5 @@
+'use strict'
+
 const configUtil = require('../../self-coverage/lib/config-util')
 
 async function parseArgv (cwd, argv) {

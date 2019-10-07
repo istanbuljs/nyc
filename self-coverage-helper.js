@@ -1,3 +1,5 @@
+'use strict'
+
 /* global ___NYC_SELF_COVERAGE___ */
 
 const path = require('path')
