@@ -60,7 +60,11 @@ t.test('transpiles .js files added via addAllFiles', async t => {
     'utf-8'
   )
 
-  const nyc = new NYC(await parseArgv(fixtures, ['--require', transpileHook]))
+  const nyc = new NYC(await parseArgv(fixtures, [
+    '--use-spawn-wrap=true',
+    '--require',
+    transpileHook
+  ]))
   await nyc.reset()
   await nyc.addAllFiles()
 
@@ -83,6 +87,7 @@ t.test('does not attempt to transpile files when they are excluded', async t => 
   )
 
   const nyc = new NYC(await parseArgv(fixtures, [
+    '--use-spawn-wrap=true',
     `--require=${transpileHook}`,
     '--extension=.do-not-transpile',
     '--include=needs-transpile.do-not-transpile'
@@ -103,6 +108,7 @@ t.test('transpiles non-.js files added via addAllFiles', async t => {
   )
 
   const nyc = new NYC(await parseArgv(fixtures, [
+    '--use-spawn-wrap=true',
     `--require=${transpileHook}`,
     '--extension=.whatever'
   ]))

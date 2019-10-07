@@ -113,7 +113,7 @@ All files                        |       0 |        0 |       0 |       0 |
   external-instrumenter.js       |       0 |        0 |       0 |       0 | 1                       
   gc.js                          |       0 |      100 |     100 |       0 | 2,3                     
   half-covered-failing.js        |       0 |        0 |     100 |       0 | 1,3,5,6,7,8             
-  selfspawn-fibonacci.js         |       0 |        0 |       0 |       0 | ...19,21,24,25,26,27,28 
+  selfspawn-fibonacci.js         |       0 |        0 |       0 |       0 | ...21,23,26,27,28,29,30 
   skip-full.js                   |       0 |      100 |     100 |       0 | 1,2                     
   test.js                        |       0 |        0 |       0 |       0 |                         
  cli/fakebin                     |       0 |      100 |     100 |       0 |                         
@@ -144,8 +144,8 @@ exports[`test/nyc-integration.js TAP --ignore-class-method skips methods that ma
 ---------------------------------|---------|----------|---------|---------|-------------------------
 File                             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s       
 ---------------------------------|---------|----------|---------|---------|-------------------------
-All files                        |    1.45 |        0 |       5 |    1.89 |                         
- cli                             |    2.08 |        0 |    5.56 |    3.13 |                         
+All files                        |    1.44 |        0 |       5 |    1.87 |                         
+ cli                             |    2.06 |        0 |    5.56 |    3.08 |                         
   args.js                        |       0 |      100 |     100 |       0 | 1                       
   by-arg2.js                     |       0 |        0 |     100 |       0 | 1,2,3,4,5,7             
   classes.js                     |   66.67 |      100 |      50 |   66.67 | 6                       
@@ -158,7 +158,7 @@ All files                        |    1.45 |        0 |       5 |    1.89 |
   gc.js                          |       0 |      100 |     100 |       0 | 2,3                     
   half-covered-failing.js        |       0 |        0 |     100 |       0 | 1,3,5,6,7,8             
   half-covered.js                |       0 |        0 |     100 |       0 | 1,3,5,6,7,8             
-  selfspawn-fibonacci.js         |       0 |        0 |       0 |       0 | ...19,21,24,25,26,27,28 
+  selfspawn-fibonacci.js         |       0 |        0 |       0 |       0 | ...21,23,26,27,28,29,30 
   skip-full.js                   |       0 |      100 |     100 |       0 | 1,2                     
  cli/fakebin                     |       0 |      100 |     100 |       0 |                         
   npm-template.js                |       0 |      100 |     100 |       0 | 2,3,4,7,9               
@@ -202,8 +202,8 @@ exports[`test/nyc-integration.js TAP --show-process-tree displays a tree of spaw
 ------------------------|---------|----------|---------|---------|-------------------
 File                    | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 ------------------------|---------|----------|---------|---------|-------------------
-All files               |   90.91 |       70 |     100 |     100 |                   
- selfspawn-fibonacci.js |   90.91 |       70 |     100 |     100 | 4,25,27           
+All files               |    91.3 |       70 |     100 |     100 |                   
+ selfspawn-fibonacci.js |    91.3 |       70 |     100 |     100 | 6,27,29           
 ------------------------|---------|----------|---------|---------|-------------------
 nyc
 │   100 % Lines
@@ -214,18 +214,40 @@ nyc
   │ ├─┬ node ./selfspawn-fibonacci.js 3
   │ │ │   100 % Lines
   │ │ ├── node ./selfspawn-fibonacci.js 2
-  │ │ │     31.58 % Lines
+  │ │ │     35 % Lines
   │ │ └── node ./selfspawn-fibonacci.js 1
-  │ │       26.32 % Lines
+  │ │       30 % Lines
   │ └── node ./selfspawn-fibonacci.js 2
-  │       31.58 % Lines
+  │       35 % Lines
   └─┬ node ./selfspawn-fibonacci.js 3
     │   100 % Lines
     ├── node ./selfspawn-fibonacci.js 2
-    │     31.58 % Lines
+    │     35 % Lines
     └── node ./selfspawn-fibonacci.js 1
-          26.32 % Lines
+          30 % Lines
 
+
+`
+
+exports[`test/nyc-integration.js TAP --use-spawn-wrap=false is functional > stdout 1`] = `
+3
+------------------------|---------|----------|---------|---------|-------------------
+File                    | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+------------------------|---------|----------|---------|---------|-------------------
+All files               |    91.3 |       70 |     100 |     100 |                   
+ selfspawn-fibonacci.js |    91.3 |       70 |     100 |     100 | 6,27,29           
+------------------------|---------|----------|---------|---------|-------------------
+
+`
+
+exports[`test/nyc-integration.js TAP --use-spawn-wrap=true is functional > stdout 1`] = `
+3
+------------------------|---------|----------|---------|---------|-------------------
+File                    | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+------------------------|---------|----------|---------|---------|-------------------
+All files               |    91.3 |       70 |     100 |     100 |                   
+ selfspawn-fibonacci.js |    91.3 |       70 |     100 |     100 | 6,27,29           
+------------------------|---------|----------|---------|---------|-------------------
 
 `
 
@@ -851,30 +873,6 @@ exports[`test/nyc-integration.js TAP passes configuration via environment variab
     true
   ]
 ]
-`
-
-exports[`test/nyc-integration.js TAP produce-source-map enabled > stdout 1`] = `
-Error: Blarrh
-    at blah (./stack-trace.js:3:1)
-----------------|---------|----------|---------|---------|-------------------
-File            | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
-----------------|---------|----------|---------|---------|-------------------
-All files       |     100 |      100 |     100 |     100 |                   
- stack-trace.js |     100 |      100 |     100 |     100 |                   
-----------------|---------|----------|---------|---------|-------------------
-
-`
-
-exports[`test/nyc-integration.js TAP produce-source-map not enabled > stdout 1`] = `
-Error: Blarrh
-    at blah (./stack-trace.js:1:1037)
-----------------|---------|----------|---------|---------|-------------------
-File            | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
-----------------|---------|----------|---------|---------|-------------------
-All files       |     100 |      100 |     100 |     100 |                   
- stack-trace.js |     100 |      100 |     100 |     100 |                   
-----------------|---------|----------|---------|---------|-------------------
-
 `
 
 exports[`test/nyc-integration.js TAP recursive run does not throw > stdout 1`] = `

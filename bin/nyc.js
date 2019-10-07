@@ -3,10 +3,8 @@
 
 const configUtil = require('../lib/config-util')
 const foreground = require('foreground-child')
+const resolveFrom = require('resolve-from')
 const NYC = require('../index.js')
-
-const sw = require('spawn-wrap')
-const wrapper = require.resolve('./wrap.js')
 
 // parse configuration and command-line arguments;
 // we keep these values in a few different forms,
@@ -44,10 +42,7 @@ async function main () {
     await nyc.addAllFiles()
   }
 
-  var env = {
-    // Support running nyc as a user without HOME (e.g. linux 'nobody'),
-    // https://github.com/istanbuljs/nyc/issues/951
-    SPAWN_WRAP_SHIM_ROOT: process.env.SPAWN_WRAP_SHIM_ROOT || process.env.XDG_CACHE_HOME || require('os').homedir(),
+  const env = {
     NYC_CONFIG: JSON.stringify(argv),
     NYC_CWD: process.cwd()
   }
@@ -58,7 +53,29 @@ async function main () {
     env.BABEL_DISABLE_CACHE = process.env.BABEL_DISABLE_CACHE = '1'
   }
 
-  sw([wrapper], env)
+  if (!argv.useSpawnWrap) {
+    const { preloadAppend, propagateEnv } = require('node-preload')
+
+    nyc.require.forEach(requireModule => {
+      const mod = resolveFrom.silent(nyc.cwd, requireModule) || requireModule
+      preloadAppend(mod)
+      require(mod)
+    })
+    preloadAppend(require.resolve('../lib/wrap.js'))
+    Object.assign(propagateEnv, env)
+  }
+
+  if (argv.all) nyc.addAllFiles()
+
+  if (argv.useSpawnWrap) {
+    const wrapper = require.resolve('./wrap.js')
+    // Support running nyc as a user without HOME (e.g. linux 'nobody'),
+    // https://github.com/istanbuljs/nyc/issues/951
+    env.SPAWN_WRAP_SHIM_ROOT = process.env.SPAWN_WRAP_SHIM_ROOT || process.env.XDG_CACHE_HOME || require('os').homedir()
+    const sw = require('spawn-wrap')
+
+    sw([wrapper], env)
+  }
 
   // Both running the test script invocation and the check-coverage run may
   // set process.exitCode. Keep track so that both children are run, but
