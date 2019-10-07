@@ -48,8 +48,7 @@ function coverageFinder () {
 
 class NYC {
   constructor (config) {
-    config = config || {}
-    this.config = config
+    this.config = { ...config }
 
     this.subprocessBin = config.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
     this._tempDirectory = config.tempDirectory || config.tempDir || './.nyc_output'
@@ -151,7 +150,7 @@ class NYC {
       compact: this.config.compact,
       preserveComments: this.config.preserveComments,
       esModules: this.config.esModules,
-      plugins: this.config.parserPlugins
+      parserPlugins: this.config.parserPlugins
     })
   }
 
@@ -365,7 +364,6 @@ class NYC {
 
   writeCoverageFile () {
     var coverage = coverageFinder()
-    if (!coverage) return
 
     // Remove any files that should be excluded but snuck into the coverage
     Object.keys(coverage).forEach(function (absFile) {

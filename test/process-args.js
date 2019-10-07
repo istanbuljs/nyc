@@ -5,7 +5,7 @@ const yargs = require('yargs/yargs')
 
 const processArgs = require('../self-coverage/lib/process-args')
 
-const nycBin = require.resolve('../bin/nyc.js')
+const nycBin = require.resolve('../self-coverage/bin/nyc.js')
 
 test('hideInstrumenterArgs removes dashed options that proceed bin', async t => {
   process.argv = [
