@@ -100,6 +100,7 @@
   "engines": {
     "node": ">=8"
   },
+  "homepage": "https://istanbul.js.org/",
   "repository": {
     "type": "git",
     "url": "git@github.com:istanbuljs/nyc.git"
