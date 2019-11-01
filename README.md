@@ -381,3 +381,9 @@ Please feel free to [contribute documentation](https://github.com/istanbuljs/ist
 [`babel-plugin-istanbul`]: https://github.com/istanbuljs/babel-plugin-istanbul
 [`@istanbuljs/nyc-config-babel`]: https://www.npmjs.com/package/@istanbuljs/nyc-config-babel
 [selecting files for coverage]: #selecting-files-for-coverage
+
+## `nyc` for enterprise
+
+Available as part of the Tidelift Subscription.
+
+The maintainers of `nyc` and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-nyc?utm_source=npm-nyc&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
