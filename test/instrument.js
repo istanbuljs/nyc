@@ -10,7 +10,7 @@ const cpFile = require('cp-file')
 const isWindows = require('is-windows')()
 const rimraf = promisify(require('rimraf'))
 
-const { runNYC, fixturesCLI } = require('./helpers')
+const { runNYC, testSuccess, fixturesCLI } = require('./helpers')
 
 const subdir = path.resolve(fixturesCLI, 'subdir')
 const outputDir = path.resolve(subdir, './output-dir')
@@ -264,6 +264,11 @@ t.test('can write files in place with --in-place switch', async t => {
 
   const file2 = path.resolve(outputDir, 'file2.js')
   t.notMatch(await fs.readFile(file2, 'utf8'), /function cov_/)
+
+  await testSuccess(t, {
+    args: ['--all', process.execPath, '-e', ''],
+    cwd: outputDir
+  })
 })
 
 t.test('aborts if trying to delete while writing files in place', async t => {

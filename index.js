@@ -269,9 +269,14 @@ class NYC {
 
     return (code, metadata, hash) => {
       const filename = metadata.filename
-      let sourceMap = null
+      const sourceMap = {}
 
-      if (this._sourceMap) sourceMap = this.sourceMaps.extractAndRegister(code, filename, hash)
+      if (this._sourceMap) {
+        sourceMap.sourceMap = this.sourceMaps.extract(code, filename)
+        sourceMap.registerMap = () => this.sourceMaps.registerMap(filename, hash, sourceMap.sourceMap)
+      } else {
+        sourceMap.registerMap = () => {}
+      }
 
       try {
         instrumented = instrumenter.instrumentSync(code, filename, sourceMap)
@@ -378,8 +383,6 @@ class NYC {
           coverage[absFile].contentHash = this.hashCache[absFile]
         }
       }, this)
-    } else {
-      this.sourceMaps.addSourceMaps(coverage)
     }
 
     var id = this.processInfo.uuid
