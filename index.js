@@ -501,28 +501,6 @@ class NYC {
     )
   }
 
-  /* istanbul ignore next: legacy function used by istanbul-lib-processinfo. */
-  eachReport (filenames, iterator, baseDirectory) {
-    baseDirectory = baseDirectory || this.tempDirectory()
-
-    const files = filenames || fs.readdirSync(baseDirectory)
-    files.forEach(f => {
-      var report
-      try {
-        report = JSON.parse(fs.readFileSync(
-          path.resolve(baseDirectory, f),
-          'utf-8'
-        ))
-
-        this.sourceMaps.reloadCachedSourceMapsSync(report)
-      } catch (e) { // handle corrupt JSON output.
-        report = {}
-      }
-
-      iterator(report)
-    })
-  }
-
   tempDirectory () {
     return path.resolve(this.cwd, this._tempDirectory)
   }
