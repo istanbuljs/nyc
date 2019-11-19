@@ -3,7 +3,6 @@
 /* global __coverage__ */
 
 const cachingTransform = require('caching-transform')
-const cpFile = require('cp-file')
 const findCacheDir = require('find-cache-dir')
 const fs = require('./lib/fs-promises')
 const os = require('os')
@@ -225,13 +224,23 @@ class NYC {
 
       const concurrency = output ? os.cpus().length : 1
       if (this.config.completeCopy && output) {
+        const files = await glob(path.resolve(input, '**'), {
+          dot: true,
+          nodir: true,
+          ignore: ['**/.git', '**/.git/**', path.join(output, '**')]
+        })
+        const destDirs = new Set(
+          files.map(src => path.dirname(path.join(output, path.relative(input, src))))
+        )
+
         await pMap(
-          await glob(path.resolve(input, '**'), {
-            dot: true,
-            nodir: true,
-            ignore: ['**/.git', '**/.git/**', path.join(output, '**')]
-          }),
-          src => cpFile(src, path.join(output, path.relative(input, src))),
+          destDirs,
+          dir => mkdirp(dir),
+          { concurrency }
+        )
+        await pMap(
+          files,
+          src => fs.copyFile(src, path.join(output, path.relative(input, src))),
           { concurrency }
         )
       }
@@ -269,9 +278,14 @@ class NYC {
 
     return (code, metadata, hash) => {
       const filename = metadata.filename
-      let sourceMap = null
+      const sourceMap = {}
 
-      if (this._sourceMap) sourceMap = this.sourceMaps.extractAndRegister(code, filename, hash)
+      if (this._sourceMap) {
+        sourceMap.sourceMap = this.sourceMaps.extract(code, filename)
+        sourceMap.registerMap = () => this.sourceMaps.registerMap(filename, hash, sourceMap.sourceMap)
+      } else {
+        sourceMap.registerMap = () => {}
+      }
 
       try {
         instrumented = instrumenter.instrumentSync(code, filename, sourceMap)
@@ -378,8 +392,6 @@ class NYC {
           coverage[absFile].contentHash = this.hashCache[absFile]
         }
       }, this)
-    } else {
-      this.sourceMaps.addSourceMaps(coverage)
     }
 
     var id = this.processInfo.uuid
@@ -497,28 +509,6 @@ class NYC {
       f => this.coverageFileLoad(f, baseDirectory),
       { concurrency: os.cpus().length }
     )
-  }
-
-  /* istanbul ignore next: legacy function used by istanbul-lib-processinfo. */
-  eachReport (filenames, iterator, baseDirectory) {
-    baseDirectory = baseDirectory || this.tempDirectory()
-
-    const files = filenames || fs.readdirSync(baseDirectory)
-    files.forEach(f => {
-      var report
-      try {
-        report = JSON.parse(fs.readFileSync(
-          path.resolve(baseDirectory, f),
-          'utf-8'
-        ))
-
-        this.sourceMaps.reloadCachedSourceMapsSync(report)
-      } catch (e) { // handle corrupt JSON output.
-        report = {}
-      }
-
-      iterator(report)
-    })
   }
 
   tempDirectory () {

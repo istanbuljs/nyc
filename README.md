@@ -78,7 +78,7 @@ You can then add the specific configuration options you want that aren't in that
 
 ### Configuration files
 
-Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a seperate configuration file - a variety of flavors are available:
+Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a separate configuration file - a variety of flavors are available:
 
 | File name       | File Association |
 |-----------------|------------------|
@@ -100,7 +100,7 @@ This table is a quick TLDR for the rest of this readme and there are more advanc
 | `check-coverage` | Check whether coverage is within thresholds, fail if not | `Boolean` | `false` |
 | `extension` | List of extensions that nyc should attempt to handle in addition to `.js` | `Array<String>` | `['.js', '.cjs', '.mjs', '.ts', '.tsx', '.jsx']` |
 | `include` | See [selecting files for coverage] for more info | `Array<String>` | `['**']`|
-| `exclude` | See [selecting files for coverage] for more info | `Array<String>` | [list](https://github.com/istanbuljs/istanbuljs/blob/master/packages/test-exclude/default-exclude.js) |
+| `exclude` | See [selecting files for coverage] for more info | `Array<String>` | [list](https://github.com/istanbuljs/schema/blob/master/default-exclude.js) |
 | `reporter` | [Coverage reporters to use](https://istanbul.js.org/docs/advanced/alternative-reporters/) | `Array<String>` | `['text']` |
 | `report-dir` | Where to put the coverage report files | `String` | `./coverage` |
 | `skip-full` | Don't show files with 100% statement, branch, and function coverage | `Boolean` | `false` |
@@ -108,8 +108,8 @@ This table is a quick TLDR for the rest of this readme and there are more advanc
 
 Configuration can also be provided by `nyc.config.js` if programmed logic is required:
 ```js
-'use strict'; 
-const {defaultExclude} = require('test-exclude');
+'use strict';
+const defaultExclude = require('@istanbuljs/schema/default-exclude');
 const isWindows = require('is-windows');
 
 let platformExclude = [
@@ -142,7 +142,7 @@ module.exports = {
 
 By default, nyc only collects coverage for source files that are visited during a test.
 It does this by watching for files that are `require()`'d during the test.
-When a file is `require()`'d, nyc creates and returns an instrumented version of the source, rather than the original. 
+When a file is `require()`'d, nyc creates and returns an instrumented version of the source, rather than the original.
 Only source files that are visited during a test will appear in the coverage report and contribute to coverage statistics.
 
 nyc will instrument all files if the `--all` flag is set or if running `nyc instrument`.
@@ -172,7 +172,7 @@ You can also specify negated paths in the `exclude` array, by prefixing them wit
 Negated paths can restore paths that have been already been excluded in the `exclude` array.
 Multiple `exclude` globs can be specified on the command line, each must follow a `--exclude`, `-x` switch.
 
-The default `exclude` list is defined in the [test-exclude module](https://github.com/istanbuljs/istanbuljs/blob/master/packages/test-exclude/default-exclude.js).
+The default `exclude` list is defined in the [@istanbuljs/schema module](https://github.com/istanbuljs/schema/blob/master/default-exclude.js).
 Specifying your own exclude property completely replaces these defaults.
 
 For example, the following config will collect coverage for every file in the `src` directory regardless of whether it is `require()`'d in a test.
@@ -200,7 +200,7 @@ To prevent this, wrap each glob in single quotes.
 We always add `**/node_modules/**` to the exclude list, even if not specified in the config.
 You can override this by setting `--exclude-node-modules=false`.
 
-For example, in the following config, `"excludeNodeModules: false"` will prevent `node_modules` from being added to the exclude rules. 
+For example, in the following config, `"excludeNodeModules: false"` will prevent `node_modules` from being added to the exclude rules.
 The set of include rules then restrict nyc to only consider instrumenting files found under the `lib/` and `node_modules/@my-org/` directories.
 The exclude rules then prevent nyc instrumenting anything in a `test` folder and the file `node_modules/@my-org/something/unwanted.js`.
 
@@ -376,6 +376,12 @@ Many testing frameworks (Mocha, Tape, Tap, etc.) can produce [TAP](https://en.wi
 See [more nyc tutorials](https://istanbul.js.org/docs/tutorials) and [advanced nyc documentation](https://istanbul.js.org/docs/advanced/).
 
 Please feel free to [contribute documentation](https://github.com/istanbuljs/istanbuljs.github.io/tree/development/content) to help us improve.
+
+## `nyc` for enterprise
+
+Available as part of the Tidelift Subscription.
+
+The maintainers of `nyc` and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-nyc?utm_source=npm-nyc&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
 
 [`@babel/register`]: https://www.npmjs.com/package/@babel/register
 [`babel-plugin-istanbul`]: https://github.com/istanbuljs/babel-plugin-istanbul
