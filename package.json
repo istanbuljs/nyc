@@ -59,7 +59,6 @@
     "@istanbuljs/schema": "^0.1.1",
     "caching-transform": "^4.0.0",
     "convert-source-map": "^1.7.0",
-    "cp-file": "^7.0.0",
     "decamelize": "^1.2.0",
     "find-cache-dir": "=3.0.0",
     "find-up": "^4.1.0",
@@ -96,7 +95,7 @@
     "which": "^2.0.1"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=8.9"
   },
   "homepage": "https://istanbul.js.org/",
   "repository": {

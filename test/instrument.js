@@ -6,7 +6,6 @@ const { promisify } = require('util')
 
 const t = require('tap')
 const makeDir = require('make-dir')
-const cpFile = require('cp-file')
 const isWindows = require('is-windows')()
 const rimraf = promisify(require('rimraf'))
 
@@ -243,7 +242,7 @@ t.test('can write files in place with --in-place switch', async t => {
   const sourceDir = path.resolve(fixturesCLI, 'instrument-inplace')
   await makeDir(outputDir)
   await Promise.all(['package.json', 'file1.js', 'file2.js'].map(
-    file => cpFile(path.join(sourceDir, file), path.join(outputDir, file))
+    file => fs.copyFile(path.join(sourceDir, file), path.join(outputDir, file))
   ))
 
   const { status } = await runNYC({
