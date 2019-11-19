@@ -2,6 +2,7 @@
 'use strict'
 
 const configUtil = require('../lib/config-util')
+const { cliWrapper, suppressEPIPE } = require('../lib/commands/helpers')
 const foreground = require('foreground-child')
 const resolveFrom = require('resolve-from')
 const NYC = require('../index.js')
@@ -81,29 +82,32 @@ async function main () {
   // a non-zero exit codes in either one leads to an overall non-zero exit code.
   process.exitCode = 0
   foreground(childArgs, async () => {
-    var mainChildExitCode = process.exitCode
+    const mainChildExitCode = process.exitCode
 
-    await nyc.writeProcessIndex()
+    try {
+      await nyc.writeProcessIndex()
 
-    nyc.maybePurgeSourceMapCache()
-    if (argv.checkCoverage) {
-      await nyc.checkCoverage({
-        lines: argv.lines,
-        functions: argv.functions,
-        branches: argv.branches,
-        statements: argv.statements
-      }, argv['per-file'])
-      process.exitCode = process.exitCode || mainChildExitCode
-    }
+      nyc.maybePurgeSourceMapCache()
+      if (argv.checkCoverage) {
+        await nyc.checkCoverage({
+          lines: argv.lines,
+          functions: argv.functions,
+          branches: argv.branches,
+          statements: argv.statements
+        }, argv['per-file']).catch(suppressEPIPE)
+        process.exitCode = process.exitCode || mainChildExitCode
+      }
 
-    if (!argv.silent) {
-      await nyc.report()
+      if (!argv.silent) {
+        await nyc.report().catch(suppressEPIPE)
+      }
+    } catch (error) {
+      /* istanbul ignore next */
+      process.exitCode = process.exitCode || mainChildExitCode || 1
+      /* istanbul ignore next */
+      console.error(error.message)
     }
   })
 }
 
-/* istanbul ignore next: the error branch should be unreachable */
-main().catch(error => {
-  console.error(error.message)
-  process.exit(1)
-})
+cliWrapper(main)()
