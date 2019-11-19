@@ -12,13 +12,10 @@ const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
 const { ProcessInfo, ProcessDB } = require('istanbul-lib-processinfo')
-const libReport = require('istanbul-lib-report')
 const mkdirp = require('make-dir')
 const Module = require('module')
 const onExit = require('signal-exit')
 const path = require('path')
-const reports = require('istanbul-reports')
-const resolveFrom = require('resolve-from')
 const rimraf = promisify(require('rimraf'))
 const SourceMaps = require('./lib/source-maps')
 const testExclude = require('test-exclude')
@@ -127,10 +124,11 @@ class NYC {
   }
 
   _loadAdditionalModules () {
-    if (!this.config.useSpawnWrap) {
+    if (!this.config.useSpawnWrap || this.require.length === 0) {
       return
     }
 
+    const resolveFrom = require('resolve-from')
     this.require.forEach(requireModule => {
       // Attempt to require the module relative to the directory being instrumented.
       // Then try other locations, e.g. the nyc node_modules folder.
@@ -430,6 +428,9 @@ class NYC {
   }
 
   async report () {
+    const libReport = require('istanbul-lib-report')
+    const reports = require('istanbul-reports')
+
     const context = libReport.createContext({
       dir: this.reportDirectory(),
       watermarks: this.config.watermarks,
