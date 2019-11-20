@@ -57,6 +57,7 @@ class NYC {
     this._showProcessTree = config.showProcessTree || false
     this._eagerInstantiation = config.eager || false
     this.cwd = config.cwd || process.cwd()
+    this.projectRoot = config.projectRoot || this.cwd
     this.reporter = [].concat(config.reporter || 'text')
 
     this.cacheDirectory = (config.cacheDir && path.resolve(config.cacheDir)) || findCacheDir({ name: 'nyc', cwd: this.cwd })
@@ -440,7 +441,7 @@ class NYC {
       reports.create(_reporter, {
         skipEmpty: this.config.skipEmpty,
         skipFull: this.config.skipFull,
-        relative: this.config.relative === 'true',
+        projectRoot: this.projectRoot,
         maxCols: process.stdout.columns || 100
       }).execute(context)
     })
