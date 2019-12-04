@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## Next
+
+The change log for the `next` version (15) can be found [here](https://github.com/istanbuljs/nyc/issues/1104).
+
 ## [14.1.1](https://github.com/istanbuljs/nyc/compare/v14.1.0...v14.1.1) (2019-05-09)
 
 
