@@ -79,7 +79,7 @@
     "rimraf": "^3.0.0",
     "signal-exit": "^3.0.2",
     "spawn-wrap": "^2.0.0-beta.0",
-    "test-exclude": "^6.0.0-alpha.1",
+    "test-exclude": "=6.0.0-alpha.1",
     "uuid": "^3.3.3",
     "yargs": "^15.0.1"
   },
