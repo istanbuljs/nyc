@@ -55,8 +55,8 @@
   "author": "Ben Coe <ben@npmjs.com>",
   "license": "ISC",
   "dependencies": {
-    "@istanbuljs/load-nyc-config": "^1.0.0-alpha.1",
-    "@istanbuljs/schema": "^0.1.1",
+    "@istanbuljs/load-nyc-config": "^1.0.0-alpha.2",
+    "@istanbuljs/schema": "^0.1.2",
     "caching-transform": "^4.0.0",
     "convert-source-map": "^1.7.0",
     "decamelize": "^1.2.0",
@@ -64,13 +64,13 @@
     "find-up": "^4.1.0",
     "foreground-child": "^2.0.0",
     "glob": "^7.1.6",
-    "istanbul-lib-coverage": "^3.0.0-alpha.1",
-    "istanbul-lib-hook": "^3.0.0-alpha.1",
-    "istanbul-lib-instrument": "^4.0.0-alpha.2",
+    "istanbul-lib-coverage": "^3.0.0-alpha.2",
+    "istanbul-lib-hook": "^3.0.0-alpha.2",
+    "istanbul-lib-instrument": "^4.0.0-alpha.3",
     "istanbul-lib-processinfo": "^2.0.2",
-    "istanbul-lib-report": "^3.0.0-alpha.1",
-    "istanbul-lib-source-maps": "^4.0.0-alpha.4",
-    "istanbul-reports": "^3.0.0-alpha.4",
+    "istanbul-lib-report": "^3.0.0-alpha.2",
+    "istanbul-lib-source-maps": "^4.0.0-alpha.5",
+    "istanbul-reports": "^3.0.0-alpha.6",
     "js-yaml": "^3.13.1",
     "make-dir": "^3.0.0",
     "p-map": "^3.0.0",
@@ -79,20 +79,20 @@
     "rimraf": "^3.0.0",
     "signal-exit": "^3.0.2",
     "spawn-wrap": "^2.0.0-beta.0",
-    "test-exclude": "=6.0.0-alpha.1",
+    "test-exclude": "^6.0.0-alpha.3",
     "uuid": "^3.3.3",
-    "yargs": "^15.0.1"
+    "yargs": "^15.0.2"
   },
   "devDependencies": {
     "any-path": "^1.3.0",
-    "coveralls": "^3.0.6",
+    "coveralls": "^3.0.9",
     "is-windows": "^1.0.2",
     "requirejs": "^2.3.6",
-    "source-map-support": "^0.5.13",
+    "source-map-support": "^0.5.16",
     "standard": "^12.0.1",
-    "standard-version": "^7.0.0",
-    "tap": "^14.6.9",
-    "which": "^2.0.1"
+    "standard-version": "^7.0.1",
+    "tap": "^14.10.2",
+    "which": "^2.0.2"
   },
   "engines": {
     "node": ">=8.9"

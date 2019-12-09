@@ -18,7 +18,7 @@ const onExit = require('signal-exit')
 const path = require('path')
 const rimraf = promisify(require('rimraf'))
 const SourceMaps = require('./lib/source-maps')
-const testExclude = require('test-exclude')
+const TestExclude = require('test-exclude')
 const pMap = require('p-map')
 
 const debugLog = debuglog('nyc')
@@ -64,7 +64,7 @@ class NYC {
       .map(ext => ext.toLowerCase())
       .filter((item, pos, arr) => arr.indexOf(item) === pos)
 
-    this.exclude = testExclude({
+    this.exclude = new TestExclude({
       cwd: this.cwd,
       include: config.include,
       exclude: config.exclude,
