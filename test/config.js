@@ -35,7 +35,7 @@ test("ignores 'include' option if it's falsy or []", async t => {
 test("ignores 'exclude' option if it's falsy", async t => {
   const nyc = new NYC(await parseArgv(path.resolve(__dirname, './fixtures/conf-empty')))
 
-  t.strictEqual(nyc.exclude.exclude.length, 18)
+  t.strictEqual(nyc.exclude.exclude.length, 27)
 })
 
 test("allows for empty 'exclude'", async t => {

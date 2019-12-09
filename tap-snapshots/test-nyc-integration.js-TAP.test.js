@@ -253,7 +253,7 @@ All files               |    91.3 |       70 |     100 |     100 |
 
 exports[`test/nyc-integration.js TAP allows .nycrc configuration to be overridden with command line args > stdout 1`] = `
 TN:
-SF:./ignore.js
+SF:ignore.js
 FNF:0
 FNH:0
 DA:1,1
@@ -263,7 +263,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:./index.js
+SF:index.js
 FNF:0
 FNH:0
 DA:1,1
@@ -305,7 +305,7 @@ All files        |      50 |       50 |     100 |      50 |
 
 exports[`test/nyc-integration.js TAP allows nyc.config.js configuration to be overridden with command line args > stdout 1`] = `
 TN:
-SF:./ignore.js
+SF:ignore.js
 FNF:0
 FNH:0
 DA:1,1
@@ -315,7 +315,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:./index.js
+SF:index.js
 FNF:0
 FNH:0
 DA:1,1
@@ -333,7 +333,7 @@ BRF:2
 BRH:1
 end_of_record
 TN:
-SF:./nyc.config.js
+SF:nyc.config.js
 FNF:0
 FNH:0
 DA:1,0
@@ -343,7 +343,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:./nycrc-config.js
+SF:nycrc-config.js
 FNF:0
 FNH:0
 DA:1,0
@@ -357,7 +357,7 @@ end_of_record
 
 exports[`test/nyc-integration.js TAP allows package.json configuration to be overridden with command line args > stdout 1`] = `
 TN:
-SF:./half-covered.js
+SF:half-covered.js
 FNF:0
 FNH:0
 DA:1,1
@@ -637,7 +637,7 @@ All files |     100 |      100 |     100 |     100 |
 
 exports[`test/nyc-integration.js TAP loads configuration from .nycrc.yaml > stdout 1`] = `
 TN:
-SF:./index.js
+SF:index.js
 FNF:0
 FNH:0
 DA:1,1
@@ -659,7 +659,7 @@ end_of_record
 
 exports[`test/nyc-integration.js TAP loads configuration from .nycrc.yml > stdout 1`] = `
 TN:
-SF:./index.js
+SF:index.js
 FNF:0
 FNH:0
 DA:1,1
@@ -688,7 +688,7 @@ ERROR: Coverage for statements (57.14%) does not meet threshold (100%) for ./ind
 
 exports[`test/nyc-integration.js TAP loads configuration from different file rather than .nycrc > stdout 1`] = `
 TN:
-SF:./ignore.js
+SF:ignore.js
 FNF:0
 FNH:0
 DA:1,1
@@ -698,7 +698,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:./index.js
+SF:index.js
 FNF:0
 FNH:0
 DA:1,1
@@ -731,7 +731,7 @@ ERROR: Coverage for statements (0%) does not meet threshold (100%) for ./nycrc-c
 
 exports[`test/nyc-integration.js TAP loads configuration from different module rather than nyc.config.js > stdout 1`] = `
 TN:
-SF:./ignore.js
+SF:ignore.js
 FNF:0
 FNH:0
 DA:1,1
@@ -741,7 +741,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:./index.js
+SF:index.js
 FNF:0
 FNH:0
 DA:1,1
@@ -759,7 +759,7 @@ BRF:2
 BRH:1
 end_of_record
 TN:
-SF:./nyc.config.js
+SF:nyc.config.js
 FNF:0
 FNH:0
 DA:1,0
@@ -769,7 +769,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:./nycrc-config.js
+SF:nycrc-config.js
 FNF:0
 FNH:0
 DA:1,0
@@ -783,7 +783,7 @@ end_of_record
 
 exports[`test/nyc-integration.js TAP loads configuration from package.json and .nycrc > stdout 1`] = `
 TN:
-SF:./index.js
+SF:index.js
 FNF:0
 FNH:0
 DA:1,1
@@ -805,7 +805,7 @@ end_of_record
 
 exports[`test/nyc-integration.js TAP loads configuration from package.json and nyc.config.js > stdout 1`] = `
 TN:
-SF:./index.js
+SF:index.js
 FNF:0
 FNH:0
 DA:1,1
