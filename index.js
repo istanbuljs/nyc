@@ -365,8 +365,8 @@ class NYC {
     // This is a bug with the spawn-wrap method where
     // we cannot force propagation of NYC_PROCESS_ID.
     if (!this.config.useSpawnWrap) {
-      const { propagateEnv } = require('node-preload')
-      propagateEnv.NYC_PROCESS_ID = this.processInfo.uuid
+      const updateVariable = require('./lib/register-env.js')
+      updateVariable('NYC_PROCESS_ID')
     }
     this._addRequireHooks()
     this._wrapExit()
