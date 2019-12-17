@@ -52,15 +52,20 @@ async function main () {
   }
 
   if (!argv.useSpawnWrap) {
-    const { preloadAppend, propagateEnv } = require('node-preload')
+    const requireModules = [
+      require.resolve('../lib/register-env.js'),
+      ...nyc.require.map(mod => resolveFrom.silent(nyc.cwd, mod) || mod)
+    ]
+    const preloadList = require('node-preload')
+    preloadList.push(
+      ...requireModules,
+      require.resolve('../lib/wrap.js')
+    )
 
-    nyc.require.forEach(requireModule => {
-      const mod = resolveFrom.silent(nyc.cwd, requireModule) || requireModule
-      preloadAppend(mod)
+    Object.assign(process.env, env)
+    requireModules.forEach(mod => {
       require(mod)
     })
-    preloadAppend(require.resolve('../lib/wrap.js'))
-    Object.assign(propagateEnv, env)
   }
 
   if (argv.all) {
