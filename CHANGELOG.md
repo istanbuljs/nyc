@@ -1,6 +1,40 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [15.0.0](https://github.com/istanbuljs/nyc/compare/v14.1.1...v15.0.0) (2019-12-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* The `flow` and `jsx` parser plugins are no longer
+enabled by default.
+* Node.js 8 is now required to run nyc
+* Remove NYC_ROOT_ID and NYC_INSTRUMENTER environmental
+variables.
+* The `root` field has been removed from processinfo
+files.
+
+### Features
+
+* Add `--use-spawn-wrap=true` option ([#1169](https://github.com/istanbuljs/nyc/issues/1169)) ([df4de4d](https://github.com/istanbuljs/nyc/commit/df4de4d490f8cd32204fba66a810ed0444c26d0d))
+* Add `.cjs`, `.mjs`, `.ts`, `.tsx`, `.jsx` to default extensions ([#1110](https://github.com/istanbuljs/nyc/issues/1110)) ([914b776](https://github.com/istanbuljs/nyc/commit/914b776215ad3ea54f0e46b4ba2904a8a9d4dfdd)), closes [#1103](https://github.com/istanbuljs/nyc/issues/1103)
+* Allow `nyc instrument` to instrument code in place ([#1149](https://github.com/istanbuljs/nyc/issues/1149)) ([7783284](https://github.com/istanbuljs/nyc/commit/77832845b85134d21eca3a23c812c4f21f36713f))
+* Drop node.js 6, upgrade dependencies ([#1134](https://github.com/istanbuljs/nyc/issues/1134)) ([00c3b34](https://github.com/istanbuljs/nyc/commit/00c3b3440a5b2ffe11b9c19ae4e08ad2f5b70e33))
+* Filenames relative to project cwd in coverage reports ([#1212](https://github.com/istanbuljs/nyc/issues/1212)) ([5258e9f](https://github.com/istanbuljs/nyc/commit/5258e9fdb1d9e3d4abd4cc9768bc09cd8040a6be))
+* Use @istanbuljs/schema for yargs setup ([#1194](https://github.com/istanbuljs/nyc/issues/1194)) ([fd40d49](https://github.com/istanbuljs/nyc/commit/fd40d49331665d936b86f30e9a873ba80071b770))
+* Use istanbul-lib-processinfo ([#1145](https://github.com/istanbuljs/nyc/issues/1145)) ([7943413](https://github.com/istanbuljs/nyc/commit/7943413dc032f8f98a164fdde88d7344e817bb5e))
+* Use source base name to prefix cache files ([#1144](https://github.com/istanbuljs/nyc/issues/1144)) ([5c1b7a9](https://github.com/istanbuljs/nyc/commit/5c1b7a9c43771f3439af44a1104e5426519e1123))
+
+
+### Bug Fixes
+
+* Avoid `source-map` module during `signal-exit` handler ([#1191](https://github.com/istanbuljs/nyc/issues/1191)) ([83eb629](https://github.com/istanbuljs/nyc/commit/83eb6294f9492bf98405ee9fdf6281c3bc199a3d))
+* Better error handling for main execution, reporting ([#1229](https://github.com/istanbuljs/nyc/issues/1229)) ([dfd629d](https://github.com/istanbuljs/nyc/commit/dfd629d95716e6159aa7216c03e28a7fbbb161e7))
+* Correct handling of source-maps for pre-instrumented files ([#1216](https://github.com/istanbuljs/nyc/issues/1216)) ([8411a26](https://github.com/istanbuljs/nyc/commit/8411a26c9e520c66251cc8044cde2c81f33f1c5f)), closes [#1208](https://github.com/istanbuljs/nyc/issues/1208)
+* Drop coverage produced by `nyc --all` for files that were tested ([#1155](https://github.com/istanbuljs/nyc/issues/1155)) ([fc1bbbf](https://github.com/istanbuljs/nyc/commit/fc1bbbf490f6ab0272359ce10ceb4987d1716256)), closes [#1113](https://github.com/istanbuljs/nyc/issues/1113) [#1124](https://github.com/istanbuljs/nyc/issues/1124) [#1148](https://github.com/istanbuljs/nyc/issues/1148)
+* Honor eager setting (false by default) ([#1179](https://github.com/istanbuljs/nyc/issues/1179)) ([c18fb0a](https://github.com/istanbuljs/nyc/commit/c18fb0a9a8eae5904298d87c62d9934243de8674))
+* Remove vestigial environment variables ([#1078](https://github.com/istanbuljs/nyc/issues/1078)) ([cfd3da0](https://github.com/istanbuljs/nyc/commit/cfd3da05156b98952f03f7be2dd3d23ba328073f))
 
 ## [14.1.1](https://github.com/istanbuljs/nyc/compare/v14.1.0...v14.1.1) (2019-05-09)
 
