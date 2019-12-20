@@ -51,7 +51,7 @@ exports[`test/nyc-integration.js TAP --check-coverage fails in any case when the
 File                     | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------------------|---------|----------|---------|---------|-------------------
 All files                |   33.33 |        0 |     100 |   33.33 |                   
- half-covered-failing.js |   33.33 |        0 |     100 |   33.33 | 5,6,7,8           
+ half-covered-failing.js |   33.33 |        0 |     100 |   33.33 | 5-8               
 -------------------------|---------|----------|---------|---------|-------------------
 
 `
@@ -66,7 +66,7 @@ exports[`test/nyc-integration.js TAP --check-coverage fails when the expected co
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -----------------|---------|----------|---------|---------|-------------------
 All files        |      50 |       50 |     100 |      50 |                   
- half-covered.js |      50 |       50 |     100 |      50 | 6,7,8             
+ half-covered.js |      50 |       50 |     100 |      50 | 6-8               
 -----------------|---------|----------|---------|---------|-------------------
 
 `
@@ -81,7 +81,7 @@ exports[`test/nyc-integration.js TAP --check-coverage fails when the expected fi
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -----------------|---------|----------|---------|---------|-------------------
 All files        |      50 |       50 |     100 |      50 |                   
- half-covered.js |      50 |       50 |     100 |      50 | 6,7,8             
+ half-covered.js |      50 |       50 |     100 |      50 | 6-8               
 -----------------|---------|----------|---------|---------|-------------------
 
 `
@@ -91,7 +91,7 @@ exports[`test/nyc-integration.js TAP --check-coverage succeeds when the expected
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -----------------|---------|----------|---------|---------|-------------------
 All files        |      50 |       50 |     100 |      50 |                   
- half-covered.js |      50 |       50 |     100 |      50 | 6,7,8             
+ half-covered.js |      50 |       50 |     100 |      50 | 6-8               
 -----------------|---------|----------|---------|---------|-------------------
 
 `
@@ -103,32 +103,32 @@ File                             | % Stmts | % Branch | % Funcs | % Lines | Unco
 All files                        |       0 |        0 |       0 |       0 |                         
  cli                             |       0 |        0 |       0 |       0 |                         
   args.js                        |       0 |      100 |     100 |       0 | 1                       
-  by-arg2.js                     |       0 |        0 |     100 |       0 | 1,2,3,4,5,7             
+  by-arg2.js                     |       0 |        0 |     100 |       0 | 1-5,7                   
   classes.js                     |       0 |      100 |       0 |       0 | 5,6,11,15               
   conf-override-module.js        |       0 |      100 |     100 |       0 | 1,2                     
-  conf-override-root.js          |       0 |        0 |     100 |       0 | 1,2,4,5,6,22,23         
+  conf-override-root.js          |       0 |        0 |     100 |       0 | 1,2,4-6,22,23           
   empty.js                       |       0 |        0 |       0 |       0 |                         
   env.js                         |       0 |      100 |     100 |       0 | 1                       
-  es6.js                         |       0 |      100 |       0 |       0 | 5,9,10,11,16,17,22,23   
+  es6.js                         |       0 |      100 |       0 |       0 | 5,9-11,16,17,22,23      
   external-instrumenter.js       |       0 |        0 |       0 |       0 | 1                       
   gc.js                          |       0 |      100 |     100 |       0 | 2,3                     
-  half-covered-failing.js        |       0 |        0 |     100 |       0 | 1,3,5,6,7,8             
-  selfspawn-fibonacci.js         |       0 |        0 |       0 |       0 | ...21,23,26,27,28,29,30 
+  half-covered-failing.js        |       0 |        0 |     100 |       0 | 1,3,5-8                 
+  selfspawn-fibonacci.js         |       0 |        0 |       0 |       0 | ...11-13,17-21,23,26-30 
   skip-full.js                   |       0 |      100 |     100 |       0 | 1,2                     
   test.js                        |       0 |        0 |       0 |       0 |                         
  cli/fakebin                     |       0 |      100 |     100 |       0 |                         
-  npm-template.js                |       0 |      100 |     100 |       0 | 2,3,4,7,9               
+  npm-template.js                |       0 |      100 |     100 |       0 | 2-4,7,9                 
  cli/instrument-inplace          |       0 |      100 |       0 |       0 |                         
   file1.js                       |       0 |      100 |       0 |       0 | 2,5                     
   file2.js                       |       0 |      100 |       0 |       0 | 2,5                     
  cli/nyc-config-js               |       0 |        0 |     100 |       0 |                         
   ignore.js                      |       0 |      100 |     100 |       0 | 1                       
-  index.js                       |       0 |        0 |     100 |       0 | 1,3,5,7,8,9,10          
+  index.js                       |       0 |        0 |     100 |       0 | 1,3,5,7-10              
   nyc.config.js                  |       0 |      100 |     100 |       0 | 1                       
   nycrc-config.js                |       0 |      100 |     100 |       0 | 1                       
  cli/nycrc                       |       0 |        0 |     100 |       0 |                         
   ignore.js                      |       0 |      100 |     100 |       0 | 1                       
-  index.js                       |       0 |        0 |     100 |       0 | 1,3,5,7,8,9,10          
+  index.js                       |       0 |        0 |     100 |       0 | 1,3,5,7-10              
  cli/subdir/input-dir            |       0 |      100 |     100 |       0 |                         
   index.js                       |       0 |      100 |     100 |       0 | 2                       
  cli/subdir/input-dir/exclude-me |       0 |      100 |     100 |       0 |                         
@@ -147,35 +147,35 @@ File                             | % Stmts | % Branch | % Funcs | % Lines | Unco
 All files                        |    1.44 |        0 |       5 |    1.87 |                         
  cli                             |    2.06 |        0 |    5.56 |    3.08 |                         
   args.js                        |       0 |      100 |     100 |       0 | 1                       
-  by-arg2.js                     |       0 |        0 |     100 |       0 | 1,2,3,4,5,7             
+  by-arg2.js                     |       0 |        0 |     100 |       0 | 1-5,7                   
   classes.js                     |   66.67 |      100 |      50 |   66.67 | 6                       
   conf-override-module.js        |       0 |      100 |     100 |       0 | 1,2                     
-  conf-override-root.js          |       0 |        0 |     100 |       0 | 1,2,4,5,6,22,23         
+  conf-override-root.js          |       0 |        0 |     100 |       0 | 1,2,4-6,22,23           
   empty.js                       |       0 |        0 |       0 |       0 |                         
   env.js                         |       0 |      100 |     100 |       0 | 1                       
-  es6.js                         |       0 |      100 |       0 |       0 | 5,9,10,11,16,17,22,23   
+  es6.js                         |       0 |      100 |       0 |       0 | 5,9-11,16,17,22,23      
   external-instrumenter.js       |       0 |        0 |       0 |       0 | 1                       
   gc.js                          |       0 |      100 |     100 |       0 | 2,3                     
-  half-covered-failing.js        |       0 |        0 |     100 |       0 | 1,3,5,6,7,8             
-  half-covered.js                |       0 |        0 |     100 |       0 | 1,3,5,6,7,8             
-  selfspawn-fibonacci.js         |       0 |        0 |       0 |       0 | ...21,23,26,27,28,29,30 
+  half-covered-failing.js        |       0 |        0 |     100 |       0 | 1,3,5-8                 
+  half-covered.js                |       0 |        0 |     100 |       0 | 1,3,5-8                 
+  selfspawn-fibonacci.js         |       0 |        0 |       0 |       0 | ...11-13,17-21,23,26-30 
   skip-full.js                   |       0 |      100 |     100 |       0 | 1,2                     
  cli/fakebin                     |       0 |      100 |     100 |       0 |                         
-  npm-template.js                |       0 |      100 |     100 |       0 | 2,3,4,7,9               
+  npm-template.js                |       0 |      100 |     100 |       0 | 2-4,7,9                 
  cli/instrument-inplace          |       0 |      100 |       0 |       0 |                         
   file1.js                       |       0 |      100 |       0 |       0 | 2,5                     
   file2.js                       |       0 |      100 |       0 |       0 | 2,5                     
  cli/nyc-config-js               |       0 |        0 |     100 |       0 |                         
   ignore.js                      |       0 |      100 |     100 |       0 | 1                       
-  index.js                       |       0 |        0 |     100 |       0 | 1,3,5,7,8,9,10          
+  index.js                       |       0 |        0 |     100 |       0 | 1,3,5,7-10              
   nycrc-config.js                |       0 |      100 |     100 |       0 | 1                       
  cli/nycrc                       |       0 |        0 |     100 |       0 |                         
   ignore.js                      |       0 |      100 |     100 |       0 | 1                       
-  index.js                       |       0 |        0 |     100 |       0 | 1,3,5,7,8,9,10          
+  index.js                       |       0 |        0 |     100 |       0 | 1,3,5,7-10              
  cli/run-npm-test                |       0 |        0 |     100 |       0 |                         
-  half-covered.js                |       0 |        0 |     100 |       0 | 1,3,5,6,7,8             
+  half-covered.js                |       0 |        0 |     100 |       0 | 1,3,5-8                 
  cli/run-npm-test-recursive      |       0 |        0 |     100 |       0 |                         
-  half-covered.js                |       0 |        0 |     100 |       0 | 1,3,5,6,7,8             
+  half-covered.js                |       0 |        0 |     100 |       0 | 1,3,5-8                 
  cli/subdir/input-dir            |       0 |      100 |     100 |       0 |                         
   index.js                       |       0 |      100 |     100 |       0 | 2                       
  cli/subdir/input-dir/exclude-me |       0 |      100 |     100 |       0 |                         
@@ -192,7 +192,7 @@ exports[`test/nyc-integration.js TAP --include can be used to limit bin to instr
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -----------------|---------|----------|---------|---------|-------------------
 All files        |      50 |       50 |     100 |      50 |                   
- half-covered.js |      50 |       50 |     100 |      50 | 6,7,8             
+ half-covered.js |      50 |       50 |     100 |      50 | 6-8               
 -----------------|---------|----------|---------|---------|-------------------
 
 `
@@ -288,7 +288,7 @@ exports[`test/nyc-integration.js TAP allows alternative high and low watermarks 
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -----------------|---------|----------|---------|---------|-------------------
 [32;1mAll files       [0m | [32;1m     50[0m | [33;1m      50[0m | [32;1m    100[0m | [31;1m     50[0m | [31;1m                 [0m 
-[32;1m half-covered.js[0m | [32;1m     50[0m | [33;1m      50[0m | [32;1m    100[0m | [31;1m     50[0m | [31;1m6,7,8            [0m 
+[32;1m half-covered.js[0m | [32;1m     50[0m | [33;1m      50[0m | [32;1m    100[0m | [31;1m     50[0m | [31;1m6-8              [0m 
 -----------------|---------|----------|---------|---------|-------------------
 
 `
@@ -298,7 +298,7 @@ exports[`test/nyc-integration.js TAP allows an alternative cache folder to be sp
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -----------------|---------|----------|---------|---------|-------------------
 All files        |      50 |       50 |     100 |      50 |                   
- half-covered.js |      50 |       50 |     100 |      50 | 6,7,8             
+ half-covered.js |      50 |       50 |     100 |      50 | 6-8               
 -----------------|---------|----------|---------|---------|-------------------
 
 `
@@ -435,7 +435,7 @@ exports[`test/nyc-integration.js TAP can run "npm test" which directly invokes a
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -----------------|---------|----------|---------|---------|-------------------
 All files        |      50 |       50 |     100 |      50 |                   
- half-covered.js |      50 |       50 |     100 |      50 | 6,7,8             
+ half-covered.js |      50 |       50 |     100 |      50 | 6-8               
 -----------------|---------|----------|---------|---------|-------------------
 
 `
@@ -457,7 +457,7 @@ exports[`test/nyc-integration.js TAP can run "npm test" which indirectly invokes
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -----------------|---------|----------|---------|---------|-------------------
 All files        |      50 |       50 |     100 |      50 |                   
- half-covered.js |      50 |       50 |     100 |      50 | 6,7,8             
+ half-covered.js |      50 |       50 |     100 |      50 | 6-8               
 -----------------|---------|----------|---------|---------|-------------------
 
 `
@@ -472,7 +472,7 @@ exports[`test/nyc-integration.js TAP check-coverage command is equivalent to the
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -----------------|---------|----------|---------|---------|-------------------
 All files        |      50 |       50 |     100 |      50 |                   
- half-covered.js |      50 |       50 |     100 |      50 | 6,7,8             
+ half-covered.js |      50 |       50 |     100 |      50 | 6-8               
 -----------------|---------|----------|---------|---------|-------------------
 
 `
@@ -491,7 +491,7 @@ exports[`test/nyc-integration.js TAP does not create .cache folder if cache is "
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -----------------|---------|----------|---------|---------|-------------------
 All files        |      50 |       50 |     100 |      50 |                   
- half-covered.js |      50 |       50 |     100 |      50 | 6,7,8             
+ half-covered.js |      50 |       50 |     100 |      50 | 6-8               
 -----------------|---------|----------|---------|---------|-------------------
 
 `
@@ -893,7 +893,7 @@ exports[`test/nyc-integration.js TAP report and check should show coverage check
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -----------------|---------|----------|---------|---------|-------------------
 All files        |      50 |       50 |     100 |      50 |                   
- half-covered.js |      50 |       50 |     100 |      50 | 6,7,8             
+ half-covered.js |      50 |       50 |     100 |      50 | 6-8               
 -----------------|---------|----------|---------|---------|-------------------
 
 `
@@ -974,7 +974,7 @@ exports[`test/nyc-integration.js TAP skip-full does not display files with 100% 
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -----------------|---------|----------|---------|---------|-------------------
 All files        |    62.5 |       50 |     100 |    62.5 |                   
- half-covered.js |      50 |       50 |     100 |      50 | 6,7,8             
+ half-covered.js |      50 |       50 |     100 |      50 | 6-8               
 -----------------|---------|----------|---------|---------|-------------------
 
 `
