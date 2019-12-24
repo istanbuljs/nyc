@@ -71,7 +71,6 @@
     "istanbul-lib-report": "^3.0.0",
     "istanbul-lib-source-maps": "^4.0.0",
     "istanbul-reports": "^3.0.0",
-    "js-yaml": "^3.13.1",
     "make-dir": "^3.0.0",
     "p-map": "^3.0.0",
     "process-on-spawn": "^1.0.0",
