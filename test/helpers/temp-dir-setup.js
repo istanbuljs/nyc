@@ -11,14 +11,14 @@ const mkdtemp = promisify(fs.mkdtemp)
 
 function tempDirSetup (t, testFile) {
   const { dir, name } = path.parse(testFile)
-  const tempDirBase = path.resolve(dir, 'temp-dir-' + name)
+  const tempDirBase = path.resolve(dir, `temp-dir-${name}`)
 
   makeDir.sync(tempDirBase)
 
   // Do not use arrow function for beforeEach
   // or afterEach, they need this from tap.
   t.beforeEach(async function () {
-    this.tempDir = await mkdtemp(tempDirBase + '/')
+    this.tempDir = await mkdtemp(`${tempDirBase}/`)
   })
 
   t.afterEach(function () {

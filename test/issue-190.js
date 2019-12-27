@@ -13,14 +13,14 @@ const fakebin = path.resolve(fixturesCLI, 'fakebin')
 const spawnOptions = {
   cwd: path.resolve(fixturesCLI, 'run-npm-test-recursive'),
   env: {
-    PATH: fakebin + ':' + process.env.PATH
+    PATH: `${fakebin}:${process.env.PATH}`
   }
 }
 
 async function writeFakeNPM (shebang) {
   const targetPath = path.resolve(fakebin, 'npm')
   const source = await fs.readFile(path.resolve(fakebin, 'npm-template.js'))
-  await fs.writeFile(targetPath, '#!' + shebang + '\n' + source)
+  await fs.writeFile(targetPath, `#!${shebang}\n${source}`)
   await fs.chmod(targetPath, 493) // 0o755
 }
 

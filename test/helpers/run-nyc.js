@@ -34,7 +34,7 @@ function sanitizeString (str, cwd, leavePathSep) {
 async function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI, env = {} }) {
   const runArgs = [nycBin].concat(tempDir ? ['--temp-dir', tempDir] : [], args)
   const { status, stderr, stdout } = await spawn(process.execPath, runArgs, {
-    cwd: cwd,
+    cwd,
     env: {
       ...envPath,
       ...env

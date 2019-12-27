@@ -15,7 +15,7 @@ module.exports = {
     const selfCoverageDir = path.join(__dirname, '.self_coverage')
     mkdirp.sync(selfCoverageDir)
     fs.writeFileSync(
-      path.join(selfCoverageDir, process.pid + '.json'),
+      path.join(selfCoverageDir, `${process.pid}.json`),
       JSON.stringify(coverage),
       'utf-8'
     )

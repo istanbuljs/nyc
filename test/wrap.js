@@ -28,8 +28,8 @@ t.test('wraps modules with coverage counters when they are required', async t =>
 
 t.test('wraps modules with coverage counters when the custom require hook compiles them', async t => {
   let required = false
-  const hook = function (module, filename) {
-    if (filename.indexOf('check-instrumented.js') !== -1) {
+  const hook = (module, filename) => {
+    if (filename.includes('check-instrumented.js')) {
       required = true
     }
     module._compile(fs.readFileSync(filename, 'utf8'), filename)

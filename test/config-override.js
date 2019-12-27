@@ -10,6 +10,7 @@ t.test('spawn that does config overriding', t => testSuccess(t, {
   args: [
     '--exclude-after-remap=false',
     '--include=conf-override-root.js',
-    process.execPath, 'conf-override-root.js'
+    process.execPath,
+    'conf-override-root.js'
   ]
 }))

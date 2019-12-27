@@ -8,14 +8,14 @@ const extensions = Object.assign({}, require.extensions) // eslint-disable-line
 const glob = promisify(require('glob'))
 const rimraf = promisify(require('rimraf'))
 
-module.exports = async function () {
+module.exports = async () => {
   // nuke any temporary files created during test runs.
   const files = await glob('test/**/*/{.nyc_output,.cache}')
   await Promise.all(files.map(f => rimraf(f)))
 
   // reset Node's require cache.
   Object.keys(require.cache).forEach((key) => {
-    if (key.indexOf('node_modules') === -1) delete require.cache[key]
+    if (!key.includes('node_modules')) delete require.cache[key]
   })
 
   // reset any custom loaders for extensions, disabling the stack maintained

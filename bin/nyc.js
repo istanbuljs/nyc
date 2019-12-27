@@ -5,7 +5,7 @@ const configUtil = require('../lib/config-util')
 const { cliWrapper, suppressEPIPE } = require('../lib/commands/helpers')
 const foreground = require('foreground-child')
 const resolveFrom = require('resolve-from')
-const NYC = require('../index.js')
+const NYC = require('..')
 
 // parse configuration and command-line arguments;
 // we keep these values in a few different forms,
@@ -32,7 +32,7 @@ async function main () {
   if (!argv.instrument) argv.instrumenter = './lib/instrumenters/noop'
   else argv.instrumenter = './lib/instrumenters/istanbul'
 
-  var nyc = (new NYC(argv))
+  const nyc = (new NYC(argv))
   if (argv.clean) {
     await nyc.reset()
   } else {

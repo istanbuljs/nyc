@@ -36,7 +36,7 @@ if (/self-coverage/.test(__dirname)) {
 }
 
 function coverageFinder () {
-  var coverage = global.__coverage__
+  let coverage = global.__coverage__
   if (typeof __coverage__ === 'object') coverage = __coverage__
   if (!coverage) coverage = global.__coverage__ = {}
   return coverage
@@ -90,9 +90,10 @@ class NYC {
     this.hookRunInThisContext = config.hookRunInThisContext
     this.fakeRequire = null
 
-    this.processInfo = new ProcessInfo(Object.assign({}, config._processInfo, {
+    this.processInfo = new ProcessInfo({
+      ...config._processInfo,
       directory: path.resolve(this.tempDirectory(), 'processinfo')
-    }))
+    })
 
     this.hashCache = {}
   }
@@ -101,7 +102,7 @@ class NYC {
     const opts = {
       salt: Hash.salt(this.config),
       hashData: (input, metadata) => [metadata.filename],
-      filenamePrefix: metadata => path.parse(metadata.filename).name + '-',
+      filenamePrefix: metadata => `${path.parse(metadata.filename).name}-`,
       onHash: (input, metadata, hash) => {
         this.hashCache[metadata.filename] = hash
       },
@@ -109,7 +110,7 @@ class NYC {
       // when running --all we should not load source-file from
       // cache, we want to instead return the fake source.
       disableCache: this._disableCachingTransform(),
-      ext: ext
+      ext
     }
     if (this._eagerInstantiation) {
       opts.transform = this._transformFactory(this.cacheDirectory)
@@ -157,13 +158,13 @@ class NYC {
   }
 
   _readTranspiledSource (filePath) {
-    var source = null
-    var ext = path.extname(filePath)
+    let source = null
+    let ext = path.extname(filePath)
     if (typeof Module._extensions[ext] === 'undefined') {
       ext = '.js'
     }
     Module._extensions[ext]({
-      _compile: function (content, filename) {
+      _compile (content) {
         source = content
       }
     }, filePath)
@@ -194,7 +195,7 @@ class NYC {
   }
 
   async instrumentAllFiles (input, output) {
-    let inputDir = '.' + path.sep
+    let inputDir = `.${path.sep}`
     const visitor = async relFile => {
       const inFile = path.resolve(inputDir, relFile)
       const inCode = await fs.readFile(inFile, 'utf-8')
@@ -270,12 +271,12 @@ class NYC {
     }
   }
 
-  _transformFactory (cacheDir) {
+  _transformFactory () {
     const instrumenter = this.instrumenter()
     let instrumented
 
     return (code, metadata, hash) => {
-      const filename = metadata.filename
+      const { filename } = metadata
       const sourceMap = {}
 
       if (this._sourceMap) {
@@ -287,10 +288,10 @@ class NYC {
 
       try {
         instrumented = instrumenter.instrumentSync(code, filename, sourceMap)
-      } catch (e) {
-        debugLog('failed to instrument ' + filename + ' with error: ' + e.stack)
+      } catch (error) {
+        debugLog(`failed to instrument ${filename} with error: ${error.stack}`)
         if (this.config.exitOnError) {
-          console.error('Failed to instrument ' + filename)
+          console.error(`Failed to instrument ${filename}`)
           process.exit(1)
         } else {
           instrumented = code
@@ -299,9 +300,8 @@ class NYC {
 
       if (this.fakeRequire) {
         return 'function x () {}'
-      } else {
-        return instrumented
       }
+      return instrumented
     }
   }
 
@@ -314,7 +314,7 @@ class NYC {
   _addHook (type) {
     const handleJs = this._handleJs.bind(this)
     const dummyMatcher = () => true // we do all processing in transformer
-    libHook['hook' + type](dummyMatcher, handleJs, { extensions: this.extensions })
+    libHook[`hook${type}`](dummyMatcher, handleJs, { extensions: this.extensions })
   }
 
   _addRequireHooks () {
@@ -360,7 +360,7 @@ class NYC {
     )
   }
 
-  wrap (bin) {
+  wrap () {
     process.env.NYC_PROCESS_ID = this.processInfo.uuid
     // This is a bug with the spawn-wrap method where
     // we cannot force propagation of NYC_PROCESS_ID.
@@ -375,7 +375,7 @@ class NYC {
   }
 
   writeCoverageFile () {
-    var coverage = coverageFinder()
+    const coverage = coverageFinder()
 
     // Remove any files that should be excluded but snuck into the coverage
     Object.keys(coverage).forEach(function (absFile) {
@@ -392,8 +392,8 @@ class NYC {
       }, this)
     }
 
-    var id = this.processInfo.uuid
-    var coverageFilename = path.resolve(this.tempDirectory(), id + '.json')
+    const id = this.processInfo.uuid
+    const coverageFilename = path.resolve(this.tempDirectory(), `${id}.json`)
 
     fs.writeFileSync(
       coverageFilename,
@@ -476,14 +476,14 @@ class NYC {
   }
 
   _checkCoverage (summary, thresholds, file) {
-    Object.keys(thresholds).forEach(function (key) {
-      var coverage = summary[key].pct
+    Object.keys(thresholds).forEach(key => {
+      const coverage = summary[key].pct
       if (coverage < thresholds[key]) {
         process.exitCode = 1
         if (file) {
-          console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet threshold (' + thresholds[key] + '%) for ' + file)
+          console.error(`ERROR: Coverage for ${key} (${coverage}%) does not meet threshold (${thresholds[key]}%) for ${file}`)
         } else {
-          console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet global threshold (' + thresholds[key] + '%)')
+          console.error(`ERROR: Coverage for ${key} (${coverage}%) does not meet global threshold (${thresholds[key]}%)`)
         }
       }
     })

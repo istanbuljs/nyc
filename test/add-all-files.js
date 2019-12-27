@@ -78,7 +78,7 @@ t.test('transpiles .js files added via addAllFiles', async t => {
   await fs.unlink(needsTranspilePath)
 })
 
-t.test('does not attempt to transpile files when they are excluded', async t => {
+t.test('does not attempt to transpile files when they are excluded', async () => {
   const notNeedTranspilePath = path.join(fixtures, './do-not-need-transpile.do-not-transpile')
   await fs.writeFile(
     notNeedTranspilePath,
