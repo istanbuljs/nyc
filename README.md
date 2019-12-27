@@ -18,6 +18,7 @@ Istanbul's state of the art command line interface, with support for:
 
 Use your package manager to add it as a dev dependency: `npm i -D nyc` or `yarn add -D nyc`.
 You can use nyc to call npm scripts (assuming they don't already have nyc executed in them), like so (replace `mocha` with your test runner everywhere you see it):
+
 ```json
 {
   "scripts": {
@@ -67,6 +68,7 @@ Please start with the pre-configured [`@istanbuljs/nyc-config-typescript`](https
 
 nyc allows you to inherit other configurations using the key `extends` in the `package.json` stanza, `.nycrc`, or YAML files.
 You can then add the specific configuration options you want that aren't in that particular shared config, e.g.
+
 ```json
 {
   "nyc": {
@@ -108,8 +110,10 @@ This table is a quick TLDR for the rest of this readme and there are more advanc
 | `temp-dir` | Directory to output raw coverage information to | `String` | `./.nyc_output` |
 
 Configuration can also be provided by `nyc.config.js` if programmed logic is required:
+
 ```js
 'use strict';
+
 const defaultExclude = require('@istanbuljs/schema/default-exclude');
 const isWindows = require('is-windows');
 
@@ -127,7 +131,10 @@ module.exports = {
 To publish and reuse your own `nyc` configuration, simply create an npm module that exports your JSON config (via [`index.json`](https://github.com/istanbuljs/istanbuljs/blob/master/packages/nyc-config-typescript/) or a CJS [`index.js`](https://github.com/istanbuljs/istanbuljs/blob/master/packages/nyc-config-hook-run-in-this-context/)).
 
 A more advanced use case would be to combine multiple shared configs in a `nyc.config.js` file:
+
 ```js
+'use strict';
+
 const babelConfig = require('@istanbuljs/nyc-config-babel');
 const hookRunInThisContextConfig = require('@istanbuljs/nyc-config-hook-run-in-this-context');
 
@@ -158,9 +165,10 @@ The `exclude` array may also use exclude negated glob patterns, these are specif
 Globs are matched using [minimatch](https://www.npmjs.com/package/minimatch).
 
 We use the following process to remove files from consideration:
- 1. Limit the set of instrumented files to those files in paths listed in the `include` array.
- 2. Remove any files that are found in the `exclude` array.
- 3. Restore any exclude negated files that have been excluded in step 2.
+
+1. Limit the set of instrumented files to those files in paths listed in the `include` array.
+2. Remove any files that are found in the `exclude` array.
+3. Restore any exclude negated files that have been excluded in step 2.
 
 ### Using include and exclude arrays
 
@@ -231,20 +239,22 @@ If nyc fails to find a directory containing a `package.json` file, it will use t
 You can change the project root directory with the `--cwd` option.
 
 nyc uses the project root directory when:
- * looking for source files to instrument
- * creating globs for include and exclude rules during file selection
- * loading custom require hooks from the `require` array
 
-nyc may create artefact directories within the project root, with these defaults:
-  * the report directory, `<project-root>/coverage`
-  * the cache directory, `<project-root>/node_modules/.cache/nyc`
-  * the temp directory, `<project-root>/.nyc_output`
+* looking for source files to instrument
+* creating globs for include and exclude rules during file selection
+* loading custom require hooks from the `require` array
+
+nyc may create artifact directories within the project root, with these defaults:
+
+* the report directory, `<project-root>/coverage`
+* the cache directory, `<project-root>/node_modules/.cache/nyc`
+* the temp directory, `<project-root>/.nyc_output`
 
 ## Require additional modules
 
 The `--require` flag can be provided to `nyc` to indicate that additional modules should be required in the subprocess collecting coverage:
 
-```
+```shell
 nyc --require esm mocha
 ```
 
@@ -328,6 +338,7 @@ rather than having to ignore every instance of that method:
 ```
 
 ## Combining reports from multiple runs
+
 If for whatever reason you have different test runners in your project or a different series of test runs for different kinds of tests, nyc will automatically combine the coverage report for you if configured correctly with the `--no-clean` flag and the `report` command.
 Originally inspired by @janiukjf in #1001, here's an example, where the `test:*` scripts (not shown) invoke only your test runner(s) and not nyc:
 

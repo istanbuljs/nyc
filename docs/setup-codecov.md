@@ -5,11 +5,12 @@
 ## Quick start
 
 Assuming your `npm test` does not run `nyc` and you have the `npx` executable (npm v5.2+), have your CI runner execute the following:
+
 ```shell
 npx nyc --reporter=lcov npm test && npx codecov
 ```
 
-## Without `npx` - TravisCI example using npm scripts
+## Without `npx` - Travis CI example using npm scripts
 
 1. add the codecov and nyc dependencies:
 
@@ -28,7 +29,7 @@ npx nyc --reporter=lcov npm test && npx codecov
   }
   ```
 
-3. For private repos, add the environment variable `CODECOV_TOKEN` to travis.
+3. For private repos, add the environment variable `CODECOV_TOKEN` to Travis CI.
 
 4. add the following to your `.travis.yml`:
 
