@@ -1,0 +1,31 @@
+version: "{build}"
+
+shallow_clone: true
+
+environment:
+  matrix:
+    - NODEJS_VERSION: "13"
+      PLATFORM: x64
+    - NODEJS_VERSION: "12"
+      PLATFORM: x64
+    - NODEJS_VERSION: "10"
+      PLATFORM: x64
+    - NODEJS_VERSION: "8"
+      PLATFORM: x64
+
+install:
+  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:NODEJS_VERSION) $env:PLATFORM
+  - npm ci
+
+test_script:
+  - node --version
+  - npm --version
+  - npm test
+
+build: off
+
+matrix:
+  fast_finish: true
+
+cache:
+  - '%APPDATA%\npm-cache\ -> appveyor.yml,package.json,package-lock.json'
