@@ -7,6 +7,12 @@ const envPath = {
   PATH: process.env.PATH
 }
 
+// Work around a Windows issue with `APPDATA`,
+// https://github.com/istanbuljs/nyc/issues/1248
+if ('APPDATA' in process.env) {
+  envPath.APPDATA = process.env.APPDATA
+}
+
 function sanitizeString (str, cwd, leavePathSep) {
   /*
    * File paths are different on different systems:
