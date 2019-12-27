@@ -5,9 +5,9 @@ These files are suitable for client side deployment during end to end testing.
 You can either pre-instrument your source, or write instrumented source to a stream.
 
 Run `nyc instrument --help` to display a full list of available command options.
- 
-## Pre-instrumented source 
- 
+
+## Pre-instrumented source
+
 You can create pre-instrumented source code by running:
 
 ```bash

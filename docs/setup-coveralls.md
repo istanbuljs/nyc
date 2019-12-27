@@ -21,7 +21,7 @@ integrated with coveralls and travis-ci.org:
   }
   ```
 
-3. For private repos, add the environment variable `COVERALLS_REPO_TOKEN` to travis.
+3. For private repos, add the environment variable `COVERALLS_REPO_TOKEN` to Travis CI.
 
 4. add the following to your `.travis.yml`:
 
