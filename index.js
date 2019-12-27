@@ -38,7 +38,7 @@ if (/self-coverage/.test(__dirname)) {
 function coverageFinder () {
   var coverage = global.__coverage__
   if (typeof __coverage__ === 'object') coverage = __coverage__
-  if (!coverage) coverage = global['__coverage__'] = {}
+  if (!coverage) coverage = global.__coverage__ = {}
   return coverage
 }
 

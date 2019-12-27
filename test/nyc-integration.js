@@ -596,15 +596,15 @@ t.test('combines multiple coverage reports', async t => {
   // branch and statement coverage.
   t.strictDeepEqual(
     mergedCoverage['/private/tmp/contrived/library.js'].s,
-    { '0': 2, '1': 1, '2': 1, '3': 2, '4': 1, '5': 1 }
+    { 0: 2, 1: 1, 2: 1, 3: 2, 4: 1, 5: 1 }
   )
   t.strictDeepEqual(
     mergedCoverage['/private/tmp/contrived/library.js'].f,
-    { '0': 1, '1': 1, '2': 2 }
+    { 0: 1, 1: 1, 2: 2 }
   )
   t.strictDeepEqual(
     mergedCoverage['/private/tmp/contrived/library.js'].b,
-    { '0': [1, 1] }
+    { 0: [1, 1] }
   )
   await rimraf(path.resolve(fixturesCLI, 'coverage.json'))
 })

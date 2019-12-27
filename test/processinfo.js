@@ -62,7 +62,7 @@ t.test('validate the created processinfo data', async t => {
       cwd: fixturesCLI,
       time: Number,
       coverageFilename: resolve(fixturesCLI, tmp, f),
-      files: [ resolvedJS ]
+      files: [resolvedJS]
     })
   }))
 })
@@ -75,11 +75,11 @@ t.test('check out the index', async t => {
   t.match(index, {
     processes: {},
     files: {
-      [resolvedJS]: [ u, u, u, u, u, u, u, u, u ]
+      [resolvedJS]: [u, u, u, u, u, u, u, u, u]
     },
     externalIds: {
       blorp: {
-        children: [ u, u, u, u, u, u, u, u ]
+        children: [u, u, u, u, u, u, u, u]
       }
     }
   })
