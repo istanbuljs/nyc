@@ -1,4 +1,5 @@
-'use strict'
+'use strict';
 
-require('../lib/wrap')
-require('spawn-wrap').runMain()
+/* eslint-disable-next-line import/no-unassigned-import */
+require('../lib/wrap');
+require('spawn-wrap').runMain();

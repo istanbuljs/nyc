@@ -1,6 +1,6 @@
-'use strict'
+'use strict';
 
-const { fixturesCLI, nycBin } = require('./paths')
+const {fixturesCLI, nycBin} = require('./paths');
 
 module.exports = {
   fixturesCLI,
@@ -13,4 +13,4 @@ module.exports = {
   tempDirSetup: require('./temp-dir-setup'),
   envCheckConfig: require('./env-check-config'),
   parseArgv: require('./parse-argv')
-}
+};

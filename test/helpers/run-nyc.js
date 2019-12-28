@@ -1,19 +1,19 @@
-'use strict'
+'use strict';
 
-const { nycBin, fixturesCLI } = require('./paths')
-const spawn = require('./spawn')
+const {nycBin, fixturesCLI} = require('./paths');
+const spawn = require('./spawn');
 
 const envPath = {
   PATH: process.env.PATH
-}
+};
 
 // Work around a Windows issue with `APPDATA`,
 // https://github.com/istanbuljs/nyc/issues/1248
 if ('APPDATA' in process.env) {
-  envPath.APPDATA = process.env.APPDATA
+  envPath.APPDATA = process.env.APPDATA;
 }
 
-function sanitizeString (str, cwd, leavePathSep) {
+function sanitizeString(str, cwd, leavePathSep) {
   /*
    * File paths are different on different systems:
    *   - make everything relative to cwd
@@ -22,24 +22,24 @@ function sanitizeString (str, cwd, leavePathSep) {
    */
   str = str
     .split(cwd).join('.')
-    .split(process.execPath).join('node')
+    .split(process.execPath).join('node');
 
   if (!leavePathSep) {
-    str = str.replace(/\\/g, '/')
+    str = str.replace(/\\/g, '/');
   }
 
-  return str
+  return str;
 }
 
-async function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI, env = {} }) {
-  const runArgs = [nycBin].concat(tempDir ? ['--temp-dir', tempDir] : [], args)
-  const { status, stderr, stdout } = await spawn(process.execPath, runArgs, {
-    cwd: cwd,
+async function runNYC({args, tempDir, leavePathSep, cwd = fixturesCLI, env = {}}) {
+  const runArgs = [nycBin].concat(tempDir ? ['--temp-dir', tempDir] : [], args);
+  const {status, stderr, stdout} = await spawn(process.execPath, runArgs, {
+    cwd,
     env: {
       ...envPath,
       ...env
     }
-  })
+  });
 
   return {
     status,
@@ -49,7 +49,7 @@ async function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI, env = {
     },
     stderr: sanitizeString(stderr, cwd, leavePathSep),
     stdout: sanitizeString(stdout, cwd, leavePathSep)
-  }
+  };
 }
 
-module.exports = runNYC
+module.exports = runNYC;

@@ -4,7 +4,7 @@
   "description": "the Istanbul command line interface",
   "main": "index.js",
   "scripts": {
-    "lint": "standard",
+    "lint": "xo",
     "pretest": "npm run lint && npm run clean && npm run instrument",
     "test": "tap",
     "snap": "npm test -- --snapshot",
@@ -22,12 +22,13 @@
     "bin/*.js",
     "lib/**/*.js"
   ],
-  "standard": {
+  "xo": {
     "ignore": [
-      "/tap-snapshots/",
-      "**/fixtures/**",
-      "**/test/build/*"
-    ]
+      "self-coverage",
+      "tap-snapshots",
+      "test/fixtures"
+    ],
+    "space": 2
   },
   "keywords": [
     "coverage",
@@ -89,10 +90,10 @@
     "is-windows": "^1.0.2",
     "requirejs": "^2.3.6",
     "source-map-support": "^0.5.16",
-    "standard": "^14.3.1",
     "standard-version": "^7.0.1",
     "tap": "^14.10.5",
-    "which": "^2.0.2"
+    "which": "^2.0.2",
+    "xo": "^0.25.3"
   },
   "engines": {
     "node": ">=8.9"

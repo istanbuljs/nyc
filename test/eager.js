@@ -1,12 +1,12 @@
-'use strict'
+'use strict';
 
-const path = require('path')
+const path = require('path');
 
-const t = require('tap')
+const t = require('tap');
 
-const { testSuccess } = require('./helpers')
+const {testSuccess} = require('./helpers');
 
-const cwd = path.resolve(__dirname, 'fixtures')
+const cwd = path.resolve(__dirname, 'fixtures');
 
 t.test('eager disabled by default', t => testSuccess(t, {
   args: [
@@ -16,7 +16,7 @@ t.test('eager disabled by default', t => testSuccess(t, {
     './eager.js'
   ],
   cwd
-}))
+}));
 
 t.test('eager enabled', t => testSuccess(t, {
   args: [
@@ -27,4 +27,4 @@ t.test('eager enabled', t => testSuccess(t, {
     './eager.js'
   ],
   cwd
-}))
+}));

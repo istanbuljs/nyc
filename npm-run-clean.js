@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-'use strict'
+'use strict';
 
-const { promisify } = require('util')
-const rimraf = promisify(require('rimraf'))
+const {promisify} = require('util');
+const rimraf = promisify(require('rimraf'));
 
 Promise.all([
   '**/.nyc_output',
@@ -16,4 +16,4 @@ Promise.all([
   'test/fixtures/cli/nyc-config-js/node_modules',
   'test/temp-dir-*',
   'self-coverage'
-].map(f => rimraf(f, { cwd: __dirname })))
+].map(f => rimraf(f, {cwd: __dirname})));
