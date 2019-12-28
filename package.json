@@ -24,8 +24,6 @@
   ],
   "xo": {
     "ignore": [
-      "self-coverage",
-      "tap-snapshots",
       "test/fixtures"
     ],
     "space": 2
