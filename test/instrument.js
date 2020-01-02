@@ -353,3 +353,52 @@ t.test('aborts if trying to clean outside working directory', async t => {
   t.strictEqual(status, 1)
   t.match(stderr, /attempt to delete/)
 })
+
+t.test('can produce baseline coverage if `--baseline` is set', async t => {
+  const { status } = await runNYC({
+    args: [
+      'instrument',
+      '--baseline',
+      './input-dir',
+      './output-dir'
+    ],
+    cwd: subdir
+  })
+
+  t.strictEqual(status, 0)
+  const target = path.resolve(subdir, 'output-dir', 'index.js')
+  t.match(await fs.readFile(target, 'utf8'), /console.log\('Hello, World!'\)/)
+  const baseline = path.resolve(fixturesCLI, '.nyc_output', 'baseline', 'coverage.json')
+  t.match(await fs.readFile(baseline, 'utf8'), /statementMap/)
+})
+
+t.test('can skip cleaning if `--no-clean` is set during baseline', async t => {
+  const args = [
+    'instrument',
+    '--baseline',
+    './input-dir',
+    './output-dir'
+  ]
+  const cwd = subdir
+
+  const { status: cleanStatus } = await runNYC({ args, cwd })
+
+  t.strictEqual(cleanStatus, 0)
+  const target = path.resolve(subdir, 'output-dir', 'index.js')
+  t.match(await fs.readFile(target, 'utf8'), /console.log\('Hello, World!'\)/)
+  const baseline = path.resolve(fixturesCLI, '.nyc_output', 'baseline', 'coverage.json')
+  t.match(await fs.readFile(baseline, 'utf8'), /statementMap/)
+
+  args.splice(2, 0, '--no-clean')
+  const { status: noCleanStatus } = await runNYC({ args, cwd })
+
+  t.strictEqual(noCleanStatus, 0)
+
+  const baselineDir = path.resolve(fixturesCLI, '.nyc_output', 'baseline')
+  const processinfoDir = path.resolve(fixturesCLI, '.nyc_output', 'processinfo')
+
+  const baselineFiles = await fs.readdir(baselineDir)
+  const processinfoFiles = await fs.readdir(processinfoDir)
+  t.equal(baselineFiles.length, 1)
+  t.equal(processinfoFiles.length, 2)
+})

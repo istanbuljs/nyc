@@ -18,6 +18,9 @@ nyc instrument <input> [output]
 The `[output]` directory is optional and can be located anywhere, if not set the instrumented code will be sent to `stdout`.
 For example, `nyc instrument . ./output` will produce instrumented versions of any source files it finds in `.` and store them in `./output`.
 
+The `--baseline` option will save a baseline coverage file to `<temp-dir>/baseline/coverage.json`.
+Include this file when reporting to highlight files with no test coverage.
+
 The `--delete` option will remove the existing output directory before instrumenting.
 
 The `--in-place` option will allow you to run the instrument command.
