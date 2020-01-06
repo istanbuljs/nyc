@@ -120,7 +120,7 @@ class NYC {
   }
 
   _disableCachingTransform () {
-    return !(this.cache && this.config.isChildProcess)
+    return !(this.cache && (this.config.isChildProcess || this.config.nycInstrumentCache))
   }
 
   _loadAdditionalModules () {
