@@ -294,7 +294,7 @@ t.test('nyc displays help to stderr when it doesn\'t know what to do', async t =
 
   t.equal(status, 1)
   t.equal(stdout, '')
-  t.equal(stderr, help.stdout)
+  t.match(stderr, help.stdout)
 })
 
 t.test('handles --clean / --no-clean properly', async t => {
