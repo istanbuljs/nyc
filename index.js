@@ -508,6 +508,7 @@ class NYC {
     }
   }
 
+  // TODO: Remove from nyc v16
   async coverageData (baseDirectory) {
     const files = await this.coverageFiles(baseDirectory)
     return pMap(
