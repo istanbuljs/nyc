@@ -102,7 +102,7 @@ This table is a quick TLDR for the rest of this readme and there are more advanc
 | `extension` | List of extensions that nyc should attempt to handle in addition to `.js` | `Array<String>` | `['.js', '.cjs', '.mjs', '.ts', '.tsx', '.jsx']` |
 | `include` | See [selecting files for coverage] for more info | `Array<String>` | `['**']`|
 | `exclude` | See [selecting files for coverage] for more info | `Array<String>` | [list](https://github.com/istanbuljs/schema/blob/master/default-exclude.js) |
-| `reporter` | [Coverage reporters to use](https://istanbul.js.org/docs/advanced/alternative-reporters/) | `Array<String>` | `['text']` |
+| `reporter` | May be set to a [built-in coverage reporter](https://istanbul.js.org/docs/advanced/alternative-reporters/) or an npm package (dev)dependency | `Array<String>` | `['text']` |
 | `report-dir` | Where to put the coverage report files | `String` | `./coverage` |
 | `skip-full` | Don't show files with 100% statement, branch, and function coverage | `Boolean` | `false` |
 | `temp-dir` | Directory to output raw coverage information to | `String` | `./.nyc_output` |
