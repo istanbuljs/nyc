@@ -10,8 +10,8 @@ exports[`test/instrument.js TAP can write files in place with --in-place switch 
 File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 ----------|---------|----------|---------|---------|-------------------
 All files |       0 |      100 |       0 |       0 |                   
- file1.js |       0 |      100 |       0 |       0 | 2,5               
- file2.js |       0 |      100 |       0 |       0 | 2,5               
+ file1.js |       0 |      100 |       0 |       0 | 2-5               
+ file2.js |       0 |      100 |       0 |       0 | 2-5               
 ----------|---------|----------|---------|---------|-------------------
 
 `
