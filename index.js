@@ -408,11 +408,16 @@ class NYC {
 
   async getCoverageMapFromAllCoverageFiles (baseDirectory) {
     const map = libCoverage.createCoverageMap({})
+    const files = await this.coverageFiles(baseDirectory)
 
-    const data = await this.coverageData(baseDirectory)
-    data.forEach(report => {
-      map.merge(report)
-    })
+    await pMap(
+      files,
+      async f => {
+        const report = await this.coverageFileLoad(f, baseDirectory)
+        map.merge(report)
+      },
+      { concurrency: os.cpus().length }
+    )
 
     map.data = await this.sourceMaps.remapCoverage(map.data)
 
@@ -503,6 +508,7 @@ class NYC {
     }
   }
 
+  // TODO: Remove from nyc v16
   async coverageData (baseDirectory) {
     const files = await this.coverageFiles(baseDirectory)
     return pMap(
