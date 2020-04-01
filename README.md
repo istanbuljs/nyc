@@ -71,11 +71,9 @@ You can then add the specific configuration options you want that aren't in that
 
 ```json
 {
-  "nyc": {
-    "extends": "@istanbuljs/nyc-config-typescript",
-    "all": true,
-    "check-coverage": true
-  }
+  "extends": "@istanbuljs/nyc-config-typescript",
+  "all": true,
+  "check-coverage": true
 }
 ```
 
@@ -184,20 +182,18 @@ Multiple `exclude` globs can be specified on the command line, each must follow 
 The default `exclude` list is defined in the [@istanbuljs/schema module](https://github.com/istanbuljs/schema/blob/master/default-exclude.js).
 Specifying your own exclude property completely replaces these defaults.
 
-For example, the following config will collect coverage for every file in the `src` directory regardless of whether it is `require()`'d in a test.
+For example, the following `nyc` config will collect coverage for every file in the `src` directory regardless of whether it is `require()`'d in a test.
 It will also exclude any files with the extension `.spec.js`.
 
 ```json
 {
-  "nyc": {
-    "all": true,
-    "include": [
-      "src/**/*.js"
-    ],
-    "exclude": [
-      "**/*.spec.js"
-    ]
-  }
+  "all": true,
+  "include": [
+    "src/**/*.js"
+  ],
+  "exclude": [
+    "**/*.spec.js"
+  ]
 }
 ```
 
@@ -209,24 +205,22 @@ To prevent this, wrap each glob in single quotes.
 We always add `**/node_modules/**` to the exclude list, even if not specified in the config.
 You can override this by setting `--exclude-node-modules=false`.
 
-For example, in the following config, `"excludeNodeModules: false"` will prevent `node_modules` from being added to the exclude rules.
+For example, `"excludeNodeModules: false"` in the following `nyc` config will prevent `node_modules` from being added to the exclude rules.
 The set of include rules then restrict nyc to only consider instrumenting files found under the `lib/` and `node_modules/@my-org/` directories.
 The exclude rules then prevent nyc instrumenting anything in a `test` folder and the file `node_modules/@my-org/something/unwanted.js`.
 
 ```json
 {
-  "nyc": {
-    "all": true,
-    "include": [
-      "lib/**",
-      "node_modules/@my-org/**"
-    ],
-    "exclude": [
-      "node_modules/@my-org/something/unwanted.js",
-      "**/test/**"
-    ],
-    "excludeNodeModules": false
-  }
+  "all": true,
+  "include": [
+    "lib/**",
+    "node_modules/@my-org/**"
+  ],
+  "exclude": [
+    "node_modules/@my-org/something/unwanted.js",
+    "**/test/**"
+  ],
+  "excludeNodeModules": false
 }
 ```
 
@@ -274,16 +268,14 @@ You can also change the default cache directory from `./node_modules/.cache/nyc`
 ## Coverage thresholds
 
 You can set custom coverage thresholds that will fail if `check-coverage` is set to `true` and your coverage drops below those thresholds.
-For example, in the following configuration, dropping below 80% branch, line, functions, or statements coverage would fail the build (you can have any combination of these):
+For example, in the following `nyc` configuration, dropping below 80% branch, line, functions, or statements coverage would fail the build (you can have any combination of these):
 
 ```json
 {
-  "nyc": {
-    "branches": 80,
-    "lines": 80,
-    "functions": 80,
-    "statements": 80
-  }
+  "branches": 80,
+  "lines": 80,
+  "functions": 80,
+  "statements": 80
 }
 ```
 
@@ -300,13 +292,11 @@ You can specify custom high and low watermarks in nyc's configuration:
 
 ```json
 {
-  "nyc": {
-    "watermarks": {
-      "lines": [80, 95],
-      "functions": [80, 95],
-      "branches": [80, 95],
-      "statements": [80, 95]
-    }
+  "watermarks": {
+    "lines": [80, 95],
+    "functions": [80, 95],
+    "branches": [80, 95],
+    "statements": [80, 95]
   }
 }
 ```
@@ -326,14 +316,11 @@ hints:
 
 ## Ignoring Methods
 
-There may be some methods that you want to universally ignore out of your classes
-rather than having to ignore every instance of that method:
+You can ignore every instance of a method simply by adding its name to the `ignore-class-method` array in your `nyc` config.
 
 ```json
 {
-  "nyc": {
-    "ignore-class-method": "render"
-  }
+  "ignore-class-method": ["render"]
 }
 ```
 
