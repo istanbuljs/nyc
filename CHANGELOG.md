@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [15.0.1](https://github.com/istanbuljs/nyc/compare/v15.0.0...v15.0.1) (2020-04-02)
+
+
+### Bug Fixes
+
+* Data merge concurrency limit to prevent OOM ([#1293](https://github.com/istanbuljs/nyc/issues/1293)) ([df34c1c](https://github.com/istanbuljs/nyc/commit/df34c1c71e74468fd67287caad2ac987176ae503)), closes [#1263](https://github.com/istanbuljs/nyc/issues/1263)
+* Ignore insignificant lines when coalesce text report ([#1300](https://github.com/istanbuljs/nyc/issues/1300)) ([3a577f0](https://github.com/istanbuljs/nyc/commit/3a577f0ddc4799d0334f7c154b612653a46b532f)), closes [istanbuljs/istanbuljs#525](https://github.com/istanbuljs/istanbuljs/issues/525)
+
 ## [15.0.0](https://github.com/istanbuljs/nyc/compare/v14.1.1...v15.0.0) (2019-12-20)
 
 
