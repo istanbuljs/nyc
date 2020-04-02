@@ -11,7 +11,7 @@ File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 ----------|---------|----------|---------|---------|-------------------
 All files |   44.44 |      100 |   33.33 |   44.44 |                   
  s1.js    |      80 |      100 |      50 |      80 | 7                 
- s2.js    |       0 |      100 |       0 |       0 | 1,2,4,6           
+ s2.js    |       0 |      100 |       0 |       0 | 1-6               
 ----------|---------|----------|---------|---------|-------------------
 
 `
@@ -22,10 +22,10 @@ run
 File                    | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 ------------------------|---------|----------|---------|---------|-------------------
 All files               |   11.11 |      100 |       0 |   11.11 |                   
- check-instrumented.es6 |       0 |      100 |       0 |       0 | 5,6               
- check-instrumented.js  |       0 |      100 |       0 |       0 | 5,6               
- not-loaded.es6         |       0 |      100 |     100 |       0 | 1,2               
- not-loaded.js          |       0 |      100 |     100 |       0 | 1,2               
+ check-instrumented.es6 |       0 |      100 |       0 |       0 | 5-6               
+ check-instrumented.js  |       0 |      100 |       0 |       0 | 5-6               
+ not-loaded.es6         |       0 |      100 |     100 |       0 | 1-2               
+ not-loaded.js          |       0 |      100 |     100 |       0 | 1-2               
  run.js                 |     100 |      100 |     100 |     100 |                   
 ------------------------|---------|----------|---------|---------|-------------------
 
@@ -36,7 +36,7 @@ exports[`test/nyc-integration.js TAP --all uses source-maps to exclude original 
 File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 ----------|---------|----------|---------|---------|-------------------
 All files |       0 |      100 |       0 |       0 |                   
- s2.js    |       0 |      100 |       0 |       0 | 1,2,4,6           
+ s2.js    |       0 |      100 |       0 |       0 | 1-6               
 ----------|---------|----------|---------|---------|-------------------
 
 `
@@ -97,93 +97,93 @@ All files        |      50 |       50 |     100 |      50 |
 `
 
 exports[`test/nyc-integration.js TAP --exclude should allow default exclude rules to be overridden > stdout 1`] = `
----------------------------------|---------|----------|---------|---------|-------------------------
-File                             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s       
----------------------------------|---------|----------|---------|---------|-------------------------
-All files                        |       0 |        0 |       0 |       0 |                         
- cli                             |       0 |        0 |       0 |       0 |                         
-  args.js                        |       0 |      100 |     100 |       0 | 1                       
-  by-arg2.js                     |       0 |        0 |     100 |       0 | 1-5,7                   
-  classes.js                     |       0 |      100 |       0 |       0 | 5,6,11,15               
-  conf-override-module.js        |       0 |      100 |     100 |       0 | 1,2                     
-  conf-override-root.js          |       0 |        0 |     100 |       0 | 1,2,4-6,22,23           
-  empty.js                       |       0 |        0 |       0 |       0 |                         
-  env.js                         |       0 |      100 |     100 |       0 | 1                       
-  es6.js                         |       0 |      100 |       0 |       0 | 5,9-11,16,17,22,23      
-  external-instrumenter.js       |       0 |        0 |       0 |       0 | 1                       
-  gc.js                          |       0 |      100 |     100 |       0 | 2,3                     
-  half-covered-failing.js        |       0 |        0 |     100 |       0 | 1,3,5-8                 
-  selfspawn-fibonacci.js         |       0 |        0 |       0 |       0 | ...11-13,17-21,23,26-30 
-  skip-full.js                   |       0 |      100 |     100 |       0 | 1,2                     
-  test.js                        |       0 |        0 |       0 |       0 |                         
- cli/fakebin                     |       0 |      100 |     100 |       0 |                         
-  npm-template.js                |       0 |      100 |     100 |       0 | 2-4,7,9                 
- cli/instrument-inplace          |       0 |      100 |       0 |       0 |                         
-  file1.js                       |       0 |      100 |       0 |       0 | 2,5                     
-  file2.js                       |       0 |      100 |       0 |       0 | 2,5                     
- cli/nyc-config-js               |       0 |        0 |     100 |       0 |                         
-  ignore.js                      |       0 |      100 |     100 |       0 | 1                       
-  index.js                       |       0 |        0 |     100 |       0 | 1,3,5,7-10              
-  nyc.config.js                  |       0 |      100 |     100 |       0 | 1                       
-  nycrc-config.js                |       0 |      100 |     100 |       0 | 1                       
- cli/nycrc                       |       0 |        0 |     100 |       0 |                         
-  ignore.js                      |       0 |      100 |     100 |       0 | 1                       
-  index.js                       |       0 |        0 |     100 |       0 | 1,3,5,7-10              
- cli/subdir/input-dir            |       0 |      100 |     100 |       0 |                         
-  index.js                       |       0 |      100 |     100 |       0 | 2                       
- cli/subdir/input-dir/exclude-me |       0 |      100 |     100 |       0 |                         
-  index.js                       |       0 |      100 |     100 |       0 | 2                       
- cli/subdir/input-dir/include-me |       0 |      100 |     100 |       0 |                         
-  exclude-me.js                  |       0 |      100 |     100 |       0 | 2                       
-  include-me.js                  |       0 |      100 |     100 |       0 | 2                       
----------------------------------|---------|----------|---------|---------|-------------------------
+---------------------------------|---------|----------|---------|---------|-------------------
+File                             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+---------------------------------|---------|----------|---------|---------|-------------------
+All files                        |       0 |        0 |       0 |       0 |                   
+ cli                             |       0 |        0 |       0 |       0 |                   
+  args.js                        |       0 |      100 |     100 |       0 | 1                 
+  by-arg2.js                     |       0 |        0 |     100 |       0 | 1-7               
+  classes.js                     |       0 |      100 |       0 |       0 | 5-15              
+  conf-override-module.js        |       0 |      100 |     100 |       0 | 1-2               
+  conf-override-root.js          |       0 |        0 |     100 |       0 | 1-23              
+  empty.js                       |       0 |        0 |       0 |       0 |                   
+  env.js                         |       0 |      100 |     100 |       0 | 1                 
+  es6.js                         |       0 |      100 |       0 |       0 | 5-23              
+  external-instrumenter.js       |       0 |        0 |       0 |       0 | 1                 
+  gc.js                          |       0 |      100 |     100 |       0 | 2-3               
+  half-covered-failing.js        |       0 |        0 |     100 |       0 | 1-8               
+  selfspawn-fibonacci.js         |       0 |        0 |       0 |       0 | 2-30              
+  skip-full.js                   |       0 |      100 |     100 |       0 | 1-2               
+  test.js                        |       0 |        0 |       0 |       0 |                   
+ cli/fakebin                     |       0 |      100 |     100 |       0 |                   
+  npm-template.js                |       0 |      100 |     100 |       0 | 2-9               
+ cli/instrument-inplace          |       0 |      100 |       0 |       0 |                   
+  file1.js                       |       0 |      100 |       0 |       0 | 2-5               
+  file2.js                       |       0 |      100 |       0 |       0 | 2-5               
+ cli/nyc-config-js               |       0 |        0 |     100 |       0 |                   
+  ignore.js                      |       0 |      100 |     100 |       0 | 1                 
+  index.js                       |       0 |        0 |     100 |       0 | 1-10              
+  nyc.config.js                  |       0 |      100 |     100 |       0 | 1                 
+  nycrc-config.js                |       0 |      100 |     100 |       0 | 1                 
+ cli/nycrc                       |       0 |        0 |     100 |       0 |                   
+  ignore.js                      |       0 |      100 |     100 |       0 | 1                 
+  index.js                       |       0 |        0 |     100 |       0 | 1-10              
+ cli/subdir/input-dir            |       0 |      100 |     100 |       0 |                   
+  index.js                       |       0 |      100 |     100 |       0 | 2                 
+ cli/subdir/input-dir/exclude-me |       0 |      100 |     100 |       0 |                   
+  index.js                       |       0 |      100 |     100 |       0 | 2                 
+ cli/subdir/input-dir/include-me |       0 |      100 |     100 |       0 |                   
+  exclude-me.js                  |       0 |      100 |     100 |       0 | 2                 
+  include-me.js                  |       0 |      100 |     100 |       0 | 2                 
+---------------------------------|---------|----------|---------|---------|-------------------
 
 `
 
 exports[`test/nyc-integration.js TAP --ignore-class-method skips methods that match ignored name but still catches those that are not > stdout 1`] = `
----------------------------------|---------|----------|---------|---------|-------------------------
-File                             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s       
----------------------------------|---------|----------|---------|---------|-------------------------
-All files                        |    1.44 |        0 |       5 |    1.87 |                         
- cli                             |    2.06 |        0 |    5.56 |    3.08 |                         
-  args.js                        |       0 |      100 |     100 |       0 | 1                       
-  by-arg2.js                     |       0 |        0 |     100 |       0 | 1-5,7                   
-  classes.js                     |   66.67 |      100 |      50 |   66.67 | 6                       
-  conf-override-module.js        |       0 |      100 |     100 |       0 | 1,2                     
-  conf-override-root.js          |       0 |        0 |     100 |       0 | 1,2,4-6,22,23           
-  empty.js                       |       0 |        0 |       0 |       0 |                         
-  env.js                         |       0 |      100 |     100 |       0 | 1                       
-  es6.js                         |       0 |      100 |       0 |       0 | 5,9-11,16,17,22,23      
-  external-instrumenter.js       |       0 |        0 |       0 |       0 | 1                       
-  gc.js                          |       0 |      100 |     100 |       0 | 2,3                     
-  half-covered-failing.js        |       0 |        0 |     100 |       0 | 1,3,5-8                 
-  half-covered.js                |       0 |        0 |     100 |       0 | 1,3,5-8                 
-  selfspawn-fibonacci.js         |       0 |        0 |       0 |       0 | ...11-13,17-21,23,26-30 
-  skip-full.js                   |       0 |      100 |     100 |       0 | 1,2                     
- cli/fakebin                     |       0 |      100 |     100 |       0 |                         
-  npm-template.js                |       0 |      100 |     100 |       0 | 2-4,7,9                 
- cli/instrument-inplace          |       0 |      100 |       0 |       0 |                         
-  file1.js                       |       0 |      100 |       0 |       0 | 2,5                     
-  file2.js                       |       0 |      100 |       0 |       0 | 2,5                     
- cli/nyc-config-js               |       0 |        0 |     100 |       0 |                         
-  ignore.js                      |       0 |      100 |     100 |       0 | 1                       
-  index.js                       |       0 |        0 |     100 |       0 | 1,3,5,7-10              
-  nycrc-config.js                |       0 |      100 |     100 |       0 | 1                       
- cli/nycrc                       |       0 |        0 |     100 |       0 |                         
-  ignore.js                      |       0 |      100 |     100 |       0 | 1                       
-  index.js                       |       0 |        0 |     100 |       0 | 1,3,5,7-10              
- cli/run-npm-test                |       0 |        0 |     100 |       0 |                         
-  half-covered.js                |       0 |        0 |     100 |       0 | 1,3,5-8                 
- cli/run-npm-test-recursive      |       0 |        0 |     100 |       0 |                         
-  half-covered.js                |       0 |        0 |     100 |       0 | 1,3,5-8                 
- cli/subdir/input-dir            |       0 |      100 |     100 |       0 |                         
-  index.js                       |       0 |      100 |     100 |       0 | 2                       
- cli/subdir/input-dir/exclude-me |       0 |      100 |     100 |       0 |                         
-  index.js                       |       0 |      100 |     100 |       0 | 2                       
- cli/subdir/input-dir/include-me |       0 |      100 |     100 |       0 |                         
-  exclude-me.js                  |       0 |      100 |     100 |       0 | 2                       
-  include-me.js                  |       0 |      100 |     100 |       0 | 2                       
----------------------------------|---------|----------|---------|---------|-------------------------
+---------------------------------|---------|----------|---------|---------|-------------------
+File                             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+---------------------------------|---------|----------|---------|---------|-------------------
+All files                        |    1.44 |        0 |       5 |    1.87 |                   
+ cli                             |    2.06 |        0 |    5.56 |    3.08 |                   
+  args.js                        |       0 |      100 |     100 |       0 | 1                 
+  by-arg2.js                     |       0 |        0 |     100 |       0 | 1-7               
+  classes.js                     |   66.67 |      100 |      50 |   66.67 | 6                 
+  conf-override-module.js        |       0 |      100 |     100 |       0 | 1-2               
+  conf-override-root.js          |       0 |        0 |     100 |       0 | 1-23              
+  empty.js                       |       0 |        0 |       0 |       0 |                   
+  env.js                         |       0 |      100 |     100 |       0 | 1                 
+  es6.js                         |       0 |      100 |       0 |       0 | 5-23              
+  external-instrumenter.js       |       0 |        0 |       0 |       0 | 1                 
+  gc.js                          |       0 |      100 |     100 |       0 | 2-3               
+  half-covered-failing.js        |       0 |        0 |     100 |       0 | 1-8               
+  half-covered.js                |       0 |        0 |     100 |       0 | 1-8               
+  selfspawn-fibonacci.js         |       0 |        0 |       0 |       0 | 2-30              
+  skip-full.js                   |       0 |      100 |     100 |       0 | 1-2               
+ cli/fakebin                     |       0 |      100 |     100 |       0 |                   
+  npm-template.js                |       0 |      100 |     100 |       0 | 2-9               
+ cli/instrument-inplace          |       0 |      100 |       0 |       0 |                   
+  file1.js                       |       0 |      100 |       0 |       0 | 2-5               
+  file2.js                       |       0 |      100 |       0 |       0 | 2-5               
+ cli/nyc-config-js               |       0 |        0 |     100 |       0 |                   
+  ignore.js                      |       0 |      100 |     100 |       0 | 1                 
+  index.js                       |       0 |        0 |     100 |       0 | 1-10              
+  nycrc-config.js                |       0 |      100 |     100 |       0 | 1                 
+ cli/nycrc                       |       0 |        0 |     100 |       0 |                   
+  ignore.js                      |       0 |      100 |     100 |       0 | 1                 
+  index.js                       |       0 |        0 |     100 |       0 | 1-10              
+ cli/run-npm-test                |       0 |        0 |     100 |       0 |                   
+  half-covered.js                |       0 |        0 |     100 |       0 | 1-8               
+ cli/run-npm-test-recursive      |       0 |        0 |     100 |       0 |                   
+  half-covered.js                |       0 |        0 |     100 |       0 | 1-8               
+ cli/subdir/input-dir            |       0 |      100 |     100 |       0 |                   
+  index.js                       |       0 |      100 |     100 |       0 | 2                 
+ cli/subdir/input-dir/exclude-me |       0 |      100 |     100 |       0 |                   
+  index.js                       |       0 |      100 |     100 |       0 | 2                 
+ cli/subdir/input-dir/include-me |       0 |      100 |     100 |       0 |                   
+  exclude-me.js                  |       0 |      100 |     100 |       0 | 2                 
+  include-me.js                  |       0 |      100 |     100 |       0 | 2                 
+---------------------------------|---------|----------|---------|---------|-------------------
 
 `
 
@@ -203,7 +203,7 @@ exports[`test/nyc-integration.js TAP --show-process-tree displays a tree of spaw
 File                    | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 ------------------------|---------|----------|---------|---------|-------------------
 All files               |    91.3 |       70 |     100 |     100 |                   
- selfspawn-fibonacci.js |    91.3 |       70 |     100 |     100 | 6,27,29           
+ selfspawn-fibonacci.js |    91.3 |       70 |     100 |     100 | 6,27-29           
 ------------------------|---------|----------|---------|---------|-------------------
 nyc
 │   100 % Lines
@@ -235,7 +235,7 @@ exports[`test/nyc-integration.js TAP --use-spawn-wrap=false is functional > stdo
 File                    | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 ------------------------|---------|----------|---------|---------|-------------------
 All files               |    91.3 |       70 |     100 |     100 |                   
- selfspawn-fibonacci.js |    91.3 |       70 |     100 |     100 | 6,27,29           
+ selfspawn-fibonacci.js |    91.3 |       70 |     100 |     100 | 6,27-29           
 ------------------------|---------|----------|---------|---------|-------------------
 
 `
@@ -246,7 +246,7 @@ exports[`test/nyc-integration.js TAP --use-spawn-wrap=true is functional > stdou
 File                    | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 ------------------------|---------|----------|---------|---------|-------------------
 All files               |    91.3 |       70 |     100 |     100 |                   
- selfspawn-fibonacci.js |    91.3 |       70 |     100 |     100 | 6,27,29           
+ selfspawn-fibonacci.js |    91.3 |       70 |     100 |     100 | 6,27-29           
 ------------------------|---------|----------|---------|---------|-------------------
 
 `
@@ -597,7 +597,7 @@ exports[`test/nyc-integration.js TAP handles --clean / --no-clean properly > std
 File        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 ------------|---------|----------|---------|---------|-------------------
 All files   |      50 |       25 |     100 |      50 |                   
- by-arg2.js |      50 |       25 |     100 |      50 | 4,5,7             
+ by-arg2.js |      50 |       25 |     100 |      50 | 4-7               
 ------------|---------|----------|---------|---------|-------------------
 
 `
@@ -905,7 +905,7 @@ do not hit
 File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 ----------|---------|----------|---------|---------|-------------------
 All files |    62.5 |      100 |      40 |    62.5 |                   
- es6.js   |    62.5 |      100 |      40 |    62.5 | 11,16,17          
+ es6.js   |    62.5 |      100 |      40 |    62.5 | 11-17             
 ----------|---------|----------|---------|---------|-------------------
 
 `
