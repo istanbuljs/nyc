@@ -98,6 +98,7 @@
     "node": ">=8.9"
   },
   "homepage": "https://istanbul.js.org/",
+  "bugs": "https://github.com/istanbuljs/nyc/issues",
   "repository": {
     "type": "git",
     "url": "git@github.com:istanbuljs/nyc.git"
