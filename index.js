@@ -446,6 +446,7 @@ class NYC {
       reports.create(_reporter, {
         skipEmpty: this.config.skipEmpty,
         skipFull: this.config.skipFull,
+        reporterOptions: this.config.reporterOptions,
         projectRoot: this.cwd,
         maxCols: process.stdout.columns || 100
       }).execute(context)
