@@ -48,6 +48,7 @@ class NYC {
 
     this.subprocessBin = config.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
     this._tempDirectory = config.tempDirectory || config.tempDir || './.nyc_output'
+    this._baselineDirectoryName = 'baseline'
     this._instrumenterLib = require(config.instrumenter || './lib/instrumenters/istanbul')
     this._reportDir = config.reportDir || 'coverage'
     this._sourceMap = typeof config.sourceMap === 'boolean' ? config.sourceMap : true
@@ -170,7 +171,7 @@ class NYC {
     return source
   }
 
-  async addAllFiles () {
+  async addAllFiles (coverageFilename) {
     this._loadAdditionalModules()
 
     this.fakeRequire = true
@@ -190,7 +191,7 @@ class NYC {
     })
     this.fakeRequire = false
 
-    this.writeCoverageFile()
+    this.writeCoverageFile(coverageFilename)
   }
 
   async instrumentAllFiles (input, output) {
@@ -335,6 +336,10 @@ class NYC {
       await mkdirp(this.cacheDirectory)
     }
 
+    if (this.config.baseline) {
+      await mkdirp(this.baselineDirectory())
+    }
+
     await mkdirp(this.processInfo.directory)
   }
 
@@ -374,26 +379,25 @@ class NYC {
     return this
   }
 
-  writeCoverageFile () {
-    var coverage = coverageFinder()
+  writeCoverageFile (filename = this.processInfo.uuid) {
+    const coverage = coverageFinder()
 
     // Remove any files that should be excluded but snuck into the coverage
-    Object.keys(coverage).forEach(function (absFile) {
+    Object.keys(coverage).forEach(absFile => {
       if (!this.exclude.shouldInstrument(absFile)) {
         delete coverage[absFile]
       }
-    }, this)
+    })
 
     if (this.cache) {
-      Object.keys(coverage).forEach(function (absFile) {
+      Object.keys(coverage).forEach(absFile => {
         if (this.hashCache[absFile] && coverage[absFile]) {
           coverage[absFile].contentHash = this.hashCache[absFile]
         }
-      }, this)
+      })
     }
 
-    var id = this.processInfo.uuid
-    var coverageFilename = path.resolve(this.tempDirectory(), id + '.json')
+    const coverageFilename = path.resolve(this.tempDirectory(), `${filename}.json`)
 
     fs.writeFileSync(
       coverageFilename,
@@ -520,6 +524,10 @@ class NYC {
 
   tempDirectory () {
     return path.resolve(this.cwd, this._tempDirectory)
+  }
+
+  baselineDirectory () {
+    return path.resolve(this.cwd, this._tempDirectory, this._baselineDirectoryName)
   }
 
   reportDirectory () {
