@@ -21,8 +21,7 @@ t.test('handles stack traces', async t => {
   nyc.wrap()
 
   const check = require('./fixtures/stack-trace')
-  // XXX investigate why this doesn't remap to line 4
-  t.notMatch(check(), /stack-trace.js:1:/)
+  t.match(check(), /stack-trace.js:4:/)
 })
 
 t.test('does not handle stack traces when disabled', async t => {
@@ -33,5 +32,5 @@ t.test('does not handle stack traces when disabled', async t => {
   nyc.wrap()
 
   const check = require('./fixtures/stack-trace')
-  t.match(check(), /stack-trace.js:1:/)
+  t.notMatch(check(), /stack-trace.js:4:/)
 })
