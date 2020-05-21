@@ -15,6 +15,7 @@ const nycConfigJS = path.resolve(fixturesCLI, 'nyc-config-js')
 const nycrcDir = path.resolve(fixturesCLI, 'nycrc')
 const fixturesSourceMaps = path.resolve(fixturesCLI, '../source-maps')
 const fixturesENM = path.resolve(fixturesCLI, '../exclude-node-modules')
+const fixturesAllTypeModule = path.resolve(fixturesCLI, '../all-type-module')
 
 const executeNodeModulesArgs = [
   '--all=true',
@@ -434,6 +435,15 @@ t.test('--all uses source-maps to exclude original sources from reports', t => t
     './instrumented/s1.min.js'
   ],
   cwd: fixturesSourceMaps
+}))
+
+t.test('--all does not fail on ERR_REQUIRE_ESM', t => testSuccess(t, {
+  args: [
+    '--all',
+    process.execPath,
+    'script.cjs'
+  ],
+  cwd: fixturesAllTypeModule
 }))
 
 t.test('caches source-maps from .map files', async t => {
