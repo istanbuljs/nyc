@@ -5,6 +5,18 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
+exports[`test/nyc-integration.js TAP --all does not fail on ERR_REQUIRE_ESM > stdout 1`] = `
+------------|---------|----------|---------|---------|-------------------
+File        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+------------|---------|----------|---------|---------|-------------------
+All files   |   33.33 |      100 |       0 |   33.33 |                   
+ extra.mjs  |       0 |      100 |       0 |       0 | 2                 
+ index.js   |       0 |      100 |       0 |       0 | 2                 
+ script.cjs |     100 |      100 |     100 |     100 |                   
+------------|---------|----------|---------|---------|-------------------
+
+`
+
 exports[`test/nyc-integration.js TAP --all includes files with both .map files and inline source-maps > stdout 1`] = `
 ----------|---------|----------|---------|---------|-------------------
 File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 

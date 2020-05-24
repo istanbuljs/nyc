@@ -20,6 +20,7 @@ const rimraf = promisify(require('rimraf'))
 const SourceMaps = require('./lib/source-maps')
 const TestExclude = require('test-exclude')
 const pMap = require('p-map')
+const getPackageType = require('get-package-type')
 
 const debugLog = debuglog('nyc')
 
@@ -170,14 +171,36 @@ class NYC {
     return source
   }
 
+  _getSourceMap (code, filename, hash) {
+    const sourceMap = {}
+    if (this._sourceMap) {
+      sourceMap.sourceMap = this.sourceMaps.extract(code, filename)
+      sourceMap.registerMap = () => this.sourceMaps.registerMap(filename, hash, sourceMap.sourceMap)
+    } else {
+      sourceMap.registerMap = () => {}
+    }
+
+    return sourceMap
+  }
+
   async addAllFiles () {
     this._loadAdditionalModules()
 
     this.fakeRequire = true
     const files = await this.exclude.glob(this.cwd)
-    files.forEach(relFile => {
+    for (const relFile of files) {
       const filename = path.resolve(this.cwd, relFile)
-      this.addFile(filename)
+      const ext = path.extname(filename)
+      if (ext === '.mjs' || (ext === '.js' && await getPackageType(filename) === 'module')) {
+        const source = await fs.readFile(filename, 'utf8')
+        this.instrumenter().instrumentSync(
+          source,
+          filename,
+          this._getSourceMap(source, filename)
+        )
+      } else {
+        this.addFile(filename)
+      }
       const coverage = coverageFinder()
       const lastCoverage = this.instrumenter().lastFileCoverage()
       if (lastCoverage) {
@@ -187,7 +210,7 @@ class NYC {
           all: true
         }
       }
-    })
+    }
     this.fakeRequire = false
 
     this.writeCoverageFile()
@@ -276,14 +299,7 @@ class NYC {
 
     return (code, metadata, hash) => {
       const filename = metadata.filename
-      const sourceMap = {}
-
-      if (this._sourceMap) {
-        sourceMap.sourceMap = this.sourceMaps.extract(code, filename)
-        sourceMap.registerMap = () => this.sourceMaps.registerMap(filename, hash, sourceMap.sourceMap)
-      } else {
-        sourceMap.registerMap = () => {}
-      }
+      const sourceMap = this._getSourceMap(code, filename, hash)
 
       try {
         instrumented = instrumenter.instrumentSync(code, filename, sourceMap)
