@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [15.1.0](https://github.com/istanbuljs/nyc/compare/v15.0.1...v15.1.0) (2020-06-01)
+
+
+### Features
+
+* **experimental:** Support using `--all` with node.js ESM ([#1320](https://github.com/istanbuljs/nyc/issues/1320)) ([992359a](https://github.com/istanbuljs/nyc/commit/992359a1e2108906e28324058008f28aa1052dc1))
+
 ## [15.0.1](https://github.com/istanbuljs/nyc/compare/v15.0.0...v15.0.1) (2020-04-02)
 
 
