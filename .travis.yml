@@ -1,9 +1,11 @@
 language: node_js
 os:
+  - windows
   - linux
   - osx
 node_js:
-  - "node"
+  - 14
+  - 12
   - 10
   - 8
 git:
