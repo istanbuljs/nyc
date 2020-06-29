@@ -1,21 +1,27 @@
 'use strict'
 
-/* global ___NYC_SELF_COVERAGE___ */
-
 const path = require('path')
 const fs = require('fs')
+const uuid = require('uuid/v4')
 const mkdirp = require('make-dir')
 const onExit = require('signal-exit')
+const nodePreload = require('node-preload')
 
-module.exports = {
+if (!nodePreload.includes(__filename)) {
+  nodePreload.unshift(__filename)
+}
+
+const nycSelfCoverageHelper = Symbol.for('nyc self-test coverage helper')
+
+global[nycSelfCoverageHelper] = {
   registered: false,
   onExit () {
-    const coverage = ___NYC_SELF_COVERAGE___
+    const coverage = global.___NYC_SELF_COVERAGE___ || {}
 
     const selfCoverageDir = path.join(__dirname, '.self_coverage')
     mkdirp.sync(selfCoverageDir)
     fs.writeFileSync(
-      path.join(selfCoverageDir, process.pid + '.json'),
+      path.join(selfCoverageDir, uuid() + '.json'),
       JSON.stringify(coverage),
       'utf-8'
     )
@@ -23,9 +29,9 @@ module.exports = {
 }
 
 onExit(() => {
-  if (module.exports.registered) {
+  if (global[nycSelfCoverageHelper].registered) {
     return
   }
 
-  module.exports.onExit()
+  global[nycSelfCoverageHelper].onExit()
 })

@@ -24,16 +24,11 @@ const getPackageType = require('get-package-type')
 
 const debugLog = debuglog('nyc')
 
-let selfCoverageHelper
-
+const nycSelfCoverageHelper = Symbol.for('nyc self-test coverage helper')
 /* istanbul ignore next */
-if (/self-coverage/.test(__dirname)) {
-  selfCoverageHelper = require('../self-coverage-helper')
-} else {
+const selfCoverageHelper = global[nycSelfCoverageHelper] || {
   // Avoid additional conditional code
-  selfCoverageHelper = {
-    onExit () {}
-  }
+  onExit () {}
 }
 
 function coverageFinder () {
