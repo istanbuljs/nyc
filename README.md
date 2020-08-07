@@ -14,6 +14,12 @@ Istanbul's state of the art command line interface, with support for:
 * applications that spawn subprocesses.
 * source mapped coverage of Babel and TypeScript projects
 
+## How Istanbul works
+
+Istanbul instruments your ES5 and ES2015+ JavaScript code with line counters, so that you can track how well your unit-tests exercise your codebase.
+
+The `nyc` command-line-client for Istanbul works well with most JavaScript testing frameworks: tap, mocha, AVA, etc.
+
 ## Installation & Usage
 
 Use your package manager to add it as a dev dependency: `npm i -D nyc` or `yarn add -D nyc`.
