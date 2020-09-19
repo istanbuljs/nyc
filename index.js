@@ -492,17 +492,22 @@ class NYC {
   }
 
   _checkCoverage (summary, thresholds, file) {
-    Object.keys(thresholds).forEach(function (key) {
-      var coverage = summary[key].pct
-      if (coverage < thresholds[key]) {
-        process.exitCode = 1
-        if (file) {
-          console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet threshold (' + thresholds[key] + '%) for ' + file)
-        } else {
-          console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet global threshold (' + thresholds[key] + '%)')
+    if (summary.isEmpty()) {
+      process.exitCode = 1
+      console.error('ERROR: No coverage was calculated for the project')
+    } else {
+      Object.keys(thresholds).forEach(function (key) {
+        var coverage = summary[key].pct
+        if (!coverage || coverage < thresholds[key]) {
+          process.exitCode = 1
+          if (file) {
+            console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet threshold (' + thresholds[key] + '%) for ' + file)
+          } else {
+            console.error('ERROR: Coverage for ' + key + ' (' + coverage + '%) does not meet global threshold (' + thresholds[key] + '%)')
+          }
         }
-      }
-    })
+      })
+    }
   }
 
   coverageFiles (baseDirectory = this.tempDirectory()) {
