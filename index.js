@@ -57,7 +57,6 @@ class NYC {
 
     this.extensions = [].concat(config.extension || [])
       .concat('.js')
-      .map(ext => ext.toLowerCase())
       .filter((item, pos, arr) => arr.indexOf(item) === pos)
 
     this.exclude = new TestExclude({
@@ -268,7 +267,7 @@ class NYC {
   }
 
   _transform (code, filename) {
-    const extname = path.extname(filename).toLowerCase()
+    const extname = path.extname(filename)
     const transform = this.transforms[extname] || (() => null)
 
     return transform(code, { filename })
