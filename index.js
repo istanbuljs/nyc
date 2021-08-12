@@ -418,16 +418,18 @@ class NYC {
   }
 
   async getCoverageMapFromAllCoverageFiles (baseDirectory) {
-    const map = libCoverage.createCoverageMap({})
     const files = await this.coverageFiles(baseDirectory)
 
-    await pMap(
+    const reports = await pMap(
       files,
-      async f => {
-        const report = await this.coverageFileLoad(f, baseDirectory)
-        map.merge(report)
-      },
+      f => this.coverageFileLoad(f, baseDirectory),
       { concurrency: os.cpus().length }
+    )
+    const map = reports.reduce((m, report) => {
+      m.merge(report)
+      return m
+    },
+    libCoverage.createCoverageMap({})
     )
 
     map.data = await this.sourceMaps.remapCoverage(map.data)
