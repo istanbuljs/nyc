@@ -72,7 +72,7 @@
     "istanbul-lib-processinfo": "^2.0.2",
     "istanbul-lib-report": "^3.0.0",
     "istanbul-lib-source-maps": "^4.0.0",
-    "istanbul-reports": "^3.0.2",
+    "istanbul-reports": "^3.0.5",
     "make-dir": "^3.0.0",
     "node-preload": "^0.2.1",
     "p-map": "^3.0.0",
