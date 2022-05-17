@@ -1,5 +1,5 @@
 {
-  "name": "nyc",
+  "name": "local-nyc",
   "version": "15.1.0",
   "description": "the Istanbul command line interface",
   "main": "index.js",
@@ -15,7 +15,7 @@
     "release": "standard-version"
   },
   "bin": {
-    "nyc": "./bin/nyc.js"
+    "local-nyc": "./bin/nyc.js"
   },
   "files": [
     "index.js",
