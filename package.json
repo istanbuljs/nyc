@@ -6,8 +6,7 @@
   "scripts": {
     "lint": "standard",
     "pretest": "npm run lint && npm run clean && npm run instrument",
-    "test": "tap",
-    "snap": "npm test -- --snapshot",
+    "test": "tap --snapshot",
     "posttest": "npm run report",
     "clean": "node ./npm-run-clean.js",
     "instrument": "node ./build-self-coverage.js",
@@ -92,7 +91,7 @@
     "source-map-support": "^0.5.16",
     "standard": "^14.3.1",
     "standard-version": "^8.0.0",
-    "tap": "^14.10.5",
+    "tap": "^16.3.0",
     "uuid": "^3.4.0",
     "which": "^2.0.2"
   },
