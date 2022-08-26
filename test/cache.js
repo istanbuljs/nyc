@@ -27,7 +27,7 @@ async function cacheTest (t, script) {
     env: {}
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
 }
 
 t.test('cache handles collisions', t => cacheTest(t, './cache-collision-runner.js'))

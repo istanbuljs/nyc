@@ -25,7 +25,7 @@ function tempDirSetup (t, testFile) {
     return rimraf(this.tempDir)
   })
 
-  t.tearDown(() => rimraf(tempDirBase))
+  t.teardown(() => rimraf(tempDirBase))
 }
 
 module.exports = tempDirSetup
