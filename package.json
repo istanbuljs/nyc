@@ -92,7 +92,7 @@
     "standard": "^14.3.1",
     "standard-version": "^8.0.0",
     "tap": "^16.3.0",
-    "uuid": "^3.4.0",
+    "uuid": "^8.3.2",
     "which": "^2.0.2"
   },
   "engines": {
