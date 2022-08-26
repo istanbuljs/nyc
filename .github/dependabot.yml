@@ -10,6 +10,6 @@ updates:
     schedule:
       interval: "monthly"
     commit-message:
-      prefix: build
-      prefix-development: build
+      prefix: chore
+      prefix-development: chore
       include: scope
