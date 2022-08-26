@@ -89,7 +89,7 @@
     "is-windows": "^1.0.2",
     "requirejs": "^2.3.6",
     "source-map-support": "^0.5.16",
-    "standard": "^14.3.1",
+    "standard": "^17.0.0",
     "standard-version": "^9.5.0",
     "tap": "^16.3.0",
     "uuid": "^8.3.2",
