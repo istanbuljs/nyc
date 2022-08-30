@@ -4,13 +4,15 @@ shallow_clone: true
 
 environment:
   matrix:
-    - NODEJS_VERSION: "13"
+    - NODEJS_VERSION: "lts/*"
+      PLATFORM: x64
+    - NODEJS_VERSION: "18"
+      PLATFORM: x64
+    - NODEJS_VERSION: "16"
+      PLATFORM: x64
+    - NODEJS_VERSION: "14"
       PLATFORM: x64
     - NODEJS_VERSION: "12"
-      PLATFORM: x64
-    - NODEJS_VERSION: "10"
-      PLATFORM: x64
-    - NODEJS_VERSION: "8"
       PLATFORM: x64
 
 install:
