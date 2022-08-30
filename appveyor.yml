@@ -4,8 +4,6 @@ shallow_clone: true
 
 environment:
   matrix:
-    - NODEJS_VERSION: "lts/*"
-      PLATFORM: x64
     - NODEJS_VERSION: "18"
       PLATFORM: x64
     - NODEJS_VERSION: "16"
