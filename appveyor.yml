@@ -15,11 +15,13 @@ environment:
 
 install:
   - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:NODEJS_VERSION) $env:PLATFORM
+  - npm install -g npm
   - npm ci
 
 test_script:
   - node --version
   - npm --version
+  - npm run build --if-present
   - npm test
 
 build: off
