@@ -74,7 +74,7 @@
     "istanbul-reports": "^3.0.2",
     "make-dir": "^3.0.0",
     "node-preload": "^0.2.1",
-    "p-map": "^3.0.0",
+    "p-map": "^4.0.0",
     "process-on-spawn": "^1.0.0",
     "resolve-from": "^5.0.0",
     "rimraf": "^3.0.0",
