@@ -61,7 +61,7 @@
     "convert-source-map": "^1.7.0",
     "decamelize": "^5.0.1",
     "find-cache-dir": "^3.2.0",
-    "find-up": "^4.1.0",
+    "find-up": "^5.0.0",
     "foreground-child": "^2.0.0",
     "get-package-type": "^0.1.0",
     "glob": "^7.1.6",
