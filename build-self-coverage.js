@@ -24,7 +24,7 @@ function instrumentFile (name) {
 
 function instrumentGlob (pattern) {
   const result = glob.sync(pattern, {
-    cwd: __dirname,
+    cwd: path.normalize(__dirname),
     nodir: true
   })
 
