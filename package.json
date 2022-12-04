@@ -58,7 +58,7 @@
     "@istanbuljs/load-nyc-config": "^1.0.0",
     "@istanbuljs/schema": "^0.1.2",
     "caching-transform": "^4.0.0",
-    "convert-source-map": "^1.7.0",
+    "convert-source-map": "^2.0.0",
     "decamelize": "^5.0.1",
     "find-cache-dir": "^3.2.0",
     "find-up": "^5.0.0",
