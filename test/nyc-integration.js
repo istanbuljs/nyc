@@ -7,7 +7,7 @@ const { promisify } = require('util')
 
 const t = require('tap')
 const glob = promisify(require('glob'))
-const rimraf = promisify(require('rimraf'))
+const rimraf = require('rimraf')
 
 const { fixturesCLI, nycBin, runNYC, tempDirSetup, testSuccess, testFailure, envCheckConfig } = require('./helpers')
 
