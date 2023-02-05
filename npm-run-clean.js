@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 'use strict'
 
+const glob = require('glob')
 const rimraf = require('rimraf')
 
-Promise.all([
+const patterns = [
   '**/.nyc_output',
   'node_modules/.cache',
   '.self_coverage',
@@ -15,4 +16,9 @@ Promise.all([
   'test/fixtures/cli/nyc-config-js/node_modules',
   'test/temp-dir-*',
   'self-coverage'
-].map(f => rimraf(f, { cwd: __dirname })))
+]
+
+patterns.forEach(pattern => {
+  glob.sync(pattern)
+    .forEach((f) => rimraf(f))
+})
