@@ -6,7 +6,7 @@ const { promisify } = require('util')
 const extensions = Object.assign({}, require.extensions) // eslint-disable-line
 
 const glob = promisify(require('glob'))
-const rimraf = promisify(require('rimraf'))
+const rimraf = require('rimraf')
 
 module.exports = async function () {
   // nuke any temporary files created during test runs.
