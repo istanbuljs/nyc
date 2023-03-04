@@ -8,8 +8,6 @@ environment:
       PLATFORM: x64
     - NODEJS_VERSION: "16"
       PLATFORM: x64
-    - NODEJS_VERSION: "14"
-      PLATFORM: x64
 
 install:
   - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:NODEJS_VERSION) $env:PLATFORM

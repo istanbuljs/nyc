@@ -3,10 +3,9 @@
 const path = require('path')
 const fs = require('../lib/fs-promises')
 const os = require('os')
-const { promisify } = require('util')
 
 const t = require('tap')
-const glob = promisify(require('glob'))
+const { glob } = require('glob')
 const rimraf = require('rimraf')
 
 const { fixturesCLI, nycBin, runNYC, tempDirSetup, testSuccess, testFailure, envCheckConfig } = require('./helpers')

@@ -19,6 +19,6 @@ const patterns = [
 ]
 
 patterns.forEach(pattern => {
-  glob.sync(pattern)
+  glob.globSync(pattern)
     .forEach((f) => rimraf(f))
 })

@@ -4,7 +4,7 @@ const path = require('path')
 const fs = require('fs')
 const istanbul = require('istanbul-lib-instrument')
 const makeDir = require('make-dir')
-const glob = require('glob')
+const { glob } = require('glob')
 
 const instrumenter = istanbul.createInstrumenter({
   coverageVariable: '___NYC_SELF_COVERAGE___',
@@ -22,23 +22,20 @@ function instrumentFile (name) {
   fs.writeFileSync(outputPath, instrumentedSource)
 }
 
-function instrumentGlob (pattern) {
-  const result = glob.sync(pattern, {
-    cwd: __dirname,
-    nodir: true
-  })
+async function instrumentGlob (pattern) {
+  const result = await glob(pattern)
 
   result.forEach(file => {
     instrumentFile(file)
   })
 }
 
-function instrumentAll () {
+async function instrumentAll () {
   /* package.json is just being copied so the instrumented copy of lib/hash.js can find it. */
   const globPatterns = ['package.json', 'index.js', 'bin/*.js', 'lib/**/*.js']
 
-  globPatterns.forEach(pattern => {
-    instrumentGlob(pattern)
+  await globPatterns.forEach(async pattern => {
+    await instrumentGlob(pattern)
   })
 }
 
