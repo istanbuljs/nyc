@@ -8,7 +8,7 @@ const rimraf = require('rimraf')
 
 module.exports = async function () {
   // nuke any temporary files created during test runs.
-  const files = await glob('test/**/*/{.nyc_output,.cache}')
+  const files = await glob('test/**/*/{.nyc_output,.cache}', { windowsPathsNoEscape: true })
   await Promise.all(files.map(f => rimraf(f)))
 
   // reset Node's require cache.

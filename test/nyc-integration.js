@@ -348,7 +348,7 @@ t.test('extracts coverage headers from unexecuted files', async t => {
     ]
   })
 
-  const files = await glob(path.join(t.tempDir, '*.json'))
+  const files = await glob(path.join(t.tempDir, '*.json'), { windowsPathsNoEscape: true })
   const coverage = []
   await Promise.all(files.map(async file => {
     const data = JSON.parse(await fs.readFile(file, 'utf-8'))

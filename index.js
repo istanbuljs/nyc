@@ -182,7 +182,7 @@ class NYC {
     this._loadAdditionalModules()
 
     this.fakeRequire = true
-    const files = await this.exclude.glob(this.cwd)
+    const files = await this.exclude.glob(this.cwd, { windowsPathsNoEscape: true })
     for (const relFile of files) {
       const filename = path.resolve(this.cwd, relFile)
       const ext = path.extname(filename)
@@ -236,14 +236,15 @@ class NYC {
     if (stats.isDirectory()) {
       inputDir = input
 
-      const filesToInstrument = await this.exclude.glob(input)
+      const filesToInstrument = await this.exclude.glob(input, { windowsPathsNoEscape: true })
 
       const concurrency = output ? os.cpus().length : 1
       if (this.config.completeCopy && output) {
         const files = await glob(path.resolve(input, '**'), {
           dot: true,
           nodir: true,
-          ignore: ['**/.git', '**/.git/**', path.join(output, '**')]
+          ignore: ['**/.git', '**/.git/**', path.join(output, '**')],
+          windowsPathsNoEscape: true
         })
         const destDirs = new Set(
           files.map(src => path.dirname(path.join(output, path.relative(input, src))))

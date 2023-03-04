@@ -19,6 +19,6 @@ const patterns = [
 ]
 
 patterns.forEach(pattern => {
-  glob.globSync(pattern)
+  glob.globSync(pattern, { windowsPathsNoEscape: true })
     .forEach((f) => rimraf(f))
 })

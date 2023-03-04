@@ -23,7 +23,7 @@ function instrumentFile (name) {
 }
 
 async function instrumentGlob (pattern) {
-  const result = await glob(pattern)
+  const result = await glob(pattern, { windowsPathsNoEscape: true })
 
   result.forEach(file => {
     instrumentFile(file)
