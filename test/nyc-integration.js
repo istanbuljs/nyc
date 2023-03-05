@@ -206,12 +206,14 @@ t.test('--use-spawn-wrap=false is functional', t => testSuccess(t, {
 
 t.test('can run "npm test" which directly invokes a test file', t => testSuccess(t, {
   args: ['npm', 'test'],
-  cwd: path.resolve(fixturesCLI, 'run-npm-test')
+  cwd: path.resolve(fixturesCLI, 'run-npm-test'),
+  env: process.env
 }))
 
 t.test('can run "npm test" which indirectly invokes a test file', t => testSuccess(t, {
   args: ['npm', 'test'],
-  cwd: path.resolve(fixturesCLI, 'run-npm-test-recursive')
+  cwd: path.resolve(fixturesCLI, 'run-npm-test-recursive'),
+  env: process.env
 }))
 
 t.test('nyc instrument single file to console', async t => {
