@@ -2,7 +2,7 @@
 'use strict'
 
 const glob = require('glob')
-const rimraf = require('rimraf')
+const { rimraf } = require('rimraf')
 
 const patterns = [
   '**/.nyc_output',

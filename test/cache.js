@@ -3,7 +3,7 @@
 const path = require('path')
 
 const t = require('tap')
-const rimraf = require('rimraf')
+const { rimraf } = require('rimraf')
 
 const NYC = require('../self-coverage')
 

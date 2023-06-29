@@ -3,7 +3,7 @@
 const path = require('path')
 const fs = require('fs')
 const makeDir = require('make-dir')
-const rimraf = require('rimraf')
+const { rimraf } = require('rimraf')
 const { promisify } = require('util')
 
 const mkdtemp = promisify(fs.mkdtemp)

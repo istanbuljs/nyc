@@ -4,7 +4,7 @@
 const extensions = Object.assign({}, require.extensions) // eslint-disable-line
 
 const { glob } = require('glob')
-const rimraf = require('rimraf')
+const { rimraf } = require('rimraf')
 
 module.exports = async function () {
   // nuke any temporary files created during test runs.

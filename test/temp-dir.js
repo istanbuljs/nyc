@@ -4,7 +4,7 @@ const fs = require('../lib/fs-promises')
 const path = require('path')
 
 const t = require('tap')
-const rimraf = require('rimraf')
+const { rimraf } = require('rimraf')
 
 const { runNYC, fixturesCLI } = require('./helpers')
 

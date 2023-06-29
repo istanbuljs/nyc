@@ -6,7 +6,7 @@ const os = require('os')
 
 const t = require('tap')
 const { glob } = require('glob')
-const rimraf = require('rimraf')
+const { rimraf } = require('rimraf')
 
 const { fixturesCLI, nycBin, runNYC, tempDirSetup, testSuccess, testFailure, envCheckConfig } = require('./helpers')
 

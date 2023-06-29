@@ -3,7 +3,7 @@
 const { resolve } = require('path')
 const { spawn } = require('child_process')
 const t = require('tap')
-const rimraf = require('rimraf')
+const { rimraf } = require('rimraf')
 const fs = require('../lib/fs-promises')
 
 const node = process.execPath

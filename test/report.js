@@ -5,7 +5,7 @@ const path = require('path')
 
 const t = require('tap')
 const isWindows = require('is-windows')()
-const rimraf = require('rimraf')
+const { rimraf } = require('rimraf')
 
 const NYC = require('../self-coverage')
 
