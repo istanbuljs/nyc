@@ -78,7 +78,7 @@
     "process-on-spawn": "^1.0.0",
     "resolve-from": "^5.0.0",
     "rimraf": "^5.0.1",
-    "signal-exit": "^3.0.2",
+    "signal-exit": "^4.1.0",
     "spawn-wrap": "^2.0.0",
     "test-exclude": "^6.0.0",
     "yargs": "^17.5.1"
