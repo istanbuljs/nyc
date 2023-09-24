@@ -687,7 +687,7 @@ files.
 ### Bug Fixes
 
 * make --all flag work with files with extensions other than .js ([#326](https://github.com/bcoe/nyc/issues/326)) ([d0a8674](https://github.com/bcoe/nyc/commit/d0a8674))
-* work around for Windows path issue nodejs/node[#6624](https://github.com/bcoe/nyc/issues/6624) ([6b1fed0](https://github.com/bcoe/nyc/commit/6b1fed0))
+* workaround for Windows path issue nodejs/node[#6624](https://github.com/bcoe/nyc/issues/6624) ([6b1fed0](https://github.com/bcoe/nyc/commit/6b1fed0))
 
 
 ### Features
