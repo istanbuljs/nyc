@@ -360,7 +360,7 @@ t.test('extracts coverage headers from unexecuted files', async t => {
 
   t.true(coverage.length !== 0)
   t.true(coverage.every(data => typeof data === 'object'))
-  // we should not have executed file, so all counts sould be 0.
+  // we should not have executed file, so all counts should be 0.
   t.true(coverage.every(data => Object.values(data.s).every(s => s === 0)))
 })
 
