@@ -442,7 +442,7 @@ files.
 
 ### Bug Fixes
 
-* introduced a bug that resulted in source-maps not being loaded approriately on second test run ([#566](https://github.com/istanbuljs/nyc/issues/566)) ([1bf74fd](https://github.com/istanbuljs/nyc/commit/1bf74fd))
+* introduced a bug that resulted in source-maps not being loaded appropriately on second test run ([#566](https://github.com/istanbuljs/nyc/issues/566)) ([1bf74fd](https://github.com/istanbuljs/nyc/commit/1bf74fd))
 
 
 
