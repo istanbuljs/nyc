@@ -671,7 +671,7 @@ files.
 
 ### Features
 
-* upgrade to new test-exclude; with suppport for node_modules, and empty exclude ([#348](https://github.com/bcoe/nyc/issues/348)) ([d616ffc](https://github.com/bcoe/nyc/commit/d616ffc))
+* upgrade to new test-exclude; with support for node_modules, and empty exclude ([#348](https://github.com/bcoe/nyc/issues/348)) ([d616ffc](https://github.com/bcoe/nyc/commit/d616ffc))
 
 
 ### BREAKING CHANGES
