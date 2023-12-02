@@ -1,6 +1,6 @@
 {
   "name": "@cschanaj/nyc",
-  "version": "17.0.1",
+  "version": "17.0.2",
   "description": "the Istanbul command line interface",
   "main": "index.js",
   "scripts": {
