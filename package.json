@@ -1,6 +1,6 @@
 {
-  "name": "nyc",
-  "version": "15.1.0",
+  "name": "@cschanaj/nyc",
+  "version": "17.0.0",
   "description": "the Istanbul command line interface",
   "main": "index.js",
   "scripts": {
@@ -50,6 +50,10 @@
     {
       "name": "Krishnan Anantheswaran",
       "website": "https://github.com/gotwarlost"
+    },
+    {
+      "name": "CHAN, Chak Shing",
+      "website": "https://github.com/cschanaj"
     }
   ],
   "author": "Ben Coe <ben@npmjs.com>",
@@ -99,9 +103,9 @@
     "node": ">=18.0.0"
   },
   "homepage": "https://istanbul.js.org/",
-  "bugs": "https://github.com/istanbuljs/nyc/issues",
+  "bugs": "https://github.com/cschanaj/nyc/issues",
   "repository": {
     "type": "git",
-    "url": "git@github.com:istanbuljs/nyc.git"
+    "url": "git@github.com:cschanaj/nyc.git"
   }
 }
