@@ -19,7 +19,6 @@ const path = require('path')
 const { rimraf } = require('rimraf')
 const SourceMaps = require('./lib/source-maps')
 const TestExclude = require('test-exclude')
-const pMap = require('p-map')
 const getPackageType = require('get-package-type')
 
 const debugLog = debuglog('nyc')
@@ -233,6 +232,7 @@ class NYC {
     this._loadAdditionalModules()
 
     const stats = await fs.lstat(input)
+    const { default: pMap } = await import('p-map')
     if (stats.isDirectory()) {
       inputDir = input
 
@@ -421,6 +421,7 @@ class NYC {
   async getCoverageMapFromAllCoverageFiles (baseDirectory) {
     const map = libCoverage.createCoverageMap({})
     const files = await this.coverageFiles(baseDirectory)
+    const { default: pMap } = await import('p-map')
 
     await pMap(
       files,
@@ -523,6 +524,7 @@ class NYC {
   // TODO: Remove from nyc v16
   async coverageData (baseDirectory) {
     const files = await this.coverageFiles(baseDirectory)
+    const { default: pMap } = await import('p-map')
     return pMap(
       files,
       f => this.coverageFileLoad(f, baseDirectory),
