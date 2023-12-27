@@ -87,15 +87,15 @@ You can then add the specific configuration options you want that aren't in that
 
 Any configuration options that can be set via the command line can also be specified in the `nyc` stanza of your package.json, or within a separate configuration file - a variety of flavors are available:
 
-| File name        | File Association |
-|------------------|------------------|
-| `.nycrc`         | JSON             |
-| `.nycrc.json`    | JSON             |
-| `.nycrc.yaml`    | YAML             |
-| `.nycrc.yml`     | YAML             |
-| `nyc.config.js`  | CommonJS export  |
-| `nyc.config.cjs` | CommonJS export  |
-| `nyc.config.mjs` | ESM export       |
+| File name        | File Association                            |
+|------------------|---------------------------------------------|
+| `.nycrc`         | JSON                                        |
+| `.nycrc.json`    | JSON                                        |
+| `.nycrc.yaml`    | YAML                                        |
+| `.nycrc.yml`     | YAML                                        |
+| `nyc.config.js`  | ESM / CommonJS export based on package type |
+| `nyc.config.cjs` | CommonJS export                             |
+| `nyc.config.mjs` | ESM export                                  |
 
 ### Common Configuration Options
 
