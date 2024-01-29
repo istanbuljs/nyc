@@ -3,7 +3,7 @@
 
 const configUtil = require('../lib/config-util')
 const { cliWrapper, suppressEPIPE } = require('../lib/commands/helpers')
-const foreground = require('foreground-child')
+const { foregroundChild } = require('foreground-child')
 const resolveFrom = require('resolve-from')
 const NYC = require('../index.js')
 
@@ -86,7 +86,7 @@ async function main () {
   // set process.exitCode. Keep track so that both children are run, but
   // a non-zero exit codes in either one leads to an overall non-zero exit code.
   process.exitCode = 0
-  foreground(childArgs, async () => {
+  foregroundChild(childArgs, async () => {
     const mainChildExitCode = process.exitCode
 
     try {
