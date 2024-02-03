@@ -6,20 +6,19 @@ const cachingTransform = require('caching-transform')
 const findCacheDir = require('find-cache-dir')
 const fs = require('./lib/fs-promises')
 const os = require('os')
-const { debuglog, promisify } = require('util')
-const glob = promisify(require('glob'))
+const { debuglog } = require('util')
+const { glob } = require('glob')
 const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
 const { ProcessInfo, ProcessDB } = require('istanbul-lib-processinfo')
 const mkdirp = require('make-dir')
 const Module = require('module')
-const onExit = require('signal-exit')
+const { onExit } = require('signal-exit')
 const path = require('path')
-const rimraf = promisify(require('rimraf'))
+const { rimraf } = require('rimraf')
 const SourceMaps = require('./lib/source-maps')
 const TestExclude = require('test-exclude')
-const pMap = require('p-map')
 const getPackageType = require('get-package-type')
 
 const debugLog = debuglog('nyc')
@@ -32,7 +31,7 @@ const selfCoverageHelper = global[nycSelfCoverageHelper] || {
 }
 
 function coverageFinder () {
-  var coverage = global.__coverage__
+  let coverage = global.__coverage__
   if (typeof __coverage__ === 'object') coverage = __coverage__
   if (!coverage) coverage = global.__coverage__ = {}
   return coverage
@@ -105,7 +104,7 @@ class NYC {
       // when running --all we should not load source-file from
       // cache, we want to instead return the fake source.
       disableCache: this._disableCachingTransform(),
-      ext: ext
+      ext
     }
     if (this._eagerInstantiation) {
       opts.transform = this._transformFactory(this.cacheDirectory)
@@ -153,8 +152,8 @@ class NYC {
   }
 
   _readTranspiledSource (filePath) {
-    var source = null
-    var ext = path.extname(filePath)
+    let source = null
+    let ext = path.extname(filePath)
     if (typeof Module._extensions[ext] === 'undefined') {
       ext = '.js'
     }
@@ -182,7 +181,7 @@ class NYC {
     this._loadAdditionalModules()
 
     this.fakeRequire = true
-    const files = await this.exclude.glob(this.cwd)
+    const files = await this.exclude.glob(this.cwd, { windowsPathsNoEscape: true })
     for (const relFile of files) {
       const filename = path.resolve(this.cwd, relFile)
       const ext = path.extname(filename)
@@ -233,17 +232,19 @@ class NYC {
     this._loadAdditionalModules()
 
     const stats = await fs.lstat(input)
+    const { default: pMap } = await import('p-map')
     if (stats.isDirectory()) {
       inputDir = input
 
-      const filesToInstrument = await this.exclude.glob(input)
+      const filesToInstrument = await this.exclude.glob(input, { windowsPathsNoEscape: true })
 
       const concurrency = output ? os.cpus().length : 1
       if (this.config.completeCopy && output) {
         const files = await glob(path.resolve(input, '**'), {
           dot: true,
           nodir: true,
-          ignore: ['**/.git', '**/.git/**', path.join(output, '**')]
+          ignore: ['**/.git', '**/.git/**', path.join(output, '**')],
+          windowsPathsNoEscape: true
         })
         const destDirs = new Set(
           files.map(src => path.dirname(path.join(output, path.relative(input, src))))
@@ -386,7 +387,7 @@ class NYC {
   }
 
   writeCoverageFile () {
-    var coverage = coverageFinder()
+    const coverage = coverageFinder()
 
     // Remove any files that should be excluded but snuck into the coverage
     Object.keys(coverage).forEach(function (absFile) {
@@ -403,8 +404,8 @@ class NYC {
       }, this)
     }
 
-    var id = this.processInfo.uuid
-    var coverageFilename = path.resolve(this.tempDirectory(), id + '.json')
+    const id = this.processInfo.uuid
+    const coverageFilename = path.resolve(this.tempDirectory(), id + '.json')
 
     fs.writeFileSync(
       coverageFilename,
@@ -420,6 +421,7 @@ class NYC {
   async getCoverageMapFromAllCoverageFiles (baseDirectory) {
     const map = libCoverage.createCoverageMap({})
     const files = await this.coverageFiles(baseDirectory)
+    const { default: pMap } = await import('p-map')
 
     await pMap(
       files,
@@ -493,7 +495,7 @@ class NYC {
 
   _checkCoverage (summary, thresholds, file) {
     Object.keys(thresholds).forEach(function (key) {
-      var coverage = summary[key].pct
+      const coverage = summary[key].pct
       if (coverage < thresholds[key]) {
         process.exitCode = 1
         if (file) {
@@ -522,6 +524,7 @@ class NYC {
   // TODO: Remove from nyc v16
   async coverageData (baseDirectory) {
     const files = await this.coverageFiles(baseDirectory)
+    const { default: pMap } = await import('p-map')
     return pMap(
       files,
       f => this.coverageFileLoad(f, baseDirectory),

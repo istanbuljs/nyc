@@ -28,8 +28,8 @@ async function runFakeNPM (t) {
   const args = [nycBin, 'npm', 'test']
   const { stderr, status } = await spawn(process.execPath, args, spawnOptions)
 
-  t.strictEqual(status, 0)
-  t.strictEqual(stderr, '')
+  t.equal(status, 0)
+  t.equal(stderr, '')
 }
 
 t.beforeEach(() => Promise.all([

@@ -1,10 +1,9 @@
 'use strict'
 
 const { resolve } = require('path')
-const { promisify } = require('util')
 const { spawn } = require('child_process')
 const t = require('tap')
-const rimraf = promisify(require('rimraf'))
+const { rimraf } = require('rimraf')
 const fs = require('../lib/fs-promises')
 
 const node = process.execPath
@@ -17,11 +16,11 @@ rimraf.sync(resolve(fixturesCLI, tmp))
 t.teardown(() => rimraf(resolve(fixturesCLI, tmp)))
 
 t.test('build some processinfo', t => {
-  var args = [
+  const args = [
     bin, '-t', tmp,
     node, 'selfspawn-fibonacci.js', '5'
   ]
-  var proc = spawn(process.execPath, args, {
+  const proc = spawn(process.execPath, args, {
     cwd: fixturesCLI,
     env: {
       PATH: process.env.PATH,

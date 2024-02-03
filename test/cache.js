@@ -1,10 +1,9 @@
 'use strict'
 
 const path = require('path')
-const { promisify } = require('util')
 
 const t = require('tap')
-const rimraf = promisify(require('rimraf'))
+const { rimraf } = require('rimraf')
 
 const NYC = require('../self-coverage')
 
@@ -27,7 +26,7 @@ async function cacheTest (t, script) {
     env: {}
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
 }
 
 t.test('cache handles collisions', t => cacheTest(t, './cache-collision-runner.js'))

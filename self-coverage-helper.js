@@ -2,9 +2,9 @@
 
 const path = require('path')
 const fs = require('fs')
-const uuid = require('uuid/v4')
+const { v4: uuidv4 } = require('uuid')
 const mkdirp = require('make-dir')
-const onExit = require('signal-exit')
+const { onExit } = require('signal-exit')
 const nodePreload = require('node-preload')
 
 if (!nodePreload.includes(__filename)) {
@@ -21,7 +21,7 @@ global[nycSelfCoverageHelper] = {
     const selfCoverageDir = path.join(__dirname, '.self_coverage')
     mkdirp.sync(selfCoverageDir)
     fs.writeFileSync(
-      path.join(selfCoverageDir, uuid() + '.json'),
+      path.join(selfCoverageDir, uuidv4() + '.json'),
       JSON.stringify(coverage),
       'utf-8'
     )

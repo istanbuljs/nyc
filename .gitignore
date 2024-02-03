@@ -6,3 +6,4 @@ test/build/
 self-coverage/
 *.swp
 needs-transpile.js
+tap-snapshots/test/

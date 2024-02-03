@@ -4,7 +4,6 @@
 	"jobs": 1,
 	"timeout": 360,
 	"bail": false,
-	"esm": false,
 	"node-arg": [
 		"--require",
 		"./self-coverage-helper.js"

@@ -1,16 +1,14 @@
 'use strict'
 
-const { promisify } = require('util')
-
 // reset global state modified by nyc in non-integration tests.
 const extensions = Object.assign({}, require.extensions) // eslint-disable-line
 
-const glob = promisify(require('glob'))
-const rimraf = promisify(require('rimraf'))
+const { glob } = require('glob')
+const { rimraf } = require('rimraf')
 
 module.exports = async function () {
   // nuke any temporary files created during test runs.
-  const files = await glob('test/**/*/{.nyc_output,.cache}')
+  const files = await glob('test/**/*/{.nyc_output,.cache}', { windowsPathsNoEscape: true })
   await Promise.all(files.map(f => rimraf(f)))
 
   // reset Node's require cache.

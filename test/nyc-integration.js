@@ -3,11 +3,10 @@
 const path = require('path')
 const fs = require('../lib/fs-promises')
 const os = require('os')
-const { promisify } = require('util')
 
 const t = require('tap')
-const glob = promisify(require('glob'))
-const rimraf = promisify(require('rimraf'))
+const { glob } = require('glob')
+const { rimraf } = require('rimraf')
 
 const { fixturesCLI, nycBin, runNYC, tempDirSetup, testSuccess, testFailure, envCheckConfig } = require('./helpers')
 
@@ -184,8 +183,8 @@ t.test('does not interpret args intended for instrumented bin', async t => {
     args: ['--silent', process.execPath, 'args.js', '--help', '--version'],
     leavePathSep: true
   })
-  t.is(status, 0)
-  t.is(stderr, '')
+  t.equal(status, 0)
+  t.equal(stderr, '')
   t.matchSnapshot(JSON.parse(stdout).slice(2))
 })
 
@@ -207,12 +206,14 @@ t.test('--use-spawn-wrap=false is functional', t => testSuccess(t, {
 
 t.test('can run "npm test" which directly invokes a test file', t => testSuccess(t, {
   args: ['npm', 'test'],
-  cwd: path.resolve(fixturesCLI, 'run-npm-test')
+  cwd: path.resolve(fixturesCLI, 'run-npm-test'),
+  env: process.env
 }))
 
 t.test('can run "npm test" which indirectly invokes a test file', t => testSuccess(t, {
   args: ['npm', 'test'],
-  cwd: path.resolve(fixturesCLI, 'run-npm-test-recursive')
+  cwd: path.resolve(fixturesCLI, 'run-npm-test-recursive'),
+  env: process.env
 }))
 
 t.test('nyc instrument single file to console', async t => {
@@ -221,8 +222,8 @@ t.test('nyc instrument single file to console', async t => {
     args: ['instrument', './half-covered.js']
   })
 
-  t.is(status, 0)
-  t.is(stderr, '')
+  t.equal(status, 0)
+  t.equal(stderr, '')
   t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered.js'))}`)
 })
 
@@ -232,8 +233,8 @@ t.test('nyc instrument disabled instrument', async t => {
     args: ['instrument', '--instrument=false', 'half-covered.js']
   })
 
-  t.is(status, 0)
-  t.is(stderr, '')
+  t.equal(status, 0)
+  t.equal(stderr, '')
   t.match(stdout, 'var a = 0')
   t.notMatch(stdout, 'cov_')
 })
@@ -244,8 +245,8 @@ t.test('nyc instrument a directory of files', async t => {
     args: ['instrument', './']
   })
 
-  t.is(status, 0)
-  t.is(stderr, '')
+  t.equal(status, 0)
+  t.equal(stderr, '')
   t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered.js'))}`)
   t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'half-covered-failing.js'))}`)
   t.notMatch(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'test.js'))}`)
@@ -257,8 +258,8 @@ t.test('nyc instrument returns unmodified source if there is no transform', asyn
     args: ['instrument', './no-transform/half-covered.xjs']
   })
 
-  t.is(status, 0)
-  t.is(stderr, '')
+  t.equal(status, 0)
+  t.equal(stderr, '')
   t.match(stdout, 'var a = 0')
   t.notMatch(stdout, 'cov_')
 })
@@ -269,8 +270,8 @@ t.test('nyc instrument on file with `package` keyword when es-modules is disable
     args: ['instrument', '--no-es-modules', './not-strict.js']
   })
 
-  t.is(status, 0)
-  t.is(stderr, '')
+  t.equal(status, 0)
+  t.equal(stderr, '')
   t.match(originalText.stdout, `path:${JSON.stringify(path.resolve(fixturesCLI, 'not-strict.js'))}`)
 })
 
@@ -284,9 +285,9 @@ t.test('nyc displays help to stderr when it doesn\'t know what to do', async t =
     args: ['--help']
   })
 
-  t.is(help.status, 0)
-  t.is(help.stderr, '')
-  t.isNot(help.stdout, '')
+  t.equal(help.status, 0)
+  t.equal(help.stderr, '')
+  t.not(help.stdout, '')
 
   const { status, stderr, stdout } = await runNYC({
     tempDir: t.tempDir,
@@ -349,7 +350,7 @@ t.test('extracts coverage headers from unexecuted files', async t => {
     ]
   })
 
-  const files = await glob(path.join(t.tempDir, '*.json'))
+  const files = await glob(path.join(t.tempDir, '*.json'), { windowsPathsNoEscape: true })
   const coverage = []
   await Promise.all(files.map(async file => {
     const data = JSON.parse(await fs.readFile(file, 'utf-8'))
@@ -358,10 +359,10 @@ t.test('extracts coverage headers from unexecuted files', async t => {
     }
   }))
 
-  t.true(coverage.length !== 0)
-  t.true(coverage.every(data => typeof data === 'object'))
+  t.ok(coverage.length !== 0)
+  t.ok(coverage.every(data => typeof data === 'object'))
   // we should not have executed file, so all counts sould be 0.
-  t.true(coverage.every(data => Object.values(data.s).every(s => s === 0)))
+  t.ok(coverage.every(data => Object.values(data.s).every(s => s === 0)))
 })
 
 t.test('allows an alternative cache folder to be specified', async t => {
@@ -378,7 +379,7 @@ t.test('allows an alternative cache folder to be specified', async t => {
 
   // we should have created foo-cache rather
   // than the default ./node_modules/.cache.
-  t.is(1, (await fs.readdir(cacheDir)).length)
+  t.equal(1, (await fs.readdir(cacheDir)).length)
 
   await rimraf(cacheDir)
 })
@@ -396,7 +397,7 @@ t.test('does not create .cache folder if cache is "false"', async t => {
     ]
   })
 
-  t.false(fs.existsSync(cacheDir))
+  t.notOk(fs.existsSync(cacheDir))
 })
 
 t.test('allows alternative high and low watermarks to be configured', t => testSuccess(t, {
@@ -456,7 +457,7 @@ t.test('caches source-maps from .map files', async t => {
   })
 
   const files = await fs.readdir(path.resolve(fixturesSourceMaps, 'node_modules/.cache/nyc'))
-  t.true(files.some(f => f.startsWith('s1.min-') && f.endsWith('.map')))
+  t.ok(files.some(f => f.startsWith('s1.min-') && f.endsWith('.map')))
 })
 
 t.test('caches inline source-maps', async t => {
@@ -469,7 +470,7 @@ t.test('caches inline source-maps', async t => {
   })
 
   const files = await fs.readdir(path.resolve(fixturesSourceMaps, 'node_modules/.cache/nyc'))
-  t.true(files.some(f => f.startsWith('s2.min-') && f.endsWith('.map')))
+  t.ok(files.some(f => f.startsWith('s2.min-') && f.endsWith('.map')))
 })
 
 t.test('appropriately instruments file with corresponding .map file', t => testSuccess(t, {
@@ -578,8 +579,8 @@ t.test('instrument with exclude-node-modules=false', async t => {
     cwd: fixturesENM
   })
 
-  t.is(status, 0)
-  t.is(stderr, '')
+  t.equal(status, 0)
+  t.equal(stderr, '')
   t.match(stdout, 'fake-module-1')
 })
 
@@ -604,15 +605,15 @@ t.test('combines multiple coverage reports', async t => {
   const mergedCoverage = require('./fixtures/cli/coverage')
   // the combined reports should have 100% function
   // branch and statement coverage.
-  t.strictDeepEqual(
+  t.strictSame(
     mergedCoverage['/private/tmp/contrived/library.js'].s,
     { 0: 2, 1: 1, 2: 1, 3: 2, 4: 1, 5: 1 }
   )
-  t.strictDeepEqual(
+  t.strictSame(
     mergedCoverage['/private/tmp/contrived/library.js'].f,
     { 0: 1, 1: 1, 2: 2 }
   )
-  t.strictDeepEqual(
+  t.strictSame(
     mergedCoverage['/private/tmp/contrived/library.js'].b,
     { 0: [1, 1] }
   )
@@ -642,9 +643,9 @@ t.test('instrument with invalid --require fails when using node-preload', async 
     ]
   })
 
-  t.is(status, 1)
+  t.equal(status, 1)
   t.match(stderr, /Cannot find module '@istanbuljs\/this-module-does-not-exist'/)
-  t.is(stdout, '')
+  t.equal(stdout, '')
 })
 
 t.test('invalid --require fails when using node-preload', async t => {
@@ -656,9 +657,9 @@ t.test('invalid --require fails when using node-preload', async t => {
     ]
   })
 
-  t.is(status, 1)
+  t.equal(status, 1)
   t.match(stderr, /Cannot find module '@istanbuljs\/this-module-does-not-exist'/)
-  t.is(stdout, '')
+  t.equal(stdout, '')
 })
 
 t.test('invalid --require fails when using spawn-wrap', async t => {
@@ -672,7 +673,7 @@ t.test('invalid --require fails when using spawn-wrap', async t => {
     ]
   })
 
-  t.is(status, 1)
+  t.equal(status, 1)
   t.match(stderr, /Cannot find module '@istanbuljs\/this-module-does-not-exist'/)
-  t.is(stdout, '')
+  t.equal(stdout, '')
 })

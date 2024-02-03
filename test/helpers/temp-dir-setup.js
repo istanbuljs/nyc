@@ -3,10 +3,9 @@
 const path = require('path')
 const fs = require('fs')
 const makeDir = require('make-dir')
-const _rimraf = require('rimraf')
+const { rimraf } = require('rimraf')
 const { promisify } = require('util')
 
-const rimraf = promisify(_rimraf)
 const mkdtemp = promisify(fs.mkdtemp)
 
 function tempDirSetup (t, testFile) {
@@ -25,7 +24,7 @@ function tempDirSetup (t, testFile) {
     return rimraf(this.tempDir)
   })
 
-  t.tearDown(() => rimraf(tempDirBase))
+  t.teardown(() => rimraf(tempDirBase))
 }
 
 module.exports = tempDirSetup
