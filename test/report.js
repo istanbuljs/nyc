@@ -32,7 +32,7 @@ async function testSignal (t, signal) {
   const checkFile = path.join(fixtures, `${signal}.js`)
   const reports = (await nyc.coverageData()).filter(report => report[checkFile])
 
-  t.strictEqual(reports.length, 1)
+  t.equal(reports.length, 1)
 }
 
 t.test('writes coverage report when process is killed with SIGTERM', t => testSignal(t, 'sigterm'))
@@ -47,6 +47,6 @@ t.test('allows coverage report to be output in an alternative directory', async 
   await nyc.reset()
 
   await nyc.report()
-  t.strictEqual(fs.existsSync('./alternative-report/lcov.info'), true)
+  t.equal(fs.existsSync('./alternative-report/lcov.info'), true)
   await rimraf('./alternative-report')
 })

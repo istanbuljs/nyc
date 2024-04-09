@@ -13,8 +13,8 @@ t.test('parser plugin set', async t => {
     args: ['instrument', 'v8.js'],
     cwd
   })
-  t.strictEqual(status, 0)
-  t.strictEqual(stderr, '')
+  t.equal(status, 0)
+  t.equal(stderr, '')
   t.match(stdout, /function cov_/)
 })
 
@@ -23,7 +23,7 @@ t.test('parser plugin unset', async t => {
     args: ['instrument', '--nycrc-path=no-plugins.json', 'v8.js'],
     cwd
   })
-  t.strictEqual(status, 0)
-  t.strictEqual(stderr, '')
+  t.equal(status, 0)
+  t.equal(stderr, '')
   t.notMatch(stdout, /function cov_/)
 })
