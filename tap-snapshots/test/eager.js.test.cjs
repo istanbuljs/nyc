@@ -5,12 +5,12 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/eager.js TAP eager disabled by default > stdout 1`] = `
+exports[`test/eager.js > TAP > eager disabled by default > stdout 1`] = `
 0
 
 `
 
-exports[`test/eager.js TAP eager enabled > stdout 1`] = `
+exports[`test/eager.js > TAP > eager enabled > stdout 1`] = `
 1
 
 `

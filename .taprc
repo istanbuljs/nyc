@@ -1,10 +1,9 @@
 {
-	"test-ignore": "^test/(helpers|src)/",
-	"coverage": false,
+	"exclude": ["^test/(helpers|src|fixtures)/", "**/fixtures/**"],
+	"disable-coverage": true,
 	"jobs": 1,
 	"timeout": 360,
 	"bail": false,
-	"esm": false,
 	"node-arg": [
 		"--require",
 		"./self-coverage-helper.js"

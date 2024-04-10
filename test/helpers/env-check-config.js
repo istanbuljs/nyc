@@ -15,8 +15,8 @@ async function envCheckConfig (t, { configArgs, checkOptions }) {
 
   const config = JSON.parse(JSON.parse(stdout).NYC_CONFIG)
 
-  t.is(status, 0)
-  t.is(stderr, '')
+  t.equal(status, 0)
+  t.equal(stderr, '')
   t.matchSnapshot(
     JSON.stringify(
       checkOptions.sort().map(option => [option, config[option]]),
