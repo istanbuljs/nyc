@@ -97,7 +97,7 @@
     "which": "^2.0.2"
   },
   "engines": {
-    "node": ">=8.9"
+    "node": ">=18"
   },
   "homepage": "https://istanbul.js.org/",
   "bugs": "https://github.com/istanbuljs/nyc/issues",
