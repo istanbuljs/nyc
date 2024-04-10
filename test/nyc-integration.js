@@ -52,11 +52,9 @@ t.test('report and check should show coverage check along with report', async t 
   })
 })
 
-/*
 t.test('--ignore-class-method skips methods that match ignored name but still catches those that are not', t => testSuccess(t, {
   args: ['--all', '--ignore-class-method', 'skip', process.execPath, './classes.js']
 }))
-*/
 
 t.test('--check-coverage fails when the expected coverage is below a threshold', t => testFailure(t, {
   args: ['--check-coverage', '--lines', '51', process.execPath, './half-covered.js']
@@ -207,19 +205,15 @@ t.test('--use-spawn-wrap=false is functional', t => testSuccess(t, {
   args: ['--use-spawn-wrap=false', process.execPath, 'selfspawn-fibonacci.js', '5']
 }))
 
-/*
 t.test('can run "npm test" which directly invokes a test file', t => testSuccess(t, {
   args: ['npm', 'test'],
   cwd: path.resolve(fixturesCLI, 'run-npm-test')
 }))
-*/
 
-/*
 t.test('can run "npm test" which indirectly invokes a test file', t => testSuccess(t, {
   args: ['npm', 'test'],
   cwd: path.resolve(fixturesCLI, 'run-npm-test-recursive')
 }))
-*/
 
 t.test('nyc instrument single file to console', async t => {
   const { status, stderr, originalText } = await runNYC({
@@ -602,7 +596,6 @@ t.test('recursive run does not throw', t => testSuccess(t, {
   cwd: path.resolve(__dirname, 'fixtures/recursive-run')
 }))
 
-/*
 t.test('combines multiple coverage reports', async t => {
   await testSuccess(t, {
     args: ['merge', './merge-input']
@@ -611,21 +604,20 @@ t.test('combines multiple coverage reports', async t => {
   const mergedCoverage = require('./fixtures/cli/coverage')
   // the combined reports should have 100% function
   // branch and statement coverage.
-  t.strictDeepEqual(
+  t.same(
     mergedCoverage['/private/tmp/contrived/library.js'].s,
     { 0: 2, 1: 1, 2: 1, 3: 2, 4: 1, 5: 1 }
   )
-  t.strictDeepEqual(
+  t.same(
     mergedCoverage['/private/tmp/contrived/library.js'].f,
     { 0: 1, 1: 1, 2: 2 }
   )
-  t.strictDeepEqual(
+  t.same(
     mergedCoverage['/private/tmp/contrived/library.js'].b,
     { 0: [1, 1] }
   )
   await rimraf(path.resolve(fixturesCLI, 'coverage.json'))
 })
-*/
 
 t.test('reports error if input directory is missing', t => testFailure(t, {
   args: ['merge', './DIRECTORY_THAT_IS_MISSING']

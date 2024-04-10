@@ -156,11 +156,11 @@ exports[`test/nyc-integration.js > TAP > --ignore-class-method skips methods tha
 ---------------------------------|---------|----------|---------|---------|-------------------
 File                             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 ---------------------------------|---------|----------|---------|---------|-------------------
-All files                        |    1.44 |        0 |       5 |    1.87 |                   
- cli                             |    2.06 |        0 |    5.56 |    3.08 |                   
+All files                        |    1.43 |        0 |       5 |    1.86 |                   
+ cli                             |    2.06 |        0 |    5.55 |    3.07 |                   
   args.js                        |       0 |      100 |     100 |       0 | 1                 
   by-arg2.js                     |       0 |        0 |     100 |       0 | 1-7               
-  classes.js                     |   66.67 |      100 |      50 |   66.67 | 6                 
+  classes.js                     |   66.66 |      100 |      50 |   66.66 | 6                 
   conf-override-module.js        |       0 |      100 |     100 |       0 | 1-2               
   conf-override-root.js          |       0 |        0 |     100 |       0 | 1-23              
   empty.js                       |       0 |        0 |       0 |       0 |                   
@@ -440,7 +440,7 @@ All files |      80 |      100 |      50 |      80 |
 
 exports[`test/nyc-integration.js > TAP > can run "npm test" which directly invokes a test file > stdout 1`] = `
 
-> @ test .
+> test
 > node ./half-covered.js
 
 -----------------|---------|----------|---------|---------|-------------------
@@ -454,15 +454,15 @@ All files        |      50 |       50 |     100 |      50 |
 
 exports[`test/nyc-integration.js > TAP > can run "npm test" which indirectly invokes a test file > stdout 1`] = `
 
-> @ test .
+> test
 > npm run test:deeper
 
 
-> @ test:deeper .
+> test:deeper
 > npm run test:even-deeper
 
 
-> @ test:even-deeper .
+> test:even-deeper
 > node ./half-covered.js
 
 -----------------|---------|----------|---------|---------|-------------------
