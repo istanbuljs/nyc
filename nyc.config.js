@@ -15,8 +15,8 @@ module.exports = {
   ],
   /* Unknown why we don't get 100% coverage on Windows. */
   'check-coverage': !isWindows,
-  branches: 99, // Raise this again once we fix up stale tests.
-  functions: 99,
-  lines: 99,
-  statements: 99
+  branches: 100,
+  functions: 100,
+  lines: 100,
+  statements: 100
 }
