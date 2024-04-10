@@ -92,12 +92,12 @@
     "source-map-support": "^0.5.16",
     "standard": "^14.3.1",
     "standard-version": "^9.0.0",
-    "tap": "^14.10.5",
+    "tap": "^18.7.2",
     "uuid": "^3.4.0",
     "which": "^2.0.2"
   },
   "engines": {
-    "node": ">=8.9"
+    "node": ">=18"
   },
   "homepage": "https://istanbul.js.org/",
   "bugs": "https://github.com/istanbuljs/nyc/issues",

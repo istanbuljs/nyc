@@ -5,16 +5,16 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/config-override.js TAP spawn that does config overriding > stdout 1`] = `
+exports[`test/config-override.js > TAP > spawn that does config overriding > stdout 1`] = `
 in parent { include: 'conf-override-root.js' }
 in child { include: 'conf-override-module.js' }
 in module { include: 'conf-override-module.js' }
 -------------------------|---------|----------|---------|---------|-------------------
 File                     | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------------------|---------|----------|---------|---------|-------------------
-All files                |   77.78 |       50 |     100 |   77.78 |                   
+All files                |   77.77 |       50 |     100 |   77.77 |                   
  conf-override-module.js |     100 |      100 |     100 |     100 |                   
- conf-override-root.js   |   71.43 |       50 |     100 |   71.43 | 22-23             
+ conf-override-root.js   |   71.42 |       50 |     100 |   71.42 | 22-23             
 -------------------------|---------|----------|---------|---------|-------------------
 
 `

@@ -31,7 +31,7 @@ t.test('works in directories without a package.json', async t => {
     cwd: subdir
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
   const target = path.resolve(subdir, 'output-dir', 'index.js')
   t.match(await fs.readFile(target, 'utf8'), /console.log\('Hello, World!'\)/)
 })
@@ -42,7 +42,7 @@ t.test('can be configured to exit on error', async t => {
     cwd: subdir
   })
 
-  t.strictEqual(status, 1)
+  t.equal(status, 1)
 })
 
 t.test('allows a single file to be instrumented', async t => {
@@ -57,7 +57,7 @@ t.test('allows a single file to be instrumented', async t => {
     args: ['instrument', './half-covered.js', outputDir]
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
 
   const files = await fs.readdir(outputDir)
   t.strictSame(files, ['half-covered.js'])
@@ -65,7 +65,7 @@ t.test('allows a single file to be instrumented', async t => {
   if (!isWindows) {
     const outputPath = path.resolve(outputDir, 'half-covered.js')
     const outputMode = (await fs.stat(outputPath)).mode & 0o7777
-    t.strictEqual(outputMode, newMode)
+    t.equal(outputMode, newMode)
 
     await fs.chmod(inputPath, inputMode)
   }
@@ -76,13 +76,13 @@ t.test('allows a directory of files to be instrumented', async t => {
     args: ['instrument', './nyc-config-js', outputDir]
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
 
   const files = fs.readdirSync(outputDir)
-  t.strictEqual(files.includes('index.js'), true)
-  t.strictEqual(files.includes('ignore.js'), true)
-  t.strictEqual(files.includes('package.json'), false)
-  t.strictEqual(files.includes('node_modules'), false)
+  t.equal(files.includes('index.js'), true)
+  t.equal(files.includes('ignore.js'), true)
+  t.equal(files.includes('package.json'), false)
+  t.equal(files.includes('node_modules'), false)
 
   const includeTarget = path.resolve(outputDir, 'ignore.js')
   t.match(await fs.readFile(includeTarget, 'utf8'), /function cov_/)
@@ -98,13 +98,13 @@ t.test('copies all files from <input> to <output> as well as those that have bee
     args: ['instrument', '--complete-copy', './nyc-config-js', outputDir]
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
 
   const files = await fs.readdir(outputDir)
-  t.strictEqual(files.includes('index.js'), true)
-  t.strictEqual(files.includes('ignore.js'), true)
-  t.strictEqual(files.includes('package.json'), true)
-  t.strictEqual(files.includes('node_modules'), true)
+  t.equal(files.includes('index.js'), true)
+  t.equal(files.includes('ignore.js'), true)
+  t.equal(files.includes('package.json'), true)
+  t.equal(files.includes('node_modules'), true)
 
   const includeTarget = path.resolve(outputDir, 'ignore.js')
   t.match(await fs.readFile(includeTarget, 'utf8'), /function cov_/)
@@ -115,11 +115,11 @@ t.test('can instrument the project directory', async t => {
     args: ['instrument', '.', outputDir]
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
 
   const files = await fs.readdir(outputDir)
-  t.strictEqual(files.includes('args.js'), true)
-  t.strictEqual(files.includes('subdir'), true)
+  t.equal(files.includes('args.js'), true)
+  t.equal(files.includes('subdir'), true)
 })
 
 t.test('allows a sub-directory of files to be instrumented', async t => {
@@ -127,10 +127,10 @@ t.test('allows a sub-directory of files to be instrumented', async t => {
     args: ['instrument', './subdir/input-dir', outputDir]
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
 
   const files = await fs.readdir(outputDir)
-  t.strictEqual(files.includes('index.js'), true)
+  t.equal(files.includes('index.js'), true)
 })
 
 t.test('allows a subdirectory to be excluded via .nycrc file', async t => {
@@ -144,13 +144,13 @@ t.test('allows a subdirectory to be excluded via .nycrc file', async t => {
     ]
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
 
   const files = fs.readdirSync(outputDir)
-  t.strictEqual(files.includes('exclude-me'), true)
-  t.strictEqual(files.includes('node_modules'), true)
-  t.strictEqual(files.includes('index.js'), true)
-  t.strictEqual(files.includes('bad.js'), true)
+  t.equal(files.includes('exclude-me'), true)
+  t.equal(files.includes('node_modules'), true)
+  t.equal(files.includes('index.js'), true)
+  t.equal(files.includes('bad.js'), true)
 
   const includeTarget = path.resolve(outputDir, 'index.js')
   t.match(await fs.readFile(includeTarget, 'utf8'), /function cov_/)
@@ -171,10 +171,10 @@ t.test('allows a file to be excluded', async t => {
     ]
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
 
   const files = await fs.readdir(outputDir)
-  t.strictEqual(files.includes('exclude-me'), true)
+  t.equal(files.includes('exclude-me'), true)
 
   const excludeTarget = path.resolve(outputDir, 'exclude-me', 'index.js')
   t.notMatch(await fs.readFile(excludeTarget, 'utf8'), /function cov_/)
@@ -191,10 +191,10 @@ t.test('allows specifying a single sub-directory to be included', async t => {
     ]
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
 
   const files = await fs.readdir(outputDir)
-  t.strictEqual(files.includes('include-me'), true)
+  t.equal(files.includes('include-me'), true)
   const instrumented = path.resolve(outputDir, 'include-me', 'include-me.js')
   t.match(await fs.readFile(instrumented, 'utf8'), /function cov_/)
 })
@@ -213,14 +213,14 @@ t.test('allows a file to be excluded from an included directory', async t => {
     ]
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
 
   const files = await fs.readdir(outputDir)
-  t.strictEqual(files.includes('include-me'), true)
+  t.equal(files.includes('include-me'), true)
 
   const includeMeFiles = await fs.readdir(path.resolve(outputDir, 'include-me'))
-  t.strictEqual(includeMeFiles.includes('include-me.js'), true)
-  t.strictEqual(includeMeFiles.includes('exclude-me.js'), true)
+  t.equal(includeMeFiles.includes('include-me.js'), true)
+  t.equal(includeMeFiles.includes('exclude-me.js'), true)
 
   const includeTarget = path.resolve(outputDir, 'include-me', 'include-me.js')
   t.match(await fs.readFile(includeTarget, 'utf8'), /function cov_/)
@@ -234,7 +234,7 @@ t.test('aborts if trying to write files in place', async t => {
     args: ['instrument', './', './']
   })
 
-  t.strictEqual(status, 1)
+  t.equal(status, 1)
   t.match(stderr, /cannot instrument files in place/)
 })
 
@@ -256,7 +256,7 @@ t.test('can write files in place with --in-place switch', async t => {
     cwd: outputDir
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
 
   const file1 = path.resolve(outputDir, 'file1.js')
   t.match(await fs.readFile(file1, 'utf8'), /function cov_/)
@@ -282,7 +282,7 @@ t.test('aborts if trying to delete while writing files in place', async t => {
     ]
   })
 
-  t.strictEqual(status, 1)
+  t.equal(status, 1)
   t.match(stderr, /cannot use '--delete' when instrumenting files in place/)
 })
 
@@ -296,7 +296,7 @@ t.test('aborts if trying to instrument files from outside the project root direc
     ]
   })
 
-  t.strictEqual(status, 1)
+  t.equal(status, 1)
   t.match(stderr, /cannot instrument files outside project root directory/)
 })
 
@@ -312,11 +312,11 @@ t.test('cleans the output directory if `--delete` is specified', async t => {
     ]
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
 
   const files = await fs.readdir(outputDir)
-  t.strictEqual(files.includes('removed-by-clean'), false)
-  t.strictEqual(files.includes('exclude-me'), true)
+  t.equal(files.includes('removed-by-clean'), false)
+  t.equal(files.includes('exclude-me'), true)
 })
 
 t.test('does not clean the output directory by default', async t => {
@@ -330,10 +330,10 @@ t.test('does not clean the output directory by default', async t => {
     ]
   })
 
-  t.strictEqual(status, 0)
+  t.equal(status, 0)
 
   const files = await fs.readdir(outputDir)
-  t.strictEqual(files.includes('removed-by-clean'), true)
+  t.equal(files.includes('removed-by-clean'), true)
 })
 
 t.test('aborts if trying to clean process.cwd()', async t => {
@@ -341,7 +341,7 @@ t.test('aborts if trying to clean process.cwd()', async t => {
     args: ['instrument', '--delete', './src', './']
   })
 
-  t.strictEqual(status, 1)
+  t.equal(status, 1)
   t.match(stderr, /attempt to delete/)
 })
 
@@ -350,6 +350,6 @@ t.test('aborts if trying to clean outside working directory', async t => {
     args: ['instrument', '--delete', './', '../']
   })
 
-  t.strictEqual(status, 1)
+  t.equal(status, 1)
   t.match(stderr, /attempt to delete/)
 })

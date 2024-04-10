@@ -5,7 +5,7 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/instrument.js TAP can write files in place with --in-place switch > stdout 1`] = `
+exports[`test/instrument.js > TAP > can write files in place with --in-place switch > stdout 1`] = `
 ----------|---------|----------|---------|---------|-------------------
 File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 ----------|---------|----------|---------|---------|-------------------
