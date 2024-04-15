@@ -47,8 +47,8 @@ async function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI, env = {
       stderr,
       stdout
     },
-    stderr: sanitizeString(stderr, cwd, leavePathSep),
-    stdout: sanitizeString(stdout, cwd, leavePathSep)
+    stderr: sanitizeString(stderr.toString('utf8'), cwd, leavePathSep),
+    stdout: sanitizeString(stdout.toString('utf8'), cwd, leavePathSep)
   }
 }
 
