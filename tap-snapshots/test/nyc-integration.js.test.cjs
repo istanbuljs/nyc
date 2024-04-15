@@ -888,7 +888,7 @@ exports[`test/nyc-integration.js > TAP > passes configuration via environment va
 `
 
 exports[`test/nyc-integration.js > TAP > recursive run does not throw > stdout 1`] = `
-
+Buffer <2268 656c 6c6f 220d 0a  "hello"..>
 `
 
 exports[`test/nyc-integration.js > TAP > report and check should show coverage check along with report > stderr 1`] = `

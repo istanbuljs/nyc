@@ -21,7 +21,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          registry-url: 'https://external-dot-oss-automation.appspot.com'
           cache: npm
         if: ${{ steps.release.outputs.release_created }}
       - run: npm publish

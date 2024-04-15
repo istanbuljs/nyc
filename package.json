@@ -8,6 +8,7 @@
     "pretest": "npm run lint && npm run clean && npm run instrument",
     "test": "tap",
     "snap": "npm test -- --snapshot",
+    "fix": "standard --fix",
     "posttest": "npm run report",
     "clean": "node ./npm-run-clean.js",
     "instrument": "node ./build-self-coverage.js",
