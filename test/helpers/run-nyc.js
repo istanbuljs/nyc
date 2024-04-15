@@ -13,7 +13,7 @@ if ('APPDATA' in process.env) {
   envPath.APPDATA = process.env.APPDATA
 }
 
-function sanitizeString(str, cwd, leavePathSep) {
+function sanitizeString (str, cwd, leavePathSep) {
   /*
    * File paths are different on different systems:
    *   - make everything relative to cwd
@@ -31,7 +31,7 @@ function sanitizeString(str, cwd, leavePathSep) {
   return str
 }
 
-async function runNYC({ args, tempDir, leavePathSep, cwd = fixturesCLI, env = {} }) {
+async function runNYC ({ args, tempDir, leavePathSep, cwd = fixturesCLI, env = {} }) {
   const runArgs = [nycBin].concat(tempDir ? ['--temp-dir', tempDir] : [], args)
   const { status, stderr, stdout } = await spawn(process.execPath, runArgs, {
     cwd: cwd,

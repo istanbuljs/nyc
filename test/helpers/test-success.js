@@ -2,7 +2,7 @@
 
 const runNYC = require('./run-nyc')
 
-async function testSuccess(t, opts) {
+async function testSuccess (t, opts) {
   const { status, stderr, stdout } = await runNYC({
     tempDir: t.tempDir,
     ...opts
