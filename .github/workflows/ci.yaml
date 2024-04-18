@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: npm
-      - run: npm i npm@latest -g
+      - run: npm config set update-notifier false
       - run: npm ci --engine-strict
       - run: npm test
   windows:
@@ -29,6 +29,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      - run: npm i npm@latest -g
+          cache: npm
+      - run: npm config set update-notifier false
       - run: npm ci
       - run: npm test
