@@ -206,7 +206,7 @@ t.test('--use-spawn-wrap=false is functional', t => testSuccess(t, {
 }))
 
 t.test('can run "npm test" which directly invokes a test file', t => testSuccess(t, {
-  args: ['npm', '--silent', 'test'],
+  args: ['npm', 'test'],
   cwd: path.resolve(fixturesCLI, 'run-npm-test')
 }))
 
