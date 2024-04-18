@@ -439,10 +439,6 @@ All files |      80 |      100 |      50 |      80 |
 `
 
 exports[`test/nyc-integration.js > TAP > can run "npm test" which directly invokes a test file > stdout 1`] = `
-
-> test
-> node ./half-covered.js
-
 -----------------|---------|----------|---------|---------|-------------------
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -----------------|---------|----------|---------|---------|-------------------
