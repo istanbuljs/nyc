@@ -87,7 +87,7 @@ async function main () {
   // a non-zero exit codes in either one leads to an overall non-zero exit code.
   process.exitCode = 0
   foregroundChild(childArgs, async () => {
-    const mainChildExitCode = process.exitCode
+    let exitCode = process.exitCode
 
     try {
       await nyc.writeProcessIndex()
@@ -100,7 +100,7 @@ async function main () {
           branches: argv.branches,
           statements: argv.statements
         }, argv['per-file']).catch(suppressEPIPE)
-        process.exitCode = process.exitCode || mainChildExitCode
+        exitCode = process.exitCode || exitCode
       }
 
       if (!argv.silent) {
@@ -108,10 +108,12 @@ async function main () {
       }
     } catch (error) {
       /* istanbul ignore next */
-      process.exitCode = process.exitCode || mainChildExitCode || 1
+      exitCode = process.exitCode || exitCode || 1
       /* istanbul ignore next */
       console.error(error.message)
     }
+
+    return exitCode
   })
 }
 
