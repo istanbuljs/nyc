@@ -1,11 +1,8 @@
 # nyc
 
-[![Build Status](https://img.shields.io/travis/istanbuljs/nyc/master.svg)](https://travis-ci.org/istanbuljs/nyc)
-[![Windows Build Status](https://img.shields.io/appveyor/ci/istanbuljs/nyc/master.svg?label=Windows%20build)](https://ci.appveyor.com/project/istanbuljs/nyc/branch/master)
-[![Coverage Status](https://img.shields.io/coveralls/github/istanbuljs/nyc/master.svg)](https://coveralls.io/r/istanbuljs/nyc?branch=master)
+[![ci](https://github.com/istanbuljs/nyc/actions/workflows/ci.yaml/badge.svg)](https://github.com/bcoe/c8/actions/workflows/ci.yaml)
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
-[![community slack](https://devtoolscommunity.herokuapp.com/badge.svg)](https://devtoolscommunity.herokuapp.com)
 
 _Having problems? want to contribute? join our [community slack](https://devtoolscommunity.herokuapp.com)_.
 

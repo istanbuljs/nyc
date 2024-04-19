@@ -15,6 +15,6 @@ while (diff[0] * 1e9 + diff[1] < 3e9) {
 }
 
 
-assert.strictEqual(require('./cache-collision-target')(message), message === 'nada' ? undefined :  'this is a ' + message)
+assert.equal(require('./cache-collision-target')(message), message === 'nada' ? undefined :  'this is a ' + message)
 
-//assert.strictEqual(process.env.NYC_CWD, __dirname)
+//assert.equal(process.env.NYC_CWD, __dirname)

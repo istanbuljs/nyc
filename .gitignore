@@ -4,5 +4,7 @@ node_modules
 test/build/
 .self_coverage
 self-coverage/
+.tap
 *.swp
+test/fixtures/cli/coverage.json
 needs-transpile.js

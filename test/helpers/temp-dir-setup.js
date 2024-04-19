@@ -17,15 +17,15 @@ function tempDirSetup (t, testFile) {
 
   // Do not use arrow function for beforeEach
   // or afterEach, they need this from tap.
-  t.beforeEach(async function () {
-    this.tempDir = await mkdtemp(tempDirBase + '/')
+  t.beforeEach(async function (t) {
+    t.tempDir = await mkdtemp(tempDirBase + '/')
   })
 
-  t.afterEach(function () {
-    return rimraf(this.tempDir)
+  t.afterEach(function (t) {
+    return rimraf(t.tempDir)
   })
 
-  t.tearDown(() => rimraf(tempDirBase))
+  t.teardown(() => rimraf(tempDirBase))
 }
 
 module.exports = tempDirSetup
