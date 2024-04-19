@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [17.0.0](https://github.com/istanbuljs/nyc/compare/nyc-v16.0.0...nyc-v17.0.0) (2024-04-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* minimum Node version now 18
+
+### Bug Fixes
+
+* **deps:** address security alerts in deps ([#1555](https://github.com/istanbuljs/nyc/issues/1555)) ([b6ed598](https://github.com/istanbuljs/nyc/commit/b6ed59832e1b190486cbf289f081122b384465e5))
+
+
+### Build System
+
+* minimum Node version now 18 ([9ef340e](https://github.com/istanbuljs/nyc/commit/9ef340e07514b5e2d05f93a99fca17e5d60d65db))
+
 ## [16.0.0](https://github.com/istanbuljs/nyc/compare/v15.1.0...v16.0.0) (2024-04-10)
 
 
