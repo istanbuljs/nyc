@@ -888,6 +888,7 @@ exports[`test/nyc-integration.js > TAP > passes configuration via environment va
 `
 
 exports[`test/nyc-integration.js > TAP > recursive run does not throw > stdout 1`] = `
+hello
 
 `
 

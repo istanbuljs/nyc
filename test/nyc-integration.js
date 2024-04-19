@@ -591,7 +591,8 @@ t.test('recursive run does not throw', t => testSuccess(t, {
     nycBin,
     process.execPath,
     nycBin,
-    'true'
+    'echo',
+    'hello'
   ],
   cwd: path.resolve(__dirname, 'fixtures/recursive-run')
 }))

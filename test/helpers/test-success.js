@@ -10,7 +10,6 @@ async function testSuccess (t, opts) {
 
   t.equal(status, 0)
   t.equal(stderr, '')
-  console.info(stdout)
   t.matchSnapshot(stdout, 'stdout')
 }
 
