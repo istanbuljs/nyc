@@ -193,6 +193,7 @@ t.test('interprets first args after -- as Node.js execArgv', t => testSuccess(t,
   args: ['--', '--expose-gc', path.resolve(fixturesCLI, 'gc.js')]
 }))
 
+// Disabled; see https://github.com/istanbuljs/nyc/pull/1546
 // t.test('--show-process-tree displays a tree of spawned processes', t => testSuccess(t, {
 //   args: ['--show-process-tree', process.execPath, 'selfspawn-fibonacci.js', '5']
 // }))
