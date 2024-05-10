@@ -32,6 +32,8 @@ t.test('build some processinfo', t => {
   proc.stderr.resume()
   proc.stdout.resume()
   proc.on('close', (code, signal) => {
+    // The subprocess is failing with the following error:
+    // " External ID blorp used by multiple processes"
     t.equal(code, 0)
     t.equal(signal, null)
     t.end()

@@ -86,8 +86,8 @@ async function main () {
   // set process.exitCode. Keep track so that both children are run, but
   // a non-zero exit codes in either one leads to an overall non-zero exit code.
   process.exitCode = 0
-  foregroundChild(childArgs, async () => {
-    let exitCode = process.exitCode
+  foregroundChild(childArgs, async (code) => {
+    let exitCode = process.exitCode || code
 
     try {
       await nyc.writeProcessIndex()
