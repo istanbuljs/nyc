@@ -193,10 +193,11 @@ t.test('interprets first args after -- as Node.js execArgv', t => testSuccess(t,
   args: ['--', '--expose-gc', path.resolve(fixturesCLI, 'gc.js')]
 }))
 
-// Disabled; see https://github.com/istanbuljs/nyc/pull/1546
-// t.test('--show-process-tree displays a tree of spawned processes', t => testSuccess(t, {
-//   args: ['--show-process-tree', process.execPath, 'selfspawn-fibonacci.js', '5']
-// }))
+// TODO; get this test to pass with `foreground-child@^3.0.0` or delete.
+// See https://github.com/istanbuljs/nyc/pull/1546
+t.skip('--show-process-tree displays a tree of spawned processes', t => testSuccess(t, {
+  args: ['--show-process-tree', process.execPath, 'selfspawn-fibonacci.js', '5']
+}))
 
 t.test('--use-spawn-wrap=true is functional', t => testSuccess(t, {
   args: ['--use-spawn-wrap=true', process.execPath, 'selfspawn-fibonacci.js', '5']
