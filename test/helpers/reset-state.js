@@ -5,7 +5,7 @@ const { promisify } = require('util')
 // reset global state modified by nyc in non-integration tests.
 const extensions = Object.assign({}, require.extensions) // eslint-disable-line
 
-const glob = promisify(require('glob'))
+const glob = require('glob')
 const rimraf = promisify(require('rimraf'))
 
 module.exports = async function () {
