@@ -1,12 +1,10 @@
 'use strict'
 
-const { promisify } = require('util')
-
 // reset global state modified by nyc in non-integration tests.
 const extensions = Object.assign({}, require.extensions) // eslint-disable-line
 
-const glob = promisify(require('glob'))
-const rimraf = promisify(require('rimraf'))
+const glob = require('glob')
+const rimraf = require('rimraf').rimraf
 
 module.exports = async function () {
   // nuke any temporary files created during test runs.

@@ -1,10 +1,9 @@
 'use strict'
 
 const { resolve } = require('path')
-const { promisify } = require('util')
 const { spawn } = require('child_process')
 const t = require('tap')
-const rimraf = promisify(require('rimraf'))
+const rimraf = require('rimraf').rimraf
 const fs = require('../lib/fs-promises')
 
 const node = process.execPath
