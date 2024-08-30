@@ -33,7 +33,7 @@ t.test('creates the default \'tempDir\' when none is specified', async t => {
   t.equal(cliFiles.includes('.temp_directory'), false)
 
   const tempFiles = await fs.readdir(path.resolve(fixturesCLI, '.nyc_output'))
-  t.equal(tempFiles.length, 3) // two coverage files, and processinfo
+  t.equal(tempFiles.length, 2) // a coverage file, and processinfo
 })
 
 t.test('prefers \'tempDirectory\' to \'tempDir\'', async t => {
@@ -56,7 +56,7 @@ t.test('prefers \'tempDirectory\' to \'tempDir\'', async t => {
   t.equal(cliFiles.includes('.temp_directory'), true)
 
   const tempFiles = await fs.readdir(path.resolve(fixturesCLI, '.temp_directory'))
-  t.equal(tempFiles.length, 3)
+  t.equal(tempFiles.length, 2)
 })
 
 t.test('uses the \'tempDir\' option if \'tempDirectory\' is not set', async t => {
@@ -77,5 +77,5 @@ t.test('uses the \'tempDir\' option if \'tempDirectory\' is not set', async t =>
   t.equal(cliFiles.includes('.temp_directory'), false)
 
   const tempFiles = await fs.readdir(path.resolve(fixturesCLI, '.temp_dir'))
-  t.equal(tempFiles.length, 3)
+  t.equal(tempFiles.length, 2)
 })

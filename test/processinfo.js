@@ -16,12 +16,7 @@ const resolvedJS = resolve(fixturesCLI, 'selfspawn-fibonacci.js')
 rimraf.sync(resolve(fixturesCLI, tmp))
 t.teardown(() => rimraf(resolve(fixturesCLI, tmp)))
 
-// TODO; get this test to pass with `foreground-child@^3.0.0` or delete.
-// See https://github.com/istanbuljs/nyc/pull/1546
-//
-// The subprocess is failing with the following error:
-// " External ID blorp used by multiple processes"
-t.skip('build some processinfo', t => {
+t.test('build some processinfo', t => {
   var args = [
     bin, '-t', tmp,
     node, 'selfspawn-fibonacci.js', '5'
@@ -43,8 +38,7 @@ t.skip('build some processinfo', t => {
   })
 })
 
-// This test is skipped because it relies on the above "build some processinfo" test.
-t.skip('validate the created processinfo data', async t => {
+t.test('validate the created processinfo data', async t => {
   const covs = (await fs.readdir(resolve(fixturesCLI, tmp)))
     .filter(f => f !== 'processinfo')
 
@@ -73,8 +67,7 @@ t.skip('validate the created processinfo data', async t => {
   }))
 })
 
-// This test is skipped because it relies on the above "build some processinfo" test.
-t.skip('check out the index', async t => {
+t.test('check out the index', async t => {
   const indexFile = resolve(fixturesCLI, tmp, 'processinfo', 'index.json')
   const indexJson = await fs.readFile(indexFile, 'utf-8')
   const index = JSON.parse(indexJson)

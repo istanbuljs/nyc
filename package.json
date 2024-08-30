@@ -64,7 +64,7 @@
     "decamelize": "^1.2.0",
     "find-cache-dir": "^3.2.0",
     "find-up": "^4.1.0",
-    "foreground-child": "^3.0.0",
+    "foreground-child": "^3.3.0",
     "get-package-type": "^0.1.0",
     "glob": "^7.1.6",
     "istanbul-lib-coverage": "^3.0.0",

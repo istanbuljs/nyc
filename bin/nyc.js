@@ -6,6 +6,8 @@ const { cliWrapper, suppressEPIPE } = require('../lib/commands/helpers')
 const { foregroundChild } = require('foreground-child')
 const resolveFrom = require('resolve-from')
 const NYC = require('../index.js')
+const path = require('path')
+const fs = require('fs')
 
 // parse configuration and command-line arguments;
 // we keep these values in a few different forms,
@@ -86,10 +88,22 @@ async function main () {
   // set process.exitCode. Keep track so that both children are run, but
   // a non-zero exit codes in either one leads to an overall non-zero exit code.
   process.exitCode = 0
-  foregroundChild(childArgs, async (code) => {
+  foregroundChild(childArgs, async (code, signal, processInfo) => {
     let exitCode = process.exitCode || code
 
     try {
+      // clean up foreground-child watchdog process info
+      const parentDir = path.resolve(nyc.tempDirectory())
+      const dir = path.resolve(nyc.tempDirectory(), 'processinfo')
+      const files = await nyc.coverageFiles(dir)
+      for (let i = 0; i < files.length; i++) {
+        const data = await nyc.coverageFileLoad(files[i], dir)
+        if (data.pid === processInfo.watchdogPid) {
+          fs.unlinkSync(path.resolve(parentDir, files[i]))
+          fs.unlinkSync(path.resolve(dir, files[i]))
+        }
+      }
+
       await nyc.writeProcessIndex()
 
       nyc.maybePurgeSourceMapCache()

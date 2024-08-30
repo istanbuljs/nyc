@@ -193,9 +193,7 @@ t.test('interprets first args after -- as Node.js execArgv', t => testSuccess(t,
   args: ['--', '--expose-gc', path.resolve(fixturesCLI, 'gc.js')]
 }))
 
-// TODO; get this test to pass with `foreground-child@^3.0.0` or delete.
-// See https://github.com/istanbuljs/nyc/pull/1546
-t.skip('--show-process-tree displays a tree of spawned processes', t => testSuccess(t, {
+t.test('--show-process-tree displays a tree of spawned processes', t => testSuccess(t, {
   args: ['--show-process-tree', process.execPath, 'selfspawn-fibonacci.js', '5']
 }))
 
