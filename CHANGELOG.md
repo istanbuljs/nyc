@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [17.1.0](https://github.com/istanbuljs/nyc/compare/nyc-v17.0.0...nyc-v17.1.0) (2024-09-19)
+
+
+### Features
+
+* **deps:** bump foreground-child from ^2.0.0 to ^3.0.0 ([#1546](https://github.com/istanbuljs/nyc/issues/1546)) ([af74d1e](https://github.com/istanbuljs/nyc/commit/af74d1eae6c598f05f6de9332cf4f83b63286fcb))
+
+
+### Bug Fixes
+
+* reduce size of serialized JSON output ([#1570](https://github.com/istanbuljs/nyc/issues/1570)) ([ae657b6](https://github.com/istanbuljs/nyc/commit/ae657b66264fe7c19a710271510e41b94a152cfa))
+
 ## [17.0.0](https://github.com/istanbuljs/nyc/compare/nyc-v16.0.0...nyc-v17.0.0) (2024-04-19)
 
 
