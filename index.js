@@ -450,7 +450,8 @@ class NYC {
     const context = libReport.createContext({
       dir: this.reportDirectory(),
       watermarks: this.config.watermarks,
-      coverageMap: await this.getCoverageMapFromAllCoverageFiles()
+      coverageMap: await this.getCoverageMapFromAllCoverageFiles(),
+      sourceFinder: this.sourceMaps.sourceFinder
     })
 
     this.reporter.forEach((_reporter) => {
