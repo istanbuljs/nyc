@@ -731,13 +731,13 @@ end_of_record
 `
 
 exports[`test/nyc-integration.js > TAP > loads configuration from different module rather than nyc.config.js > stderr 1`] = `
+ERROR: Coverage for lines (0%) does not meet threshold (100%) for ./nycrc-config.js
+ERROR: Coverage for statements (0%) does not meet threshold (100%) for ./nycrc-config.js
+ERROR: Coverage for lines (0%) does not meet threshold (100%) for ./nyc.config.js
+ERROR: Coverage for statements (0%) does not meet threshold (100%) for ./nyc.config.js
 ERROR: Coverage for lines (57.14%) does not meet threshold (100%) for ./index.js
 ERROR: Coverage for branches (50%) does not meet threshold (100%) for ./index.js
 ERROR: Coverage for statements (57.14%) does not meet threshold (100%) for ./index.js
-ERROR: Coverage for lines (0%) does not meet threshold (100%) for ./nyc.config.js
-ERROR: Coverage for statements (0%) does not meet threshold (100%) for ./nyc.config.js
-ERROR: Coverage for lines (0%) does not meet threshold (100%) for ./nycrc-config.js
-ERROR: Coverage for statements (0%) does not meet threshold (100%) for ./nycrc-config.js
 
 `
 

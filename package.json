@@ -66,7 +66,7 @@
     "find-up": "^4.1.0",
     "foreground-child": "^3.3.0",
     "get-package-type": "^0.1.0",
-    "glob": "^7.1.6",
+    "glob": "^9.3.5",
     "istanbul-lib-coverage": "^3.0.0",
     "istanbul-lib-hook": "^3.0.0",
     "istanbul-lib-instrument": "^6.0.2",
@@ -79,10 +79,10 @@
     "p-map": "^3.0.0",
     "process-on-spawn": "^1.0.0",
     "resolve-from": "^5.0.0",
-    "rimraf": "^3.0.0",
+    "rimraf": "^4.0.0",
     "signal-exit": "^3.0.2",
     "spawn-wrap": "^2.0.0",
-    "test-exclude": "^6.0.0",
+    "test-exclude": "^7.0.0",
     "yargs": "^15.0.2"
   },
   "devDependencies": {
