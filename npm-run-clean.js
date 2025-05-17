@@ -15,4 +15,4 @@ Promise.all([
   'test/fixtures/cli/nyc-config-js/node_modules',
   'test/temp-dir-*',
   'self-coverage'
-].map(f => rimraf(f, { cwd: __dirname })))
+].map(f => rimraf(f, { cwd: __dirname, glob: true })))

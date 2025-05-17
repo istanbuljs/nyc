@@ -79,7 +79,7 @@
     "p-map": "^3.0.0",
     "process-on-spawn": "^1.0.0",
     "resolve-from": "^5.0.0",
-    "rimraf": "^4.0.0",
+    "rimraf": "^4.2.0",
     "signal-exit": "^3.0.2",
     "spawn-wrap": "^2.0.0",
     "test-exclude": "^7.0.0",
