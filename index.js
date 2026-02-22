@@ -6,8 +6,8 @@ const cachingTransform = require('caching-transform')
 const findCacheDir = require('find-cache-dir')
 const fs = require('./lib/fs-promises')
 const os = require('os')
-const { debuglog, promisify } = require('util')
-const glob = promisify(require('glob'))
+const { debuglog } = require('util')
+const { glob } = require('glob')
 const Hash = require('./lib/hash')
 const libCoverage = require('istanbul-lib-coverage')
 const libHook = require('istanbul-lib-hook')
@@ -16,7 +16,7 @@ const mkdirp = require('make-dir')
 const Module = require('module')
 const onExit = require('signal-exit')
 const path = require('path')
-const rimraf = promisify(require('rimraf'))
+const { rimraf } = require('rimraf')
 const SourceMaps = require('./lib/source-maps')
 const TestExclude = require('test-exclude')
 const pMap = require('p-map')
@@ -240,10 +240,10 @@ class NYC {
 
       const concurrency = output ? os.cpus().length : 1
       if (this.config.completeCopy && output) {
-        const files = await glob(path.resolve(input, '**'), {
+        const files = await glob(path.resolve(input, '**').split(path.sep).join('/'), {
           dot: true,
           nodir: true,
-          ignore: ['**/.git', '**/.git/**', path.join(output, '**')]
+          ignore: ['**/.git', '**/.git/**', path.join(output, '**').split(path.sep).join('/')]
         })
         const destDirs = new Set(
           files.map(src => path.dirname(path.join(output, path.relative(input, src))))

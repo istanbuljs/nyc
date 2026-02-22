@@ -2,12 +2,11 @@
 
 const fs = require('../lib/fs-promises')
 const path = require('path')
-const { promisify } = require('util')
 
 const t = require('tap')
 const makeDir = require('make-dir')
 const isWindows = require('is-windows')()
-const rimraf = promisify(require('rimraf'))
+const { rimraf } = require('rimraf')
 
 const { runNYC, testSuccess, fixturesCLI } = require('./helpers')
 

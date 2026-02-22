@@ -3,11 +3,10 @@
 const path = require('path')
 const fs = require('../lib/fs-promises')
 const os = require('os')
-const { promisify } = require('util')
 
 const t = require('tap')
-const glob = promisify(require('glob'))
-const rimraf = promisify(require('rimraf'))
+const { glob } = require('glob')
+const { rimraf } = require('rimraf')
 
 const { fixturesCLI, nycBin, runNYC, tempDirSetup, testSuccess, testFailure, envCheckConfig } = require('./helpers')
 
@@ -349,7 +348,7 @@ t.test('extracts coverage headers from unexecuted files', async t => {
     ]
   })
 
-  const files = await glob(path.join(t.tempDir, '*.json'))
+  const files = await glob(path.join(t.tempDir, '*.json').split(path.sep).join('/'))
   const coverage = []
   await Promise.all(files.map(async file => {
     const data = JSON.parse(await fs.readFile(file, 'utf-8'))
