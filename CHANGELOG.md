@@ -882,7 +882,7 @@ files.
 
 ### Features
 
-* better docs for excluding, thanks @kentdodds \o/  ([22b06fe](https://github.com/bcoe/nyc/commit/22b06fe))
+* better docs for excluding, thanks @kentcdodds \o/  ([22b06fe](https://github.com/bcoe/nyc/commit/22b06fe))
 * updating dependencies (spawn wrap with npm patches \o/) ([ac841b8](https://github.com/bcoe/nyc/commit/ac841b8))
 
 
