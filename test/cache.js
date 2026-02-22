@@ -1,10 +1,9 @@
 'use strict'
 
 const path = require('path')
-const { promisify } = require('util')
 
 const t = require('tap')
-const rimraf = promisify(require('rimraf'))
+const { rimraf } = require('rimraf')
 
 const NYC = require('../self-coverage')
 

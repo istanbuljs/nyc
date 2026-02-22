@@ -4,7 +4,7 @@ const path = require('path')
 const fs = require('fs')
 const istanbul = require('istanbul-lib-instrument')
 const makeDir = require('make-dir')
-const glob = require('glob')
+const { globSync } = require('glob')
 
 const instrumenter = istanbul.createInstrumenter({
   coverageVariable: '___NYC_SELF_COVERAGE___',
@@ -23,7 +23,7 @@ function instrumentFile (name) {
 }
 
 function instrumentGlob (pattern) {
-  const result = glob.sync(pattern, {
+  const result = globSync(pattern, {
     cwd: __dirname,
     nodir: true
   })

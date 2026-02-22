@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 'use strict'
 
-const { promisify } = require('util')
-const rimraf = promisify(require('rimraf'))
+const { rimraf } = require('rimraf')
 
 Promise.all([
   '**/.nyc_output',
