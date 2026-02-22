@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [18.0.0](https://github.com/istanbuljs/nyc/compare/nyc-v17.1.0...nyc-v18.0.0) (2026-02-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** transitive dependencies now require node 20 || >=22.
+
+### Bug Fixes
+
+* **deps:** update dependencies pulling in old glob ([#1612](https://github.com/istanbuljs/nyc/issues/1612)) ([0707729](https://github.com/istanbuljs/nyc/commit/07077290cac3bd38d3e9a99eee535fa62438e252))
+
 ## [17.1.0](https://github.com/istanbuljs/nyc/compare/nyc-v17.0.0...nyc-v17.1.0) (2024-09-19)
 
 
