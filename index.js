@@ -240,10 +240,10 @@ class NYC {
 
       const concurrency = output ? os.cpus().length : 1
       if (this.config.completeCopy && output) {
-        const files = await glob(path.resolve(input, '**'), {
+        const files = await glob(path.resolve(input, '**').split(path.sep).join('/'), {
           dot: true,
           nodir: true,
-          ignore: ['**/.git', '**/.git/**', path.join(output, '**')]
+          ignore: ['**/.git', '**/.git/**', path.join(output, '**').split(path.sep).join('/')]
         })
         const destDirs = new Set(
           files.map(src => path.dirname(path.join(output, path.relative(input, src))))
