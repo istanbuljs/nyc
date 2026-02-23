@@ -258,7 +258,7 @@ nyc --require esm mocha
 ### Interaction with `--all` flag
 
 The `--require` flag also operates on the main nyc process for use by `--all`.
-For example, in situations with `nyc --all --instrument false` and [`babel-plugin-istanbul`] setup the `--all` option only works if `--require @babel/register` is passed to nyc.
+For example, in situations with `nyc --all --instrument false` and [`babel-plugin-istanbul`] set up the `--all` option only works if `--require @babel/register` is passed to nyc.
 Passing it to mocha would cause the tests to be instrumented but unloaded sources would not be seen.
 The [`@istanbuljs/nyc-config-babel`] package handles this for you!
 

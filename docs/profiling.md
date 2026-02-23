@@ -29,7 +29,7 @@ cd /user/dev/ava
 npm link nyc
 ```
 
-This will likely not work with `tap --coverage`, since tap will try to use it's own older copy of nyc instead of your globally linked one. Modify the test script in your test project so it uses the `nyc` binary directly, and disable `tap`s version with the `--no-cov` flag:
+This will likely not work with `tap --coverage`, since tap will try to use its own older copy of nyc instead of your globally linked one. Modify the test script in your test project so it uses the `nyc` binary directly, and disable `tap`s version with the `--no-cov` flag:
 
 `package.json`:
 

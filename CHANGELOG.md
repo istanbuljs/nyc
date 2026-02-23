@@ -497,7 +497,7 @@ files.
 
 ### Bug Fixes
 
-* introduced a bug that resulted in source-maps not being loaded approriately on second test run ([#566](https://github.com/istanbuljs/nyc/issues/566)) ([1bf74fd](https://github.com/istanbuljs/nyc/commit/1bf74fd))
+* introduced a bug that resulted in source-maps not being loaded appropriately on second test run ([#566](https://github.com/istanbuljs/nyc/issues/566)) ([1bf74fd](https://github.com/istanbuljs/nyc/commit/1bf74fd))
 
 
 
@@ -726,7 +726,7 @@ files.
 
 ### Features
 
-* upgrade to new test-exclude; with suppport for node_modules, and empty exclude ([#348](https://github.com/bcoe/nyc/issues/348)) ([d616ffc](https://github.com/bcoe/nyc/commit/d616ffc))
+* upgrade to new test-exclude; with support for node_modules, and empty exclude ([#348](https://github.com/bcoe/nyc/issues/348)) ([d616ffc](https://github.com/bcoe/nyc/commit/d616ffc))
 
 
 ### BREAKING CHANGES
@@ -742,7 +742,7 @@ files.
 ### Bug Fixes
 
 * make --all flag work with files with extensions other than .js ([#326](https://github.com/bcoe/nyc/issues/326)) ([d0a8674](https://github.com/bcoe/nyc/commit/d0a8674))
-* work around for Windows path issue nodejs/node[#6624](https://github.com/bcoe/nyc/issues/6624) ([6b1fed0](https://github.com/bcoe/nyc/commit/6b1fed0))
+* workaround for Windows path issue nodejs/node[#6624](https://github.com/bcoe/nyc/issues/6624) ([6b1fed0](https://github.com/bcoe/nyc/commit/6b1fed0))
 
 
 ### Features
@@ -882,7 +882,7 @@ files.
 
 ### Features
 
-* better docs for excluding, thanks @kentdodds \o/  ([22b06fe](https://github.com/bcoe/nyc/commit/22b06fe))
+* better docs for excluding, thanks @kentcdodds \o/  ([22b06fe](https://github.com/bcoe/nyc/commit/22b06fe))
 * updating dependencies (spawn wrap with npm patches \o/) ([ac841b8](https://github.com/bcoe/nyc/commit/ac841b8))
 
 
@@ -920,7 +920,7 @@ files.
 
 ### v6.1.0 (2016/03/12 15:00 +7:00)
 
-- [#191](https://github.com/bcoe/nyc/pull/191) upgrade to non-singleton verison of yargs (@bcoe)
+- [#191](https://github.com/bcoe/nyc/pull/191) upgrade to non-singleton version of yargs (@bcoe)
 - [#185](https://github.com/bcoe/nyc/pull/185) default to long-form option names so that they can be overridden in package.json (@rapzo)
 - [#180](https://github.com/bcoe/nyc/pull/180) fix bug with findUp (@bcoe)
 - [#178](https://github.com/bcoe/nyc/pull/178) --all should handle extensions other than .js. (@lloydcotten)
