@@ -515,6 +515,7 @@ class NYC {
       await this.sourceMaps.reloadCachedSourceMaps(report)
       return report
     } catch (error) {
+      console.error(`There was a problem loading coverage from ${filename} in ${baseDirectory}: ${error}`)
       return {}
     }
   }
