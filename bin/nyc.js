@@ -34,7 +34,7 @@ async function main () {
   if (!argv.instrument) argv.instrumenter = './lib/instrumenters/noop'
   else argv.instrumenter = './lib/instrumenters/istanbul'
 
-  var nyc = (new NYC(argv))
+  const nyc = (new NYC(argv))
   if (argv.clean) {
     await nyc.reset()
   } else {
