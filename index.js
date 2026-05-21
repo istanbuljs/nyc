@@ -32,7 +32,7 @@ const selfCoverageHelper = global[nycSelfCoverageHelper] || {
 }
 
 function coverageFinder () {
-  var coverage = global.__coverage__
+  let coverage = global.__coverage__
   if (typeof __coverage__ === 'object') coverage = __coverage__
   if (!coverage) coverage = global.__coverage__ = {}
   return coverage
@@ -105,7 +105,7 @@ class NYC {
       // when running --all we should not load source-file from
       // cache, we want to instead return the fake source.
       disableCache: this._disableCachingTransform(),
-      ext: ext
+      ext
     }
     if (this._eagerInstantiation) {
       opts.transform = this._transformFactory(this.cacheDirectory)
@@ -153,8 +153,8 @@ class NYC {
   }
 
   _readTranspiledSource (filePath) {
-    var source = null
-    var ext = path.extname(filePath)
+    let source = null
+    let ext = path.extname(filePath)
     if (typeof Module._extensions[ext] === 'undefined') {
       ext = '.js'
     }
@@ -386,7 +386,7 @@ class NYC {
   }
 
   writeCoverageFile () {
-    var coverage = coverageFinder()
+    const coverage = coverageFinder()
 
     // Remove any files that should be excluded but snuck into the coverage
     Object.keys(coverage).forEach(function (absFile) {
@@ -403,8 +403,8 @@ class NYC {
       }, this)
     }
 
-    var id = this.processInfo.uuid
-    var coverageFilename = path.resolve(this.tempDirectory(), id + '.json')
+    const id = this.processInfo.uuid
+    const coverageFilename = path.resolve(this.tempDirectory(), id + '.json')
 
     fs.writeFileSync(
       coverageFilename,
@@ -493,7 +493,7 @@ class NYC {
 
   _checkCoverage (summary, thresholds, file) {
     Object.keys(thresholds).forEach(function (key) {
-      var coverage = summary[key].pct
+      const coverage = summary[key].pct
       if (coverage < thresholds[key]) {
         process.exitCode = 1
         if (file) {
