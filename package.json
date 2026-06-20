@@ -103,6 +103,6 @@
   "bugs": "https://github.com/istanbuljs/nyc/issues",
   "repository": {
     "type": "git",
-    "url": "git@github.com:istanbuljs/nyc.git"
+    "url": "git+https://github.com/istanbuljs/nyc.git"
   }
 }
