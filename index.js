@@ -18,6 +18,7 @@ const onExit = require('signal-exit')
 const path = require('path')
 const { rimraf } = require('rimraf')
 const SourceMaps = require('./lib/source-maps')
+const { sanitizeCoveragePaths } = require('./lib/sanitize-coverage-paths')
 const TestExclude = require('test-exclude')
 const pMap = require('p-map')
 const getPackageType = require('get-package-type')
@@ -430,7 +431,7 @@ class NYC {
       { concurrency: os.cpus().length }
     )
 
-    map.data = await this.sourceMaps.remapCoverage(map.data)
+    map.data = sanitizeCoveragePaths(await this.sourceMaps.remapCoverage(map.data))
 
     // depending on whether source-code is pre-instrumented
     // or instrumented using a JIT plugin like @babel/require
