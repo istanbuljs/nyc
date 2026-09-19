@@ -198,10 +198,12 @@ class NYC {
       }
       const coverage = coverageFinder()
       const lastCoverage = this.instrumenter().lastFileCoverage()
-      if (lastCoverage) {
+      // Only use this data if we don't have it without `all: true`: a file that
+      // was actually exercised already has real counters here, and overwriting
+      // them with the empty placeholder would report it as uncovered.
+      if (lastCoverage && !coverage[lastCoverage.path]) {
         coverage[lastCoverage.path] = {
           ...lastCoverage,
-          // Only use this data if we don't have it without `all: true`
           all: true
         }
       }

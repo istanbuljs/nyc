@@ -29,6 +29,33 @@ t.test('outputs an empty coverage report for all files that are not excluded', a
   t.equal(report.s['1'], 0)
 })
 
+t.test('does not overwrite the coverage of a file that was actually loaded', async t => {
+  const nyc = new NYC(await parseArgv(fixtures))
+  await nyc.reset()
+
+  // Pretend the file was exercised before `--all` walks the tree: real counters
+  // are already sitting in the global coverage object.
+  const loadedPath = path.join(fixtures, './not-loaded.js')
+  global.__coverage__ = global.__coverage__ || {}
+  global.__coverage__[loadedPath] = {
+    path: loadedPath,
+    statementMap: { 0: { start: { line: 1, column: 0 }, end: { line: 1, column: 1 } } },
+    fnMap: {},
+    branchMap: {},
+    s: { 0: 7 },
+    f: {},
+    b: {}
+  }
+
+  await nyc.addAllFiles()
+
+  const reports = (await nyc.coverageData()).filter(report => ap(report)[loadedPath])
+  const report = reports[0][loadedPath]
+
+  t.equal(report.s['0'], 7, 'real hit count survives --all')
+  t.notOk(report.all, 'entry is not marked as an --all placeholder')
+})
+
 t.test('outputs an empty coverage report for multiple configured extensions', async t => {
   const cwd = path.resolve(fixtures, './conf-multiple-extensions')
   const nyc = new NYC(await parseArgv(cwd))
