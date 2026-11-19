@@ -4,7 +4,7 @@
 [![NPM version](https://img.shields.io/npm/v/nyc.svg)](https://www.npmjs.com/package/nyc)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
-_Having problems? want to contribute? join our [community slack](https://devtoolscommunity.herokuapp.com)_.
+_Having problems? want to contribute? please [open an issue](https://github.com/istanbuljs/nyc/issues)_.
 
 Istanbul's state of the art command line interface, with support for:
 
@@ -377,7 +377,7 @@ Many testing frameworks (Mocha, Tape, Tap, etc.) can produce [TAP](https://en.wi
 
 ## Tutorials and Advanced Documentation
 
-See [more nyc tutorials](https://istanbul.js.org/docs/tutorials) and [advanced nyc documentation](https://istanbul.js.org/docs/advanced/).
+See [more nyc tutorials](https://istanbul.js.org/docs/tutorials/) and [advanced nyc documentation](https://istanbul.js.org/docs/advanced/).
 
 Please feel free to [contribute documentation](https://github.com/istanbuljs/istanbuljs.github.io/tree/development/content) to help us improve.
 
